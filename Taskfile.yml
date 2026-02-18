@@ -9,16 +9,19 @@ includes:
     dir: ./api
 
 vars:
-  FLUTTER: flutter
   DART: dart
-  FASTLANE: fastlane
   DOTENVX: dotenvx
+  FASTLANE: fastlane
+  FLUTTER: flutter
+  GENHTML: genhtml
+  LCOV: lcov
+  OPENAPI_GENERATOR: openapi-generator-cli
   PRE_COMMIT: pre-commit
 
 tasks:
   default:
     cmds:
-      - task --list-all
+      - task --list
     silent: true
 
   install:
@@ -51,7 +54,7 @@ tasks:
   generate-openapi:
     desc: Generate OpenAPI code
     cmds:
-      - openapi-generator generate -i ./openapi/openapi.yaml -g dart-dio -o ./api
+      - "{{.OPENAPI_GENERATOR}} generate -i ./openapi/openapi.yaml -g dart-dio -o ./api"
 
   build:
     desc: Run build_runner to generate code
@@ -120,9 +123,14 @@ tasks:
   build-coverage-report:
     desc: Build coverage report
     cmds:
-      - "lcov --remove coverage/lcov.info 'lib/**.g.dart' -o coverage/new_lcov.info --ignore-errors unused"
-      - "genhtml coverage/new_lcov.info -o coverage/html"
+      - "{{.LCOV}} --remove coverage/lcov.info 'lib/**.g.dart' -o coverage/new_lcov.info --ignore-errors unused"
+      - "{{.GENHTML}} coverage/new_lcov.info -o coverage/html"
       - "open coverage/html/index.html"
+
+  format:
+    desc: Format Dart code
+    cmds:
+      - "{{.DART}} format lib/ test/ dotto_design_system/"
 
   analyze:
     desc: Analyze Dart code
