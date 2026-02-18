@@ -14,6 +14,6 @@ echo "$staged_files" | xargs dart format --output=none --set-exit-if-changed
 if [ $? -ne 0 ]; then
   echo ""
   echo "ERROR: Some files are not formatted."
-  echo "Run 'dart format .' to fix formatting, then stage the changes."
+  echo "Run 'task format' to fix formatting, then stage the changes."
   exit 1
 fi
