@@ -279,3 +279,5 @@ macos/Flutter/GeneratedPluginRegistrant.swift
 coverage/
 
 **.mocks.dart
+
+firebase.json
