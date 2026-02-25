@@ -6,5 +6,10 @@ flutter = "3.38.9"
 java = "26"
 node = "24"
 "npm:@openapitools/openapi-generator-cli" = "latest"
-pre-commit = "latest"
 ruby = "4.0"
+
+[tasks.pre-commit]
+description = "Run pre-commit checks"
+run = """
+dart run scripts/pre_commit.dart
+"""
