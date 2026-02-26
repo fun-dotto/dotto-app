@@ -1,12 +1,31 @@
 import 'package:dotto/asset.dart';
 import 'package:dotto_design_system/style/semantic_color.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_overboard/flutter_overboard.dart';
 
-final class AppTutorial extends StatelessWidget {
+final class AppTutorial extends StatefulWidget {
   const AppTutorial({required this.onDismissed, super.key});
 
   final void Function() onDismissed;
+
+  @override
+  State<AppTutorial> createState() => _AppTutorialState();
+}
+
+final class _AppTutorialState extends State<AppTutorial> {
+  late final PageController _pageController;
+  int _currentPage = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController();
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
 
   Widget _withImage(
     BuildContext context,
@@ -64,59 +83,75 @@ final class AppTutorial extends StatelessWidget {
   Widget build(BuildContext context) {
     final topMargin = MediaQuery.of(context).size.height / 2;
     final backgroundColor = SemanticColor.accentMaterialColor.shade50;
-    final pages = [
-      PageModel.withChild(
-        child: _withImage(context, topMargin, Asset.tutorialHome, 'ホーム', '時間割を設定でき、休講・補講情報などの確認をできます', backgroundColor),
-        color: backgroundColor,
-      ),
-      PageModel.withChild(
-        child: _withImage(
-          context,
-          topMargin,
-          Asset.tutorialMap,
-          '学内マップ',
-          '使用中の教室を確認したり、教員名で検索したりできます',
-          backgroundColor,
-        ),
-        color: backgroundColor,
-      ),
-      PageModel.withChild(
-        child: _withImage(context, topMargin, Asset.tutorialKamoku, '科目検索', 'シラバスから科目を検索できます', backgroundColor),
-        color: backgroundColor,
-      ),
-      PageModel.withChild(
-        child: _withImage(
-          context,
-          topMargin,
-          Asset.tutorialKadai,
-          'HOPE課題',
-          'HOPEで設定を行うことで課題を表示することができます',
-          backgroundColor,
-        ),
-        color: backgroundColor,
-      ),
-      PageModel.withChild(
-        child: Padding(
-          padding: const EdgeInsets.only(bottom: 25),
-          child: Text('さあ、始めましょう！', style: Theme.of(context).textTheme.headlineMedium),
-        ),
+    final pages = <Widget>[
+      _withImage(context, topMargin, Asset.tutorialHome, 'ホーム', '時間割を設定でき、休講・補講情報などの確認をできます', backgroundColor),
+      _withImage(context, topMargin, Asset.tutorialMap, '学内マップ', '使用中の教室を確認したり、教員名で検索したりできます', backgroundColor),
+      _withImage(context, topMargin, Asset.tutorialKamoku, '科目検索', 'シラバスから科目を検索できます', backgroundColor),
+      _withImage(context, topMargin, Asset.tutorialKadai, 'HOPE課題', 'HOPEで設定を行うことで課題を表示することができます', backgroundColor),
+      Container(
         color: SemanticColor.accentMaterialColor.shade100,
-        doAnimateChild: true,
+        alignment: Alignment.center,
+        padding: const EdgeInsets.only(bottom: 25),
+        child: Text('さあ、始めましょう！', style: Theme.of(context).textTheme.headlineMedium),
       ),
     ];
+
+    final isLastPage = _currentPage == pages.length - 1;
+
     return Scaffold(
       appBar: AppBar(title: const Text('Dottoの使い方')),
       body: SafeArea(
-        child: OverBoard(
-          buttonColor: Colors.black,
-          activeBulletColor: Colors.black,
-          inactiveBulletColor: Colors.black38,
-          nextText: 'つぎへ',
-          finishText: '閉じる',
-          skipText: '閉じる',
-          pages: pages,
-          skipCallback: onDismissed,
-          finishCallback: onDismissed,
+        child: Column(
+          children: [
+            Expanded(
+              child: PageView.builder(
+                controller: _pageController,
+                itemCount: pages.length,
+                onPageChanged: (index) {
+                  setState(() {
+                    _currentPage = index;
+                  });
+                },
+                itemBuilder: (context, index) => pages[index],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(pages.length, (index) {
+                  return Container(
+                    width: 8,
+                    height: 8,
+                    margin: const EdgeInsets.symmetric(horizontal: 4),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: index == _currentPage ? Colors.black : Colors.black38,
+                    ),
+                  );
+                }),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              child: Row(
+                children: [
+                  TextButton(onPressed: widget.onDismissed, child: const Text('閉じる')),
+                  const Spacer(),
+                  FilledButton(
+                    onPressed: () {
+                      if (isLastPage) {
+                        widget.onDismissed();
+                        return;
+                      }
+                      _pageController.nextPage(duration: const Duration(milliseconds: 250), curve: Curves.easeInOut);
+                    },
+                    child: Text(isLastPage ? '閉じる' : 'つぎへ'),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
