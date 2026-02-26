@@ -66,57 +66,83 @@ final class _AppTutorialState extends State<AppTutorial> {
             child: Image.asset(Asset.icon1024, width: 140, height: 140),
           ),
           const SizedBox(height: 120),
-          Text(page.welcomeBodyTop!, style: Theme.of(context).textTheme.displaySmall),
-          Text(page.welcomeBodyBottom!, style: Theme.of(context).textTheme.titleMedium),
+          RichText(
+            text: TextSpan(
+              children: [
+                TextSpan(
+                  text: 'Dotto',
+                  style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                    color: SemanticColor.light.accentPrimary,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                TextSpan(
+                  text: 'で',
+                  style: Theme.of(context).textTheme.displaySmall?.copyWith(color: SemanticColor.light.labelPrimary),
+                ),
+              ],
+            ),
+          ),
+          Text(
+            'はこだて未来大学のすべてを',
+            style: Theme.of(context).textTheme.headlineSmall?.copyWith(color: SemanticColor.light.labelPrimary),
+          ),
         ],
       ),
     );
   }
 
   Widget _buildFeaturePage(BuildContext context, _TutorialPageData page) {
-    final imageBackground = SemanticColor.accentMaterialColor.shade50;
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(32, 24, 32, 0),
-      child: Column(
-        children: [
-          Text(page.title!, style: Theme.of(context).textTheme.titleLarge),
-          const SizedBox(height: 32),
-          Container(
-            width: double.infinity,
-            height: 430,
-            decoration: BoxDecoration(color: imageBackground, borderRadius: BorderRadius.circular(16)),
-            child: Center(
-              child: Container(
-                constraints: const BoxConstraints(maxHeight: 390),
-                decoration: BoxDecoration(
-                  color: SemanticColor.light.backgroundSecondary,
-                  borderRadius: BorderRadius.circular(36),
-                  border: Border.all(color: SemanticColor.light.borderPrimary),
-                  boxShadow: [
-                    BoxShadow(
-                      color: SemanticColor.light.backgroundQuaternary.withValues(alpha: 0.18),
-                      blurRadius: 18,
-                      offset: const Offset(0, 8),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final mockupHeight = (constraints.maxHeight * 0.74).clamp(300.0, 480.0).toDouble();
+        return SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(32, 24, 32, 24),
+          child: Column(
+            children: [
+              Text(
+                page.title!,
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(color: SemanticColor.light.accentPrimary),
+              ),
+              const SizedBox(height: 16),
+              Container(
+                width: double.infinity,
+                height: mockupHeight + 12,
+                decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
+                child: Center(
+                  child: Container(
+                    constraints: BoxConstraints(maxHeight: mockupHeight),
+                    decoration: BoxDecoration(
+                      color: SemanticColor.light.backgroundSecondary,
+                      borderRadius: BorderRadius.circular(36),
+                      border: Border.all(color: SemanticColor.light.borderPrimary),
+                      boxShadow: [
+                        BoxShadow(
+                          color: SemanticColor.light.backgroundQuaternary.withValues(alpha: 0.18),
+                          blurRadius: 18,
+                          offset: const Offset(0, 8),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(28),
-                    child: AspectRatio(
-                      aspectRatio: 1080 / 2130,
-                      child: Image.asset(page.imagePath!, fit: BoxFit.cover),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(28),
+                        child: AspectRatio(
+                          aspectRatio: 1080 / 2130,
+                          child: Image.asset(page.imagePath!, fit: BoxFit.cover),
+                        ),
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
+              const SizedBox(height: 16),
+              Text(page.description!, textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodyLarge),
+            ],
           ),
-          const SizedBox(height: 32),
-          Text(page.description!, textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodyLarge),
-        ],
-      ),
+        );
+      },
     );
   }
 
