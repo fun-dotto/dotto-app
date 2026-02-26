@@ -137,7 +137,10 @@ final class _AppTutorialState extends State<AppTutorial> {
   Widget _buildFeaturePage(BuildContext context, _TutorialPageData page) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final mockupHeight = (constraints.maxHeight * 0.74).clamp(300.0, 480.0).toDouble();
+        final bodyStyle = Theme.of(context).textTheme.bodyLarge;
+        final estimatedDescriptionHeight = ((bodyStyle?.fontSize ?? 16) * (bodyStyle?.height ?? 1.4) * 2) + 8;
+        final reservedHeight = 24 + 48 + 16 + 16 + estimatedDescriptionHeight;
+        final imageHeight = (constraints.maxHeight - reservedHeight).clamp(240.0, 460.0).toDouble();
         return SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(32, 24, 32, 24),
           child: Column(
@@ -149,113 +152,25 @@ final class _AppTutorialState extends State<AppTutorial> {
               const SizedBox(height: 16),
               Container(
                 width: double.infinity,
-                height: mockupHeight + 12,
-                decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
-                child: Center(
-                  child: _buildPhoneMockup(
-                    imagePath: page.imagePath!,
-                    fallbackImagePath: page.fallbackImagePath!,
-                    mockupHeight: mockupHeight,
+                height: imageHeight,
+                alignment: Alignment.center,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(24),
+                  child: Image.asset(
+                    page.imagePath!,
+                    height: imageHeight,
+                    fit: BoxFit.contain,
+                    errorBuilder: (_, __, ___) =>
+                        Image.asset(page.fallbackImagePath!, height: imageHeight, fit: BoxFit.contain),
                   ),
                 ),
               ),
               const SizedBox(height: 16),
-              Text(page.description!, textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodyLarge),
+              Text(page.description!, textAlign: TextAlign.center, maxLines: 2, style: bodyStyle),
             ],
           ),
         );
       },
-    );
-  }
-
-  Widget _buildPhoneMockup({
-    required String imagePath,
-    required String fallbackImagePath,
-    required double mockupHeight,
-  }) {
-    final phoneWidth = mockupHeight * 0.54;
-    return SizedBox(
-      width: phoneWidth + 12,
-      height: mockupHeight,
-      child: Stack(
-        clipBehavior: Clip.none,
-        alignment: Alignment.center,
-        children: [
-          Container(
-            width: phoneWidth,
-            height: mockupHeight,
-            decoration: BoxDecoration(
-              color: SemanticColor.light.backgroundSecondary,
-              borderRadius: BorderRadius.circular(36),
-              border: Border.all(color: SemanticColor.light.borderPrimary),
-              boxShadow: [
-                BoxShadow(
-                  color: SemanticColor.light.backgroundQuaternary.withValues(alpha: 0.2),
-                  blurRadius: 20,
-                  offset: const Offset(0, 10),
-                ),
-              ],
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(8),
-              child: Stack(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(28),
-                    child: AspectRatio(
-                      aspectRatio: 1080 / 2130,
-                      child: Image.asset(
-                        imagePath,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => Image.asset(fallbackImagePath, fit: BoxFit.cover),
-                      ),
-                    ),
-                  ),
-                  Align(
-                    alignment: Alignment.topCenter,
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 8),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Container(
-                            width: 10,
-                            height: 10,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: SemanticColor.light.borderPrimary,
-                              border: Border.all(color: SemanticColor.light.backgroundSecondary),
-                            ),
-                          ),
-                          const SizedBox(width: 28),
-                          Container(
-                            width: 52,
-                            height: 7,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8),
-                              color: SemanticColor.light.backgroundTertiary,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Positioned(right: 0, top: mockupHeight * 0.33, child: _buildSideButton()),
-          Positioned(right: 0, top: mockupHeight * 0.56, child: _buildSideButton()),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSideButton() {
-    return Container(
-      width: 6,
-      height: 52,
-      decoration: BoxDecoration(color: SemanticColor.light.backgroundTertiary, borderRadius: BorderRadius.circular(4)),
     );
   }
 
