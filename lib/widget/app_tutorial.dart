@@ -137,37 +137,61 @@ final class _AppTutorialState extends State<AppTutorial> {
   }
 
   Widget _buildFeaturePage(BuildContext context, _TutorialPageData page) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(32, 24, 32, 24),
-      child: Column(
-        children: [
-          Text(
-            page.title!,
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(color: SemanticColor.light.accentPrimary),
-          ),
-          const SizedBox(height: 12),
-          Expanded(
-            child: SizedBox(
-              width: double.infinity,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(24),
-                child: Image.asset(
-                  page.imagePath!,
-                  fit: BoxFit.contain,
-                  errorBuilder: (_, __, ___) => Image.asset(page.fallbackImagePath!, fit: BoxFit.contain),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final bodyStyle = Theme.of(context).textTheme.bodyLarge;
+        final estimatedDescriptionHeight = ((bodyStyle?.fontSize ?? 16) * (bodyStyle?.height ?? 1.4) * 2) + 8;
+        const topAndBottomSpacing = 24 + 12 + 20 + 24;
+        const titleHeight = 44.0;
+        final availableImageHeight =
+            (constraints.maxHeight - topAndBottomSpacing - titleHeight - estimatedDescriptionHeight).clamp(
+              220.0,
+              520.0,
+            );
+
+        const imageAspectRatio = 2130 / 1080;
+        const visibleTopRatio = 0.7;
+        final contentWidth = constraints.maxWidth - 64;
+        final targetTop70Height = contentWidth * imageAspectRatio * visibleTopRatio;
+        final imageViewportHeight = targetTop70Height.clamp(220.0, availableImageHeight).toDouble();
+        final requiredImageWidth = imageViewportHeight / (visibleTopRatio * imageAspectRatio);
+        final imageWidthFactor = (requiredImageWidth / contentWidth).clamp(0.55, 1.0);
+
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(32, 24, 32, 24),
+          child: Column(
+            children: [
+              Text(
+                page.title!,
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(color: SemanticColor.light.accentPrimary),
+              ),
+              const SizedBox(height: 12),
+              SizedBox(
+                width: double.infinity,
+                height: imageViewportHeight,
+                child: Align(
+                  alignment: Alignment.topCenter,
+                  child: FractionallySizedBox(
+                    widthFactor: imageWidthFactor,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(24),
+                      child: Image.asset(
+                        page.imagePath!,
+                        fit: BoxFit.fitWidth,
+                        alignment: Alignment.topCenter,
+                        errorBuilder: (_, __, ___) =>
+                            Image.asset(page.fallbackImagePath!, fit: BoxFit.fitWidth, alignment: Alignment.topCenter),
+                      ),
+                    ),
+                  ),
                 ),
               ),
-            ),
+              const SizedBox(height: 20),
+              Text(page.description!, textAlign: TextAlign.center, maxLines: 2, style: bodyStyle),
+            ],
           ),
-          const SizedBox(height: 20),
-          Text(
-            page.description!,
-            textAlign: TextAlign.center,
-            maxLines: 2,
-            style: Theme.of(context).textTheme.bodyLarge,
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
