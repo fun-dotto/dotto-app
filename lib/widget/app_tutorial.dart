@@ -139,8 +139,8 @@ final class _AppTutorialState extends State<AppTutorial> {
       builder: (context, constraints) {
         final bodyStyle = Theme.of(context).textTheme.bodyLarge;
         final estimatedDescriptionHeight = ((bodyStyle?.fontSize ?? 16) * (bodyStyle?.height ?? 1.4) * 2) + 8;
-        final reservedHeight = 24 + 48 + 16 + 16 + estimatedDescriptionHeight;
-        final imageHeight = (constraints.maxHeight - reservedHeight).clamp(240.0, 460.0).toDouble();
+        final reservedHeight = 24 + 44 + 12 + 20 + estimatedDescriptionHeight;
+        final imageHeight = (constraints.maxHeight - reservedHeight).clamp(280.0, 520.0).toDouble();
         return SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(32, 24, 32, 24),
           child: Column(
@@ -149,7 +149,7 @@ final class _AppTutorialState extends State<AppTutorial> {
                 page.title!,
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(color: SemanticColor.light.accentPrimary),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 12),
               Container(
                 width: double.infinity,
                 height: imageHeight,
@@ -165,7 +165,7 @@ final class _AppTutorialState extends State<AppTutorial> {
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 20),
               Text(page.description!, textAlign: TextAlign.center, maxLines: 2, style: bodyStyle),
             ],
           ),
