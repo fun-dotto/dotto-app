@@ -82,49 +82,51 @@ final class _AppTutorialState extends State<AppTutorial> {
   Widget _buildWelcomePage(BuildContext context, _TutorialPageData page) {
     return LayoutBuilder(
       builder: (context, constraints) {
+        final topOffset = (constraints.maxHeight * 0.1).clamp(20.0, 72.0).toDouble();
+        final middleGap = (constraints.maxHeight * 0.24).clamp(72.0, 140.0).toDouble();
         return SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(24, 20, 24, 20),
           child: ConstrainedBox(
             constraints: BoxConstraints(minHeight: constraints.maxHeight - 40),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                SizedBox(height: topOffset),
                 Text(
                   page.welcomeTitle!,
-                  style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     color: SemanticColor.light.accentPrimary,
                     fontWeight: FontWeight.w700,
-                    letterSpacing: 1.2,
                   ),
                 ),
                 const SizedBox(height: 20),
                 ClipRRect(
                   borderRadius: BorderRadius.circular(28),
-                  child: Image.asset(Asset.icon1024, width: 132, height: 132),
+                  child: Image.asset(Asset.icon1024, width: 140, height: 140),
                 ),
-                const SizedBox(height: 72),
+                SizedBox(height: middleGap),
                 RichText(
                   text: TextSpan(
                     children: [
                       TextSpan(
                         text: 'Dotto',
-                        style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           color: SemanticColor.light.accentPrimary,
                           fontWeight: FontWeight.w700,
+                          letterSpacing: 0.96,
                         ),
                       ),
                       TextSpan(
                         text: 'で',
-                        style: Theme.of(
-                          context,
-                        ).textTheme.displaySmall?.copyWith(color: SemanticColor.light.labelPrimary),
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: SemanticColor.light.labelPrimary),
                       ),
                     ],
                   ),
                 ),
                 Text(
                   'はこだて未来大学のすべてを',
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(color: SemanticColor.light.labelPrimary),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyLarge?.copyWith(color: SemanticColor.light.labelPrimary, letterSpacing: 0.64),
                 ),
               ],
             ),
@@ -202,28 +204,57 @@ final class _AppTutorialState extends State<AppTutorial> {
     );
   }
 
+  Widget _buildBackgroundDottoText() {
+    return IgnorePointer(
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: Transform.translate(
+          offset: const Offset(-42, 132),
+          child: RotatedBox(
+            quarterTurns: 1,
+            child: Text(
+              'Dotto',
+              style: TextStyle(
+                fontSize: 170,
+                fontWeight: FontWeight.w700,
+                letterSpacing: -1.5,
+                color: SemanticColor.light.accentPrimary.withValues(alpha: 0.09),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(title: const Text('Dottoの使い方')),
       body: SafeArea(
-        child: Column(
+        child: Stack(
           children: [
-            _buildTopBar(context),
-            Expanded(
-              child: PageView.builder(
-                controller: _controller,
-                onPageChanged: (index) => setState(() => _currentIndex = index),
-                itemCount: _pages.length,
-                itemBuilder: (context, index) {
-                  final page = _pages[index];
-                  if (page.isWelcome) {
-                    return _buildWelcomePage(context, page);
-                  }
-                  return _buildFeaturePage(context, page);
-                },
-              ),
+            Positioned.fill(child: _buildBackgroundDottoText()),
+            Column(
+              children: [
+                _buildTopBar(context),
+                Expanded(
+                  child: PageView.builder(
+                    controller: _controller,
+                    onPageChanged: (index) => setState(() => _currentIndex = index),
+                    itemCount: _pages.length,
+                    itemBuilder: (context, index) {
+                      final page = _pages[index];
+                      if (page.isWelcome) {
+                        return _buildWelcomePage(context, page);
+                      }
+                      return _buildFeaturePage(context, page);
+                    },
+                  ),
+                ),
+                _buildBottomArea(context),
+              ],
             ),
-            _buildBottomArea(context),
           ],
         ),
       ),
