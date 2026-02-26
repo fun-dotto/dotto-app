@@ -137,42 +137,37 @@ final class _AppTutorialState extends State<AppTutorial> {
   }
 
   Widget _buildFeaturePage(BuildContext context, _TutorialPageData page) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final bodyStyle = Theme.of(context).textTheme.bodyLarge;
-        final estimatedDescriptionHeight = ((bodyStyle?.fontSize ?? 16) * (bodyStyle?.height ?? 1.4) * 2) + 8;
-        final reservedHeight = 24 + 44 + 12 + 20 + estimatedDescriptionHeight;
-        final imageHeight = (constraints.maxHeight - reservedHeight).clamp(280.0, 520.0).toDouble();
-        return SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(32, 24, 32, 24),
-          child: Column(
-            children: [
-              Text(
-                page.title!,
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(color: SemanticColor.light.accentPrimary),
-              ),
-              const SizedBox(height: 12),
-              Container(
-                width: double.infinity,
-                height: imageHeight,
-                alignment: Alignment.center,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(24),
-                  child: Image.asset(
-                    page.imagePath!,
-                    height: imageHeight,
-                    fit: BoxFit.contain,
-                    errorBuilder: (_, __, ___) =>
-                        Image.asset(page.fallbackImagePath!, height: imageHeight, fit: BoxFit.contain),
-                  ),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(32, 24, 32, 24),
+      child: Column(
+        children: [
+          Text(
+            page.title!,
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(color: SemanticColor.light.accentPrimary),
+          ),
+          const SizedBox(height: 12),
+          Expanded(
+            child: SizedBox(
+              width: double.infinity,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(24),
+                child: Image.asset(
+                  page.imagePath!,
+                  fit: BoxFit.contain,
+                  errorBuilder: (_, __, ___) => Image.asset(page.fallbackImagePath!, fit: BoxFit.contain),
                 ),
               ),
-              const SizedBox(height: 20),
-              Text(page.description!, textAlign: TextAlign.center, maxLines: 2, style: bodyStyle),
-            ],
+            ),
           ),
-        );
-      },
+          const SizedBox(height: 20),
+          Text(
+            page.description!,
+            textAlign: TextAlign.center,
+            maxLines: 2,
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
+        ],
+      ),
     );
   }
 
@@ -209,7 +204,7 @@ final class _AppTutorialState extends State<AppTutorial> {
       child: Align(
         alignment: Alignment.centerLeft,
         child: Transform.translate(
-          offset: const Offset(-42, 132),
+          offset: const Offset(-90, 132),
           child: RotatedBox(
             quarterTurns: 1,
             child: Text(
