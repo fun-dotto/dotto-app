@@ -1,9 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-final userProvider = NotifierProvider<UserNotifier, User?>(UserNotifier.new);
+part 'user_controller.g.dart';
 
-final class UserNotifier extends Notifier<User?> {
+@riverpod
+final class UserNotifier extends _$UserNotifier {
   @override
   User? build() {
     return FirebaseAuth.instance.currentUser;
