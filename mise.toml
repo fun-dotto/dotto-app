@@ -1,3 +1,6 @@
+[settings.ruby]
+compile = false
+
 [tools]
 "aqua:go-task/task" = "latest"
 dotenvx = "latest"
