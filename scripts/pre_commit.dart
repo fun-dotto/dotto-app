@@ -115,7 +115,18 @@ Future<int> checkDartFormat() async {
     }
     return 1;
   }
-  final allStagedDartFiles = (stagedResult.stdout as String).trim().split('\n').where((f) => f.isNotEmpty).toList();
+  if (stagedResult.exitCode != 0) {
+    stderr.writeln('$red❌ ERROR: Failed to get staged Dart files from git.$reset');
+    if (stagedResult.stderr != null && stagedResult.stderr.toString().trim().isNotEmpty) {
+      stderr.writeln(stagedResult.stderr);
+    }
+    return 1;
+  }
+  final allStagedDartFiles = (stagedResult.stdout as String)
+      .split('\n')
+      .map((f) => f.trim())
+      .where((f) => f.isNotEmpty)
+      .toList();
 
   // Filter out generated files and api directory
   final stagedDartFiles = allStagedDartFiles.where((f) {
