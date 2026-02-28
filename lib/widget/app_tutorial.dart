@@ -77,7 +77,7 @@ final class _AppTutorialState extends State<AppTutorial> {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(16),
-                child: Image.asset(Asset.icon1024, width: 61, height: 61),
+                child: Image.asset(Asset.icon1024, width: 52, height: 52),
               ),
               const Spacer(),
               DottoButton(onPressed: widget.onDismissed, type: DottoButtonType.text, child: const Text('スキップ')),
@@ -100,10 +100,7 @@ final class _AppTutorialState extends State<AppTutorial> {
               children: [
                 Text(
                   page.welcomeTitle!,
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    color: SemanticColor.light.accentPrimary,
-                    fontWeight: FontWeight.w700,
-                  ),
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(color: SemanticColor.light.accentPrimary),
                 ),
                 const SizedBox(height: 20),
                 ClipRRect(
@@ -116,11 +113,9 @@ final class _AppTutorialState extends State<AppTutorial> {
                     children: [
                       TextSpan(
                         text: 'Dotto',
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          color: SemanticColor.light.accentPrimary,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 0.96,
-                        ),
+                        style: Theme.of(
+                          context,
+                        ).textTheme.titleLarge?.copyWith(color: SemanticColor.light.accentPrimary),
                       ),
                       TextSpan(
                         text: 'で',
@@ -131,9 +126,7 @@ final class _AppTutorialState extends State<AppTutorial> {
                 ),
                 Text(
                   'はこだて未来大学のすべてを',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodyLarge?.copyWith(color: SemanticColor.light.labelPrimary, letterSpacing: 0.64),
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: SemanticColor.light.labelPrimary),
                 ),
               ],
             ),
@@ -151,7 +144,7 @@ final class _AppTutorialState extends State<AppTutorial> {
         const horizontalPadding = 0.0;
         const topPadding = 0.0;
         const bottomPadding = 4.0;
-        const titleToImageSpacing = 0.0;
+        const titleToImageSpacing = 8.0;
         const imageToDescriptionSpacing = 20.0;
         const topAndBottomSpacing = topPadding + bottomPadding + titleToImageSpacing + imageToDescriptionSpacing;
         const titleHeight = 38.0;
