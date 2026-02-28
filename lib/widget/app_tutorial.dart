@@ -148,7 +148,12 @@ final class _AppTutorialState extends State<AppTutorial> {
       builder: (context, constraints) {
         final bodyStyle = Theme.of(context).textTheme.bodyLarge;
         final estimatedDescriptionHeight = ((bodyStyle?.fontSize ?? 16) * (bodyStyle?.height ?? 1.4) * 2) + 8;
-        const topAndBottomSpacing = 24 + 6 + 10 + 16;
+        const horizontalPadding = 24.0;
+        const topPadding = 0.0;
+        const bottomPadding = 20.0;
+        const titleToImageSpacing = 4.0;
+        const imageToDescriptionSpacing = 24.0;
+        const topAndBottomSpacing = topPadding + bottomPadding + titleToImageSpacing + imageToDescriptionSpacing;
         const titleHeight = 38.0;
         final availableImageHeight =
             (constraints.maxHeight - topAndBottomSpacing - titleHeight - estimatedDescriptionHeight).clamp(
@@ -158,21 +163,25 @@ final class _AppTutorialState extends State<AppTutorial> {
 
         const imageAspectRatio = 2130 / 1080;
         const visibleTopRatio = 0.7;
-        final contentWidth = constraints.maxWidth - 64;
-        final targetTop70Height = contentWidth * imageAspectRatio * visibleTopRatio;
-        final imageViewportHeight = targetTop70Height.clamp(220.0, availableImageHeight).toDouble();
-        final requiredImageWidth = imageViewportHeight / (visibleTopRatio * imageAspectRatio);
-        final imageWidthFactor = (requiredImageWidth / contentWidth).clamp(0.76, 1.0);
+        final contentWidth = constraints.maxWidth - (horizontalPadding * 2);
+        const desiredImageWidthFactor = 1.0;
+        final maxWidthFactorForTop70 = (availableImageHeight / (contentWidth * imageAspectRatio * visibleTopRatio))
+            .clamp(0.0, 1.0)
+            .toDouble();
+        final imageWidthFactor = desiredImageWidthFactor <= maxWidthFactorForTop70
+            ? desiredImageWidthFactor
+            : maxWidthFactorForTop70;
+        final imageViewportHeight = contentWidth * imageWidthFactor * imageAspectRatio * visibleTopRatio;
 
         return Padding(
-          padding: const EdgeInsets.fromLTRB(32, 10, 32, 24),
+          padding: const EdgeInsets.fromLTRB(horizontalPadding, topPadding, horizontalPadding, bottomPadding),
           child: Column(
             children: [
               Text(
                 page.title!,
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(color: SemanticColor.light.accentPrimary),
               ),
-              const SizedBox(height: 6),
+              const SizedBox(height: titleToImageSpacing),
               SizedBox(
                 width: double.infinity,
                 height: imageViewportHeight,
@@ -193,7 +202,7 @@ final class _AppTutorialState extends State<AppTutorial> {
                   ),
                 ),
               ),
-              const SizedBox(height: 28),
+              const SizedBox(height: imageToDescriptionSpacing),
               Text(page.description!, textAlign: TextAlign.center, maxLines: 2, style: bodyStyle),
             ],
           ),
@@ -203,6 +212,9 @@ final class _AppTutorialState extends State<AppTutorial> {
   }
 
   Widget _buildBottomArea(BuildContext context) {
+    final indicatorCount = _pages.length - 1;
+    final activeIndicatorIndex = _currentIndex <= 0 ? -1 : _currentIndex - 1;
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(40, 40, 40, 40),
       child: Column(
@@ -210,14 +222,14 @@ final class _AppTutorialState extends State<AppTutorial> {
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: List.generate(_pages.length, (index) {
-              final isActive = index == _currentIndex;
+            children: List.generate(indicatorCount, (index) {
+              final isReached = index <= activeIndicatorIndex;
               return Container(
                 width: 8,
                 height: 8,
                 margin: const EdgeInsets.symmetric(horizontal: 4),
                 decoration: BoxDecoration(
-                  color: isActive ? SemanticColor.light.accentPrimary : SemanticColor.light.borderPrimary,
+                  color: isReached ? SemanticColor.light.accentPrimary : SemanticColor.light.borderPrimary,
                   shape: BoxShape.circle,
                 ),
               );
