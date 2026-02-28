@@ -66,12 +66,30 @@ Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
 [*AnnouncementsApi*](doc/AnnouncementsApi.md) | [**announcementsV0List**](doc/AnnouncementsApi.md#announcementsv0list) | **GET** /announcements | 
 [*AnnouncementsApi*](doc/AnnouncementsApi.md) | [**announcementsV1List**](doc/AnnouncementsApi.md#announcementsv1list) | **GET** /v1/announcements | 
+[*SubjectsApi*](doc/SubjectsApi.md) | [**subjectsV1Detail**](doc/SubjectsApi.md#subjectsv1detail) | **GET** /v1/subjects/{id} | 
+[*SubjectsApi*](doc/SubjectsApi.md) | [**subjectsV1List**](doc/SubjectsApi.md#subjectsv1list) | **GET** /v1/subjects | 
 
 
 ## Documentation For Models
 
  - [Announcement](doc/Announcement.md)
  - [AnnouncementsV1List200Response](doc/AnnouncementsV1List200Response.md)
+ - [DottoFoundationV1Class](doc/DottoFoundationV1Class.md)
+ - [DottoFoundationV1Course](doc/DottoFoundationV1Course.md)
+ - [DottoFoundationV1CourseSemester](doc/DottoFoundationV1CourseSemester.md)
+ - [DottoFoundationV1CulturalSubjectCategory](doc/DottoFoundationV1CulturalSubjectCategory.md)
+ - [DottoFoundationV1Faculty](doc/DottoFoundationV1Faculty.md)
+ - [DottoFoundationV1Grade](doc/DottoFoundationV1Grade.md)
+ - [DottoFoundationV1SubjectClassification](doc/DottoFoundationV1SubjectClassification.md)
+ - [DottoFoundationV1SubjectRequirementType](doc/DottoFoundationV1SubjectRequirementType.md)
+ - [SubjectDetail](doc/SubjectDetail.md)
+ - [SubjectServiceSubjectFaculty](doc/SubjectServiceSubjectFaculty.md)
+ - [SubjectServiceSubjectRequirement](doc/SubjectServiceSubjectRequirement.md)
+ - [SubjectServiceSubjectTargetClass](doc/SubjectServiceSubjectTargetClass.md)
+ - [SubjectServiceSyllabus](doc/SubjectServiceSyllabus.md)
+ - [SubjectSummary](doc/SubjectSummary.md)
+ - [SubjectsV1Detail200Response](doc/SubjectsV1Detail200Response.md)
+ - [SubjectsV1List200Response](doc/SubjectsV1List200Response.md)
 
 
 ## Documentation For Authorization
