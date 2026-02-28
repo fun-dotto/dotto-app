@@ -141,8 +141,8 @@ final class _AppTutorialState extends State<AppTutorial> {
       builder: (context, constraints) {
         final bodyStyle = Theme.of(context).textTheme.bodyLarge;
         final estimatedDescriptionHeight = ((bodyStyle?.fontSize ?? 16) * (bodyStyle?.height ?? 1.4) * 2) + 8;
-        const topAndBottomSpacing = 24 + 12 + 20 + 24;
-        const titleHeight = 44.0;
+        const topAndBottomSpacing = 24 + 6 + 10 + 16;
+        const titleHeight = 38.0;
         final availableImageHeight =
             (constraints.maxHeight - topAndBottomSpacing - titleHeight - estimatedDescriptionHeight).clamp(
               220.0,
@@ -155,7 +155,7 @@ final class _AppTutorialState extends State<AppTutorial> {
         final targetTop70Height = contentWidth * imageAspectRatio * visibleTopRatio;
         final imageViewportHeight = targetTop70Height.clamp(220.0, availableImageHeight).toDouble();
         final requiredImageWidth = imageViewportHeight / (visibleTopRatio * imageAspectRatio);
-        final imageWidthFactor = (requiredImageWidth / contentWidth).clamp(0.55, 1.0);
+        final imageWidthFactor = (requiredImageWidth / contentWidth).clamp(0.76, 1.0);
 
         return Padding(
           padding: const EdgeInsets.fromLTRB(32, 24, 32, 24),
@@ -165,7 +165,7 @@ final class _AppTutorialState extends State<AppTutorial> {
                 page.title!,
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(color: SemanticColor.light.accentPrimary),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 6),
               SizedBox(
                 width: double.infinity,
                 height: imageViewportHeight,
@@ -186,7 +186,7 @@ final class _AppTutorialState extends State<AppTutorial> {
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 10),
               Text(page.description!, textAlign: TextAlign.center, maxLines: 2, style: bodyStyle),
             ],
           ),
