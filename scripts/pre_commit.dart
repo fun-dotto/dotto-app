@@ -55,11 +55,18 @@ Future<int> checkEnvKeysSecurity() async {
     // Get staged content
     final contentResult = await Process.run('git', ['show', ':0:$envFile']);
 
-    String content = '';
-
-    if (contentResult.exitCode == 0) {
-      content = (contentResult.stdout as String).trim();
+    if (contentResult.exitCode != 0) {
+      final errorOutput = (contentResult.stderr as String?)?.trim();
+      print(
+          '$red❌ エラー: git show でステージ済みの $envFile の内容を取得できませんでした。$reset');
+      if (errorOutput != null && errorOutput.isNotEmpty) {
+        print('git show のエラー出力:');
+        print(errorOutput);
+      }
+      return 1;
     }
+
+    String content = (contentResult.stdout as String).trim();
     // If empty, try to read from working tree (for new files)
     if (content.isEmpty && await File(envFile).exists()) {
       content = await File(envFile).readAsString();
