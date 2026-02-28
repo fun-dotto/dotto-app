@@ -30,11 +30,7 @@ Future<int> checkEnvKeysSecurity() async {
 
   // Get staged files
   final stagedResult = await Process.run('git', ['diff', '--cached', '--name-only', '--diff-filter=ACM']);
-  final stagedFiles = (stagedResult.stdout as String)
-      .trim()
-      .split('\n')
-      .where((f) => f.trim().isNotEmpty)
-      .toList();
+  final stagedFiles = (stagedResult.stdout as String).trim().split('\n').where((f) => f.trim().isNotEmpty).toList();
 
   // Check if .env.keys is staged
   if (stagedFiles.any((f) => f.endsWith('.env.keys'))) {
@@ -57,8 +53,7 @@ Future<int> checkEnvKeysSecurity() async {
 
     if (contentResult.exitCode != 0) {
       final errorOutput = (contentResult.stderr as String?)?.trim();
-      print(
-          '$red❌ エラー: git show でステージ済みの $envFile の内容を取得できませんでした。$reset');
+      print('$red❌ エラー: git show でステージ済みの $envFile の内容を取得できませんでした。$reset');
       if (errorOutput != null && errorOutput.isNotEmpty) {
         print('git show のエラー出力:');
         print(errorOutput);
@@ -87,9 +82,15 @@ Future<int> checkEnvKeysSecurity() async {
 
     if (unencryptedLines.isNotEmpty) {
       print('$red❌ エラー: $envFile 内に暗号化されていない行を検出しました！$reset');
-      print('平文のままコミットしようとしています:');
+      print('平文のままコミットしようとしている行:');
       for (final line in unencryptedLines) {
-        print('$red  $line$reset');
+        // セキュリティのため、キー名のみ表示し値はマスクする
+        final keyMatch = RegExp(r'^([^=]+)=').firstMatch(line);
+        if (keyMatch != null) {
+          print('$red  ${keyMatch.group(1)}=***$reset');
+        } else {
+          print('$red  (形式不明の行)$reset');
+        }
       }
       print('');
       print('✅ 対応策:');
@@ -153,6 +154,15 @@ Future<int> checkDartFormat() async {
   if (formatResult.exitCode != 0) {
     print('');
     print('$red❌ エラー: 一部のファイルがフォーマットされていません。$reset');
+    final stdout = (formatResult.stdout as String).trim();
+    final stderr = (formatResult.stderr as String).trim();
+    if (stdout.isNotEmpty) {
+      print(stdout);
+    }
+    if (stderr.isNotEmpty) {
+      print(stderr);
+    }
+    print('');
     print("フォーマットを修正するには 'task format' を実行し、その後変更をステージしてください。");
     return 1;
   }
