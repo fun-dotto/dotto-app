@@ -122,13 +122,6 @@ Future<int> checkDartFormat() async {
     }
     return 1;
   }
-  if (stagedResult.exitCode != 0) {
-    stderr.writeln('$red❌ ERROR: Failed to get staged Dart files from git.$reset');
-    if (stagedResult.stderr != null && stagedResult.stderr.toString().trim().isNotEmpty) {
-      stderr.writeln(stagedResult.stderr);
-    }
-    return 1;
-  }
   final allStagedDartFiles = (stagedResult.stdout as String)
       .split('\n')
       .map((f) => f.trim())
