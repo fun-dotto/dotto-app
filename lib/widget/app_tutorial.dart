@@ -66,15 +66,24 @@ final class _AppTutorialState extends State<AppTutorial> {
     super.dispose();
   }
 
-  Widget _buildTopBar(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(40, 24, 40, 24),
-      child: Row(
-        children: [
-          ClipRRect(borderRadius: BorderRadius.circular(16), child: Image.asset(Asset.icon1024, width: 61, height: 61)),
-          const Spacer(),
-          DottoButton(onPressed: widget.onDismissed, type: DottoButtonType.text, child: const Text('スキップ')),
-        ],
+  Widget _buildTopBar(BuildContext context, {required bool visible}) {
+    return IgnorePointer(
+      ignoring: !visible,
+      child: Opacity(
+        opacity: visible ? 1 : 0,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(40, 24, 40, 24),
+          child: Row(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: Image.asset(Asset.icon1024, width: 61, height: 61),
+              ),
+              const Spacer(),
+              DottoButton(onPressed: widget.onDismissed, type: DottoButtonType.text, child: const Text('スキップ')),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -82,15 +91,13 @@ final class _AppTutorialState extends State<AppTutorial> {
   Widget _buildWelcomePage(BuildContext context, _TutorialPageData page) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final topOffset = (constraints.maxHeight * 0.1).clamp(20.0, 72.0).toDouble();
-        final middleGap = (constraints.maxHeight * 0.24).clamp(72.0, 140.0).toDouble();
         return SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(24, 20, 24, 20),
           child: ConstrainedBox(
             constraints: BoxConstraints(minHeight: constraints.maxHeight - 40),
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(height: topOffset),
                 Text(
                   page.welcomeTitle!,
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
@@ -103,7 +110,7 @@ final class _AppTutorialState extends State<AppTutorial> {
                   borderRadius: BorderRadius.circular(28),
                   child: Image.asset(Asset.icon1024, width: 140, height: 140),
                 ),
-                SizedBox(height: middleGap),
+                const SizedBox(height: 110),
                 RichText(
                   text: TextSpan(
                     children: [
@@ -209,7 +216,10 @@ final class _AppTutorialState extends State<AppTutorial> {
                 width: 8,
                 height: 8,
                 margin: const EdgeInsets.symmetric(horizontal: 4),
-                decoration: BoxDecoration(color: isActive ? Colors.black : Colors.black26, shape: BoxShape.circle),
+                decoration: BoxDecoration(
+                  color: isActive ? SemanticColor.light.accentPrimary : SemanticColor.light.borderPrimary,
+                  shape: BoxShape.circle,
+                ),
               );
             }),
           ),
@@ -256,7 +266,7 @@ final class _AppTutorialState extends State<AppTutorial> {
             Positioned.fill(child: _buildBackgroundDottoText()),
             Column(
               children: [
-                _buildTopBar(context),
+                _buildTopBar(context, visible: _currentIndex != 0),
                 Expanded(
                   child: PageView.builder(
                     controller: _controller,
