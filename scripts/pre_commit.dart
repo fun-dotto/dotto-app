@@ -30,7 +30,11 @@ Future<int> checkEnvKeysSecurity() async {
 
   // Get staged files
   final stagedResult = await Process.run('git', ['diff', '--cached', '--name-only', '--diff-filter=ACM']);
-  final stagedFiles = (stagedResult.stdout as String).trim().split('\n');
+  final stagedFiles = (stagedResult.stdout as String)
+      .trim()
+      .split('\n')
+      .where((f) => f.trim().isNotEmpty)
+      .toList();
 
   // Check if .env.keys is staged
   if (stagedFiles.any((f) => f.endsWith('.env.keys'))) {
