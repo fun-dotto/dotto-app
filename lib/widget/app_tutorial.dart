@@ -147,18 +147,18 @@ final class _AppTutorialState extends State<AppTutorial> {
     return LayoutBuilder(
       builder: (context, constraints) {
         final bodyStyle = Theme.of(context).textTheme.bodyLarge;
-        final estimatedDescriptionHeight = ((bodyStyle?.fontSize ?? 16) * (bodyStyle?.height ?? 1.4) * 2) + 8;
-        const horizontalPadding = 24.0;
+        final estimatedDescriptionHeight = ((bodyStyle?.fontSize ?? 16) * (bodyStyle?.height ?? 1.4) * 2);
+        const horizontalPadding = 0.0;
         const topPadding = 0.0;
-        const bottomPadding = 20.0;
-        const titleToImageSpacing = 4.0;
-        const imageToDescriptionSpacing = 24.0;
+        const bottomPadding = 4.0;
+        const titleToImageSpacing = 0.0;
+        const imageToDescriptionSpacing = 20.0;
         const topAndBottomSpacing = topPadding + bottomPadding + titleToImageSpacing + imageToDescriptionSpacing;
         const titleHeight = 38.0;
         final availableImageHeight =
             (constraints.maxHeight - topAndBottomSpacing - titleHeight - estimatedDescriptionHeight).clamp(
               220.0,
-              520.0,
+              620.0,
             );
 
         const imageAspectRatio = 2130 / 1080;
