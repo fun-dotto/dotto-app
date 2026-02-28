@@ -80,7 +80,16 @@ final class _AppTutorialState extends State<AppTutorial> {
                 child: Image.asset(Asset.icon1024, width: 52, height: 52),
               ),
               const Spacer(),
-              DottoButton(onPressed: widget.onDismissed, type: DottoButtonType.text, child: const Text('スキップ')),
+              DottoButton(
+                onPressed: widget.onDismissed,
+                type: DottoButtonType.text,
+                style: DottoButton.styleFrom(
+                  textStyle: Theme.of(context).textTheme.bodySmall,
+                  padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 10),
+                  minimumSize: const Size(32, 28),
+                ),
+                child: const Text('スキップ'),
+              ),
             ],
           ),
         ),
@@ -140,18 +149,19 @@ final class _AppTutorialState extends State<AppTutorial> {
     return LayoutBuilder(
       builder: (context, constraints) {
         final bodyStyle = Theme.of(context).textTheme.bodyLarge;
+        final titleStyle = Theme.of(context).textTheme.titleLarge;
+        final estimatedTitleHeight = (titleStyle?.fontSize ?? 28) * (titleStyle?.height ?? 1.1);
         final estimatedDescriptionHeight = ((bodyStyle?.fontSize ?? 16) * (bodyStyle?.height ?? 1.4) * 2);
         const horizontalPadding = 0.0;
         const topPadding = 0.0;
-        const bottomPadding = 4.0;
-        const titleToImageSpacing = 8.0;
-        const imageToDescriptionSpacing = 20.0;
+        const bottomPadding = 0.0;
+        const titleToImageSpacing = 14.0;
+        const imageToDescriptionSpacing = 12.0;
         const topAndBottomSpacing = topPadding + bottomPadding + titleToImageSpacing + imageToDescriptionSpacing;
-        const titleHeight = 38.0;
         final availableImageHeight =
-            (constraints.maxHeight - topAndBottomSpacing - titleHeight - estimatedDescriptionHeight).clamp(
+            (constraints.maxHeight - topAndBottomSpacing - estimatedTitleHeight - estimatedDescriptionHeight).clamp(
               220.0,
-              620.0,
+              680.0,
             );
 
         const imageAspectRatio = 2130 / 1080;
@@ -172,7 +182,11 @@ final class _AppTutorialState extends State<AppTutorial> {
             children: [
               Text(
                 page.title!,
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(color: SemanticColor.light.accentPrimary),
+                style: titleStyle?.copyWith(
+                  color: SemanticColor.light.accentPrimary,
+                  fontWeight: FontWeight.w600,
+                  fontSize: (titleStyle.fontSize ?? 24) - 2,
+                ),
               ),
               const SizedBox(height: titleToImageSpacing),
               SizedBox(
