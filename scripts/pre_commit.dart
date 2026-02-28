@@ -127,8 +127,8 @@ Future<int> checkDartFormat() async {
 
   if (formatResult.exitCode != 0) {
     print('');
-    print('$red❌ ERROR: Some files are not formatted.$reset');
-    print("Run 'task format' to fix formatting, then stage the changes.");
+    print('$red❌ エラー: 一部のファイルがフォーマットされていません。$reset');
+    print("フォーマットを修正するには 'task format' を実行し、その後変更をステージしてください。");
     return 1;
   }
 
