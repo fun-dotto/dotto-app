@@ -51,8 +51,11 @@ Future<int> checkEnvKeysSecurity() async {
     // Get staged content
     final contentResult = await Process.run('git', ['show', ':0:$envFile']);
 
-    var content = (contentResult.stdout as String).trim();
+    String content = '';
 
+    if (contentResult.exitCode == 0) {
+      content = (contentResult.stdout as String).trim();
+    }
     // If empty, try to read from working tree (for new files)
     if (content.isEmpty && await File(envFile).exists()) {
       content = await File(envFile).readAsString();
