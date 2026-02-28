@@ -158,7 +158,7 @@ final class _AppTutorialState extends State<AppTutorial> {
         final imageWidthFactor = (requiredImageWidth / contentWidth).clamp(0.76, 1.0);
 
         return Padding(
-          padding: const EdgeInsets.fromLTRB(32, 24, 32, 24),
+          padding: const EdgeInsets.fromLTRB(32, 10, 32, 24),
           child: Column(
             children: [
               Text(
@@ -186,7 +186,7 @@ final class _AppTutorialState extends State<AppTutorial> {
                   ),
                 ),
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 28),
               Text(page.description!, textAlign: TextAlign.center, maxLines: 2, style: bodyStyle),
             ],
           ),
