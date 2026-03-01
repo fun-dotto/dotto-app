@@ -3,8 +3,8 @@
 //
 
 // ignore_for_file: unused_element
+import 'package:openapi/src/model/faculty_service_faculty.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:openapi/src/model/dotto_foundation_v1_faculty.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 
@@ -27,7 +27,7 @@ abstract class SubjectSummary implements Built<SubjectSummary, SubjectSummaryBui
   String get name;
 
   @BuiltValueField(wireName: r'faculties')
-  BuiltList<DottoFoundationV1Faculty> get faculties;
+  BuiltList<FacultyServiceFaculty> get faculties;
 
   /// TODO: 時間割APIを作成したら、曜日・時限を取得する 曜日・時限
   @BuiltValueField(wireName: r'dayOfWeekTimetableSlots')
@@ -73,7 +73,7 @@ class _$SubjectSummarySerializer implements PrimitiveSerializer<SubjectSummary> 
     yield r'faculties';
     yield serializers.serialize(
       object.faculties,
-      specifiedType: const FullType(BuiltList, [FullType(DottoFoundationV1Faculty)]),
+      specifiedType: const FullType(BuiltList, [FullType(FacultyServiceFaculty)]),
     );
     yield r'dayOfWeekTimetableSlots';
     yield serializers.serialize(
@@ -125,8 +125,8 @@ class _$SubjectSummarySerializer implements PrimitiveSerializer<SubjectSummary> 
         case r'faculties':
           final valueDes = serializers.deserialize(
             value,
-            specifiedType: const FullType(BuiltList, [FullType(DottoFoundationV1Faculty)]),
-          ) as BuiltList<DottoFoundationV1Faculty>;
+            specifiedType: const FullType(BuiltList, [FullType(FacultyServiceFaculty)]),
+          ) as BuiltList<FacultyServiceFaculty>;
           result.faculties.replace(valueDes);
           break;
         case r'dayOfWeekTimetableSlots':

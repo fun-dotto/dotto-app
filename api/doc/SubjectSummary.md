@@ -10,7 +10,7 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **id** | **String** |  | 
 **name** | **String** |  | 
-**faculties** | [**BuiltList&lt;DottoFoundationV1Faculty&gt;**](DottoFoundationV1Faculty.md) |  | 
+**faculties** | [**BuiltList&lt;FacultyServiceFaculty&gt;**](FacultyServiceFaculty.md) |  | 
 **dayOfWeekTimetableSlots** | **String** | TODO: 時間割APIを作成したら、曜日・時限を取得する 曜日・時限 | 
 **isAddedToTimetable** | **bool** | TODO: 時間割APIを作成したら、時間割に追加されているかを取得する 時間割に追加されているか | 
 
