@@ -225,20 +225,6 @@ components:
         - Health
         - Communication
       description: 教養科目カテゴリ
-    DottoFoundationV1.Faculty:
-      type: object
-      required:
-        - id
-        - name
-        - email
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        email:
-          type: string
-      description: 教員
     DottoFoundationV1.Grade:
       type: string
       enum:
@@ -266,6 +252,20 @@ components:
         - Optional
         - OptionalRequired
       description: 必修・選択
+    FacultyService.Faculty:
+      type: object
+      required:
+        - id
+        - name
+        - email
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+      description: 教員
     SubjectDetail:
       type: object
       required:
@@ -310,7 +310,7 @@ components:
         - isPrimary
       properties:
         faculty:
-          $ref: '#/components/schemas/DottoFoundationV1.Faculty'
+          $ref: '#/components/schemas/FacultyService.Faculty'
         isPrimary:
           type: boolean
     SubjectService.SubjectRequirement:
@@ -463,7 +463,7 @@ components:
         faculties:
           type: array
           items:
-            $ref: '#/components/schemas/DottoFoundationV1.Faculty'
+            $ref: '#/components/schemas/FacultyService.Faculty'
         dayOfWeekTimetableSlots:
           type: string
           description: |-

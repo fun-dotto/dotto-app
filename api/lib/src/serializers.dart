@@ -20,10 +20,10 @@ import 'package:openapi/src/model/dotto_foundation_v1_class.dart';
 import 'package:openapi/src/model/dotto_foundation_v1_course.dart';
 import 'package:openapi/src/model/dotto_foundation_v1_course_semester.dart';
 import 'package:openapi/src/model/dotto_foundation_v1_cultural_subject_category.dart';
-import 'package:openapi/src/model/dotto_foundation_v1_faculty.dart';
 import 'package:openapi/src/model/dotto_foundation_v1_grade.dart';
 import 'package:openapi/src/model/dotto_foundation_v1_subject_classification.dart';
 import 'package:openapi/src/model/dotto_foundation_v1_subject_requirement_type.dart';
+import 'package:openapi/src/model/faculty_service_faculty.dart';
 import 'package:openapi/src/model/subject_detail.dart';
 import 'package:openapi/src/model/subject_service_subject_faculty.dart';
 import 'package:openapi/src/model/subject_service_subject_requirement.dart';
@@ -42,10 +42,10 @@ part 'serializers.g.dart';
   DottoFoundationV1Course,
   DottoFoundationV1CourseSemester,
   DottoFoundationV1CulturalSubjectCategory,
-  DottoFoundationV1Faculty,
   DottoFoundationV1Grade,
   DottoFoundationV1SubjectClassification,
   DottoFoundationV1SubjectRequirementType,
+  FacultyServiceFaculty,
   SubjectDetail,
   SubjectServiceSubjectFaculty,
   SubjectServiceSubjectRequirement,
