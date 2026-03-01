@@ -4,7 +4,7 @@
 
 // ignore_for_file: unused_element
 import 'package:built_collection/built_collection.dart';
-import 'package:openapi/src/model/subject_detail.dart';
+import 'package:openapi/src/model/subject_summary.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 
@@ -17,7 +17,7 @@ part 'subjects_v1_list200_response.g.dart';
 @BuiltValue()
 abstract class SubjectsV1List200Response implements Built<SubjectsV1List200Response, SubjectsV1List200ResponseBuilder> {
   @BuiltValueField(wireName: r'subjects')
-  BuiltList<SubjectDetail> get subjects;
+  BuiltList<SubjectSummary> get subjects;
 
   SubjectsV1List200Response._();
 
@@ -45,7 +45,7 @@ class _$SubjectsV1List200ResponseSerializer implements PrimitiveSerializer<Subje
     yield r'subjects';
     yield serializers.serialize(
       object.subjects,
-      specifiedType: const FullType(BuiltList, [FullType(SubjectDetail)]),
+      specifiedType: const FullType(BuiltList, [FullType(SubjectSummary)]),
     );
   }
 
@@ -73,8 +73,8 @@ class _$SubjectsV1List200ResponseSerializer implements PrimitiveSerializer<Subje
         case r'subjects':
           final valueDes = serializers.deserialize(
             value,
-            specifiedType: const FullType(BuiltList, [FullType(SubjectDetail)]),
-          ) as BuiltList<SubjectDetail>;
+            specifiedType: const FullType(BuiltList, [FullType(SubjectSummary)]),
+          ) as BuiltList<SubjectSummary>;
           result.subjects.replace(valueDes);
           break;
         default:

@@ -114,7 +114,7 @@ class SubjectsApi {
   /// * [classification] - 学部: 専門・教養; 大学院: 専門・研究指導
   /// * [semester] - 開講時期
   /// * [requirementType] - 必修・選択・選択必修
-  /// * [calturalSubjectCategory] - 教養科目カテゴリ
+  /// * [culturalSubjectCategory] - 教養科目カテゴリ
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
   /// * [headers] - Can be used to add additional headers to the request
   /// * [extras] - Can be used to add flags to the request
@@ -132,7 +132,7 @@ class SubjectsApi {
     required BuiltList<DottoFoundationV1SubjectClassification> classification,
     required BuiltList<DottoFoundationV1CourseSemester> semester,
     required BuiltList<DottoFoundationV1SubjectRequirementType> requirementType,
-    required BuiltList<DottoFoundationV1CulturalSubjectCategory> calturalSubjectCategory,
+    required BuiltList<DottoFoundationV1CulturalSubjectCategory> culturalSubjectCategory,
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
     Map<String, dynamic>? extra,
@@ -161,7 +161,7 @@ class SubjectsApi {
       r'classification': encodeCollectionQueryParameter<DottoFoundationV1SubjectClassification>(_serializers, classification, const FullType(BuiltList, [FullType(DottoFoundationV1SubjectClassification)]), format: ListFormat.csv,),
       r'semester': encodeCollectionQueryParameter<DottoFoundationV1CourseSemester>(_serializers, semester, const FullType(BuiltList, [FullType(DottoFoundationV1CourseSemester)]), format: ListFormat.csv,),
       r'requirementType': encodeCollectionQueryParameter<DottoFoundationV1SubjectRequirementType>(_serializers, requirementType, const FullType(BuiltList, [FullType(DottoFoundationV1SubjectRequirementType)]), format: ListFormat.csv,),
-      r'calturalSubjectCategory': encodeCollectionQueryParameter<DottoFoundationV1CulturalSubjectCategory>(_serializers, calturalSubjectCategory, const FullType(BuiltList, [FullType(DottoFoundationV1CulturalSubjectCategory)]), format: ListFormat.csv,),
+      r'culturalSubjectCategory': encodeCollectionQueryParameter<DottoFoundationV1CulturalSubjectCategory>(_serializers, culturalSubjectCategory, const FullType(BuiltList, [FullType(DottoFoundationV1CulturalSubjectCategory)]), format: ListFormat.csv,),
     };
 
     final _response = await _dio.request<Object>(

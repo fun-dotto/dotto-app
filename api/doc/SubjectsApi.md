@@ -55,7 +55,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **subjectsV1List**
-> SubjectsV1List200Response subjectsV1List(q, grade, courses, class_, classification, semester, requirementType, calturalSubjectCategory)
+> SubjectsV1List200Response subjectsV1List(q, grade, courses, class_, classification, semester, requirementType, culturalSubjectCategory)
 
 
 
@@ -73,10 +73,10 @@ final BuiltList<DottoFoundationV1Class> class_ = ; // BuiltList<DottoFoundationV
 final BuiltList<DottoFoundationV1SubjectClassification> classification = ; // BuiltList<DottoFoundationV1SubjectClassification> | 学部: 専門・教養; 大学院: 専門・研究指導
 final BuiltList<DottoFoundationV1CourseSemester> semester = ; // BuiltList<DottoFoundationV1CourseSemester> | 開講時期
 final BuiltList<DottoFoundationV1SubjectRequirementType> requirementType = ; // BuiltList<DottoFoundationV1SubjectRequirementType> | 必修・選択・選択必修
-final BuiltList<DottoFoundationV1CulturalSubjectCategory> calturalSubjectCategory = ; // BuiltList<DottoFoundationV1CulturalSubjectCategory> | 教養科目カテゴリ
+final BuiltList<DottoFoundationV1CulturalSubjectCategory> culturalSubjectCategory = ; // BuiltList<DottoFoundationV1CulturalSubjectCategory> | 教養科目カテゴリ
 
 try {
-    final response = api.subjectsV1List(q, grade, courses, class_, classification, semester, requirementType, calturalSubjectCategory);
+    final response = api.subjectsV1List(q, grade, courses, class_, classification, semester, requirementType, culturalSubjectCategory);
     print(response);
 } on DioException catch (e) {
     print('Exception when calling SubjectsApi->subjectsV1List: $e\n');
@@ -94,7 +94,7 @@ Name | Type | Description  | Notes
  **classification** | [**BuiltList&lt;DottoFoundationV1SubjectClassification&gt;**](DottoFoundationV1SubjectClassification.md)| 学部: 専門・教養; 大学院: 専門・研究指導 | 
  **semester** | [**BuiltList&lt;DottoFoundationV1CourseSemester&gt;**](DottoFoundationV1CourseSemester.md)| 開講時期 | 
  **requirementType** | [**BuiltList&lt;DottoFoundationV1SubjectRequirementType&gt;**](DottoFoundationV1SubjectRequirementType.md)| 必修・選択・選択必修 | 
- **calturalSubjectCategory** | [**BuiltList&lt;DottoFoundationV1CulturalSubjectCategory&gt;**](DottoFoundationV1CulturalSubjectCategory.md)| 教養科目カテゴリ | 
+ **culturalSubjectCategory** | [**BuiltList&lt;DottoFoundationV1CulturalSubjectCategory&gt;**](DottoFoundationV1CulturalSubjectCategory.md)| 教養科目カテゴリ | 
 
 ### Return type
 
