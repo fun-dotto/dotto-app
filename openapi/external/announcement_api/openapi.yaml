@@ -1,0 +1,207 @@
+openapi: 3.1.0
+info:
+  title: Announcement Service
+  version: 1.0.0
+tags:
+  - name: Announcements
+paths:
+  /v1/announcements:
+    get:
+      operationId: AnnouncementsV1_list
+      parameters:
+        - name: sortByDate
+          in: query
+          required: false
+          description: |-
+            日時ソート
+
+            昇順ソートの場合は`asc`を指定、降順ソートの場合は`desc`を指定
+          schema:
+            $ref: '#/components/schemas/FoundationV1.SortDirection'
+            default: asc
+          explode: false
+        - name: filterIsActive
+          in: query
+          required: false
+          description: |-
+            公開状態で絞り込むか
+
+            公開状態のみを抽出する場合は`true`を指定
+          schema:
+            type: boolean
+            default: false
+          explode: false
+      responses:
+        '200':
+          description: おしらせのリスト
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  announcements:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Announcement'
+                required:
+                  - announcements
+      tags:
+        - Announcements
+    post:
+      operationId: AnnouncementsV1_create
+      description: おしらせを作成する
+      parameters: []
+      responses:
+        '201':
+          description: 作成されたおしらせ
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  announcement:
+                    $ref: '#/components/schemas/Announcement'
+                required:
+                  - announcement
+      tags:
+        - Announcements
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnnouncementRequest'
+        description: 作成するおしらせの情報
+  /v1/announcements/{id}:
+    get:
+      operationId: AnnouncementsV1_detail
+      description: おしらせを詳細取得する
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: おしらせID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: おしらせの詳細
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  announcement:
+                    $ref: '#/components/schemas/Announcement'
+                required:
+                  - announcement
+      tags:
+        - Announcements
+    put:
+      operationId: AnnouncementsV1_update
+      description: おしらせを更新する
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: おしらせID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 更新されたおしらせ
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  announcement:
+                    $ref: '#/components/schemas/Announcement'
+                required:
+                  - announcement
+      tags:
+        - Announcements
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnnouncementRequest'
+        description: 更新するおしらせの情報
+    delete:
+      operationId: AnnouncementsV1_delete
+      description: おしらせを削除する
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: おしらせID
+          schema:
+            type: string
+      responses:
+        '204':
+          description: There is no content to send for this request, but the headers may be useful.
+      tags:
+        - Announcements
+components:
+  schemas:
+    Announcement:
+      type: object
+      required:
+        - id
+        - title
+        - availableFrom
+        - url
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        availableFrom:
+          type: string
+          format: date-time
+        availableUntil:
+          type: string
+          format: date-time
+        url:
+          type: string
+          format: uri
+    AnnouncementRequest:
+      type: object
+      required:
+        - title
+        - availableFrom
+        - url
+      properties:
+        title:
+          type: string
+        availableFrom:
+          type: string
+          format: date-time
+        availableUntil:
+          type: string
+          format: date-time
+        url:
+          type: string
+          format: uri
+    FoundationV1.SortDirection:
+      type: string
+      enum:
+        - asc
+        - desc
+servers:
+  - url: http://localhost:8080
+    description: Local
+    variables: {}
+  - url: https://announcement-api-dev-107577467292.asia-northeast1.run.app
+    description: Development
+    variables: {}
+  - url: https://announcement-api-stg-107577467292.asia-northeast1.run.app
+    description: Staging
+    variables: {}
+  - url: https://announcement-api-qa-107577467292.asia-northeast1.run.app
+    description: QA
+    variables: {}
+  - url: https://announcement-api-107577467292.asia-northeast1.run.app
+    description: Production
+    variables: {}

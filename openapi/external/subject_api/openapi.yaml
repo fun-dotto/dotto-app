@@ -1,51 +1,134 @@
 openapi: 3.1.0
 info:
-  title: App BFF Service
+  title: Subject Service
   version: 1.0.0
 tags:
-  - name: Announcements
+  - name: Faculties
   - name: Subjects
+  - name: Syllabus
 paths:
-  /announcements:
+  /v1/faculties:
     get:
-      operationId: AnnouncementsV0_list
+      operationId: FacultiesV1_list
+      description: 教員一覧を取得する
       parameters: []
       responses:
         '200':
-          description: おしらせのリスト
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Announcement'
-      tags:
-        - Announcements
-  /v1/announcements:
-    get:
-      operationId: AnnouncementsV1_list
-      parameters: []
-      responses:
-        '200':
-          description: おしらせのリスト
+          description: 教員のリスト
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  announcements:
+                  faculties:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Announcement'
+                      $ref: '#/components/schemas/DottoFoundationV1.Faculty'
                 required:
-                  - announcements
+                  - faculties
       tags:
-        - Announcements
+        - Faculties
+    post:
+      operationId: FacultiesV1_create
+      description: 教員を作成する
+      parameters: []
+      responses:
+        '201':
+          description: 作成された教員
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  faculty:
+                    $ref: '#/components/schemas/DottoFoundationV1.Faculty'
+                required:
+                  - faculty
+      tags:
+        - Faculties
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DottoFoundationV1.FacultyRequest'
+        description: 作成する教員の情報
+  /v1/faculties/{id}:
+    get:
+      operationId: FacultiesV1_detail
+      description: 教員を詳細取得する
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: 教員ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 教員の詳細
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  faculty:
+                    $ref: '#/components/schemas/DottoFoundationV1.Faculty'
+                required:
+                  - faculty
+      tags:
+        - Faculties
+    put:
+      operationId: FacultiesV1_update
+      description: 教員を更新する
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: 教員ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 更新された教員
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  faculty:
+                    $ref: '#/components/schemas/DottoFoundationV1.Faculty'
+                required:
+                  - faculty
+      tags:
+        - Faculties
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DottoFoundationV1.FacultyRequest'
+        description: 更新する教員の情報
+    delete:
+      operationId: FacultiesV1_delete
+      description: 教員を削除する
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: 教員ID
+          schema:
+            type: string
+      responses:
+        '204':
+          description: There is no content to send for this request, but the headers may be useful.
+      tags:
+        - Faculties
   /v1/subjects:
     get:
       operationId: SubjectsV1_list
       description: |-
-        科目を検索する
+        科目一覧を取得する
 
         同一項目同士はOR、異なる項目同士はANDでフィルタリングされます。
       parameters:
@@ -135,13 +218,40 @@ paths:
                   - subjects
       tags:
         - Subjects
+    put:
+      operationId: SubjectsV1_upsert
+      description: 科目を作成または更新する
+      parameters: []
+      responses:
+        '200':
+          description: 作成された科目
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  subject:
+                    $ref: '#/components/schemas/Subject'
+                required:
+                  - subject
+      tags:
+        - Subjects
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubjectRequest'
+        description: 作成する科目の情報
   /v1/subjects/{id}:
     get:
       operationId: SubjectsV1_detail
+      description: 科目を詳細取得する
       parameters:
         - name: id
           in: path
           required: true
+          description: 科目ID
           schema:
             type: string
       responses:
@@ -153,31 +263,53 @@ paths:
                 type: object
                 properties:
                   subject:
-                    $ref: '#/components/schemas/SubjectDetail'
+                    $ref: '#/components/schemas/Subject'
                 required:
                   - subject
       tags:
         - Subjects
+    delete:
+      operationId: SubjectsV1_delete
+      description: 科目を削除する
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: 科目ID
+          schema:
+            type: string
+      responses:
+        '204':
+          description: There is no content to send for this request, but the headers may be useful.
+      tags:
+        - Subjects
+  /v1/subjects/{id}/syllabus:
+    get:
+      operationId: SyllabusV1_detail
+      description: シラバスを取得する
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: 科目ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: シラバス
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  syllabus:
+                    $ref: '#/components/schemas/Syllabus'
+                required:
+                  - syllabus
+      tags:
+        - Syllabus
 components:
   schemas:
-    Announcement:
-      type: object
-      required:
-        - id
-        - title
-        - date
-        - url
-      properties:
-        id:
-          type: string
-        title:
-          type: string
-        date:
-          type: string
-          format: date-time
-        url:
-          type: string
-          format: uri
     DottoFoundationV1.Class:
       type: string
       enum:
@@ -239,6 +371,16 @@ components:
         email:
           type: string
       description: 教員
+    DottoFoundationV1.FacultyRequest:
+      type: object
+      required:
+        - name
+        - email
+      properties:
+        name:
+          type: string
+        email:
+          type: string
     DottoFoundationV1.Grade:
       type: string
       enum:
@@ -266,7 +408,7 @@ components:
         - Optional
         - OptionalRequired
       description: 必修・選択
-    SubjectDetail:
+    Subject:
       type: object
       required:
         - id
@@ -276,7 +418,6 @@ components:
         - credit
         - eligibleAttributes
         - requirements
-        - syllabus
       properties:
         id:
           type: string
@@ -285,7 +426,7 @@ components:
         faculties:
           type: array
           items:
-            $ref: '#/components/schemas/SubjectService.SubjectFaculty'
+            $ref: '#/components/schemas/SubjectFaculty'
         semester:
           $ref: '#/components/schemas/DottoFoundationV1.CourseSemester'
         credit:
@@ -294,16 +435,14 @@ components:
         eligibleAttributes:
           type: array
           items:
-            $ref: '#/components/schemas/SubjectService.SubjectTargetClass'
+            $ref: '#/components/schemas/SubjectTargetClass'
           description: 授業名末尾の`学年-クラス`をもとに決定
         requirements:
           type: array
           items:
-            $ref: '#/components/schemas/SubjectService.SubjectRequirement'
+            $ref: '#/components/schemas/SubjectRequirement'
           description: 科目群・科目区分をもとに決定
-        syllabus:
-          $ref: '#/components/schemas/SubjectService.Syllabus'
-    SubjectService.SubjectFaculty:
+    SubjectFaculty:
       type: object
       required:
         - faculty
@@ -313,7 +452,24 @@ components:
           $ref: '#/components/schemas/DottoFoundationV1.Faculty'
         isPrimary:
           type: boolean
-    SubjectService.SubjectRequirement:
+    SubjectFacultyRequest:
+      type: object
+      required:
+        - facultyId
+        - isPrimary
+      properties:
+        facultyId:
+          type: string
+        isPrimary:
+          type: boolean
+    SubjectRequest:
+      type: object
+      required:
+        - syllabusId
+      properties:
+        syllabusId:
+          type: string
+    SubjectRequirement:
       type: object
       required:
         - course
@@ -323,7 +479,32 @@ components:
           $ref: '#/components/schemas/DottoFoundationV1.Course'
         requirementType:
           $ref: '#/components/schemas/DottoFoundationV1.SubjectRequirementType'
-    SubjectService.SubjectTargetClass:
+    SubjectRequirementRequest:
+      type: object
+      required:
+        - course
+        - requirementType
+      properties:
+        course:
+          $ref: '#/components/schemas/DottoFoundationV1.Course'
+        requirementType:
+          $ref: '#/components/schemas/DottoFoundationV1.SubjectRequirementType'
+    SubjectSummary:
+      type: object
+      required:
+        - id
+        - name
+        - faculties
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        faculties:
+          type: array
+          items:
+            $ref: '#/components/schemas/SubjectFaculty'
+    SubjectTargetClass:
       type: object
       required:
         - grade
@@ -335,7 +516,7 @@ components:
             - $ref: '#/components/schemas/DottoFoundationV1.Class'
           description: 修士課程・博士課程対象の場合はnull
       description: 対象学年・クラス
-    SubjectService.Syllabus:
+    Syllabus:
       type: object
       required:
         - id
@@ -447,46 +628,19 @@ components:
         dspoSubject:
           type: string
           description: DSOP対象科目
-    SubjectSummary:
-      type: object
-      required:
-        - id
-        - name
-        - faculties
-        - dayOfWeekTimetableSlots
-        - isAddedToTimetable
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        faculties:
-          type: array
-          items:
-            $ref: '#/components/schemas/DottoFoundationV1.Faculty'
-        dayOfWeekTimetableSlots:
-          type: string
-          description: |-
-            TODO: 時間割APIを作成したら、曜日・時限を取得する
-            曜日・時限
-        isAddedToTimetable:
-          type: boolean
-          description: |-
-            TODO: 時間割APIを作成したら、時間割に追加されているかを取得する
-            時間割に追加されているか
 servers:
   - url: http://localhost:8080
     description: Local
     variables: {}
-  - url: https://app-bff-api-dev-107577467292.asia-northeast1.run.app
+  - url: https://subject-api-dev-107577467292.asia-northeast1.run.app
     description: Development
     variables: {}
-  - url: https://app-bff-api-stg-107577467292.asia-northeast1.run.app
+  - url: https://subject-api-stg-107577467292.asia-northeast1.run.app
     description: Staging
     variables: {}
-  - url: https://app-bff-api-qa-107577467292.asia-northeast1.run.app
+  - url: https://subject-api-qa-107577467292.asia-northeast1.run.app
     description: QA
     variables: {}
-  - url: https://app-bff-api-107577467292.asia-northeast1.run.app
+  - url: https://subject-api-107577467292.asia-northeast1.run.app
     description: Production
     variables: {}
