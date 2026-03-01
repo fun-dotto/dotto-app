@@ -110,7 +110,7 @@ paths:
             items:
               $ref: '#/components/schemas/DottoFoundationV1.SubjectRequirementType'
           explode: false
-        - name: calturalSubjectCategory
+        - name: culturalSubjectCategory
           in: query
           required: true
           description: 教養科目カテゴリ
@@ -130,7 +130,7 @@ paths:
                   subjects:
                     type: array
                     items:
-                      $ref: '#/components/schemas/SubjectDetail'
+                      $ref: '#/components/schemas/SubjectSummary'
                 required:
                   - subjects
       tags:
