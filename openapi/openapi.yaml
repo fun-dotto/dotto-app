@@ -306,11 +306,11 @@ components:
     SubjectService.SubjectFaculty:
       type: object
       required:
-        - faculty
+        - facultyId
         - isPrimary
       properties:
-        faculty:
-          $ref: '#/components/schemas/FacultyService.Faculty'
+        facultyId:
+          type: string
         isPrimary:
           type: boolean
     SubjectService.SubjectRequirement:
