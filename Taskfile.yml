@@ -16,7 +16,6 @@ vars:
   GENHTML: genhtml
   LCOV: lcov
   OPENAPI_GENERATOR: openapi-generator-cli
-  PRE_COMMIT: pre-commit
 
 tasks:
   default:
@@ -31,16 +30,14 @@ tasks:
       - "{{.FLUTTER}} pub get"
 
   install-pre-commit:
-    desc: Install pre-commit hooks
+    desc: Install pre-commit hooks (using mise)
     cmds:
-      - "{{.PRE_COMMIT}} install"
+      - mise generate git-pre-commit --write --task=pre-commit
 
   install-all:
     desc: Install dependencies for all projects
     deps:
       - task: install-pre-commit
-        vars:
-          PRE_COMMIT: "{{.PRE_COMMIT}}"
       - task: install
         vars:
           FLUTTER: "{{.FLUTTER}}"
@@ -130,7 +127,7 @@ tasks:
   format:
     desc: Format Dart code
     cmds:
-      - "{{.DART}} format lib/ test/ dotto_design_system/"
+      - "{{.DART}} format lib/ test/ scripts/ dotto_design_system/"
 
   analyze:
     desc: Analyze Dart code
