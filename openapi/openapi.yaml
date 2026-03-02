@@ -285,7 +285,7 @@ components:
         faculties:
           type: array
           items:
-            $ref: '#/components/schemas/SubjectService.SubjectFaculty'
+            $ref: '#/components/schemas/SubjectFaculty'
         semester:
           $ref: '#/components/schemas/DottoFoundationV1.CourseSemester'
         credit:
@@ -303,14 +303,14 @@ components:
           description: 科目群・科目区分をもとに決定
         syllabus:
           $ref: '#/components/schemas/SubjectService.Syllabus'
-    SubjectService.SubjectFaculty:
+    SubjectFaculty:
       type: object
       required:
-        - facultyId
+        - faculty
         - isPrimary
       properties:
-        facultyId:
-          type: string
+        faculty:
+          $ref: '#/components/schemas/FacultyService.Faculty'
         isPrimary:
           type: boolean
     SubjectService.SubjectRequirement:
@@ -463,7 +463,7 @@ components:
         faculties:
           type: array
           items:
-            $ref: '#/components/schemas/FacultyService.Faculty'
+            $ref: '#/components/schemas/SubjectFaculty'
         dayOfWeekTimetableSlots:
           type: string
           description: |-
