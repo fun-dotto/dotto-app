@@ -5,6 +5,7 @@ info:
 tags:
   - name: Announcements
   - name: Subjects
+  - name: Users
 paths:
   /announcements:
     get:
@@ -51,14 +52,14 @@ paths:
       parameters:
         - name: q
           in: query
-          required: true
+          required: false
           description: 検索ワード
           schema:
             type: string
           explode: false
         - name: grade
           in: query
-          required: true
+          required: false
           description: 学年
           schema:
             type: array
@@ -67,7 +68,7 @@ paths:
           explode: false
         - name: courses
           in: query
-          required: true
+          required: false
           description: コース; 大学院の場合は大学院コースに読み替え
           schema:
             type: array
@@ -76,7 +77,7 @@ paths:
           explode: false
         - name: class
           in: query
-          required: true
+          required: false
           description: クラス; 大学院の学年を選択した場合は選択できない
           schema:
             type: array
@@ -85,7 +86,7 @@ paths:
           explode: false
         - name: classification
           in: query
-          required: true
+          required: false
           description: '学部: 専門・教養; 大学院: 専門・研究指導'
           schema:
             type: array
@@ -94,7 +95,7 @@ paths:
           explode: false
         - name: semester
           in: query
-          required: true
+          required: false
           description: 開講時期
           schema:
             type: array
@@ -103,7 +104,7 @@ paths:
           explode: false
         - name: requirementType
           in: query
-          required: true
+          required: false
           description: 必修・選択・選択必修
           schema:
             type: array
@@ -112,7 +113,7 @@ paths:
           explode: false
         - name: culturalSubjectCategory
           in: query
-          required: true
+          required: false
           description: 教養科目カテゴリ
           schema:
             type: array
@@ -158,6 +159,61 @@ paths:
                   - subject
       tags:
         - Subjects
+  /v1/users/{id}:
+    get:
+      operationId: UsersV1_detail
+      description: ユーザーを取得する
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ユーザーID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ユーザーの情報
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: '#/components/schemas/UserInfo'
+                required:
+                  - user
+      tags:
+        - Users
+    post:
+      operationId: UsersV1_upsert
+      description: ユーザーを作成または更新する
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 作成または更新されたユーザー
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: '#/components/schemas/UserInfo'
+                required:
+                  - user
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserInfo'
+        description: 作成または更新するユーザーの情報
 components:
   schemas:
     Announcement:
@@ -225,6 +281,16 @@ components:
         - Health
         - Communication
       description: 教養科目カテゴリ
+    DottoFoundationV1.DayOfWeek:
+      type: string
+      enum:
+        - Sunday
+        - Monday
+        - Tuesday
+        - Wednesday
+        - Thursday
+        - Friday
+        - Saturday
     DottoFoundationV1.Grade:
       type: string
       enum:
@@ -238,6 +304,15 @@ components:
         - D2
         - D3
       description: 学年
+    DottoFoundationV1.Period:
+      type: string
+      enum:
+        - Period1
+        - Period2
+        - Period3
+        - Period4
+        - Period5
+        - Period6
     DottoFoundationV1.SubjectClassification:
       type: string
       enum:
@@ -272,6 +347,7 @@ components:
         - id
         - name
         - faculties
+        - year
         - semester
         - credit
         - eligibleAttributes
@@ -286,8 +362,13 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/SubjectFaculty'
+        year:
+          type: integer
+          description: 開講年度
         semester:
-          $ref: '#/components/schemas/DottoFoundationV1.CourseSemester'
+          allOf:
+            - $ref: '#/components/schemas/DottoFoundationV1.CourseSemester'
+          description: 開講時期
         credit:
           type: integer
           description: 単位数
@@ -453,7 +534,8 @@ components:
         - id
         - name
         - faculties
-        - dayOfWeekTimetableSlots
+        - dayOfWeek
+        - period
         - isAddedToTimetable
       properties:
         id:
@@ -464,16 +546,32 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/SubjectFaculty'
-        dayOfWeekTimetableSlots:
-          type: string
+        dayOfWeek:
+          allOf:
+            - $ref: '#/components/schemas/DottoFoundationV1.DayOfWeek'
           description: |-
-            TODO: 時間割APIを作成したら、曜日・時限を取得する
-            曜日・時限
+            TODO: Timetable API から曜日を取得する
+            曜日
+        period:
+          allOf:
+            - $ref: '#/components/schemas/DottoFoundationV1.Period'
+          description: |-
+            TODO: Timetable API から時限を取得する
+            時限
         isAddedToTimetable:
           type: boolean
           description: |-
             TODO: 時間割APIを作成したら、時間割に追加されているかを取得する
             時間割に追加されているか
+    UserInfo:
+      type: object
+      properties:
+        grade:
+          $ref: '#/components/schemas/DottoFoundationV1.Grade'
+        course:
+          $ref: '#/components/schemas/DottoFoundationV1.Course'
+        class:
+          $ref: '#/components/schemas/DottoFoundationV1.Class'
 servers:
   - url: http://localhost:8080
     description: Local
