@@ -10,8 +10,9 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **id** | **String** |  | 
 **name** | **String** |  | 
-**faculties** | [**BuiltList&lt;SubjectServiceSubjectFaculty&gt;**](SubjectServiceSubjectFaculty.md) |  | 
-**semester** | [**DottoFoundationV1CourseSemester**](DottoFoundationV1CourseSemester.md) |  | 
+**faculties** | [**BuiltList&lt;SubjectFaculty&gt;**](SubjectFaculty.md) |  | 
+**year** | **int** | 開講年度 | 
+**semester** | [**DottoFoundationV1CourseSemester**](DottoFoundationV1CourseSemester.md) | 開講時期 | 
 **credit** | **int** | 単位数 | 
 **eligibleAttributes** | [**BuiltList&lt;SubjectServiceSubjectTargetClass&gt;**](SubjectServiceSubjectTargetClass.md) | 授業名末尾の`学年-クラス`をもとに決定 | 
 **requirements** | [**BuiltList&lt;SubjectServiceSubjectRequirement&gt;**](SubjectServiceSubjectRequirement.md) | 科目群・科目区分をもとに決定 | 

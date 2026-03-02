@@ -87,14 +87,14 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **q** | **String**| 検索ワード | 
- **grade** | [**BuiltList&lt;DottoFoundationV1Grade&gt;**](DottoFoundationV1Grade.md)| 学年 | 
- **courses** | [**BuiltList&lt;DottoFoundationV1Course&gt;**](DottoFoundationV1Course.md)| コース; 大学院の場合は大学院コースに読み替え | 
- **class_** | [**BuiltList&lt;DottoFoundationV1Class&gt;**](DottoFoundationV1Class.md)| クラス; 大学院の学年を選択した場合は選択できない | 
- **classification** | [**BuiltList&lt;DottoFoundationV1SubjectClassification&gt;**](DottoFoundationV1SubjectClassification.md)| 学部: 専門・教養; 大学院: 専門・研究指導 | 
- **semester** | [**BuiltList&lt;DottoFoundationV1CourseSemester&gt;**](DottoFoundationV1CourseSemester.md)| 開講時期 | 
- **requirementType** | [**BuiltList&lt;DottoFoundationV1SubjectRequirementType&gt;**](DottoFoundationV1SubjectRequirementType.md)| 必修・選択・選択必修 | 
- **culturalSubjectCategory** | [**BuiltList&lt;DottoFoundationV1CulturalSubjectCategory&gt;**](DottoFoundationV1CulturalSubjectCategory.md)| 教養科目カテゴリ | 
+ **q** | **String**| 検索ワード | [optional] 
+ **grade** | [**BuiltList&lt;DottoFoundationV1Grade&gt;**](DottoFoundationV1Grade.md)| 学年 | [optional] 
+ **courses** | [**BuiltList&lt;DottoFoundationV1Course&gt;**](DottoFoundationV1Course.md)| コース; 大学院の場合は大学院コースに読み替え | [optional] 
+ **class_** | [**BuiltList&lt;DottoFoundationV1Class&gt;**](DottoFoundationV1Class.md)| クラス; 大学院の学年を選択した場合は選択できない | [optional] 
+ **classification** | [**BuiltList&lt;DottoFoundationV1SubjectClassification&gt;**](DottoFoundationV1SubjectClassification.md)| 学部: 専門・教養; 大学院: 専門・研究指導 | [optional] 
+ **semester** | [**BuiltList&lt;DottoFoundationV1CourseSemester&gt;**](DottoFoundationV1CourseSemester.md)| 開講時期 | [optional] 
+ **requirementType** | [**BuiltList&lt;DottoFoundationV1SubjectRequirementType&gt;**](DottoFoundationV1SubjectRequirementType.md)| 必修・選択・選択必修 | [optional] 
+ **culturalSubjectCategory** | [**BuiltList&lt;DottoFoundationV1CulturalSubjectCategory&gt;**](DottoFoundationV1CulturalSubjectCategory.md)| 教養科目カテゴリ | [optional] 
 
 ### Return type
 
