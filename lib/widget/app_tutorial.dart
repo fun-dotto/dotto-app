@@ -117,26 +117,24 @@ final class _AppTutorialState extends State<AppTutorial> {
                   child: Image.asset(Asset.icon1024, width: 140, height: 140),
                 ),
                 const SizedBox(height: 110),
-                RichText(
-                  text: TextSpan(
-                    children: [
-                      TextSpan(
-                        text: 'Dotto',
-                        style: Theme.of(
-                          context,
-                        ).textTheme.titleLarge?.copyWith(color: SemanticColor.light.accentPrimary),
-                      ),
-                      TextSpan(
-                        text: 'で',
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: SemanticColor.light.labelPrimary),
-                      ),
-                    ],
+                if (page.welcomeBodyTop != null)
+                  Text(
+                    page.welcomeBodyTop!,
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyLarge
+                        ?.copyWith(color: SemanticColor.light.labelPrimary),
+                    textAlign: TextAlign.center,
                   ),
-                ),
-                Text(
-                  'はこだて未来大学のすべてを',
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: SemanticColor.light.labelPrimary),
-                ),
+                if (page.welcomeBodyBottom != null)
+                  Text(
+                    page.welcomeBodyBottom!,
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyLarge
+                        ?.copyWith(color: SemanticColor.light.labelPrimary),
+                    textAlign: TextAlign.center,
+                  ),
               ],
             ),
           ),
