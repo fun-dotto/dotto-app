@@ -86,7 +86,6 @@ final class _AppTutorialState extends State<AppTutorial> {
                 style: DottoButton.styleFrom(
                   textStyle: Theme.of(context).textTheme.bodySmall,
                   padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 10),
-                  minimumSize: const Size(32, 28),
                 ),
                 child: const Text('スキップ'),
               ),
