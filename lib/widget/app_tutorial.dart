@@ -160,7 +160,7 @@ final class _AppTutorialState extends State<AppTutorial> {
         const topAndBottomSpacing = topPadding + bottomPadding + titleToImageSpacing + imageToDescriptionSpacing;
         final availableImageHeight =
             (constraints.maxHeight - topAndBottomSpacing - estimatedTitleHeight - estimatedDescriptionHeight).clamp(
-              220.0,
+              0.0,
               680.0,
             );
 
