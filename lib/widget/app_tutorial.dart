@@ -209,7 +209,13 @@ final class _AppTutorialState extends State<AppTutorial> {
                 ),
               ),
               const SizedBox(height: imageToDescriptionSpacing),
-              Text(page.description!, textAlign: TextAlign.center, maxLines: 2, style: bodyStyle),
+              Text(
+                page.description!,
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: bodyStyle,
+              ),
             ],
           ),
         );
