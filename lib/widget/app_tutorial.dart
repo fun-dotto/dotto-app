@@ -185,7 +185,7 @@ final class _AppTutorialState extends State<AppTutorial> {
                 style: titleStyle?.copyWith(
                   color: SemanticColor.light.accentPrimary,
                   fontWeight: FontWeight.w600,
-                  fontSize: (titleStyle.fontSize ?? 24) - 2,
+                  fontSize: (titleStyle?.fontSize ?? 24) - 2,
                 ),
               ),
               const SizedBox(height: titleToImageSpacing),
