@@ -279,6 +279,7 @@ final class _AppTutorialState extends State<AppTutorial> {
     return Scaffold(
       appBar: AppBar(title: const Text('Dottoの使い方')),
       body: SafeArea(
+        top: false,
         child: Stack(
           children: [
             Positioned.fill(child: _buildBackgroundDottoText()),
