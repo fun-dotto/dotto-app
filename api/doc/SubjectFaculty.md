@@ -1,4 +1,4 @@
-# openapi.model.SubjectServiceSubjectFaculty
+# openapi.model.SubjectFaculty
 
 ## Load the model package
 ```dart

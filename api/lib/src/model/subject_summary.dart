@@ -3,8 +3,10 @@
 //
 
 // ignore_for_file: unused_element
+import 'package:openapi/src/model/dotto_foundation_v1_period.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:openapi/src/model/dotto_foundation_v1_faculty.dart';
+import 'package:openapi/src/model/dotto_foundation_v1_day_of_week.dart';
+import 'package:openapi/src/model/subject_faculty.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 
@@ -16,7 +18,8 @@ part 'subject_summary.g.dart';
 /// * [id] 
 /// * [name] 
 /// * [faculties] 
-/// * [dayOfWeekTimetableSlots] - TODO: 時間割APIを作成したら、曜日・時限を取得する 曜日・時限
+/// * [dayOfWeek] - TODO: Timetable API から曜日を取得する 曜日
+/// * [period] - TODO: Timetable API から時限を取得する 時限
 /// * [isAddedToTimetable] - TODO: 時間割APIを作成したら、時間割に追加されているかを取得する 時間割に追加されているか
 @BuiltValue()
 abstract class SubjectSummary implements Built<SubjectSummary, SubjectSummaryBuilder> {
@@ -27,11 +30,17 @@ abstract class SubjectSummary implements Built<SubjectSummary, SubjectSummaryBui
   String get name;
 
   @BuiltValueField(wireName: r'faculties')
-  BuiltList<DottoFoundationV1Faculty> get faculties;
+  BuiltList<SubjectFaculty> get faculties;
 
-  /// TODO: 時間割APIを作成したら、曜日・時限を取得する 曜日・時限
-  @BuiltValueField(wireName: r'dayOfWeekTimetableSlots')
-  String get dayOfWeekTimetableSlots;
+  /// TODO: Timetable API から曜日を取得する 曜日
+  @BuiltValueField(wireName: r'dayOfWeek')
+  DottoFoundationV1DayOfWeek get dayOfWeek;
+  // enum dayOfWeekEnum {  Sunday,  Monday,  Tuesday,  Wednesday,  Thursday,  Friday,  Saturday,  };
+
+  /// TODO: Timetable API から時限を取得する 時限
+  @BuiltValueField(wireName: r'period')
+  DottoFoundationV1Period get period;
+  // enum periodEnum {  Period1,  Period2,  Period3,  Period4,  Period5,  Period6,  };
 
   /// TODO: 時間割APIを作成したら、時間割に追加されているかを取得する 時間割に追加されているか
   @BuiltValueField(wireName: r'isAddedToTimetable')
@@ -73,12 +82,17 @@ class _$SubjectSummarySerializer implements PrimitiveSerializer<SubjectSummary> 
     yield r'faculties';
     yield serializers.serialize(
       object.faculties,
-      specifiedType: const FullType(BuiltList, [FullType(DottoFoundationV1Faculty)]),
+      specifiedType: const FullType(BuiltList, [FullType(SubjectFaculty)]),
     );
-    yield r'dayOfWeekTimetableSlots';
+    yield r'dayOfWeek';
     yield serializers.serialize(
-      object.dayOfWeekTimetableSlots,
-      specifiedType: const FullType(String),
+      object.dayOfWeek,
+      specifiedType: const FullType(DottoFoundationV1DayOfWeek),
+    );
+    yield r'period';
+    yield serializers.serialize(
+      object.period,
+      specifiedType: const FullType(DottoFoundationV1Period),
     );
     yield r'isAddedToTimetable';
     yield serializers.serialize(
@@ -125,16 +139,23 @@ class _$SubjectSummarySerializer implements PrimitiveSerializer<SubjectSummary> 
         case r'faculties':
           final valueDes = serializers.deserialize(
             value,
-            specifiedType: const FullType(BuiltList, [FullType(DottoFoundationV1Faculty)]),
-          ) as BuiltList<DottoFoundationV1Faculty>;
+            specifiedType: const FullType(BuiltList, [FullType(SubjectFaculty)]),
+          ) as BuiltList<SubjectFaculty>;
           result.faculties.replace(valueDes);
           break;
-        case r'dayOfWeekTimetableSlots':
+        case r'dayOfWeek':
           final valueDes = serializers.deserialize(
             value,
-            specifiedType: const FullType(String),
-          ) as String;
-          result.dayOfWeekTimetableSlots = valueDes;
+            specifiedType: const FullType(DottoFoundationV1DayOfWeek),
+          ) as DottoFoundationV1DayOfWeek;
+          result.dayOfWeek = valueDes;
+          break;
+        case r'period':
+          final valueDes = serializers.deserialize(
+            value,
+            specifiedType: const FullType(DottoFoundationV1Period),
+          ) as DottoFoundationV1Period;
+          result.period = valueDes;
           break;
         case r'isAddedToTimetable':
           final valueDes = serializers.deserialize(

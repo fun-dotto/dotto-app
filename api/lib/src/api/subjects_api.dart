@@ -114,7 +114,7 @@ class SubjectsApi {
   /// * [classification] - 学部: 専門・教養; 大学院: 専門・研究指導
   /// * [semester] - 開講時期
   /// * [requirementType] - 必修・選択・選択必修
-  /// * [calturalSubjectCategory] - 教養科目カテゴリ
+  /// * [culturalSubjectCategory] - 教養科目カテゴリ
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
   /// * [headers] - Can be used to add additional headers to the request
   /// * [extras] - Can be used to add flags to the request
@@ -125,14 +125,14 @@ class SubjectsApi {
   /// Returns a [Future] containing a [Response] with a [SubjectsV1List200Response] as data
   /// Throws [DioException] if API call or serialization fails
   Future<Response<SubjectsV1List200Response>> subjectsV1List({ 
-    required String q,
-    required BuiltList<DottoFoundationV1Grade> grade,
-    required BuiltList<DottoFoundationV1Course> courses,
-    required BuiltList<DottoFoundationV1Class> class_,
-    required BuiltList<DottoFoundationV1SubjectClassification> classification,
-    required BuiltList<DottoFoundationV1CourseSemester> semester,
-    required BuiltList<DottoFoundationV1SubjectRequirementType> requirementType,
-    required BuiltList<DottoFoundationV1CulturalSubjectCategory> calturalSubjectCategory,
+    String? q,
+    BuiltList<DottoFoundationV1Grade>? grade,
+    BuiltList<DottoFoundationV1Course>? courses,
+    BuiltList<DottoFoundationV1Class>? class_,
+    BuiltList<DottoFoundationV1SubjectClassification>? classification,
+    BuiltList<DottoFoundationV1CourseSemester>? semester,
+    BuiltList<DottoFoundationV1SubjectRequirementType>? requirementType,
+    BuiltList<DottoFoundationV1CulturalSubjectCategory>? culturalSubjectCategory,
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
     Map<String, dynamic>? extra,
@@ -154,14 +154,14 @@ class SubjectsApi {
     );
 
     final _queryParameters = <String, dynamic>{
-      r'q': encodeQueryParameter(_serializers, q, const FullType(String)),
-      r'grade': encodeCollectionQueryParameter<DottoFoundationV1Grade>(_serializers, grade, const FullType(BuiltList, [FullType(DottoFoundationV1Grade)]), format: ListFormat.csv,),
-      r'courses': encodeCollectionQueryParameter<DottoFoundationV1Course>(_serializers, courses, const FullType(BuiltList, [FullType(DottoFoundationV1Course)]), format: ListFormat.csv,),
-      r'class': encodeCollectionQueryParameter<DottoFoundationV1Class>(_serializers, class_, const FullType(BuiltList, [FullType(DottoFoundationV1Class)]), format: ListFormat.csv,),
-      r'classification': encodeCollectionQueryParameter<DottoFoundationV1SubjectClassification>(_serializers, classification, const FullType(BuiltList, [FullType(DottoFoundationV1SubjectClassification)]), format: ListFormat.csv,),
-      r'semester': encodeCollectionQueryParameter<DottoFoundationV1CourseSemester>(_serializers, semester, const FullType(BuiltList, [FullType(DottoFoundationV1CourseSemester)]), format: ListFormat.csv,),
-      r'requirementType': encodeCollectionQueryParameter<DottoFoundationV1SubjectRequirementType>(_serializers, requirementType, const FullType(BuiltList, [FullType(DottoFoundationV1SubjectRequirementType)]), format: ListFormat.csv,),
-      r'calturalSubjectCategory': encodeCollectionQueryParameter<DottoFoundationV1CulturalSubjectCategory>(_serializers, calturalSubjectCategory, const FullType(BuiltList, [FullType(DottoFoundationV1CulturalSubjectCategory)]), format: ListFormat.csv,),
+      if (q != null) r'q': encodeQueryParameter(_serializers, q, const FullType(String)),
+      if (grade != null) r'grade': encodeCollectionQueryParameter<DottoFoundationV1Grade>(_serializers, grade, const FullType(BuiltList, [FullType(DottoFoundationV1Grade)]), format: ListFormat.csv,),
+      if (courses != null) r'courses': encodeCollectionQueryParameter<DottoFoundationV1Course>(_serializers, courses, const FullType(BuiltList, [FullType(DottoFoundationV1Course)]), format: ListFormat.csv,),
+      if (class_ != null) r'class': encodeCollectionQueryParameter<DottoFoundationV1Class>(_serializers, class_, const FullType(BuiltList, [FullType(DottoFoundationV1Class)]), format: ListFormat.csv,),
+      if (classification != null) r'classification': encodeCollectionQueryParameter<DottoFoundationV1SubjectClassification>(_serializers, classification, const FullType(BuiltList, [FullType(DottoFoundationV1SubjectClassification)]), format: ListFormat.csv,),
+      if (semester != null) r'semester': encodeCollectionQueryParameter<DottoFoundationV1CourseSemester>(_serializers, semester, const FullType(BuiltList, [FullType(DottoFoundationV1CourseSemester)]), format: ListFormat.csv,),
+      if (requirementType != null) r'requirementType': encodeCollectionQueryParameter<DottoFoundationV1SubjectRequirementType>(_serializers, requirementType, const FullType(BuiltList, [FullType(DottoFoundationV1SubjectRequirementType)]), format: ListFormat.csv,),
+      if (culturalSubjectCategory != null) r'culturalSubjectCategory': encodeCollectionQueryParameter<DottoFoundationV1CulturalSubjectCategory>(_serializers, culturalSubjectCategory, const FullType(BuiltList, [FullType(DottoFoundationV1CulturalSubjectCategory)]), format: ListFormat.csv,),
     };
 
     final _response = await _dio.request<Object>(
