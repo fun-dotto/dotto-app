@@ -68,8 +68,8 @@ Class | Method | HTTP request | Description
 [*AnnouncementsApi*](doc/AnnouncementsApi.md) | [**announcementsV1List**](doc/AnnouncementsApi.md#announcementsv1list) | **GET** /v1/announcements | 
 [*SubjectsApi*](doc/SubjectsApi.md) | [**subjectsV1Detail**](doc/SubjectsApi.md#subjectsv1detail) | **GET** /v1/subjects/{id} | 
 [*SubjectsApi*](doc/SubjectsApi.md) | [**subjectsV1List**](doc/SubjectsApi.md#subjectsv1list) | **GET** /v1/subjects | 
-[*UsersApi*](doc/UsersApi.md) | [**usersV1Detail**](doc/UsersApi.md#usersv1detail) | **GET** /v1/users/{id} | 
-[*UsersApi*](doc/UsersApi.md) | [**usersV1Upsert**](doc/UsersApi.md#usersv1upsert) | **POST** /v1/users/{id} | 
+[*UsersApi*](doc/UsersApi.md) | [**usersV1Detail**](doc/UsersApi.md#usersv1detail) | **GET** /v1/users | 
+[*UsersApi*](doc/UsersApi.md) | [**usersV1Upsert**](doc/UsersApi.md#usersv1upsert) | **POST** /v1/users | 
 
 
 ## Documentation For Models

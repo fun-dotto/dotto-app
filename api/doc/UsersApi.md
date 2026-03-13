@@ -9,12 +9,12 @@ All URIs are relative to *http://localhost:8080*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**usersV1Detail**](UsersApi.md#usersv1detail) | **GET** /v1/users/{id} | 
-[**usersV1Upsert**](UsersApi.md#usersv1upsert) | **POST** /v1/users/{id} | 
+[**usersV1Detail**](UsersApi.md#usersv1detail) | **GET** /v1/users | 
+[**usersV1Upsert**](UsersApi.md#usersv1upsert) | **POST** /v1/users | 
 
 
 # **usersV1Detail**
-> UsersV1Detail200Response usersV1Detail(id)
+> UsersV1Detail200Response usersV1Detail()
 
 
 
@@ -25,10 +25,9 @@ Method | HTTP request | Description
 import 'package:openapi/api.dart';
 
 final api = Openapi().getUsersApi();
-final String id = id_example; // String | ユーザーID
 
 try {
-    final response = api.usersV1Detail(id);
+    final response = api.usersV1Detail();
     print(response);
 } on DioException catch (e) {
     print('Exception when calling UsersApi->usersV1Detail: $e\n');
@@ -36,10 +35,7 @@ try {
 ```
 
 ### Parameters
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **id** | **String**| ユーザーID | 
+This endpoint does not need any parameter.
 
 ### Return type
 
@@ -57,7 +53,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **usersV1Upsert**
-> UsersV1Detail200Response usersV1Upsert(id, userInfo)
+> UsersV1Detail200Response usersV1Upsert(userInfo)
 
 
 
@@ -68,11 +64,10 @@ No authorization required
 import 'package:openapi/api.dart';
 
 final api = Openapi().getUsersApi();
-final String id = id_example; // String | 
 final UserInfo userInfo = ; // UserInfo | 作成または更新するユーザーの情報
 
 try {
-    final response = api.usersV1Upsert(id, userInfo);
+    final response = api.usersV1Upsert(userInfo);
     print(response);
 } on DioException catch (e) {
     print('Exception when calling UsersApi->usersV1Upsert: $e\n');
@@ -83,7 +78,6 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **id** | **String**|  | 
  **userInfo** | [**UserInfo**](UserInfo.md)| 作成または更新するユーザーの情報 | 
 
 ### Return type
