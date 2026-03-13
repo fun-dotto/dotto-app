@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dotto/domain/user_preference_keys.dart';
 import 'package:dotto/feature/setting/controller/settings_controller.dart';
 import 'package:dotto/feature/timetable/repository/timetable_repository.dart';
-import 'package:dotto/helper/firebase_auth_repository.dart';
+import 'package:dotto/helper/firebase_auth_helper.dart';
 import 'package:dotto/helper/user_preference_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -46,7 +46,7 @@ final class SettingsRepository {
   }
 
   Future<void> onLogin(BuildContext context, WidgetRef ref, void Function(User?) callback) async {
-    final user = await FirebaseAuthRepository().signIn();
+    final user = await FirebaseAuthHelper.signIn();
     if (user != null) {
       callback(user);
       await saveFCMToken(user);
@@ -61,7 +61,7 @@ final class SettingsRepository {
   }
 
   Future<void> onLogout(void Function() logout) async {
-    await FirebaseAuthRepository().signOut();
+    await FirebaseAuthHelper.signOut();
     logout();
   }
 }
