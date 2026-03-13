@@ -21,7 +21,7 @@ enum Semester {
     Semester.winterIntensive => '冬期集中',
   };
 
-  @Deprecated('syllabus.dbで使用')
+  // Legacy: syllabus.dbで使用。移行完了までは削除しないこと。
   int get number {
     switch (this) {
       case Semester.spring:
