@@ -1,5 +1,6 @@
 import 'package:dotto/api/api_environment.dart';
 import 'package:dotto/feature/debug/debug_view_model.dart';
+import 'package:dotto/feature/search_subject/search_subject_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -74,6 +75,16 @@ final class DebugScreen extends ConsumerWidget {
                 context,
                 environment,
                 (environment) => ref.read(apiEnvironmentProvider.notifier).value = environment,
+              ),
+            ),
+            ListTile(
+              title: const Text('Search Subject'),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (context) => const SearchSubjectScreen(),
+                  settings: const RouteSettings(name: '/search_subject'),
+                ),
               ),
             ),
           ],
