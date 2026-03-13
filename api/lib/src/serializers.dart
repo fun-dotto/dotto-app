@@ -14,6 +14,10 @@ import 'package:built_value/iso_8601_date_time_serializer.dart';
 import 'package:openapi/src/date_serializer.dart';
 import 'package:openapi/src/model/date.dart';
 
+import 'package:openapi/src/model/academic_service_faculty.dart';
+import 'package:openapi/src/model/academic_service_subject_requirement.dart';
+import 'package:openapi/src/model/academic_service_subject_target_class.dart';
+import 'package:openapi/src/model/academic_service_syllabus.dart';
 import 'package:openapi/src/model/announcement.dart';
 import 'package:openapi/src/model/announcements_v1_list200_response.dart';
 import 'package:openapi/src/model/dotto_foundation_v1_class.dart';
@@ -25,12 +29,8 @@ import 'package:openapi/src/model/dotto_foundation_v1_grade.dart';
 import 'package:openapi/src/model/dotto_foundation_v1_period.dart';
 import 'package:openapi/src/model/dotto_foundation_v1_subject_classification.dart';
 import 'package:openapi/src/model/dotto_foundation_v1_subject_requirement_type.dart';
-import 'package:openapi/src/model/faculty_service_faculty.dart';
 import 'package:openapi/src/model/subject_detail.dart';
 import 'package:openapi/src/model/subject_faculty.dart';
-import 'package:openapi/src/model/subject_service_subject_requirement.dart';
-import 'package:openapi/src/model/subject_service_subject_target_class.dart';
-import 'package:openapi/src/model/subject_service_syllabus.dart';
 import 'package:openapi/src/model/subject_summary.dart';
 import 'package:openapi/src/model/subjects_v1_detail200_response.dart';
 import 'package:openapi/src/model/subjects_v1_list200_response.dart';
@@ -40,6 +40,10 @@ import 'package:openapi/src/model/users_v1_detail200_response.dart';
 part 'serializers.g.dart';
 
 @SerializersFor([
+  AcademicServiceFaculty,
+  AcademicServiceSubjectRequirement,
+  AcademicServiceSubjectTargetClass,
+  AcademicServiceSyllabus,
   Announcement,
   AnnouncementsV1List200Response,
   DottoFoundationV1Class,
@@ -51,12 +55,8 @@ part 'serializers.g.dart';
   DottoFoundationV1Period,
   DottoFoundationV1SubjectClassification,
   DottoFoundationV1SubjectRequirementType,
-  FacultyServiceFaculty,
   SubjectDetail,
   SubjectFaculty,
-  SubjectServiceSubjectRequirement,
-  SubjectServiceSubjectTargetClass,
-  SubjectServiceSyllabus,
   SubjectSummary,
   SubjectsV1Detail200Response,
   SubjectsV1List200Response,

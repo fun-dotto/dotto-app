@@ -216,6 +216,154 @@ paths:
         description: 作成または更新するユーザーの情報
 components:
   schemas:
+    AcademicService.Faculty:
+      type: object
+      required:
+        - id
+        - name
+        - email
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+      description: 教員
+    AcademicService.SubjectRequirement:
+      type: object
+      required:
+        - course
+        - requirementType
+      properties:
+        course:
+          $ref: '#/components/schemas/DottoFoundationV1.Course'
+        requirementType:
+          $ref: '#/components/schemas/DottoFoundationV1.SubjectRequirementType'
+    AcademicService.SubjectTargetClass:
+      type: object
+      required:
+        - grade
+      properties:
+        grade:
+          $ref: '#/components/schemas/DottoFoundationV1.Grade'
+        class:
+          allOf:
+            - $ref: '#/components/schemas/DottoFoundationV1.Class'
+          description: 修士課程・博士課程対象の場合はnull
+      description: 対象学年・クラス
+    AcademicService.Syllabus:
+      type: object
+      required:
+        - id
+        - name
+        - enName
+        - grades
+        - credit
+        - facultyNames
+        - practicalHomeFacultyCategory
+        - multiplePersonTeachingForm
+        - teachingForm
+        - summary
+        - learningOutcomes
+        - assignments
+        - evaluationMethod
+        - textbooks
+        - referenceBooks
+        - prerequisites
+        - preLearning
+        - postLearning
+        - notes
+        - keywords
+        - targetCourses
+        - targetAreas
+        - classifications
+        - teachingLanguage
+        - contentsAndSchedule
+        - teachingAndExamForm
+        - dsopSubject
+      properties:
+        id:
+          type: string
+          description: 教務システムのシラバスID
+        name:
+          type: string
+          description: 授業名
+        enName:
+          type: string
+          description: 授業名 (en)
+        grades:
+          type: string
+          description: 配当年次
+        credit:
+          type: integer
+          description: 単位数
+        facultyNames:
+          type: string
+          description: 担当教員名
+        practicalHomeFacultyCategory:
+          type: string
+          description: 実務家教員区分
+        multiplePersonTeachingForm:
+          type: string
+          description: 複数人担当形式
+        teachingForm:
+          type: string
+          description: 授業形態
+        summary:
+          type: string
+          description: 授業の概要
+        learningOutcomes:
+          type: string
+          description: 授業の到達目標
+        assignments:
+          type: string
+          description: 提出課題等
+        evaluationMethod:
+          type: string
+          description: 成績の評価方法・基準
+        textbooks:
+          type: string
+          description: テキスト
+        referenceBooks:
+          type: string
+          description: 参考書
+        prerequisites:
+          type: string
+          description: 履修条件
+        preLearning:
+          type: string
+          description: 事前学習
+        postLearning:
+          type: string
+          description: 事後学習
+        notes:
+          type: string
+          description: 履修上の留意点
+        keywords:
+          type: string
+          description: キーワード
+        targetCourses:
+          type: string
+          description: 対象コース・領域
+        targetAreas:
+          type: string
+          description: 対象領域
+        classifications:
+          type: string
+          description: 科目群・科目区分
+        teachingLanguage:
+          type: string
+          description: 教授言語
+        contentsAndSchedule:
+          type: string
+          description: 授業内容とスケジュール
+        teachingAndExamForm:
+          type: string
+          description: 授業・試験の形式
+        dsopSubject:
+          type: string
+          description: DSOP対象科目
     Announcement:
       type: object
       required:
@@ -327,20 +475,6 @@ components:
         - Optional
         - OptionalRequired
       description: 必修・選択
-    FacultyService.Faculty:
-      type: object
-      required:
-        - id
-        - name
-        - email
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        email:
-          type: string
-      description: 教員
     SubjectDetail:
       type: object
       required:
@@ -375,15 +509,15 @@ components:
         eligibleAttributes:
           type: array
           items:
-            $ref: '#/components/schemas/SubjectService.SubjectTargetClass'
+            $ref: '#/components/schemas/AcademicService.SubjectTargetClass'
           description: 授業名末尾の`学年-クラス`をもとに決定
         requirements:
           type: array
           items:
-            $ref: '#/components/schemas/SubjectService.SubjectRequirement'
+            $ref: '#/components/schemas/AcademicService.SubjectRequirement'
           description: 科目群・科目区分をもとに決定
         syllabus:
-          $ref: '#/components/schemas/SubjectService.Syllabus'
+          $ref: '#/components/schemas/AcademicService.Syllabus'
     SubjectFaculty:
       type: object
       required:
@@ -391,143 +525,9 @@ components:
         - isPrimary
       properties:
         faculty:
-          $ref: '#/components/schemas/FacultyService.Faculty'
+          $ref: '#/components/schemas/AcademicService.Faculty'
         isPrimary:
           type: boolean
-    SubjectService.SubjectRequirement:
-      type: object
-      required:
-        - course
-        - requirementType
-      properties:
-        course:
-          $ref: '#/components/schemas/DottoFoundationV1.Course'
-        requirementType:
-          $ref: '#/components/schemas/DottoFoundationV1.SubjectRequirementType'
-    SubjectService.SubjectTargetClass:
-      type: object
-      required:
-        - grade
-      properties:
-        grade:
-          $ref: '#/components/schemas/DottoFoundationV1.Grade'
-        class:
-          allOf:
-            - $ref: '#/components/schemas/DottoFoundationV1.Class'
-          description: 修士課程・博士課程対象の場合はnull
-      description: 対象学年・クラス
-    SubjectService.Syllabus:
-      type: object
-      required:
-        - id
-        - name
-        - enName
-        - grades
-        - credit
-        - facultyNames
-        - practicalHomeFacultyCategory
-        - multiplePersonTeachingForm
-        - teachingForm
-        - summary
-        - learningOutcomes
-        - assignments
-        - evaluationMethod
-        - textbooks
-        - referenceBooks
-        - prerequisites
-        - preLearning
-        - postLearning
-        - notes
-        - keywords
-        - targetCourses
-        - targetAreas
-        - classifications
-        - teachingLanguage
-        - contentsAndSchedule
-        - teachingAndExamForm
-        - dspoSubject
-      properties:
-        id:
-          type: string
-          description: 教務システムのシラバスID
-        name:
-          type: string
-          description: 授業名
-        enName:
-          type: string
-          description: 授業名 (en)
-        grades:
-          type: string
-          description: 配当年次
-        credit:
-          type: integer
-          description: 単位数
-        facultyNames:
-          type: string
-          description: 担当教員名
-        practicalHomeFacultyCategory:
-          type: string
-          description: 実務家教員区分
-        multiplePersonTeachingForm:
-          type: string
-          description: 複数人担当形式
-        teachingForm:
-          type: string
-          description: 授業形態
-        summary:
-          type: string
-          description: 授業の概要
-        learningOutcomes:
-          type: string
-          description: 授業の到達目標
-        assignments:
-          type: string
-          description: 提出課題等
-        evaluationMethod:
-          type: string
-          description: 成績の評価方法・基準
-        textbooks:
-          type: string
-          description: テキスト
-        referenceBooks:
-          type: string
-          description: 参考書
-        prerequisites:
-          type: string
-          description: 履修条件
-        preLearning:
-          type: string
-          description: 事前学習
-        postLearning:
-          type: string
-          description: 事後学習
-        notes:
-          type: string
-          description: 履修上の留意点
-        keywords:
-          type: string
-          description: キーワード
-        targetCourses:
-          type: string
-          description: 対象コース・領域
-        targetAreas:
-          type: string
-          description: 対象領域
-        classifications:
-          type: string
-          description: 科目群・科目区分
-        teachingLanguage:
-          type: string
-          description: 教授言語
-        contentsAndSchedule:
-          type: string
-          description: 授業内容とスケジュール
-        teachingAndExamForm:
-          type: string
-          description: 授業・試験の形式
-        dspoSubject:
-          type: string
-          description: DSOP対象科目
     SubjectSummary:
       type: object
       required:

@@ -14,9 +14,9 @@ Name | Type | Description | Notes
 **year** | **int** | 開講年度 | 
 **semester** | [**DottoFoundationV1CourseSemester**](DottoFoundationV1CourseSemester.md) | 開講時期 | 
 **credit** | **int** | 単位数 | 
-**eligibleAttributes** | [**BuiltList&lt;SubjectServiceSubjectTargetClass&gt;**](SubjectServiceSubjectTargetClass.md) | 授業名末尾の`学年-クラス`をもとに決定 | 
-**requirements** | [**BuiltList&lt;SubjectServiceSubjectRequirement&gt;**](SubjectServiceSubjectRequirement.md) | 科目群・科目区分をもとに決定 | 
-**syllabus** | [**SubjectServiceSyllabus**](SubjectServiceSyllabus.md) |  | 
+**eligibleAttributes** | [**BuiltList&lt;AcademicServiceSubjectTargetClass&gt;**](AcademicServiceSubjectTargetClass.md) | 授業名末尾の`学年-クラス`をもとに決定 | 
+**requirements** | [**BuiltList&lt;AcademicServiceSubjectRequirement&gt;**](AcademicServiceSubjectRequirement.md) | 科目群・科目区分をもとに決定 | 
+**syllabus** | [**AcademicServiceSyllabus**](AcademicServiceSyllabus.md) |  | 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 
