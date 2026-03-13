@@ -83,6 +83,10 @@ final class SettingsScreen extends ConsumerWidget {
                     ? (_) => SettingsRepository().onLogin(context, ref, (User? user) => userNotifier.user = user)
                     : (_) => SettingsRepository().onLogout(userNotifier.logout),
               ),
+            ],
+          ),
+          SettingsSection(
+            tiles: <SettingsTile>[
               // 学年
               SettingsTile.navigation(
                 onPressed: (_) async {
