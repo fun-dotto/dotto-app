@@ -77,20 +77,16 @@ final class SettingsScreen extends ConsumerWidget {
             tiles: <SettingsTile>[
               // Googleでログイン
               SettingsTile.navigation(
-                title: Text((user == null) ? 'ログイン' : 'ログイン中'),
-                value: (Platform.isIOS)
-                    ? (user == null)
-                          ? null
-                          : const Text('ログアウト')
-                    : Text((user == null) ? 'Googleアカウント (@fun.ac.jp)' : '${user.email}でログイン中'),
-                description: (Platform.isIOS)
-                    ? Text((user == null) ? 'Googleアカウント (@fun.ac.jp)' : '${user.email}でログイン中')
-                    : null,
+                title: Text((user == null) ? 'Google アカウント (@fun.ac.jp) でログイン' : '${user.email}でログイン中'),
                 leading: Icon((user == null) ? Icons.login : Icons.logout),
                 onPressed: (user == null)
                     ? (_) => SettingsRepository().onLogin(context, ref, (User? user) => userNotifier.user = user)
                     : (_) => SettingsRepository().onLogout(userNotifier.logout),
               ),
+            ],
+          ),
+          SettingsSection(
+            tiles: <SettingsTile>[
               // 学年
               SettingsTile.navigation(
                 onPressed: (_) async {
