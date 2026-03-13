@@ -1,6 +1,7 @@
 import 'package:dotto/domain/subject_summary.dart';
 import 'package:dotto/feature/search_subject/domain/subject_filter.dart';
 import 'package:dotto/feature/search_subject/search_subject_filter_screen.dart';
+import 'package:dotto/repository/subject_repository.dart';
 import 'package:dotto_design_system/component/text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -13,8 +14,26 @@ class SearchSubjectScreen extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final textEditingController = useTextEditingController();
     final focusNode = useFocusNode();
-    final subjects = useState<List<SubjectSummary>>([]);
     final filter = useState(SubjectFilter());
+    final subjects = useState<AsyncValue<List<SubjectSummary>>>(const AsyncData([]));
+
+    bool isEmptyFilter() =>
+        textEditingController.text.isEmpty &&
+        filter.value.grades.isEmpty &&
+        filter.value.courses.isEmpty &&
+        filter.value.classes.isEmpty &&
+        filter.value.classifications.isEmpty &&
+        filter.value.semesters.isEmpty &&
+        filter.value.requirements.isEmpty &&
+        filter.value.culturalSubjectCategories.isEmpty;
+
+    Future<void> search() async {
+      subjects
+        ..value = const AsyncLoading()
+        ..value = await AsyncValue.guard(
+          () => ref.read(subjectRepositoryProvider).getSubjects(textEditingController.text, filter.value),
+        );
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -32,6 +51,7 @@ class SearchSubjectScreen extends HookConsumerWidget {
               if (result != null) {
                 filter.value = result;
               }
+              await search();
             },
             icon: Badge(isLabelVisible: filter.value.hasActiveFilters, child: const Icon(Icons.tune)),
           ),
@@ -42,23 +62,35 @@ class SearchSubjectScreen extends HookConsumerWidget {
         child: Column(
           spacing: 8,
           children: [
-            DottoTextField(placeholder: '科目名で検索', controller: textEditingController, focusNode: focusNode),
+            DottoTextField(
+              placeholder: '科目名で検索',
+              controller: textEditingController,
+              focusNode: focusNode,
+              onSubmitted: (_) => search(),
+            ),
             Expanded(
-              child: ListView.separated(
-                separatorBuilder: (_, _) => const Divider(height: 0),
-                itemCount: subjects.value.length,
-                itemBuilder: (context, index) {
-                  final subject = subjects.value[index];
-                  return ListTile(
-                    title: Text(subject.name),
-                    subtitle: Text('${subject.dayOfWeek.label}${subject.period.number}'),
-                    onTap: () {},
-                    trailing: const Icon(Icons.chevron_right),
-                    leading: Icon(subject.isAddedToTimetable ? Icons.check : Icons.add),
-                  );
-                },
-                keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-              ),
+              child: switch (subjects.value) {
+                AsyncData(:final value) =>
+                  value.isEmpty && !isEmptyFilter()
+                      ? const Center(child: Text('科目が見つかりませんでした'))
+                      : ListView.separated(
+                          separatorBuilder: (_, _) => const Divider(height: 0),
+                          itemCount: value.length,
+                          itemBuilder: (context, index) {
+                            final subject = value[index];
+                            return ListTile(
+                              title: Text(subject.name),
+                              subtitle: Text('${subject.dayOfWeek.label}${subject.period.number}'),
+                              onTap: () {},
+                              trailing: const Icon(Icons.chevron_right),
+                              leading: Icon(subject.isAddedToTimetable ? Icons.check : Icons.add),
+                            );
+                          },
+                          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+                        ),
+                AsyncError(:final error) => Center(child: Text('エラーが発生しました: $error')),
+                AsyncLoading() => const Center(child: CircularProgressIndicator()),
+              },
             ),
           ],
         ),
