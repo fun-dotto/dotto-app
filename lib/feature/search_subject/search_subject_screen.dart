@@ -31,7 +31,6 @@ class SearchSubjectScreen extends HookWidget {
               if (result != null) {
                 filter.value = result;
               }
-              print(filter.value);
             },
             icon: Badge(isLabelVisible: filter.value.hasActiveFilters, child: const Icon(Icons.tune)),
           ),
