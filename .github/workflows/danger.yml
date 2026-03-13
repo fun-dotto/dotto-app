@@ -30,6 +30,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
       - uses: jdx/mise-action@v3
       - name: Install dependencies
         run: bundle install
