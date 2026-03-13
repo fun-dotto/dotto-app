@@ -1,18 +1,33 @@
 import 'package:flutter/material.dart';
 
 enum DayOfWeek {
-  monday(label: '月', color: Colors.black),
-  tuesday(label: '火', color: Colors.black),
-  wednesday(label: '水', color: Colors.black),
-  thursday(label: '木', color: Colors.black),
-  friday(label: '金', color: Colors.black),
-  saturday(label: '土', color: Colors.blue),
-  sunday(label: '日', color: Colors.red);
+  monday,
+  tuesday,
+  wednesday,
+  thursday,
+  friday,
+  saturday,
+  sunday;
 
-  const DayOfWeek({required this.label, required this.color});
+  String get label => switch (this) {
+    DayOfWeek.monday => '月',
+    DayOfWeek.tuesday => '火',
+    DayOfWeek.wednesday => '水',
+    DayOfWeek.thursday => '木',
+    DayOfWeek.friday => '金',
+    DayOfWeek.saturday => '土',
+    DayOfWeek.sunday => '日',
+  };
 
-  final String label;
-  final Color color;
+  Color get color => switch (this) {
+    DayOfWeek.monday => Colors.black,
+    DayOfWeek.tuesday => Colors.black,
+    DayOfWeek.wednesday => Colors.black,
+    DayOfWeek.thursday => Colors.black,
+    DayOfWeek.friday => Colors.black,
+    DayOfWeek.saturday => Colors.blue,
+    DayOfWeek.sunday => Colors.red,
+  };
 
   int get number => index + 1;
 
