@@ -8,7 +8,6 @@ import 'package:built_value/json_object.dart';
 import 'package:built_value/serializer.dart';
 import 'package:dio/dio.dart';
 
-import 'package:openapi/src/api_util.dart';
 import 'package:openapi/src/model/user_info.dart';
 import 'package:openapi/src/model/users_v1_detail200_response.dart';
 
@@ -24,7 +23,6 @@ class UsersApi {
   /// ユーザーを取得する
   ///
   /// Parameters:
-  /// * [id] - ユーザーID
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
   /// * [headers] - Can be used to add additional headers to the request
   /// * [extras] - Can be used to add flags to the request
@@ -35,7 +33,6 @@ class UsersApi {
   /// Returns a [Future] containing a [Response] with a [UsersV1Detail200Response] as data
   /// Throws [DioException] if API call or serialization fails
   Future<Response<UsersV1Detail200Response>> usersV1Detail({ 
-    required String id,
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
     Map<String, dynamic>? extra,
@@ -43,7 +40,7 @@ class UsersApi {
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
   }) async {
-    final _path = r'/v1/users/{id}'.replaceAll('{' r'id' '}', encodeQueryParameter(_serializers, id, const FullType(String)).toString());
+    final _path = r'/v1/users';
     final _options = Options(
       method: r'GET',
       headers: <String, dynamic>{
@@ -99,7 +96,6 @@ class UsersApi {
   /// ユーザーを作成または更新する
   ///
   /// Parameters:
-  /// * [id] 
   /// * [userInfo] - 作成または更新するユーザーの情報
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
   /// * [headers] - Can be used to add additional headers to the request
@@ -111,7 +107,6 @@ class UsersApi {
   /// Returns a [Future] containing a [Response] with a [UsersV1Detail200Response] as data
   /// Throws [DioException] if API call or serialization fails
   Future<Response<UsersV1Detail200Response>> usersV1Upsert({ 
-    required String id,
     required UserInfo userInfo,
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
@@ -120,7 +115,7 @@ class UsersApi {
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
   }) async {
-    final _path = r'/v1/users/{id}'.replaceAll('{' r'id' '}', encodeQueryParameter(_serializers, id, const FullType(String)).toString());
+    final _path = r'/v1/users';
     final _options = Options(
       method: r'POST',
       headers: <String, dynamic>{
