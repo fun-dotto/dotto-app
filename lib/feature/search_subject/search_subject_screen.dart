@@ -44,7 +44,6 @@ class SearchSubjectScreen extends HookWidget {
             DottoTextField(placeholder: '科目名で検索', controller: textEditingController, focusNode: focusNode),
             Expanded(
               child: ListView.separated(
-                shrinkWrap: true,
                 separatorBuilder: (_, _) => const Divider(height: 0),
                 itemCount: subjects.value.length,
                 itemBuilder: (context, index) {
