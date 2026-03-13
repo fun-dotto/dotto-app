@@ -16,11 +16,6 @@ final class DebugScreen extends HookConsumerWidget {
     final idToken = useFuture(useMemoized(() => FirebaseAuth.instance.currentUser?.getIdToken()));
     final environment = ref.watch(apiEnvironmentProvider);
 
-    useEffect(() {
-      ref.read(apiEnvironmentProvider.notifier).load();
-      return null;
-    }, const []);
-
     void showEnvironmentPicker() {
       showDialog<void>(
         context: context,
