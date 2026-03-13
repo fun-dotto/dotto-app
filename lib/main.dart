@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:dotto/api/api_environment.dart';
 import 'package:dotto/app.dart';
 import 'package:dotto/firebase_options.dart';
 import 'package:dotto/helper/firebase_storage_repository.dart';
@@ -75,7 +76,9 @@ Future<void> main() async {
   await LoggerImpl().logAppOpen();
 
   // アプリの起動
-  runApp(const ProviderScope(child: MyApp()));
+  final container = ProviderContainer();
+  await container.read(apiEnvironmentProvider.notifier).load();
+  runApp(UncontrolledProviderScope(container: container, child: const MyApp()));
 }
 
 @pragma('vm:entry-point')

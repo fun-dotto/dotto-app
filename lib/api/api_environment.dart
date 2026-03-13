@@ -5,7 +5,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'api_environment.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 final class ApiEnvironment extends _$ApiEnvironment {
   @override
   Environment build() {
@@ -23,12 +23,12 @@ final class ApiEnvironment extends _$ApiEnvironment {
   Future<void> load() async {
     final environment = await UserPreferenceRepository.getString(UserPreferenceKeys.environment);
     if (environment != null) {
-      state = Environment.values.firstWhere((e) => e.name == environment);
+      state = Environment.values.firstWhere((e) => e.tag == environment, orElse: () => state);
     }
   }
 
   Future<void> _save() async {
-    await UserPreferenceRepository.setString(UserPreferenceKeys.environment, state.name);
+    await UserPreferenceRepository.setString(UserPreferenceKeys.environment, state.tag);
   }
 }
 
@@ -37,6 +37,20 @@ enum Environment {
   staging,
   qa,
   production;
+
+  String get tag => switch (this) {
+    Environment.development => 'dev',
+    Environment.staging => 'stg',
+    Environment.qa => 'qa',
+    Environment.production => 'prod',
+  };
+
+  String get label => switch (this) {
+    Environment.development => 'Development',
+    Environment.staging => 'Staging',
+    Environment.qa => 'QA',
+    Environment.production => 'Production',
+  };
 
   String get basePath => switch (this) {
     Environment.development => 'https://app-bff-api-dev-107577467292.asia-northeast1.run.app',
