@@ -63,7 +63,3 @@ lib/src/model/user_info.dart
 lib/src/model/users_v1_detail200_response.dart
 lib/src/serializers.dart
 pubspec.yaml
-test/academic_service_faculty_test.dart
-test/academic_service_subject_requirement_test.dart
-test/academic_service_subject_target_class_test.dart
-test/academic_service_syllabus_test.dart
