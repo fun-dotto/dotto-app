@@ -219,7 +219,7 @@ class _EditTimetableScreenState extends ConsumerState<EditTimetableScreen> with 
   Widget build(BuildContext context) {
     final timetableViewStyle = ref.watch(timetableViewStyleProvider);
     final selectedSemester = ref.watch(selectedSemesterProvider);
-    final selectedIndex = Semester.values.indexOf(selectedSemester);
+    final selectedIndex = Semester.onEditTimetableScreen.indexOf(selectedSemester);
     if (_tabController.index != selectedIndex && !_tabController.indexIsChanging) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) {
@@ -245,10 +245,10 @@ class _EditTimetableScreenState extends ConsumerState<EditTimetableScreen> with 
         bottom: TabBar(
           dividerColor: Colors.transparent,
           controller: _tabController,
-          tabs: Semester.values.map((e) => Tab(text: e.label)).toList(),
+          tabs: Semester.onEditTimetableScreen.map((e) => Tab(text: e.label)).toList(),
         ),
       ),
-      body: TabBarView(controller: _tabController, children: Semester.values.map(_timetable).toList()),
+      body: TabBarView(controller: _tabController, children: Semester.onEditTimetableScreen.map(_timetable).toList()),
     );
   }
 }
