@@ -17,6 +17,15 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:openapi/openapi.dart' hide SubjectFaculty, SubjectSummary;
 
+extension IterableToBuiltListOrNullExtension<E> on Iterable<E> {
+  BuiltList<T>? mapToBuiltListOrNull<T>(T Function(E) convert) {
+    if (isEmpty) {
+      return null;
+    }
+    return BuiltList<T>(map(convert));
+  }
+}
+
 final subjectRepositoryProvider = Provider<SubjectRepository>((ref) => SubjectRepositoryImpl(ref));
 
 abstract class SubjectRepository {
@@ -34,41 +43,33 @@ final class SubjectRepositoryImpl implements SubjectRepository {
       final api = ref.read(apiClientProvider).getSubjectsApi();
       final response = await api.subjectsV1List(
         q: query,
-        grade: filter.grades.isEmpty
-            ? null
-            : BuiltList<DottoFoundationV1Grade>(
-                filter.grades.map(
-                  (e) => switch (e) {
-                    Grade.b1 => DottoFoundationV1Grade.b1,
-                    Grade.b2 => DottoFoundationV1Grade.b2,
-                    Grade.b3 => DottoFoundationV1Grade.b3,
-                    Grade.b4 => DottoFoundationV1Grade.b4,
-                    Grade.m1 => DottoFoundationV1Grade.m1,
-                    Grade.m2 => DottoFoundationV1Grade.m2,
-                    Grade.d1 => DottoFoundationV1Grade.d1,
-                    Grade.d2 => DottoFoundationV1Grade.d2,
-                    Grade.d3 => DottoFoundationV1Grade.d3,
-                  },
-                ),
-              ),
-        courses: filter.courses.isEmpty
-            ? null
-            : BuiltList<DottoFoundationV1Course>(
-                filter.courses.map(
-                  (e) => switch (e) {
-                    AcademicArea.informationSystemCourse => DottoFoundationV1Course.informationSystem,
-                    AcademicArea.informationDesignCourse => DottoFoundationV1Course.informationDesign,
-                    AcademicArea.complexCourse => DottoFoundationV1Course.complexSystem,
-                    AcademicArea.intelligenceSystemCourse => DottoFoundationV1Course.intelligentSystem,
-                    AcademicArea.advancedICTCourse => DottoFoundationV1Course.advancedICT,
-                    AcademicArea.informationArchitectureArea => DottoFoundationV1Course.informationSystem,
-                    AcademicArea.mediaDesignArea => DottoFoundationV1Course.informationDesign,
-                    AcademicArea.complexInformationScienceArea => DottoFoundationV1Course.complexSystem,
-                    AcademicArea.intelligenceInformationScienceArea => DottoFoundationV1Course.intelligentSystem,
-                    AcademicArea.advancedICTArea => DottoFoundationV1Course.advancedICT,
-                  },
-                ),
-              ),
+        grade: filter.grades.mapToBuiltListOrNull(
+          (e) => switch (e) {
+            Grade.b1 => DottoFoundationV1Grade.b1,
+            Grade.b2 => DottoFoundationV1Grade.b2,
+            Grade.b3 => DottoFoundationV1Grade.b3,
+            Grade.b4 => DottoFoundationV1Grade.b4,
+            Grade.m1 => DottoFoundationV1Grade.m1,
+            Grade.m2 => DottoFoundationV1Grade.m2,
+            Grade.d1 => DottoFoundationV1Grade.d1,
+            Grade.d2 => DottoFoundationV1Grade.d2,
+            Grade.d3 => DottoFoundationV1Grade.d3,
+          },
+        ),
+        courses: filter.courses.mapToBuiltListOrNull(
+          (e) => switch (e) {
+            AcademicArea.informationSystemCourse => DottoFoundationV1Course.informationSystem,
+            AcademicArea.informationDesignCourse => DottoFoundationV1Course.informationDesign,
+            AcademicArea.complexCourse => DottoFoundationV1Course.complexSystem,
+            AcademicArea.intelligenceSystemCourse => DottoFoundationV1Course.intelligentSystem,
+            AcademicArea.advancedICTCourse => DottoFoundationV1Course.advancedICT,
+            AcademicArea.informationArchitectureArea => DottoFoundationV1Course.informationSystem,
+            AcademicArea.mediaDesignArea => DottoFoundationV1Course.informationDesign,
+            AcademicArea.complexInformationScienceArea => DottoFoundationV1Course.complexSystem,
+            AcademicArea.intelligenceInformationScienceArea => DottoFoundationV1Course.intelligentSystem,
+            AcademicArea.advancedICTArea => DottoFoundationV1Course.advancedICT,
+          },
+        ),
         class_: filter.classes.isEmpty
             ? null
             : BuiltList<DottoFoundationV1Class>(
