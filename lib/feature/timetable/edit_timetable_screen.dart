@@ -37,7 +37,7 @@ class _EditTimetableScreenState extends ConsumerState<EditTimetableScreen> with 
       return;
     }
     final current = ref.read(selectedSemesterProvider);
-    final selected = Semester.values[_tabController.index];
+    final selected = Semester.onEditTimetableScreen[_tabController.index];
     if (current != selected) {
       ref.read(selectedSemesterProvider.notifier).value = selected;
     }
