@@ -27,7 +27,7 @@ final class DebugScreen extends HookConsumerWidget {
                 ref.read(apiEnvironmentProvider.notifier).value = env;
                 Navigator.of(context).pop();
               },
-              child: ListTile(title: Text(env.name), trailing: Icon(env == environment ? Icons.check : null)),
+              child: ListTile(title: Text(env.label), trailing: Icon(env == environment ? Icons.check : null)),
             );
           }).toList(),
         ),
@@ -79,7 +79,7 @@ final class DebugScreen extends HookConsumerWidget {
           ),
           ListTile(
             title: const Text('Environment'),
-            subtitle: Text(environment.name),
+            subtitle: Text(environment.label),
             trailing: const Icon(Icons.chevron_right),
             onTap: showEnvironmentPicker,
           ),
