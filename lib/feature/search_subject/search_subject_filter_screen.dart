@@ -85,7 +85,7 @@ class SearchSubjectFilterScreen extends HookWidget {
             const SizedBox(height: 12),
             _buildFilterChipGroup<SubjectRequirement>(
               context: context,
-              label: '必選区分',
+              label: '必修・選択',
               values: SubjectRequirement.values,
               selected: currentFilter.value.requirements,
               onChanged: (v) => currentFilter.value = currentFilter.value.copyWith(requirements: v),
