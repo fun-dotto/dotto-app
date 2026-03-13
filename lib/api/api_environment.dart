@@ -23,12 +23,12 @@ final class ApiEnvironment extends _$ApiEnvironment {
   Future<void> load() async {
     final environment = await UserPreferenceRepository.getString(UserPreferenceKeys.environment);
     if (environment != null) {
-      state = Environment.values.firstWhere((e) => e.name == environment, orElse: () => state);
+      state = Environment.values.firstWhere((e) => e.tag == environment, orElse: () => state);
     }
   }
 
   Future<void> _save() async {
-    await UserPreferenceRepository.setString(UserPreferenceKeys.environment, state.name);
+    await UserPreferenceRepository.setString(UserPreferenceKeys.environment, state.tag);
   }
 }
 
@@ -38,7 +38,14 @@ enum Environment {
   qa,
   production;
 
-  String get name => switch (this) {
+  String get tag => switch (this) {
+    Environment.development => 'dev',
+    Environment.staging => 'stg',
+    Environment.qa => 'qa',
+    Environment.production => 'prod',
+  };
+
+  String get label => switch (this) {
     Environment.development => 'Development',
     Environment.staging => 'Staging',
     Environment.qa => 'QA',
