@@ -40,8 +40,8 @@ final class SettingsScreen extends ConsumerWidget {
               SettingsTile.navigation(
                 title: Text(
                   (ref.read(userProvider.notifier).isAuthenticated)
-                      ? 'Google アカウント (@fun.ac.jp) でログイン'
-                      : '${user.value?.email}でログイン中',
+                      ? '${user.value?.email}でログイン中'
+                      : 'Google アカウント (@fun.ac.jp) でログイン',
                 ),
                 leading: Icon((user.value == null) ? Icons.login : Icons.logout),
                 onPressed: (user.value == null)
