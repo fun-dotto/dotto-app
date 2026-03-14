@@ -3,7 +3,7 @@ import 'package:dotto/domain/announcement.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final announcementRepositoryProvider = Provider<AnnouncementRepository>((ref) => AnnouncementRepositoryImpl(ref));
+final announcementRepositoryProvider = Provider<AnnouncementRepository>(AnnouncementRepositoryImpl.new);
 
 abstract class AnnouncementRepository {
   Future<List<Announcement>> getAnnouncements();

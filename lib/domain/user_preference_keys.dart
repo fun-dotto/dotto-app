@@ -2,6 +2,7 @@ enum UserPreferenceKeys {
   environment(key: 'environment', type: String),
   grade(key: 'grade', type: String),
   course(key: 'course', type: String),
+  class_(key: 'class', type: String),
   userKey(key: 'userKey', type: String),
   kadaiFinishList(key: 'finishListKey', type: String),
   kadaiAlertList(key: 'alertListKey', type: String),

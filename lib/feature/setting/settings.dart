@@ -38,7 +38,11 @@ final class SettingsScreen extends ConsumerWidget {
             tiles: <SettingsTile>[
               // Googleでログイン
               SettingsTile.navigation(
-                title: Text((user.value == null) ? 'Google アカウント (@fun.ac.jp) でログイン' : '${user.value?.email}でログイン中'),
+                title: Text(
+                  (ref.read(userProvider.notifier).isAuthenticated)
+                      ? 'Google アカウント (@fun.ac.jp) でログイン'
+                      : '${user.value?.email}でログイン中',
+                ),
                 leading: Icon((user.value == null) ? Icons.login : Icons.logout),
                 onPressed: (user.value == null)
                     ? (_) async {
@@ -58,18 +62,30 @@ final class SettingsScreen extends ConsumerWidget {
                     context: context,
                     builder: (context) => SimpleDialog(
                       title: const Text('学年'),
-                      children: Grade.values.map((grade) {
-                        return MaterialButton(
+                      children: [
+                        MaterialButton(
                           onPressed: () {
-                            // TODO: 学年を設定
+                            ref.read(userProvider.notifier).setGrade(null);
                             Navigator.of(context).pop();
                           },
                           child: ListTile(
-                            title: Text(grade.label),
-                            trailing: Icon(user.value?.grade == grade ? Icons.check : null),
+                            title: Text('なし'),
+                            trailing: Icon(user.value?.grade == null ? Icons.check : null),
                           ),
-                        );
-                      }).toList(),
+                        ),
+                        ...Grade.values.map((grade) {
+                          return MaterialButton(
+                            onPressed: () {
+                              ref.read(userProvider.notifier).setGrade(grade);
+                              Navigator.of(context).pop();
+                            },
+                            child: ListTile(
+                              title: Text(grade.label),
+                              trailing: Icon(user.value?.grade == grade ? Icons.check : null),
+                            ),
+                          );
+                        }).toList(),
+                      ],
                     ),
                   );
                 },
@@ -84,18 +100,30 @@ final class SettingsScreen extends ConsumerWidget {
                     context: context,
                     builder: (context) => SimpleDialog(
                       title: const Text('コース'),
-                      children: AcademicArea.values.map((academicArea) {
-                        return MaterialButton(
+                      children: [
+                        MaterialButton(
                           onPressed: () {
-                            // TODO: コースを設定
+                            ref.read(userProvider.notifier).setCourse(null);
                             Navigator.of(context).pop();
                           },
                           child: ListTile(
-                            title: Text(academicArea.label),
-                            trailing: Icon(user.value?.course == academicArea ? Icons.check : null),
+                            title: Text('なし'),
+                            trailing: Icon(user.value?.course == null ? Icons.check : null),
                           ),
-                        );
-                      }).toList(),
+                        ),
+                        ...AcademicArea.values.map((academicArea) {
+                          return MaterialButton(
+                            onPressed: () {
+                              ref.read(userProvider.notifier).setCourse(academicArea);
+                              Navigator.of(context).pop();
+                            },
+                            child: ListTile(
+                              title: Text(academicArea.label),
+                              trailing: Icon(user.value?.course == academicArea ? Icons.check : null),
+                            ),
+                          );
+                        }).toList(),
+                      ],
                     ),
                   );
                 },
@@ -110,18 +138,30 @@ final class SettingsScreen extends ConsumerWidget {
                     context: context,
                     builder: (context) => SimpleDialog(
                       title: const Text('クラス'),
-                      children: AcademicClass.values.map((academicClass) {
-                        return MaterialButton(
+                      children: [
+                        MaterialButton(
                           onPressed: () {
-                            // TODO: クラスを設定
+                            ref.read(userProvider.notifier).setClass(null);
                             Navigator.of(context).pop();
                           },
                           child: ListTile(
-                            title: Text(academicClass.label),
-                            trailing: Icon(user.value?.class_ == academicClass ? Icons.check : null),
+                            title: Text('なし'),
+                            trailing: Icon(user.value?.class_ == null ? Icons.check : null),
                           ),
-                        );
-                      }).toList(),
+                        ),
+                        ...AcademicClass.values.map((academicClass) {
+                          return MaterialButton(
+                            onPressed: () {
+                              ref.read(userProvider.notifier).setClass(academicClass);
+                              Navigator.of(context).pop();
+                            },
+                            child: ListTile(
+                              title: Text(academicClass.label),
+                              trailing: Icon(user.value?.class_ == academicClass ? Icons.check : null),
+                            ),
+                          );
+                        }).toList(),
+                      ],
                     ),
                   );
                 },
