@@ -65,7 +65,6 @@ final class _AppTutorialState extends State<AppTutorial> {
                 style: DottoButton.styleFrom(
                   textStyle: Theme.of(context).textTheme.bodySmall,
                   padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 10),
-                  minimumSize: const Size(32, 28),
                 ),
                 child: const Text('スキップ'),
               ),
@@ -82,7 +81,9 @@ final class _AppTutorialState extends State<AppTutorial> {
         return SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(24, 20, 24, 20),
           child: ConstrainedBox(
-            constraints: BoxConstraints(minHeight: constraints.maxHeight - 40),
+            constraints: BoxConstraints(
+              minHeight: constraints.maxHeight > 40 ? constraints.maxHeight - 40 : 0,
+            ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -131,7 +132,7 @@ final class _AppTutorialState extends State<AppTutorial> {
         const topAndBottomSpacing = topPadding + bottomPadding + titleToImageSpacing + imageToDescriptionSpacing;
         final availableImageHeight =
             (constraints.maxHeight - topAndBottomSpacing - estimatedTitleHeight - estimatedDescriptionHeight).clamp(
-              220.0,
+              0.0,
               680.0,
             );
 
@@ -181,7 +182,13 @@ final class _AppTutorialState extends State<AppTutorial> {
                 ),
               ),
               const SizedBox(height: imageToDescriptionSpacing),
-              Text(page.description!, textAlign: TextAlign.center, maxLines: 2, style: bodyStyle),
+              Text(
+                page.description!,
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: bodyStyle,
+              ),
             ],
           ),
         );
@@ -251,6 +258,7 @@ final class _AppTutorialState extends State<AppTutorial> {
     return Scaffold(
       appBar: AppBar(title: const Text('Dottoの使い方')),
       body: SafeArea(
+        top: false,
         child: Stack(
           children: [
             Positioned.fill(child: _buildBackgroundDottoText()),

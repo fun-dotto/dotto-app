@@ -5,6 +5,7 @@ info:
 tags:
   - name: Announcements
   - name: Subjects
+  - name: Users
 paths:
   /announcements:
     get:
@@ -51,14 +52,14 @@ paths:
       parameters:
         - name: q
           in: query
-          required: true
+          required: false
           description: 検索ワード
           schema:
             type: string
           explode: false
         - name: grade
           in: query
-          required: true
+          required: false
           description: 学年
           schema:
             type: array
@@ -67,7 +68,7 @@ paths:
           explode: false
         - name: courses
           in: query
-          required: true
+          required: false
           description: コース; 大学院の場合は大学院コースに読み替え
           schema:
             type: array
@@ -76,7 +77,7 @@ paths:
           explode: false
         - name: class
           in: query
-          required: true
+          required: false
           description: クラス; 大学院の学年を選択した場合は選択できない
           schema:
             type: array
@@ -85,7 +86,7 @@ paths:
           explode: false
         - name: classification
           in: query
-          required: true
+          required: false
           description: '学部: 専門・教養; 大学院: 専門・研究指導'
           schema:
             type: array
@@ -94,7 +95,7 @@ paths:
           explode: false
         - name: semester
           in: query
-          required: true
+          required: false
           description: 開講時期
           schema:
             type: array
@@ -103,16 +104,16 @@ paths:
           explode: false
         - name: requirementType
           in: query
-          required: true
+          required: false
           description: 必修・選択・選択必修
           schema:
             type: array
             items:
               $ref: '#/components/schemas/DottoFoundationV1.SubjectRequirementType'
           explode: false
-        - name: calturalSubjectCategory
+        - name: culturalSubjectCategory
           in: query
-          required: true
+          required: false
           description: 教養科目カテゴリ
           schema:
             type: array
@@ -130,7 +131,7 @@ paths:
                   subjects:
                     type: array
                     items:
-                      $ref: '#/components/schemas/SubjectDetail'
+                      $ref: '#/components/schemas/SubjectSummary'
                 required:
                   - subjects
       tags:
@@ -158,74 +159,64 @@ paths:
                   - subject
       tags:
         - Subjects
+  /v1/users/{id}:
+    get:
+      operationId: UsersV1_detail
+      description: ユーザーを取得する
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ユーザーID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ユーザーの情報
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: '#/components/schemas/UserInfo'
+                required:
+                  - user
+      tags:
+        - Users
+    post:
+      operationId: UsersV1_upsert
+      description: ユーザーを作成または更新する
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 作成または更新されたユーザー
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: '#/components/schemas/UserInfo'
+                required:
+                  - user
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserInfo'
+        description: 作成または更新するユーザーの情報
 components:
   schemas:
-    Announcement:
-      type: object
-      required:
-        - id
-        - title
-        - date
-        - url
-      properties:
-        id:
-          type: string
-        title:
-          type: string
-        date:
-          type: string
-          format: date-time
-        url:
-          type: string
-          format: uri
-    DottoFoundationV1.Class:
-      type: string
-      enum:
-        - A
-        - B
-        - C
-        - D
-        - E
-        - F
-        - G
-        - H
-        - I
-        - J
-        - K
-        - L
-      description: クラス
-    DottoFoundationV1.Course:
-      type: string
-      enum:
-        - InformationSystem
-        - InformationDesign
-        - AdvancedICT
-        - ComplexSystem
-        - IntelligentSystem
-      description: コース
-    DottoFoundationV1.CourseSemester:
-      type: string
-      enum:
-        - AllYear
-        - H1
-        - H2
-        - Q1
-        - Q2
-        - Q3
-        - Q4
-        - SummerIntensive
-        - WinterIntensive
-      description: 開講時期
-    DottoFoundationV1.CulturalSubjectCategory:
-      type: string
-      enum:
-        - Society
-        - Human
-        - Science
-        - Health
-        - Communication
-      description: 教養科目カテゴリ
-    DottoFoundationV1.Faculty:
+    AcademicService.Faculty:
       type: object
       required:
         - id
@@ -239,81 +230,7 @@ components:
         email:
           type: string
       description: 教員
-    DottoFoundationV1.Grade:
-      type: string
-      enum:
-        - B1
-        - B2
-        - B3
-        - B4
-        - M1
-        - M2
-        - D1
-        - D2
-        - D3
-      description: 学年
-    DottoFoundationV1.SubjectClassification:
-      type: string
-      enum:
-        - Specialized
-        - Cultural
-        - ResearchInstruction
-      description: 科目カテゴリ
-    DottoFoundationV1.SubjectRequirementType:
-      type: string
-      enum:
-        - Required
-        - Optional
-        - OptionalRequired
-      description: 必修・選択
-    SubjectDetail:
-      type: object
-      required:
-        - id
-        - name
-        - faculties
-        - semester
-        - credit
-        - eligibleAttributes
-        - requirements
-        - syllabus
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        faculties:
-          type: array
-          items:
-            $ref: '#/components/schemas/SubjectService.SubjectFaculty'
-        semester:
-          $ref: '#/components/schemas/DottoFoundationV1.CourseSemester'
-        credit:
-          type: integer
-          description: 単位数
-        eligibleAttributes:
-          type: array
-          items:
-            $ref: '#/components/schemas/SubjectService.SubjectTargetClass'
-          description: 授業名末尾の`学年-クラス`をもとに決定
-        requirements:
-          type: array
-          items:
-            $ref: '#/components/schemas/SubjectService.SubjectRequirement'
-          description: 科目群・科目区分をもとに決定
-        syllabus:
-          $ref: '#/components/schemas/SubjectService.Syllabus'
-    SubjectService.SubjectFaculty:
-      type: object
-      required:
-        - faculty
-        - isPrimary
-      properties:
-        faculty:
-          $ref: '#/components/schemas/DottoFoundationV1.Faculty'
-        isPrimary:
-          type: boolean
-    SubjectService.SubjectRequirement:
+    AcademicService.SubjectRequirement:
       type: object
       required:
         - course
@@ -323,7 +240,7 @@ components:
           $ref: '#/components/schemas/DottoFoundationV1.Course'
         requirementType:
           $ref: '#/components/schemas/DottoFoundationV1.SubjectRequirementType'
-    SubjectService.SubjectTargetClass:
+    AcademicService.SubjectTargetClass:
       type: object
       required:
         - grade
@@ -335,7 +252,7 @@ components:
             - $ref: '#/components/schemas/DottoFoundationV1.Class'
           description: 修士課程・博士課程対象の場合はnull
       description: 対象学年・クラス
-    SubjectService.Syllabus:
+    AcademicService.Syllabus:
       type: object
       required:
         - id
@@ -364,7 +281,7 @@ components:
         - teachingLanguage
         - contentsAndSchedule
         - teachingAndExamForm
-        - dspoSubject
+        - dsopSubject
       properties:
         id:
           type: string
@@ -444,16 +361,181 @@ components:
         teachingAndExamForm:
           type: string
           description: 授業・試験の形式
-        dspoSubject:
+        dsopSubject:
           type: string
           description: DSOP対象科目
+    Announcement:
+      type: object
+      required:
+        - id
+        - title
+        - date
+        - url
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        date:
+          type: string
+          format: date-time
+        url:
+          type: string
+          format: uri
+    DottoFoundationV1.Class:
+      type: string
+      enum:
+        - A
+        - B
+        - C
+        - D
+        - E
+        - F
+        - G
+        - H
+        - I
+        - J
+        - K
+        - L
+      description: クラス
+    DottoFoundationV1.Course:
+      type: string
+      enum:
+        - InformationSystem
+        - InformationDesign
+        - AdvancedICT
+        - ComplexSystem
+        - IntelligentSystem
+      description: コース
+    DottoFoundationV1.CourseSemester:
+      type: string
+      enum:
+        - AllYear
+        - H1
+        - H2
+        - Q1
+        - Q2
+        - Q3
+        - Q4
+        - SummerIntensive
+        - WinterIntensive
+      description: 開講時期
+    DottoFoundationV1.CulturalSubjectCategory:
+      type: string
+      enum:
+        - Society
+        - Human
+        - Science
+        - Health
+        - Communication
+      description: 教養科目カテゴリ
+    DottoFoundationV1.DayOfWeek:
+      type: string
+      enum:
+        - Sunday
+        - Monday
+        - Tuesday
+        - Wednesday
+        - Thursday
+        - Friday
+        - Saturday
+    DottoFoundationV1.Grade:
+      type: string
+      enum:
+        - B1
+        - B2
+        - B3
+        - B4
+        - M1
+        - M2
+        - D1
+        - D2
+        - D3
+      description: 学年
+    DottoFoundationV1.Period:
+      type: string
+      enum:
+        - Period1
+        - Period2
+        - Period3
+        - Period4
+        - Period5
+        - Period6
+    DottoFoundationV1.SubjectClassification:
+      type: string
+      enum:
+        - Specialized
+        - Cultural
+        - ResearchInstruction
+      description: 科目カテゴリ
+    DottoFoundationV1.SubjectRequirementType:
+      type: string
+      enum:
+        - Required
+        - Optional
+        - OptionalRequired
+      description: 必修・選択
+    SubjectDetail:
+      type: object
+      required:
+        - id
+        - name
+        - faculties
+        - year
+        - semester
+        - credit
+        - eligibleAttributes
+        - requirements
+        - syllabus
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        faculties:
+          type: array
+          items:
+            $ref: '#/components/schemas/SubjectFaculty'
+        year:
+          type: integer
+          description: 開講年度
+        semester:
+          allOf:
+            - $ref: '#/components/schemas/DottoFoundationV1.CourseSemester'
+          description: 開講時期
+        credit:
+          type: integer
+          description: 単位数
+        eligibleAttributes:
+          type: array
+          items:
+            $ref: '#/components/schemas/AcademicService.SubjectTargetClass'
+          description: 授業名末尾の`学年-クラス`をもとに決定
+        requirements:
+          type: array
+          items:
+            $ref: '#/components/schemas/AcademicService.SubjectRequirement'
+          description: 科目群・科目区分をもとに決定
+        syllabus:
+          $ref: '#/components/schemas/AcademicService.Syllabus'
+    SubjectFaculty:
+      type: object
+      required:
+        - faculty
+        - isPrimary
+      properties:
+        faculty:
+          $ref: '#/components/schemas/AcademicService.Faculty'
+        isPrimary:
+          type: boolean
     SubjectSummary:
       type: object
       required:
         - id
         - name
         - faculties
-        - dayOfWeekTimetableSlots
+        - dayOfWeek
+        - period
         - isAddedToTimetable
       properties:
         id:
@@ -463,17 +545,33 @@ components:
         faculties:
           type: array
           items:
-            $ref: '#/components/schemas/DottoFoundationV1.Faculty'
-        dayOfWeekTimetableSlots:
-          type: string
+            $ref: '#/components/schemas/SubjectFaculty'
+        dayOfWeek:
+          allOf:
+            - $ref: '#/components/schemas/DottoFoundationV1.DayOfWeek'
           description: |-
-            TODO: 時間割APIを作成したら、曜日・時限を取得する
-            曜日・時限
+            TODO: Timetable API から曜日を取得する
+            曜日
+        period:
+          allOf:
+            - $ref: '#/components/schemas/DottoFoundationV1.Period'
+          description: |-
+            TODO: Timetable API から時限を取得する
+            時限
         isAddedToTimetable:
           type: boolean
           description: |-
             TODO: 時間割APIを作成したら、時間割に追加されているかを取得する
             時間割に追加されているか
+    UserInfo:
+      type: object
+      properties:
+        grade:
+          $ref: '#/components/schemas/DottoFoundationV1.Grade'
+        course:
+          $ref: '#/components/schemas/DottoFoundationV1.Course'
+        class:
+          $ref: '#/components/schemas/DottoFoundationV1.Class'
 servers:
   - url: http://localhost:8080
     description: Local

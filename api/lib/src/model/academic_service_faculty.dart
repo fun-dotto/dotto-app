@@ -3,64 +3,72 @@
 //
 
 // ignore_for_file: unused_element
-import 'package:openapi/src/model/faculty_service_faculty.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 
-part 'subject_service_subject_faculty.g.dart';
+part 'academic_service_faculty.g.dart';
 
-/// SubjectServiceSubjectFaculty
+/// 教員
 ///
 /// Properties:
-/// * [faculty] 
-/// * [isPrimary] 
+/// * [id] 
+/// * [name] 
+/// * [email] 
 @BuiltValue()
-abstract class SubjectServiceSubjectFaculty implements Built<SubjectServiceSubjectFaculty, SubjectServiceSubjectFacultyBuilder> {
-  @BuiltValueField(wireName: r'faculty')
-  FacultyServiceFaculty get faculty;
+abstract class AcademicServiceFaculty implements Built<AcademicServiceFaculty, AcademicServiceFacultyBuilder> {
+  @BuiltValueField(wireName: r'id')
+  String get id;
 
-  @BuiltValueField(wireName: r'isPrimary')
-  bool get isPrimary;
+  @BuiltValueField(wireName: r'name')
+  String get name;
 
-  SubjectServiceSubjectFaculty._();
+  @BuiltValueField(wireName: r'email')
+  String get email;
 
-  factory SubjectServiceSubjectFaculty([void updates(SubjectServiceSubjectFacultyBuilder b)]) = _$SubjectServiceSubjectFaculty;
+  AcademicServiceFaculty._();
+
+  factory AcademicServiceFaculty([void updates(AcademicServiceFacultyBuilder b)]) = _$AcademicServiceFaculty;
 
   @BuiltValueHook(initializeBuilder: true)
-  static void _defaults(SubjectServiceSubjectFacultyBuilder b) => b;
+  static void _defaults(AcademicServiceFacultyBuilder b) => b;
 
   @BuiltValueSerializer(custom: true)
-  static Serializer<SubjectServiceSubjectFaculty> get serializer => _$SubjectServiceSubjectFacultySerializer();
+  static Serializer<AcademicServiceFaculty> get serializer => _$AcademicServiceFacultySerializer();
 }
 
-class _$SubjectServiceSubjectFacultySerializer implements PrimitiveSerializer<SubjectServiceSubjectFaculty> {
+class _$AcademicServiceFacultySerializer implements PrimitiveSerializer<AcademicServiceFaculty> {
   @override
-  final Iterable<Type> types = const [SubjectServiceSubjectFaculty, _$SubjectServiceSubjectFaculty];
+  final Iterable<Type> types = const [AcademicServiceFaculty, _$AcademicServiceFaculty];
 
   @override
-  final String wireName = r'SubjectServiceSubjectFaculty';
+  final String wireName = r'AcademicServiceFaculty';
 
   Iterable<Object?> _serializeProperties(
     Serializers serializers,
-    SubjectServiceSubjectFaculty object, {
+    AcademicServiceFaculty object, {
     FullType specifiedType = FullType.unspecified,
   }) sync* {
-    yield r'faculty';
+    yield r'id';
     yield serializers.serialize(
-      object.faculty,
-      specifiedType: const FullType(FacultyServiceFaculty),
+      object.id,
+      specifiedType: const FullType(String),
     );
-    yield r'isPrimary';
+    yield r'name';
     yield serializers.serialize(
-      object.isPrimary,
-      specifiedType: const FullType(bool),
+      object.name,
+      specifiedType: const FullType(String),
+    );
+    yield r'email';
+    yield serializers.serialize(
+      object.email,
+      specifiedType: const FullType(String),
     );
   }
 
   @override
   Object serialize(
     Serializers serializers,
-    SubjectServiceSubjectFaculty object, {
+    AcademicServiceFaculty object, {
     FullType specifiedType = FullType.unspecified,
   }) {
     return _serializeProperties(serializers, object, specifiedType: specifiedType).toList();
@@ -71,26 +79,33 @@ class _$SubjectServiceSubjectFacultySerializer implements PrimitiveSerializer<Su
     Object serialized, {
     FullType specifiedType = FullType.unspecified,
     required List<Object?> serializedList,
-    required SubjectServiceSubjectFacultyBuilder result,
+    required AcademicServiceFacultyBuilder result,
     required List<Object?> unhandled,
   }) {
     for (var i = 0; i < serializedList.length; i += 2) {
       final key = serializedList[i] as String;
       final value = serializedList[i + 1];
       switch (key) {
-        case r'faculty':
+        case r'id':
           final valueDes = serializers.deserialize(
             value,
-            specifiedType: const FullType(FacultyServiceFaculty),
-          ) as FacultyServiceFaculty;
-          result.faculty.replace(valueDes);
+            specifiedType: const FullType(String),
+          ) as String;
+          result.id = valueDes;
           break;
-        case r'isPrimary':
+        case r'name':
           final valueDes = serializers.deserialize(
             value,
-            specifiedType: const FullType(bool),
-          ) as bool;
-          result.isPrimary = valueDes;
+            specifiedType: const FullType(String),
+          ) as String;
+          result.name = valueDes;
+          break;
+        case r'email':
+          final valueDes = serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String;
+          result.email = valueDes;
           break;
         default:
           unhandled.add(key);
@@ -101,12 +116,12 @@ class _$SubjectServiceSubjectFacultySerializer implements PrimitiveSerializer<Su
   }
 
   @override
-  SubjectServiceSubjectFaculty deserialize(
+  AcademicServiceFaculty deserialize(
     Serializers serializers,
     Object serialized, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final result = SubjectServiceSubjectFacultyBuilder();
+    final result = AcademicServiceFacultyBuilder();
     final serializedList = (serialized as Iterable<Object?>).toList();
     final unhandled = <Object?>[];
     _deserializeProperties(

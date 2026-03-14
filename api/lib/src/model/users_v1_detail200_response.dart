@@ -3,56 +3,55 @@
 //
 
 // ignore_for_file: unused_element
-import 'package:built_collection/built_collection.dart';
-import 'package:openapi/src/model/subject_summary.dart';
+import 'package:openapi/src/model/user_info.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 
-part 'subjects_v1_list200_response.g.dart';
+part 'users_v1_detail200_response.g.dart';
 
-/// SubjectsV1List200Response
+/// UsersV1Detail200Response
 ///
 /// Properties:
-/// * [subjects] 
+/// * [user] 
 @BuiltValue()
-abstract class SubjectsV1List200Response implements Built<SubjectsV1List200Response, SubjectsV1List200ResponseBuilder> {
-  @BuiltValueField(wireName: r'subjects')
-  BuiltList<SubjectSummary> get subjects;
+abstract class UsersV1Detail200Response implements Built<UsersV1Detail200Response, UsersV1Detail200ResponseBuilder> {
+  @BuiltValueField(wireName: r'user')
+  UserInfo get user;
 
-  SubjectsV1List200Response._();
+  UsersV1Detail200Response._();
 
-  factory SubjectsV1List200Response([void updates(SubjectsV1List200ResponseBuilder b)]) = _$SubjectsV1List200Response;
+  factory UsersV1Detail200Response([void updates(UsersV1Detail200ResponseBuilder b)]) = _$UsersV1Detail200Response;
 
   @BuiltValueHook(initializeBuilder: true)
-  static void _defaults(SubjectsV1List200ResponseBuilder b) => b;
+  static void _defaults(UsersV1Detail200ResponseBuilder b) => b;
 
   @BuiltValueSerializer(custom: true)
-  static Serializer<SubjectsV1List200Response> get serializer => _$SubjectsV1List200ResponseSerializer();
+  static Serializer<UsersV1Detail200Response> get serializer => _$UsersV1Detail200ResponseSerializer();
 }
 
-class _$SubjectsV1List200ResponseSerializer implements PrimitiveSerializer<SubjectsV1List200Response> {
+class _$UsersV1Detail200ResponseSerializer implements PrimitiveSerializer<UsersV1Detail200Response> {
   @override
-  final Iterable<Type> types = const [SubjectsV1List200Response, _$SubjectsV1List200Response];
+  final Iterable<Type> types = const [UsersV1Detail200Response, _$UsersV1Detail200Response];
 
   @override
-  final String wireName = r'SubjectsV1List200Response';
+  final String wireName = r'UsersV1Detail200Response';
 
   Iterable<Object?> _serializeProperties(
     Serializers serializers,
-    SubjectsV1List200Response object, {
+    UsersV1Detail200Response object, {
     FullType specifiedType = FullType.unspecified,
   }) sync* {
-    yield r'subjects';
+    yield r'user';
     yield serializers.serialize(
-      object.subjects,
-      specifiedType: const FullType(BuiltList, [FullType(SubjectSummary)]),
+      object.user,
+      specifiedType: const FullType(UserInfo),
     );
   }
 
   @override
   Object serialize(
     Serializers serializers,
-    SubjectsV1List200Response object, {
+    UsersV1Detail200Response object, {
     FullType specifiedType = FullType.unspecified,
   }) {
     return _serializeProperties(serializers, object, specifiedType: specifiedType).toList();
@@ -63,19 +62,19 @@ class _$SubjectsV1List200ResponseSerializer implements PrimitiveSerializer<Subje
     Object serialized, {
     FullType specifiedType = FullType.unspecified,
     required List<Object?> serializedList,
-    required SubjectsV1List200ResponseBuilder result,
+    required UsersV1Detail200ResponseBuilder result,
     required List<Object?> unhandled,
   }) {
     for (var i = 0; i < serializedList.length; i += 2) {
       final key = serializedList[i] as String;
       final value = serializedList[i + 1];
       switch (key) {
-        case r'subjects':
+        case r'user':
           final valueDes = serializers.deserialize(
             value,
-            specifiedType: const FullType(BuiltList, [FullType(SubjectSummary)]),
-          ) as BuiltList<SubjectSummary>;
-          result.subjects.replace(valueDes);
+            specifiedType: const FullType(UserInfo),
+          ) as UserInfo;
+          result.user.replace(valueDes);
           break;
         default:
           unhandled.add(key);
@@ -86,12 +85,12 @@ class _$SubjectsV1List200ResponseSerializer implements PrimitiveSerializer<Subje
   }
 
   @override
-  SubjectsV1List200Response deserialize(
+  UsersV1Detail200Response deserialize(
     Serializers serializers,
     Object serialized, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final result = SubjectsV1List200ResponseBuilder();
+    final result = UsersV1Detail200ResponseBuilder();
     final serializedList = (serialized as Iterable<Object?>).toList();
     final unhandled = <Object?>[];
     _deserializeProperties(

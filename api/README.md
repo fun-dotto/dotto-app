@@ -68,28 +68,34 @@ Class | Method | HTTP request | Description
 [*AnnouncementsApi*](doc/AnnouncementsApi.md) | [**announcementsV1List**](doc/AnnouncementsApi.md#announcementsv1list) | **GET** /v1/announcements | 
 [*SubjectsApi*](doc/SubjectsApi.md) | [**subjectsV1Detail**](doc/SubjectsApi.md#subjectsv1detail) | **GET** /v1/subjects/{id} | 
 [*SubjectsApi*](doc/SubjectsApi.md) | [**subjectsV1List**](doc/SubjectsApi.md#subjectsv1list) | **GET** /v1/subjects | 
+[*UsersApi*](doc/UsersApi.md) | [**usersV1Detail**](doc/UsersApi.md#usersv1detail) | **GET** /v1/users/{id} | 
+[*UsersApi*](doc/UsersApi.md) | [**usersV1Upsert**](doc/UsersApi.md#usersv1upsert) | **POST** /v1/users/{id} | 
 
 
 ## Documentation For Models
 
+ - [AcademicServiceFaculty](doc/AcademicServiceFaculty.md)
+ - [AcademicServiceSubjectRequirement](doc/AcademicServiceSubjectRequirement.md)
+ - [AcademicServiceSubjectTargetClass](doc/AcademicServiceSubjectTargetClass.md)
+ - [AcademicServiceSyllabus](doc/AcademicServiceSyllabus.md)
  - [Announcement](doc/Announcement.md)
  - [AnnouncementsV1List200Response](doc/AnnouncementsV1List200Response.md)
  - [DottoFoundationV1Class](doc/DottoFoundationV1Class.md)
  - [DottoFoundationV1Course](doc/DottoFoundationV1Course.md)
  - [DottoFoundationV1CourseSemester](doc/DottoFoundationV1CourseSemester.md)
  - [DottoFoundationV1CulturalSubjectCategory](doc/DottoFoundationV1CulturalSubjectCategory.md)
- - [DottoFoundationV1Faculty](doc/DottoFoundationV1Faculty.md)
+ - [DottoFoundationV1DayOfWeek](doc/DottoFoundationV1DayOfWeek.md)
  - [DottoFoundationV1Grade](doc/DottoFoundationV1Grade.md)
+ - [DottoFoundationV1Period](doc/DottoFoundationV1Period.md)
  - [DottoFoundationV1SubjectClassification](doc/DottoFoundationV1SubjectClassification.md)
  - [DottoFoundationV1SubjectRequirementType](doc/DottoFoundationV1SubjectRequirementType.md)
  - [SubjectDetail](doc/SubjectDetail.md)
- - [SubjectServiceSubjectFaculty](doc/SubjectServiceSubjectFaculty.md)
- - [SubjectServiceSubjectRequirement](doc/SubjectServiceSubjectRequirement.md)
- - [SubjectServiceSubjectTargetClass](doc/SubjectServiceSubjectTargetClass.md)
- - [SubjectServiceSyllabus](doc/SubjectServiceSyllabus.md)
+ - [SubjectFaculty](doc/SubjectFaculty.md)
  - [SubjectSummary](doc/SubjectSummary.md)
  - [SubjectsV1Detail200Response](doc/SubjectsV1Detail200Response.md)
  - [SubjectsV1List200Response](doc/SubjectsV1List200Response.md)
+ - [UserInfo](doc/UserInfo.md)
+ - [UsersV1Detail200Response](doc/UsersV1Detail200Response.md)
 
 
 ## Documentation For Authorization

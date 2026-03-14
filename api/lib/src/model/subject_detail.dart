@@ -3,12 +3,12 @@
 //
 
 // ignore_for_file: unused_element
+import 'package:openapi/src/model/academic_service_subject_target_class.dart';
+import 'package:openapi/src/model/academic_service_subject_requirement.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:openapi/src/model/subject_service_subject_requirement.dart';
-import 'package:openapi/src/model/subject_service_syllabus.dart';
 import 'package:openapi/src/model/dotto_foundation_v1_course_semester.dart';
-import 'package:openapi/src/model/subject_service_subject_target_class.dart';
-import 'package:openapi/src/model/subject_service_subject_faculty.dart';
+import 'package:openapi/src/model/academic_service_syllabus.dart';
+import 'package:openapi/src/model/subject_faculty.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 
@@ -20,7 +20,8 @@ part 'subject_detail.g.dart';
 /// * [id] 
 /// * [name] 
 /// * [faculties] 
-/// * [semester] 
+/// * [year] - 開講年度
+/// * [semester] - 開講時期
 /// * [credit] - 単位数
 /// * [eligibleAttributes] - 授業名末尾の`学年-クラス`をもとに決定
 /// * [requirements] - 科目群・科目区分をもとに決定
@@ -34,8 +35,13 @@ abstract class SubjectDetail implements Built<SubjectDetail, SubjectDetailBuilde
   String get name;
 
   @BuiltValueField(wireName: r'faculties')
-  BuiltList<SubjectServiceSubjectFaculty> get faculties;
+  BuiltList<SubjectFaculty> get faculties;
 
+  /// 開講年度
+  @BuiltValueField(wireName: r'year')
+  int get year;
+
+  /// 開講時期
   @BuiltValueField(wireName: r'semester')
   DottoFoundationV1CourseSemester get semester;
   // enum semesterEnum {  AllYear,  H1,  H2,  Q1,  Q2,  Q3,  Q4,  SummerIntensive,  WinterIntensive,  };
@@ -46,14 +52,14 @@ abstract class SubjectDetail implements Built<SubjectDetail, SubjectDetailBuilde
 
   /// 授業名末尾の`学年-クラス`をもとに決定
   @BuiltValueField(wireName: r'eligibleAttributes')
-  BuiltList<SubjectServiceSubjectTargetClass> get eligibleAttributes;
+  BuiltList<AcademicServiceSubjectTargetClass> get eligibleAttributes;
 
   /// 科目群・科目区分をもとに決定
   @BuiltValueField(wireName: r'requirements')
-  BuiltList<SubjectServiceSubjectRequirement> get requirements;
+  BuiltList<AcademicServiceSubjectRequirement> get requirements;
 
   @BuiltValueField(wireName: r'syllabus')
-  SubjectServiceSyllabus get syllabus;
+  AcademicServiceSyllabus get syllabus;
 
   SubjectDetail._();
 
@@ -91,7 +97,12 @@ class _$SubjectDetailSerializer implements PrimitiveSerializer<SubjectDetail> {
     yield r'faculties';
     yield serializers.serialize(
       object.faculties,
-      specifiedType: const FullType(BuiltList, [FullType(SubjectServiceSubjectFaculty)]),
+      specifiedType: const FullType(BuiltList, [FullType(SubjectFaculty)]),
+    );
+    yield r'year';
+    yield serializers.serialize(
+      object.year,
+      specifiedType: const FullType(int),
     );
     yield r'semester';
     yield serializers.serialize(
@@ -106,17 +117,17 @@ class _$SubjectDetailSerializer implements PrimitiveSerializer<SubjectDetail> {
     yield r'eligibleAttributes';
     yield serializers.serialize(
       object.eligibleAttributes,
-      specifiedType: const FullType(BuiltList, [FullType(SubjectServiceSubjectTargetClass)]),
+      specifiedType: const FullType(BuiltList, [FullType(AcademicServiceSubjectTargetClass)]),
     );
     yield r'requirements';
     yield serializers.serialize(
       object.requirements,
-      specifiedType: const FullType(BuiltList, [FullType(SubjectServiceSubjectRequirement)]),
+      specifiedType: const FullType(BuiltList, [FullType(AcademicServiceSubjectRequirement)]),
     );
     yield r'syllabus';
     yield serializers.serialize(
       object.syllabus,
-      specifiedType: const FullType(SubjectServiceSyllabus),
+      specifiedType: const FullType(AcademicServiceSyllabus),
     );
   }
 
@@ -158,9 +169,16 @@ class _$SubjectDetailSerializer implements PrimitiveSerializer<SubjectDetail> {
         case r'faculties':
           final valueDes = serializers.deserialize(
             value,
-            specifiedType: const FullType(BuiltList, [FullType(SubjectServiceSubjectFaculty)]),
-          ) as BuiltList<SubjectServiceSubjectFaculty>;
+            specifiedType: const FullType(BuiltList, [FullType(SubjectFaculty)]),
+          ) as BuiltList<SubjectFaculty>;
           result.faculties.replace(valueDes);
+          break;
+        case r'year':
+          final valueDes = serializers.deserialize(
+            value,
+            specifiedType: const FullType(int),
+          ) as int;
+          result.year = valueDes;
           break;
         case r'semester':
           final valueDes = serializers.deserialize(
@@ -179,22 +197,22 @@ class _$SubjectDetailSerializer implements PrimitiveSerializer<SubjectDetail> {
         case r'eligibleAttributes':
           final valueDes = serializers.deserialize(
             value,
-            specifiedType: const FullType(BuiltList, [FullType(SubjectServiceSubjectTargetClass)]),
-          ) as BuiltList<SubjectServiceSubjectTargetClass>;
+            specifiedType: const FullType(BuiltList, [FullType(AcademicServiceSubjectTargetClass)]),
+          ) as BuiltList<AcademicServiceSubjectTargetClass>;
           result.eligibleAttributes.replace(valueDes);
           break;
         case r'requirements':
           final valueDes = serializers.deserialize(
             value,
-            specifiedType: const FullType(BuiltList, [FullType(SubjectServiceSubjectRequirement)]),
-          ) as BuiltList<SubjectServiceSubjectRequirement>;
+            specifiedType: const FullType(BuiltList, [FullType(AcademicServiceSubjectRequirement)]),
+          ) as BuiltList<AcademicServiceSubjectRequirement>;
           result.requirements.replace(valueDes);
           break;
         case r'syllabus':
           final valueDes = serializers.deserialize(
             value,
-            specifiedType: const FullType(SubjectServiceSyllabus),
-          ) as SubjectServiceSyllabus;
+            specifiedType: const FullType(AcademicServiceSyllabus),
+          ) as AcademicServiceSyllabus;
           result.syllabus.replace(valueDes);
           break;
         default:
