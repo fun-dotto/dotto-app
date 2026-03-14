@@ -22,32 +22,11 @@ final class _AppTutorialState extends State<AppTutorial> {
       title: '時間割の管理',
       description: '自分の時間割を設定して\n休講/補講情報を受け取ろう',
       imagePath: Asset.tutorialTimetableMock,
-      fallbackImagePath: Asset.tutorialHome,
     ),
-    _TutorialPageData(
-      title: 'バスの時刻表',
-      description: '大学から最寄りのバス停までの\n時刻表を確認しよう',
-      imagePath: Asset.tutorialBusMock,
-      fallbackImagePath: Asset.tutorialMap,
-    ),
-    _TutorialPageData(
-      title: '学内マップ',
-      description: '空き教室を確認したり\n研究室を検索しよう',
-      imagePath: Asset.tutorialCampusMapMock,
-      fallbackImagePath: Asset.tutorialMap,
-    ),
-    _TutorialPageData(
-      title: '科目検索',
-      description: 'レビューや過去問を\n閲覧しよう',
-      imagePath: Asset.tutorialSubjectMock,
-      fallbackImagePath: Asset.tutorialKamoku,
-    ),
-    _TutorialPageData(
-      title: '学食メニュー',
-      description: '学食のメニューや価格を\n確認しよう',
-      imagePath: Asset.tutorialCafeteriaMock,
-      fallbackImagePath: Asset.tutorialKadai,
-    ),
+    _TutorialPageData(title: 'バスの時刻表', description: '大学から最寄りのバス停までの\n時刻表を確認しよう', imagePath: Asset.tutorialBusMock),
+    _TutorialPageData(title: '学内マップ', description: '空き教室を確認したり\n研究室を検索しよう', imagePath: Asset.tutorialCampusMapMock),
+    _TutorialPageData(title: '科目検索', description: 'レビューや過去問を\n閲覧しよう', imagePath: Asset.tutorialSubjectMock),
+    _TutorialPageData(title: '学食メニュー', description: '学食のメニューや価格を\n確認しよう', imagePath: Asset.tutorialCafeteriaMock),
   ];
 
   bool get _isLastPage => _currentIndex == _pages.length - 1;
@@ -120,19 +99,13 @@ final class _AppTutorialState extends State<AppTutorial> {
                 if (page.welcomeBodyTop != null)
                   Text(
                     page.welcomeBodyTop!,
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyLarge
-                        ?.copyWith(color: SemanticColor.light.labelPrimary),
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: SemanticColor.light.labelPrimary),
                     textAlign: TextAlign.center,
                   ),
                 if (page.welcomeBodyBottom != null)
                   Text(
                     page.welcomeBodyBottom!,
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyLarge
-                        ?.copyWith(color: SemanticColor.light.labelPrimary),
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: SemanticColor.light.labelPrimary),
                     textAlign: TextAlign.center,
                   ),
               ],
