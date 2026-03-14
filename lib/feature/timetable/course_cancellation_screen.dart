@@ -31,8 +31,8 @@ final class CourseCancellationScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final user = ref.watch(userProvider);
-    if (user == null) {
+    final isAuthenticated = ref.watch(userProvider).value != null;
+    if (!isAuthenticated) {
       return Scaffold(
         appBar: AppBar(title: const Text('休講・補講')),
         body: const Center(child: Text('Googleアカウント(@fun.ac.jp)ログインが必要です。')),

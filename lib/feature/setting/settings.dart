@@ -1,18 +1,15 @@
-import 'dart:io';
-
 import 'package:dotto/controller/config_controller.dart';
 import 'package:dotto/controller/user_controller.dart';
-import 'package:dotto/domain/user_preference_keys.dart';
+import 'package:dotto/domain/academic_area.dart';
+import 'package:dotto/domain/academic_class.dart';
+import 'package:dotto/domain/grade.dart';
 import 'package:dotto/feature/announcement/announcement_screen.dart';
 import 'package:dotto/feature/assignment/setup_hope_continuity_screen.dart';
 import 'package:dotto/feature/debug/debug_screen.dart';
 import 'package:dotto/feature/github_contributor/github_contributor_screen.dart';
-import 'package:dotto/feature/setting/controller/settings_controller.dart';
-import 'package:dotto/feature/setting/repository/settings_repository.dart';
 import 'package:dotto/feature/setting/widget/license.dart';
-import 'package:dotto/helper/user_preference_repository.dart';
+import 'package:dotto/feature/timetable/repository/timetable_repository.dart';
 import 'package:dotto/widget/app_tutorial.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -23,44 +20,8 @@ import 'package:url_launcher/url_launcher_string.dart';
 final class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
 
-  Widget listDialog(BuildContext context, String title, UserPreferenceKeys userPreferenceKeys, List<String> list) {
-    return AlertDialog(
-      title: Text(title),
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10))),
-      content: SingleChildScrollView(
-        child: SizedBox(
-          width: double.maxFinite,
-          child: Column(
-            children: [
-              const Divider(),
-              ConstrainedBox(
-                constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.5),
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: list.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return ListTile(
-                      title: Text(list[index]),
-                      onTap: () async {
-                        await UserPreferenceRepository.setString(userPreferenceKeys, list[index]);
-                        if (context.mounted) {
-                          Navigator.of(context).pop(list[index]);
-                        }
-                      },
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final userNotifier = ref.read(userProvider.notifier);
     final user = ref.watch(userProvider);
     final config = ref.watch(configProvider);
 
@@ -77,11 +38,14 @@ final class SettingsScreen extends ConsumerWidget {
             tiles: <SettingsTile>[
               // Googleでログイン
               SettingsTile.navigation(
-                title: Text((user == null) ? 'Google アカウント (@fun.ac.jp) でログイン' : '${user.email}でログイン中'),
-                leading: Icon((user == null) ? Icons.login : Icons.logout),
-                onPressed: (user == null)
-                    ? (_) => SettingsRepository().onLogin(context, ref, (User? user) => userNotifier.user = user)
-                    : (_) => SettingsRepository().onLogout(userNotifier.logout),
+                title: Text((user.value == null) ? 'Google アカウント (@fun.ac.jp) でログイン' : '${user.value?.email}でログイン中'),
+                leading: Icon((user.value == null) ? Icons.login : Icons.logout),
+                onPressed: (user.value == null)
+                    ? (_) async {
+                        await ref.read(userProvider.notifier).signIn();
+                        await TimetableRepository().loadPersonalTimetableListOnLogin(context, ref);
+                      }
+                    : (_) => ref.read(userProvider.notifier).signOut(),
               ),
             ],
           ),
@@ -90,43 +54,80 @@ final class SettingsScreen extends ConsumerWidget {
               // 学年
               SettingsTile.navigation(
                 onPressed: (_) async {
-                  final returnText = await showDialog<String>(
+                  await showDialog<void>(
                     context: context,
-                    builder: (_) {
-                      return listDialog(context, '学年', UserPreferenceKeys.grade, ['なし', '1年', '2年', '3年', '4年']);
-                    },
+                    builder: (context) => SimpleDialog(
+                      title: const Text('学年'),
+                      children: Grade.values.map((grade) {
+                        return MaterialButton(
+                          onPressed: () {
+                            // TODO: 学年を設定
+                            Navigator.of(context).pop();
+                          },
+                          child: ListTile(
+                            title: Text(grade.label),
+                            trailing: Icon(user.value?.grade == grade ? Icons.check : null),
+                          ),
+                        );
+                      }).toList(),
+                    ),
                   );
-                  if (returnText != null) {
-                    ref.invalidate(settingsGradeProvider);
-                  }
                 },
                 leading: const Icon(Icons.school),
                 title: const Text('学年'),
-                value: Text(ref.watch(settingsGradeProvider).value ?? 'なし'),
+                value: Text(user.value?.grade?.label ?? '未設定'),
               ),
               // コース
               SettingsTile.navigation(
                 onPressed: (_) async {
-                  final returnText = await showDialog<String>(
+                  await showDialog<void>(
                     context: context,
-                    builder: (_) {
-                      return listDialog(context, 'コース', UserPreferenceKeys.course, [
-                        'なし',
-                        '情報システム',
-                        '情報デザイン',
-                        '知能',
-                        '複雑',
-                        '高度ICT',
-                      ]);
-                    },
+                    builder: (context) => SimpleDialog(
+                      title: const Text('コース'),
+                      children: AcademicArea.values.map((academicArea) {
+                        return MaterialButton(
+                          onPressed: () {
+                            // TODO: コースを設定
+                            Navigator.of(context).pop();
+                          },
+                          child: ListTile(
+                            title: Text(academicArea.label),
+                            trailing: Icon(user.value?.course == academicArea ? Icons.check : null),
+                          ),
+                        );
+                      }).toList(),
+                    ),
                   );
-                  if (returnText != null) {
-                    ref.invalidate(settingsCourseProvider);
-                  }
                 },
                 leading: const Icon(Icons.school),
                 title: const Text('コース'),
-                value: Text(ref.watch(settingsCourseProvider).value ?? 'なし'),
+                value: Text(user.value?.course?.label ?? '未設定'),
+              ),
+              // クラス
+              SettingsTile.navigation(
+                onPressed: (_) async {
+                  await showDialog<void>(
+                    context: context,
+                    builder: (context) => SimpleDialog(
+                      title: const Text('クラス'),
+                      children: AcademicClass.values.map((academicClass) {
+                        return MaterialButton(
+                          onPressed: () {
+                            // TODO: クラスを設定
+                            Navigator.of(context).pop();
+                          },
+                          child: ListTile(
+                            title: Text(academicClass.label),
+                            trailing: Icon(user.value?.class_ == academicClass ? Icons.check : null),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  );
+                },
+                leading: const Icon(Icons.school),
+                title: const Text('クラス'),
+                value: Text(user.value?.class_?.label ?? '未設定'),
               ),
               // HOPE連携
               SettingsTile.navigation(

@@ -17,9 +17,9 @@ final class MyPageTimetable extends ConsumerWidget {
   const MyPageTimetable({super.key});
 
   Widget timetableLessonButton(BuildContext context, WidgetRef ref, TimetableCourse? timetableCourse) {
-    final user = ref.watch(userProvider);
+    final isAuthenticated = ref.watch(userProvider).value != null;
     var foregroundColor = Colors.black;
-    if (timetableCourse != null && user != null) {
+    if (timetableCourse != null && isAuthenticated) {
       if (timetableCourse.cancel) {
         foregroundColor = Colors.grey;
       }
@@ -64,7 +64,7 @@ final class MyPageTimetable extends ConsumerWidget {
                         lessonId: record['LessonId'] as int,
                         lessonName: record['授業名'] as String,
                         kakomonLessonId: record['過去問'] as int?,
-                        isAuthenticated: user != null,
+                        isAuthenticated: isAuthenticated,
                       ),
                       settings: RouteSettings(
                         name:
@@ -110,7 +110,7 @@ final class MyPageTimetable extends ConsumerWidget {
                   ),
                 ),
                 // 休講情報など
-                if (timetableCourse != null && user != null)
+                if (timetableCourse != null && isAuthenticated)
                   if (timetableCourse.cancel)
                     _canceledLabel(context)
                   else if (timetableCourse.sup)

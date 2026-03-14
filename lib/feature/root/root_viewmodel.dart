@@ -1,16 +1,14 @@
 import 'package:app_links/app_links.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dotto/controller/config_controller.dart';
 import 'package:dotto/controller/user_controller.dart';
 import 'package:dotto/domain/tab_item.dart';
 import 'package:dotto/domain/user_preference_keys.dart';
 import 'package:dotto/feature/root/root_viewmodel_state.dart';
-import 'package:dotto/feature/setting/controller/settings_controller.dart';
+import 'package:dotto/feature/setting/controller/hope_continuation_user_key_controller.dart';
 import 'package:dotto/helper/logger.dart';
 import 'package:dotto/helper/notification_helper.dart';
 import 'package:dotto/helper/remote_config_helper.dart';
 import 'package:dotto/helper/user_preference_repository.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -36,15 +34,15 @@ class RootViewModel extends _$RootViewModel {
           if (userKey == null) return;
           final userKeyPattern = RegExp(r'^[a-zA-Z0-9]{16}$');
           if (userKey.isEmpty || (userKey.length == 16 && userKeyPattern.hasMatch(userKey))) {
-            UserPreferenceRepository.setString(UserPreferenceKeys.userKey, userKey);
-            ref.invalidate(settingsUserKeyProvider);
+            ref.read(hopeContinuationUserKeyProvider.notifier).set(userKey);
+            return;
           }
         })
         .onError((Object error, StackTrace stackTrace) {
           debugPrint(error.toString());
         });
-    // FCM Token
-    await _saveFCMToken();
+    // Refresh User and Save FCM Token
+    await ref.read(userProvider.notifier).refresh();
 
     final hasShownAppTutorial =
         await UserPreferenceRepository.getBool(UserPreferenceKeys.isAppTutorialComplete) ?? false;
@@ -92,29 +90,6 @@ class RootViewModel extends _$RootViewModel {
   void onAppTutorialDismissed() {
     state = AsyncValue.data(state.value!.copyWith(hasShownAppTutorial: true));
     UserPreferenceRepository.setBool(UserPreferenceKeys.isAppTutorialComplete, value: true);
-  }
-
-  Future<void> _saveFCMToken() async {
-    final didSave = await UserPreferenceRepository.getBool(UserPreferenceKeys.didSaveFCMToken) ?? false;
-    if (didSave) {
-      return;
-    }
-    final user = ref.read(userProvider);
-    final apnsToken = await FirebaseMessaging.instance.getAPNSToken();
-    debugPrint('APNs Token: $apnsToken');
-    final fcmToken = await FirebaseMessaging.instance.getToken();
-    debugPrint('FCM Token: $fcmToken');
-    if (fcmToken != null && user != null) {
-      final db = FirebaseFirestore.instance;
-      final tokenRef = db.collection('fcm_token');
-      final tokenQuery = tokenRef.where('uid', isEqualTo: user.uid).where('token', isEqualTo: fcmToken);
-      final tokenQuerySnapshot = await tokenQuery.get();
-      final tokenDocs = tokenQuerySnapshot.docs;
-      if (tokenDocs.isEmpty) {
-        await tokenRef.add({'uid': user.uid, 'token': fcmToken, 'last_updated': Timestamp.now()});
-      }
-      await UserPreferenceRepository.setBool(UserPreferenceKeys.didSaveFCMToken, value: true);
-    }
   }
 
   void onUpdateAlertShown() {
