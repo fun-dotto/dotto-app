@@ -43,7 +43,7 @@ final class SettingsScreen extends ConsumerWidget {
                       ? '${user.value?.email}でログイン中'
                       : 'Google アカウント (@fun.ac.jp) でログイン',
                 ),
-                leading: Icon((user.value == null) ? Icons.login : Icons.logout),
+                leading: Icon((ref.read(userProvider.notifier).isAuthenticated) ? Icons.logout : Icons.login),
                 onPressed: (user.value == null)
                     ? (_) async {
                         await ref.read(userProvider.notifier).signIn();
