@@ -23,20 +23,6 @@ final class Asset {
   static const String mapR7 = 'assets/map/mapr7.png';
 
   // Tutorial
-  /// チュートリアル用ホーム画面の画像
-  static const String tutorialHome = 'assets/tutorial/home.png';
-
-  /// チュートリアル用課題画面の画像
-  static const String tutorialKadai = 'assets/tutorial/kadai.png';
-
-  /// チュートリアル用科目詳細画面の画像
-  static const String tutorialKamokuDetail = 'assets/tutorial/kamoku_detail.png';
-
-  /// チュートリアル用科目画面の画像
-  static const String tutorialKamoku = 'assets/tutorial/kamoku.png';
-
-  /// チュートリアル用マップ画面の画像
-  static const String tutorialMap = 'assets/tutorial/map.png';
 
   /// チュートリアル用時間割モック画像
   static const String tutorialTimetableMock = 'assets/tutorial/onboarding1.png';
