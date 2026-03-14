@@ -23,6 +23,7 @@ final class SettingsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(userProvider);
+    final isAuthenticated = ref.watch(userProvider.notifier).isAuthenticated;
     final config = ref.watch(configProvider);
 
     // 設定を取得
@@ -38,18 +39,14 @@ final class SettingsScreen extends ConsumerWidget {
             tiles: <SettingsTile>[
               // Googleでログイン
               SettingsTile.navigation(
-                title: Text(
-                  (ref.read(userProvider.notifier).isAuthenticated)
-                      ? '${user.value?.email}でログイン中'
-                      : 'Google アカウント (@fun.ac.jp) でログイン',
-                ),
-                leading: Icon((ref.read(userProvider.notifier).isAuthenticated) ? Icons.logout : Icons.login),
-                onPressed: (user.value == null)
-                    ? (_) async {
+                title: Text(isAuthenticated ? '${user.value?.email}でログイン中' : 'Google アカウント (@fun.ac.jp) でログイン'),
+                leading: Icon(isAuthenticated ? Icons.logout : Icons.login),
+                onPressed: isAuthenticated
+                    ? (_) => ref.read(userProvider.notifier).signOut()
+                    : (_) async {
                         await ref.read(userProvider.notifier).signIn();
                         await TimetableRepository().loadPersonalTimetableListOnLogin(context, ref);
-                      }
-                    : (_) => ref.read(userProvider.notifier).signOut(),
+                      },
               ),
             ],
           ),
