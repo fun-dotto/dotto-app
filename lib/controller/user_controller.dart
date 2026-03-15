@@ -55,7 +55,7 @@ final class UserNotifier extends _$UserNotifier {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
       await FirebaseAuthHelper.signOut();
-      return const DottoUser(id: '', name: '', email: '', avatarUrl: '', grade: null, course: null, class_: null);
+      return _syncUser();
     });
   }
 

@@ -80,7 +80,7 @@ final class MapScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final asyncViewModel = ref.watch(mapViewModelProvider);
-    final isAuthenticated = ref.watch(userProvider).value != null;
+    final isAuthenticated = ref.watch(userProvider.notifier).isAuthenticated;
 
     return Scaffold(
       resizeToAvoidBottomInset: false,

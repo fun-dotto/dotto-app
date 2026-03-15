@@ -53,7 +53,7 @@ final class SearchCourseScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final viewModelAsync = ref.watch(searchCourseViewModelProvider);
-    final isAuthenticated = ref.watch(userProvider).value != null;
+    final isAuthenticated = ref.watch(userProvider.notifier).isAuthenticated;
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
