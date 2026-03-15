@@ -6,7 +6,7 @@ import 'package:dotto/feature/assignment/domain/assignment_state.dart';
 import 'package:dotto/feature/assignment/domain/kadai.dart';
 import 'package:dotto/feature/assignment/hidden_assignment_list_screen.dart';
 import 'package:dotto/feature/assignment/setup_hope_continuity_screen.dart';
-import 'package:dotto/feature/setting/controller/settings_controller.dart';
+import 'package:dotto/feature/setting/controller/hope_continuation_user_key_controller.dart';
 import 'package:dotto_design_system/component/button.dart';
 import 'package:dotto_design_system/style/semantic_color.dart';
 import 'package:flutter/material.dart';
@@ -479,7 +479,7 @@ final class _AssignmentListScreenState extends ConsumerState<AssignmentListScree
 
   @override
   Widget build(BuildContext context) {
-    ref.watch(settingsUserKeyProvider);
+    ref.watch(hopeContinuationUserKeyProvider);
     final assignmentState = ref.watch(assignmentPreferencesProvider);
     final assignments = ref.watch(assignmentsProvider);
 

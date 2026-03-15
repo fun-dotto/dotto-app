@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dotto/controller/user_controller.dart';
 import 'package:dotto/domain/user_preference_keys.dart';
 import 'package:dotto/feature/search_course/repository/syllabus_database_config.dart';
 import 'package:dotto/feature/timetable/controller/personal_lesson_id_list_controller.dart';
@@ -10,6 +9,7 @@ import 'package:dotto/feature/timetable/controller/week_period_all_records_contr
 import 'package:dotto/feature/timetable/domain/timetable_course.dart';
 import 'package:dotto/helper/read_json_file.dart';
 import 'package:dotto/helper/user_preference_repository.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sqflite/sqflite.dart';
@@ -76,7 +76,7 @@ final class TimetableRepository {
   }
 
   Future<void> loadPersonalTimetableListOnLogin(BuildContext context, WidgetRef ref) async {
-    final user = ref.read(userProvider);
+    final user = FirebaseAuth.instance.currentUser;
     if (user == null) {
       return;
     }
@@ -167,7 +167,7 @@ final class TimetableRepository {
   }
 
   Future<List<int>> loadPersonalTimetableList(WidgetRef ref) async {
-    final user = ref.read(userProvider);
+    final user = FirebaseAuth.instance.currentUser;
     var personalTimetableList = <int>[];
     if (user == null) {
       personalTimetableList = await _getPersonalTimetableList();
@@ -206,7 +206,7 @@ final class TimetableRepository {
   }
 
   Future<void> addPersonalTimetableListToFirestore(int lessonId, WidgetRef ref) async {
-    final user = ref.read(userProvider);
+    final user = FirebaseAuth.instance.currentUser;
     if (user == null) {
       return;
     }
@@ -221,7 +221,7 @@ final class TimetableRepository {
   }
 
   Future<void> removePersonalTimetableListFromFirestore(int lessonId, WidgetRef ref) async {
-    final user = ref.read(userProvider);
+    final user = FirebaseAuth.instance.currentUser;
     if (user == null) {
       return;
     }
@@ -236,7 +236,7 @@ final class TimetableRepository {
   }
 
   Future<void> savePersonalTimetableListToFirestore(List<int> personalTimetableList, WidgetRef ref) async {
-    final user = ref.read(userProvider);
+    final user = FirebaseAuth.instance.currentUser;
     if (user == null) {
       return;
     }

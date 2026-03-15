@@ -4,13 +4,17 @@ import 'package:dotto/domain/room.dart';
 import 'package:dotto/domain/room_schedule.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final roomRepositoryProvider = Provider<RoomRepository>((_) => _RoomRepositoryImpl());
+final roomRepositoryProvider = Provider<RoomRepository>(RoomRepositoryImpl.new);
 
 abstract class RoomRepository {
   Future<List<Room>> getRooms();
 }
 
-final class _RoomRepositoryImpl implements RoomRepository {
+final class RoomRepositoryImpl implements RoomRepository {
+  RoomRepositoryImpl(this.ref);
+
+  final Ref ref;
+
   @override
   Future<List<Room>> getRooms() async {
     final roomResponses = await RoomAPI.getRooms();

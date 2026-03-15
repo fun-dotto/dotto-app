@@ -26,7 +26,7 @@ extension IterableToBuiltListOrNullExtension<E> on Iterable<E> {
   }
 }
 
-final subjectRepositoryProvider = Provider<SubjectRepository>((ref) => SubjectRepositoryImpl(ref));
+final subjectRepositoryProvider = Provider<SubjectRepository>(SubjectRepositoryImpl.new);
 
 abstract class SubjectRepository {
   Future<List<SubjectSummary>> getSubjects(String query, SubjectFilter filter);

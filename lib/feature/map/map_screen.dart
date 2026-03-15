@@ -11,7 +11,6 @@ import 'package:dotto/feature/map/widget/map_floor_button.dart';
 import 'package:dotto/feature/map/widget/map_legend.dart';
 import 'package:dotto/feature/map/widget/map_search_bar.dart';
 import 'package:dotto/feature/map/widget/map_search_result_list.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -21,12 +20,12 @@ final class MapScreen extends ConsumerWidget {
   final void Function() onGoToSettingButtonTapped;
 
   Widget _datePickerSection({
-    required User? user,
+    required bool isAuthenticated,
     required DateTime searchDatetime,
     required void Function(DateTime) onPeriodButtonTapped,
     required void Function(DateTime) onDatePickerConfirmed,
   }) {
-    if (user == null) {
+    if (!isAuthenticated) {
       return const SizedBox.shrink();
     }
     return ConstrainedBox(
@@ -46,7 +45,7 @@ final class MapScreen extends ConsumerWidget {
     required MapTileProps? props,
     required Room? room,
     required DateTime dateTime,
-    required bool isLoggedIn,
+    required bool isAuthenticated,
     required void Function() onDismissed,
     required void Function() onGoToSettingButtonTapped,
   }) {
@@ -69,7 +68,7 @@ final class MapScreen extends ConsumerWidget {
                 props: props,
                 room: room,
                 dateTime: dateTime,
-                isLoggedIn: isLoggedIn,
+                isAuthenticated: isAuthenticated,
                 onDismissed: onDismissed,
                 onGoToSettingButtonTapped: onGoToSettingButtonTapped,
               )
@@ -81,8 +80,7 @@ final class MapScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final asyncViewModel = ref.watch(mapViewModelProvider);
-
-    final user = ref.watch(userProvider);
+    final isAuthenticated = ref.watch(userProvider.notifier).isAuthenticated;
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -146,7 +144,7 @@ final class MapScreen extends ConsumerWidget {
                         ),
                       ),
                       _datePickerSection(
-                        user: user,
+                        isAuthenticated: isAuthenticated,
                         searchDatetime: viewModel.searchDatetime,
                         onPeriodButtonTapped: (dateTime) async {
                           var setDate = dateTime;
@@ -165,7 +163,7 @@ final class MapScreen extends ConsumerWidget {
                     props: FUNMap.tileProps.firstWhereOrNull((e) => e.id == viewModel.focusedMapTileProps?.id),
                     room: viewModel.rooms.firstWhereOrNull((e) => e.id == viewModel.focusedMapTileProps?.id),
                     dateTime: viewModel.searchDatetime,
-                    isLoggedIn: user != null,
+                    isAuthenticated: isAuthenticated,
                     onDismissed: () {
                       ref.read(mapViewModelProvider.notifier).onBottomSheetDismissed();
                     },

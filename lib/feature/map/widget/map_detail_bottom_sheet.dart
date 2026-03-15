@@ -12,7 +12,7 @@ final class MapDetailBottomSheet extends StatelessWidget {
     required this.props,
     required this.room,
     required this.dateTime,
-    required this.isLoggedIn,
+    required this.isAuthenticated,
     required this.onDismissed,
     required this.onGoToSettingButtonTapped,
     super.key,
@@ -21,7 +21,7 @@ final class MapDetailBottomSheet extends StatelessWidget {
   final MapTileProps props;
   final Room room;
   final DateTime dateTime;
-  final bool isLoggedIn;
+  final bool isAuthenticated;
   final void Function() onDismissed;
   final void Function() onGoToSettingButtonTapped;
 
@@ -97,7 +97,7 @@ final class MapDetailBottomSheet extends StatelessWidget {
               IconButton(onPressed: onDismissed, icon: const Icon(Icons.close)),
             ],
           ),
-          if (isLoggedIn)
+          if (isAuthenticated)
             Expanded(
               child: SingleChildScrollView(
                 child: Column(
