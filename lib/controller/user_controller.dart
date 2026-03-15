@@ -115,11 +115,6 @@ final class UserNotifier extends _$UserNotifier {
       'complexCourse' => AcademicArea.complexCourse,
       'intelligenceSystemCourse' => AcademicArea.intelligenceSystemCourse,
       'advancedICTCourse' => AcademicArea.advancedICTCourse,
-      'informationArchitectureArea' => AcademicArea.informationArchitectureArea,
-      'mediaDesignArea' => AcademicArea.mediaDesignArea,
-      'complexInformationScienceArea' => AcademicArea.complexInformationScienceArea,
-      'intelligenceInformationScienceArea' => AcademicArea.intelligenceInformationScienceArea,
-      'advancedICTArea' => AcademicArea.advancedICTArea,
       _ => null,
     };
     final class_ = switch (await UserPreferenceRepository.getString(UserPreferenceKeys.class_)) {
