@@ -11,6 +11,9 @@ final class UserInfoTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final photoURL = user.photoURL; // String? のまま
+    final name = user.displayName ?? '名前が設定されていません';
+    final email = user.email ?? '';
     return const SizedBox(); // 仮
   }
 }
