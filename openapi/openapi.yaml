@@ -159,17 +159,11 @@ paths:
                   - subject
       tags:
         - Subjects
-  /v1/users/{id}:
+  /v1/users:
     get:
       operationId: UsersV1_detail
       description: ユーザーを取得する
-      parameters:
-        - name: id
-          in: path
-          required: true
-          description: ユーザーID
-          schema:
-            type: string
+      parameters: []
       responses:
         '200':
           description: ユーザーの情報
@@ -187,12 +181,7 @@ paths:
     post:
       operationId: UsersV1_upsert
       description: ユーザーを作成または更新する
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
+      parameters: []
       responses:
         '200':
           description: 作成または更新されたユーザー

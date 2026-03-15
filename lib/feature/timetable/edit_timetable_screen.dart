@@ -1,11 +1,11 @@
 import 'package:collection/collection.dart';
 import 'package:dotto/domain/day_of_week.dart';
+import 'package:dotto/domain/period.dart';
+import 'package:dotto/domain/semester.dart';
 import 'package:dotto/feature/timetable/controller/personal_lesson_id_list_controller.dart';
 import 'package:dotto/feature/timetable/controller/selected_semester_controller.dart';
 import 'package:dotto/feature/timetable/controller/timetable_view_style_controller.dart';
 import 'package:dotto/feature/timetable/controller/week_period_all_records_controller.dart';
-import 'package:dotto/feature/timetable/domain/period.dart';
-import 'package:dotto/feature/timetable/domain/semester.dart';
 import 'package:dotto/feature/timetable/select_course_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -25,9 +25,9 @@ class _EditTimetableScreenState extends ConsumerState<EditTimetableScreen> with 
     super.initState();
     final initialSemester = ref.read(selectedSemesterProvider);
     _tabController = TabController(
-      length: Semester.values.length,
+      length: Semester.onEditTimetableScreen.length,
       vsync: this,
-      initialIndex: Semester.values.indexOf(initialSemester),
+      initialIndex: Semester.onEditTimetableScreen.indexOf(initialSemester),
     );
     _tabController.addListener(_handleTabSelection);
   }
@@ -37,7 +37,7 @@ class _EditTimetableScreenState extends ConsumerState<EditTimetableScreen> with 
       return;
     }
     final current = ref.read(selectedSemesterProvider);
-    final selected = Semester.values[_tabController.index];
+    final selected = Semester.onEditTimetableScreen[_tabController.index];
     if (current != selected) {
       ref.read(selectedSemesterProvider.notifier).value = selected;
     }
@@ -219,7 +219,7 @@ class _EditTimetableScreenState extends ConsumerState<EditTimetableScreen> with 
   Widget build(BuildContext context) {
     final timetableViewStyle = ref.watch(timetableViewStyleProvider);
     final selectedSemester = ref.watch(selectedSemesterProvider);
-    final selectedIndex = Semester.values.indexOf(selectedSemester);
+    final selectedIndex = Semester.onEditTimetableScreen.indexOf(selectedSemester);
     if (_tabController.index != selectedIndex && !_tabController.indexIsChanging) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) {
@@ -245,10 +245,10 @@ class _EditTimetableScreenState extends ConsumerState<EditTimetableScreen> with 
         bottom: TabBar(
           dividerColor: Colors.transparent,
           controller: _tabController,
-          tabs: Semester.values.map((e) => Tab(text: e.label)).toList(),
+          tabs: Semester.onEditTimetableScreen.map((e) => Tab(text: e.label)).toList(),
         ),
       ),
-      body: TabBarView(controller: _tabController, children: Semester.values.map(_timetable).toList()),
+      body: TabBarView(controller: _tabController, children: Semester.onEditTimetableScreen.map(_timetable).toList()),
     );
   }
 }
