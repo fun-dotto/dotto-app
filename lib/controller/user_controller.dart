@@ -27,12 +27,14 @@ final class UserNotifier extends _$UserNotifier {
 
   Future<void> refresh() async {
     state = const AsyncValue.loading();
-    final firebaseUser = FirebaseAuth.instance.currentUser;
-    final didSaveFCMToken = await UserPreferenceRepository.getBool(UserPreferenceKeys.didSaveFCMToken);
-    if (firebaseUser != null && didSaveFCMToken == false) {
-      await _saveFCMToken(firebaseUser);
-    }
-    state = await AsyncValue.guard(_syncUser);
+    state = await AsyncValue.guard(() async {
+      final firebaseUser = FirebaseAuth.instance.currentUser;
+      final didSaveFCMToken = await UserPreferenceRepository.getBool(UserPreferenceKeys.didSaveFCMToken);
+      if (firebaseUser != null && didSaveFCMToken == false) {
+        await _saveFCMToken(firebaseUser);
+      }
+      return _syncUser();
+    });
   }
 
   Future<void> signIn() async {
@@ -121,17 +123,29 @@ final class UserNotifier extends _$UserNotifier {
     if (firebaseUser == null) {
       return defaultUser;
     }
-    final user = await ref.read(userRepositoryProvider).getUser(firebaseUser: firebaseUser) ?? defaultUser;
-    final updatedUser = user.copyWith(
-      grade: user.grade ?? grade,
-      course: user.course ?? course,
-      class_: user.class_ ?? class_,
-    );
     try {
-      return ref.read(userRepositoryProvider).upsertUser(firebaseUser: firebaseUser, user: updatedUser);
+      final user =
+          await ref.read(userRepositoryProvider).getUser(firebaseUser: firebaseUser) ??
+          defaultUser.copyWith(
+            id: firebaseUser.uid,
+            name: firebaseUser.displayName ?? '',
+            email: firebaseUser.email ?? '',
+            avatarUrl: firebaseUser.photoURL ?? '',
+          );
+      final updatedUser = user.copyWith(
+        grade: user.grade ?? grade,
+        course: user.course ?? course,
+        class_: user.class_ ?? class_,
+      );
+      try {
+        return ref.read(userRepositoryProvider).upsertUser(firebaseUser: firebaseUser, user: updatedUser);
+      } on Exception catch (e) {
+        debugPrint('Error during upserting user: $e');
+        return updatedUser;
+      }
     } on Exception catch (e) {
-      debugPrint('Error during upserting user: $e');
-      return updatedUser;
+      debugPrint('Error during getting user: $e');
+      return defaultUser;
     }
   }
 

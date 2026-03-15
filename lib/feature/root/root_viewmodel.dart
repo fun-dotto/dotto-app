@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:app_links/app_links.dart';
 import 'package:dotto/controller/config_controller.dart';
 import 'package:dotto/controller/user_controller.dart';

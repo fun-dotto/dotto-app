@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:dotto/api/api_client.dart';
 import 'package:dotto/domain/academic_area.dart';
 import 'package:dotto/domain/academic_class.dart';
@@ -26,20 +27,20 @@ final class UserRepositoryImpl implements UserRepository {
     try {
       final api = ref.read(apiClientProvider).getUsersApi();
       final response = await api.usersV1Detail();
-      if (response.statusCode != 200) {
-        if (response.statusCode == 404) {
-          return null;
-        }
-        throw Exception('Failed to get user');
-      }
       final data = response.data;
       if (data == null) {
-        throw Exception('Failed to get user');
+        return null;
       }
       return _toDottoUser(firebaseUser, data.user);
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 404) {
+        return null;
+      }
+      debugPrint('Error during getting user: $e');
+      rethrow;
     } on Exception catch (e) {
       debugPrint('Error during getting user: $e');
-      throw Exception('Failed to get user');
+      rethrow;
     }
   }
 
@@ -86,17 +87,18 @@ final class UserRepositoryImpl implements UserRepository {
           },
       );
       final response = await api.usersV1Upsert(userInfo: userInfo);
-      if (response.statusCode != 200) {
-        throw Exception('Failed to upsert user');
-      }
       final data = response.data;
-      if (data == null) {
+      final updatedUserInfo = data?.user;
+      if (updatedUserInfo == null) {
         throw Exception('Failed to upsert user');
       }
-      return _toDottoUser(firebaseUser, data.user);
+      return _toDottoUser(firebaseUser, updatedUserInfo);
+    } on DioException catch (e) {
+      debugPrint('Error during upserting user: $e');
+      rethrow;
     } on Exception catch (e) {
       debugPrint('Error during upserting user: $e');
-      throw Exception('Failed to upsert user');
+      rethrow;
     }
   }
 
