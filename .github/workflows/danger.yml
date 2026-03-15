@@ -4,8 +4,10 @@ on:
   pull_request:
     types:
       - assigned
+      - demilestoned
       - edited
       - labeled
+      - milestoned
       - opened
       - reopened
       - ready_for_review
@@ -30,6 +32,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
       - uses: jdx/mise-action@v3
       - name: Install dependencies
         run: bundle install

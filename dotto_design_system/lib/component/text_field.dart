@@ -20,23 +20,38 @@ final class DottoTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
-      controller: controller,
-      focusNode: focusNode,
-      decoration: InputDecoration(
-        hintText: placeholder,
-        suffixIcon: controller?.text.isNotEmpty ?? false
-            ? IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: () {
-                  controller?.clear();
-                  onCleared?.call();
-                },
-              )
-            : null,
-      ),
-      onChanged: onChanged,
-      onSubmitted: onSubmitted,
+    final controller = this.controller;
+    if (controller == null) {
+      return TextField(
+        focusNode: focusNode,
+        decoration: InputDecoration(hintText: placeholder),
+        onChanged: onChanged,
+        onSubmitted: onSubmitted,
+      );
+    }
+
+    return ListenableBuilder(
+      listenable: controller,
+      builder: (context, _) {
+        return TextField(
+          controller: controller,
+          focusNode: focusNode,
+          decoration: InputDecoration(
+            hintText: placeholder,
+            suffixIcon: controller.text.isNotEmpty
+                ? IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () {
+                      controller.clear();
+                      onCleared?.call();
+                    },
+                  )
+                : null,
+          ),
+          onChanged: onChanged,
+          onSubmitted: onSubmitted,
+        );
+      },
     );
   }
 }

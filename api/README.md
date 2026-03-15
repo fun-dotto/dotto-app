@@ -68,12 +68,16 @@ Class | Method | HTTP request | Description
 [*AnnouncementsApi*](doc/AnnouncementsApi.md) | [**announcementsV1List**](doc/AnnouncementsApi.md#announcementsv1list) | **GET** /v1/announcements | 
 [*SubjectsApi*](doc/SubjectsApi.md) | [**subjectsV1Detail**](doc/SubjectsApi.md#subjectsv1detail) | **GET** /v1/subjects/{id} | 
 [*SubjectsApi*](doc/SubjectsApi.md) | [**subjectsV1List**](doc/SubjectsApi.md#subjectsv1list) | **GET** /v1/subjects | 
-[*UsersApi*](doc/UsersApi.md) | [**usersV1Detail**](doc/UsersApi.md#usersv1detail) | **GET** /v1/users/{id} | 
-[*UsersApi*](doc/UsersApi.md) | [**usersV1Upsert**](doc/UsersApi.md#usersv1upsert) | **POST** /v1/users/{id} | 
+[*UsersApi*](doc/UsersApi.md) | [**usersV1Detail**](doc/UsersApi.md#usersv1detail) | **GET** /v1/users | 
+[*UsersApi*](doc/UsersApi.md) | [**usersV1Upsert**](doc/UsersApi.md#usersv1upsert) | **POST** /v1/users | 
 
 
 ## Documentation For Models
 
+ - [AcademicServiceFaculty](doc/AcademicServiceFaculty.md)
+ - [AcademicServiceSubjectRequirement](doc/AcademicServiceSubjectRequirement.md)
+ - [AcademicServiceSubjectTargetClass](doc/AcademicServiceSubjectTargetClass.md)
+ - [AcademicServiceSyllabus](doc/AcademicServiceSyllabus.md)
  - [Announcement](doc/Announcement.md)
  - [AnnouncementsV1List200Response](doc/AnnouncementsV1List200Response.md)
  - [DottoFoundationV1Class](doc/DottoFoundationV1Class.md)
@@ -85,12 +89,8 @@ Class | Method | HTTP request | Description
  - [DottoFoundationV1Period](doc/DottoFoundationV1Period.md)
  - [DottoFoundationV1SubjectClassification](doc/DottoFoundationV1SubjectClassification.md)
  - [DottoFoundationV1SubjectRequirementType](doc/DottoFoundationV1SubjectRequirementType.md)
- - [FacultyServiceFaculty](doc/FacultyServiceFaculty.md)
  - [SubjectDetail](doc/SubjectDetail.md)
  - [SubjectFaculty](doc/SubjectFaculty.md)
- - [SubjectServiceSubjectRequirement](doc/SubjectServiceSubjectRequirement.md)
- - [SubjectServiceSubjectTargetClass](doc/SubjectServiceSubjectTargetClass.md)
- - [SubjectServiceSyllabus](doc/SubjectServiceSyllabus.md)
  - [SubjectSummary](doc/SubjectSummary.md)
  - [SubjectsV1Detail200Response](doc/SubjectsV1Detail200Response.md)
  - [SubjectsV1List200Response](doc/SubjectsV1List200Response.md)
