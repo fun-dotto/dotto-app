@@ -1,4 +1,4 @@
-<!-- I want to review in Japanese. -->
+<!-- GitHub Copilot コードレビューへの指示: このプルリクエストをレビューしてコメントするときは日本語でお願いします -->
 
 # やったこと
 
@@ -22,5 +22,3 @@
 # メモ
 
 -
-
-<!-- I want to review in Japanese. -->
