@@ -18,6 +18,11 @@ part 'user_controller.g.dart';
 final class UserNotifier extends _$UserNotifier {
   @override
   Future<DottoUser> build() async {
+    final firebaseUser = FirebaseAuth.instance.currentUser;
+    final didSaveFCMToken = await UserPreferenceRepository.getBool(UserPreferenceKeys.didSaveFCMToken);
+    if (firebaseUser != null && didSaveFCMToken == false) {
+      await _saveFCMToken(firebaseUser);
+    }
     return _syncUser();
   }
 

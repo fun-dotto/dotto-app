@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:app_links/app_links.dart';
 import 'package:dotto/controller/config_controller.dart';
-import 'package:dotto/controller/user_controller.dart';
 import 'package:dotto/domain/tab_item.dart';
 import 'package:dotto/domain/user_preference_keys.dart';
 import 'package:dotto/feature/root/root_viewmodel_state.dart';
@@ -43,8 +42,6 @@ class RootViewModel extends _$RootViewModel {
         .onError((Object error, StackTrace stackTrace) {
           debugPrint(error.toString());
         });
-    // Refresh User and Save FCM Token
-    await ref.read(userProvider.notifier).refresh();
 
     final hasShownAppTutorial =
         await UserPreferenceRepository.getBool(UserPreferenceKeys.isAppTutorialComplete) ?? false;
