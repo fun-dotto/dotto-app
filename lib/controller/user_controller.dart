@@ -61,17 +61,39 @@ final class UserNotifier extends _$UserNotifier {
 
   Future<void> setGrade(Grade? grade) async {
     await UserPreferenceRepository.setString(UserPreferenceKeys.grade, grade?.name ?? '');
-    state = await AsyncValue.guard(_syncUser);
+    final current = state.value;
+    if (current != null) {
+      state = AsyncValue.data(current.copyWith(grade: grade));
+      await _upsertCurrentUser(current.copyWith(grade: grade));
+    }
   }
 
   Future<void> setCourse(AcademicArea? course) async {
     await UserPreferenceRepository.setString(UserPreferenceKeys.course, course?.name ?? '');
-    state = await AsyncValue.guard(_syncUser);
+    final current = state.value;
+    if (current != null) {
+      state = AsyncValue.data(current.copyWith(course: course));
+      await _upsertCurrentUser(current.copyWith(course: course));
+    }
   }
 
   Future<void> setClass(AcademicClass? class_) async {
     await UserPreferenceRepository.setString(UserPreferenceKeys.class_, class_?.name ?? '');
-    state = await AsyncValue.guard(_syncUser);
+    final current = state.value;
+    if (current != null) {
+      state = AsyncValue.data(current.copyWith(class_: class_));
+      await _upsertCurrentUser(current.copyWith(class_: class_));
+    }
+  }
+
+  Future<void> _upsertCurrentUser(DottoUser user) async {
+    final firebaseUser = FirebaseAuth.instance.currentUser;
+    if (firebaseUser == null) return;
+    try {
+      await ref.read(userRepositoryProvider).upsertUser(firebaseUser: firebaseUser, user: user);
+    } on Exception catch (e) {
+      debugPrint('Error during upserting user: $e');
+    }
   }
 
   Future<DottoUser> _syncUser() async {
