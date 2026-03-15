@@ -176,6 +176,8 @@ paths:
                     $ref: '#/components/schemas/UserInfo'
                 required:
                   - user
+        '404':
+          description: The server cannot find the requested resource.
       tags:
         - Users
     post:
