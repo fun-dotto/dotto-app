@@ -34,6 +34,28 @@ final class UserInfoTile extends StatelessWidget {
             : Image.asset(Asset.noImage, fit: BoxFit.cover),
       ),
     );
+    final content = Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      decoration: BoxDecoration(
+        color: semantic.backgroundSecondary,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: semantic.borderPrimary),
+      ),
+      child: Row(
+        children: [
+          avatar,
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [Text(name), const SizedBox(height: 2), Text(email)],
+            ),
+          ),
+          const SizedBox(width: 8),
+          Icon(Icons.chevron_right, color: semantic.labelSecondary),
+        ],
+      ),
+    );
     return const SizedBox(); // 仮
   }
 }
