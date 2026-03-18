@@ -73,10 +73,10 @@ void main() {
 
       expect(initialState.contributors, testGitHubContributors);
       expect(initialState.contributors.length, 2);
-      expect(initialState.contributors[0].id, '1');
-      expect(initialState.contributors[0].login, 'GitHubUser1');
-      expect(initialState.contributors[1].id, '2');
-      expect(initialState.contributors[1].login, 'GitHubUser2');
+      expect(initialState.contributors[0].id, '2');
+      expect(initialState.contributors[0].login, 'GitHubUser2');
+      expect(initialState.contributors[1].id, '1');
+      expect(initialState.contributors[1].login, 'GitHubUser1');
 
       // listener が呼ばれたことを確認
       verify(listener.call(any, any)).called(greaterThan(0));
