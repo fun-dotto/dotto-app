@@ -21,12 +21,14 @@ void main() {
       login: 'GitHubUser1',
       avatarUrl: 'https://avatars.githubusercontent.com/u/1?v=4',
       htmlUrl: 'https://github.com/GitHubUser1',
+      contributions: 100,
     ),
     GitHubProfile(
       id: '2',
       login: 'GitHubUser2',
       avatarUrl: 'https://avatars.githubusercontent.com/u/2?v=4',
       htmlUrl: 'https://github.com/GitHubUser2',
+      contributions: 50,
     ),
   ];
 
