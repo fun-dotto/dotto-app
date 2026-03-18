@@ -10,7 +10,9 @@ import 'package:openapi/src/auth/basic_auth.dart';
 import 'package:openapi/src/auth/bearer_auth.dart';
 import 'package:openapi/src/auth/oauth.dart';
 import 'package:openapi/src/api/announcements_api.dart';
+import 'package:openapi/src/api/course_registrations_api.dart';
 import 'package:openapi/src/api/subjects_api.dart';
+import 'package:openapi/src/api/timetable_items_api.dart';
 import 'package:openapi/src/api/users_api.dart';
 
 class Openapi {
@@ -73,10 +75,22 @@ class Openapi {
     return AnnouncementsApi(dio, serializers);
   }
 
+  /// Get CourseRegistrationsApi instance, base route and serializer can be overridden by a given but be careful,
+  /// by doing that all interceptors will not be executed
+  CourseRegistrationsApi getCourseRegistrationsApi() {
+    return CourseRegistrationsApi(dio, serializers);
+  }
+
   /// Get SubjectsApi instance, base route and serializer can be overridden by a given but be careful,
   /// by doing that all interceptors will not be executed
   SubjectsApi getSubjectsApi() {
     return SubjectsApi(dio, serializers);
+  }
+
+  /// Get TimetableItemsApi instance, base route and serializer can be overridden by a given but be careful,
+  /// by doing that all interceptors will not be executed
+  TimetableItemsApi getTimetableItemsApi() {
+    return TimetableItemsApi(dio, serializers);
   }
 
   /// Get UsersApi instance, base route and serializer can be overridden by a given but be careful,
