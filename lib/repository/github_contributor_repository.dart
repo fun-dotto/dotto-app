@@ -39,7 +39,15 @@ final class GitHubContributorRepositoryImpl implements GitHubContributorReposito
           .toList();
 
       return githubProfileResponses
-          .map((e) => GitHubProfile(id: e.id.toString(), login: e.login, avatarUrl: e.avatarUrl, htmlUrl: e.htmlUrl))
+          .map(
+            (e) => GitHubProfile(
+              id: e.id.toString(),
+              login: e.login,
+              avatarUrl: e.avatarUrl,
+              htmlUrl: e.htmlUrl,
+              contributions: e.contributions,
+            ),
+          )
           .toList();
     } catch (e) {
       debugPrint(e.toString());

@@ -8,6 +8,8 @@ final class GitHubContributorService {
   final Ref ref;
 
   Future<List<GitHubProfile>> getContributors() async {
-    return ref.read(gitHubContributorRepositoryProvider).getContributors();
+    final contributors = await ref.read(gitHubContributorRepositoryProvider).getContributors();
+    contributors.sort((a, b) => b.contributions.compareTo(a.contributions));
+    return contributors;
   }
 }
