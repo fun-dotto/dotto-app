@@ -23,7 +23,7 @@ final class SettingsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(userProvider);
-    final isAuthenticated = ref.watch(userProvider.notifier).isAuthenticated;
+    final isAuthenticated = user.value?.id.isNotEmpty ?? false;
     final config = ref.watch(configProvider);
 
     // 設定を取得
