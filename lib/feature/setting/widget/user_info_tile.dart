@@ -56,6 +56,12 @@ final class UserInfoTile extends StatelessWidget {
         ],
       ),
     );
-    return const SizedBox(); // 仮
+    //もし処理がなければcontentを返してただのカードを表示して終了する
+    if (onTap == null) return content;
+    //処理があればtapできて波紋波紋エフェクトが出る
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(onTap: onTap, borderRadius: BorderRadius.circular(14), child: content),
+    );
   }
 }
