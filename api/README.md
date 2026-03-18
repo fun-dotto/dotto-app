@@ -66,8 +66,12 @@ Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
 [*AnnouncementsApi*](doc/AnnouncementsApi.md) | [**announcementsV0List**](doc/AnnouncementsApi.md#announcementsv0list) | **GET** /announcements | 
 [*AnnouncementsApi*](doc/AnnouncementsApi.md) | [**announcementsV1List**](doc/AnnouncementsApi.md#announcementsv1list) | **GET** /v1/announcements | 
+[*CourseRegistrationsApi*](doc/CourseRegistrationsApi.md) | [**courseRegistrationsV1Create**](doc/CourseRegistrationsApi.md#courseregistrationsv1create) | **POST** /v1/courseRegistrations | 
+[*CourseRegistrationsApi*](doc/CourseRegistrationsApi.md) | [**courseRegistrationsV1Delete**](doc/CourseRegistrationsApi.md#courseregistrationsv1delete) | **DELETE** /v1/courseRegistrations/{id} | 
+[*CourseRegistrationsApi*](doc/CourseRegistrationsApi.md) | [**courseRegistrationsV1List**](doc/CourseRegistrationsApi.md#courseregistrationsv1list) | **GET** /v1/courseRegistrations | 
 [*SubjectsApi*](doc/SubjectsApi.md) | [**subjectsV1Detail**](doc/SubjectsApi.md#subjectsv1detail) | **GET** /v1/subjects/{id} | 
 [*SubjectsApi*](doc/SubjectsApi.md) | [**subjectsV1List**](doc/SubjectsApi.md#subjectsv1list) | **GET** /v1/subjects | 
+[*TimetableItemsApi*](doc/TimetableItemsApi.md) | [**timetableItemsV1List**](doc/TimetableItemsApi.md#timetableitemsv1list) | **GET** /v1/timetableItems | 
 [*UsersApi*](doc/UsersApi.md) | [**usersV1Detail**](doc/UsersApi.md#usersv1detail) | **GET** /v1/users | 
 [*UsersApi*](doc/UsersApi.md) | [**usersV1Upsert**](doc/UsersApi.md#usersv1upsert) | **POST** /v1/users | 
 
@@ -80,6 +84,10 @@ Class | Method | HTTP request | Description
  - [AcademicServiceSyllabus](doc/AcademicServiceSyllabus.md)
  - [Announcement](doc/Announcement.md)
  - [AnnouncementsV1List200Response](doc/AnnouncementsV1List200Response.md)
+ - [CourseRegistration](doc/CourseRegistration.md)
+ - [CourseRegistrationRequest](doc/CourseRegistrationRequest.md)
+ - [CourseRegistrationsV1Create201Response](doc/CourseRegistrationsV1Create201Response.md)
+ - [CourseRegistrationsV1List200Response](doc/CourseRegistrationsV1List200Response.md)
  - [DottoFoundationV1Class](doc/DottoFoundationV1Class.md)
  - [DottoFoundationV1Course](doc/DottoFoundationV1Course.md)
  - [DottoFoundationV1CourseSemester](doc/DottoFoundationV1CourseSemester.md)
@@ -94,6 +102,8 @@ Class | Method | HTTP request | Description
  - [SubjectSummary](doc/SubjectSummary.md)
  - [SubjectsV1Detail200Response](doc/SubjectsV1Detail200Response.md)
  - [SubjectsV1List200Response](doc/SubjectsV1List200Response.md)
+ - [TimetableItem](doc/TimetableItem.md)
+ - [TimetableItemsV1List200Response](doc/TimetableItemsV1List200Response.md)
  - [UserInfo](doc/UserInfo.md)
  - [UsersV1Detail200Response](doc/UsersV1Detail200Response.md)
 

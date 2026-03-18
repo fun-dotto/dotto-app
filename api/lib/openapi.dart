@@ -11,7 +11,9 @@ export 'package:openapi/src/serializers.dart';
 export 'package:openapi/src/model/date.dart';
 
 export 'package:openapi/src/api/announcements_api.dart';
+export 'package:openapi/src/api/course_registrations_api.dart';
 export 'package:openapi/src/api/subjects_api.dart';
+export 'package:openapi/src/api/timetable_items_api.dart';
 export 'package:openapi/src/api/users_api.dart';
 
 export 'package:openapi/src/model/academic_service_faculty.dart';
@@ -20,6 +22,10 @@ export 'package:openapi/src/model/academic_service_subject_target_class.dart';
 export 'package:openapi/src/model/academic_service_syllabus.dart';
 export 'package:openapi/src/model/announcement.dart';
 export 'package:openapi/src/model/announcements_v1_list200_response.dart';
+export 'package:openapi/src/model/course_registration.dart';
+export 'package:openapi/src/model/course_registration_request.dart';
+export 'package:openapi/src/model/course_registrations_v1_create201_response.dart';
+export 'package:openapi/src/model/course_registrations_v1_list200_response.dart';
 export 'package:openapi/src/model/dotto_foundation_v1_class.dart';
 export 'package:openapi/src/model/dotto_foundation_v1_course.dart';
 export 'package:openapi/src/model/dotto_foundation_v1_course_semester.dart';
@@ -34,6 +40,8 @@ export 'package:openapi/src/model/subject_faculty.dart';
 export 'package:openapi/src/model/subject_summary.dart';
 export 'package:openapi/src/model/subjects_v1_detail200_response.dart';
 export 'package:openapi/src/model/subjects_v1_list200_response.dart';
+export 'package:openapi/src/model/timetable_item.dart';
+export 'package:openapi/src/model/timetable_items_v1_list200_response.dart';
 export 'package:openapi/src/model/user_info.dart';
 export 'package:openapi/src/model/users_v1_detail200_response.dart';
 

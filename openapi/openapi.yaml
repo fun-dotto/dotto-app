@@ -6,6 +6,8 @@ tags:
   - name: Announcements
   - name: Subjects
   - name: Users
+  - name: TimetableItems
+  - name: CourseRegistrations
 paths:
   /announcements:
     get:
@@ -42,6 +44,82 @@ paths:
                   - announcements
       tags:
         - Announcements
+  /v1/courseRegistrations:
+    get:
+      operationId: CourseRegistrationsV1_list
+      description: 履修情報を取得する
+      parameters:
+        - name: year
+          in: query
+          required: false
+          description: 開講年度; 指定しない場合は今年度が選択される
+          schema:
+            type: integer
+          explode: false
+        - name: semester
+          in: query
+          required: true
+          description: 開講時期
+          schema:
+            $ref: '#/components/schemas/DottoFoundationV1.CourseSemester'
+          explode: false
+      responses:
+        '200':
+          description: 履修情報のリスト
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  courseRegistrations:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CourseRegistration'
+                required:
+                  - courseRegistrations
+      tags:
+        - CourseRegistrations
+    post:
+      operationId: CourseRegistrationsV1_create
+      description: 履修情報を作成する
+      parameters: []
+      responses:
+        '201':
+          description: 作成された履修情報
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  courseRegistration:
+                    $ref: '#/components/schemas/CourseRegistration'
+                required:
+                  - courseRegistration
+      tags:
+        - CourseRegistrations
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CourseRegistrationRequest'
+        description: 作成する履修情報の情報
+  /v1/courseRegistrations/{id}:
+    delete:
+      operationId: CourseRegistrationsV1_delete
+      description: 履修情報を削除する
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: 履修情報ID
+          schema:
+            type: string
+      responses:
+        '204':
+          description: There is no content to send for this request, but the headers may be useful.
+      tags:
+        - CourseRegistrations
   /v1/subjects:
     get:
       operationId: SubjectsV1_list
@@ -159,6 +237,50 @@ paths:
                   - subject
       tags:
         - Subjects
+  /v1/timetableItems:
+    get:
+      operationId: TimetableItemsV1_list
+      description: 時間割を取得する
+      parameters:
+        - name: year
+          in: query
+          required: false
+          description: 開講年度; 指定しない場合は今年度が選択される
+          schema:
+            type: integer
+          explode: false
+        - name: semester
+          in: query
+          required: true
+          description: 開講時期
+          schema:
+            $ref: '#/components/schemas/DottoFoundationV1.CourseSemester'
+          explode: false
+        - name: dayOfWeek
+          in: query
+          required: false
+          description: 曜日; 複数指定時はORでフィルタリングされる; 指定しない場合は全ての曜日が選択される
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/DottoFoundationV1.DayOfWeek'
+          explode: false
+      responses:
+        '200':
+          description: 時間割のリスト
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  timetableItems:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TimetableItem'
+                required:
+                  - timetableItems
+      tags:
+        - TimetableItems
   /v1/users:
     get:
       operationId: UsersV1_detail
@@ -373,6 +495,23 @@ components:
         url:
           type: string
           format: uri
+    CourseRegistration:
+      type: object
+      required:
+        - id
+        - subject
+      properties:
+        id:
+          type: string
+        subject:
+          $ref: '#/components/schemas/SubjectSummary'
+    CourseRegistrationRequest:
+      type: object
+      required:
+        - subjectId
+      properties:
+        subjectId:
+          type: string
     DottoFoundationV1.Class:
       type: string
       enum:
@@ -554,6 +693,22 @@ components:
           description: |-
             TODO: 時間割APIを作成したら、時間割に追加されているかを取得する
             時間割に追加されているか
+    TimetableItem:
+      type: object
+      required:
+        - id
+        - subject
+        - dayOfWeek
+        - period
+      properties:
+        id:
+          type: string
+        subject:
+          $ref: '#/components/schemas/SubjectSummary'
+        dayOfWeek:
+          $ref: '#/components/schemas/DottoFoundationV1.DayOfWeek'
+        period:
+          $ref: '#/components/schemas/DottoFoundationV1.Period'
     UserInfo:
       type: object
       properties:
