@@ -1,41 +1,22 @@
 import 'package:dotto/helper/syllabus_database_helper.dart';
 
 final class CourseDatabaseHelper {
-  static const String _coursesQuery = '''
-    SELECT * FROM sort detail 
-    INNER JOIN sort ON sort.LessonId=detail.LessonId 
-    WHERE 
-  ''';
-
-  static const String _weekPeriodQuery = '''
-    SELECT * FROM week_period 
-    WHERE lessonId IN 
-  ''';
-
   static Future<List<Map<String, dynamic>>> searchCourses({
     required String whereClause,
     required String searchWord,
   }) async {
-    try {
-      final db = await SyllabusDatabaseHelper.getDatabase();
-      final records = await db.rawQuery('$_coursesQuery$whereClause');
-      return records.where((record) => record['授業名']?.toString().contains(searchWord) ?? false).toList();
-    } catch (e) {
-      throw Exception('科目検索に失敗しました: $e');
-    }
+    final db = await SyllabusDatabaseHelper.getDatabase();
+    final records = await db.query(
+      'sort, detail',
+      where: 'sort.LessonId=detail.LessonId AND ?',
+      whereArgs: [whereClause],
+    );
+    return records.where((record) => record['授業名']?.toString().contains(searchWord) ?? false).toList();
   }
 
   static Future<List<Map<String, dynamic>>> fetchWeekPeriod(List<int> lessonIdList) async {
-    if (lessonIdList.isEmpty) {
-      return [];
-    }
-
-    try {
-      final db = await SyllabusDatabaseHelper.getDatabase();
-      final placeholders = lessonIdList.join(',');
-      return await db.rawQuery('$_weekPeriodQuery($placeholders)');
-    } catch (e) {
-      throw Exception('時間割情報の取得に失敗しました: $e');
-    }
+    final db = await SyllabusDatabaseHelper.getDatabase();
+    final records = await db.query('week_period', where: 'lessonId IN (?)', whereArgs: [lessonIdList.join(',')]);
+    return records;
   }
 }

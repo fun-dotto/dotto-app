@@ -1,10 +1,8 @@
-import 'dart:convert';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dotto/feature/funch/domain/firestore_funch_menu.dart';
 import 'package:dotto/feature/funch/domain/funch_menu.dart';
 import 'package:dotto/feature/funch/utility/datetime.dart';
-import 'package:dotto/helper/read_json_file.dart';
+import 'package:dotto/helper/file_helper.dart';
 
 abstract interface class FunchRepositoryInterface {
   Future<List<FunchCommonMenu>> getAllCommonMenu();
@@ -15,10 +13,8 @@ abstract interface class FunchRepositoryInterface {
 final class FunchRepositoryImpl implements FunchRepositoryInterface {
   @override
   Future<List<FunchCommonMenu>> getAllCommonMenu() async {
-    const fileName = 'funch/menu.json';
-    final jsonString = await readJsonFile(fileName);
-    final jsonData = json.decode(jsonString) as List<dynamic>;
-    return jsonData.map((e) => FunchCommonMenu.fromJson(e as Map<String, dynamic>)).toList();
+    final data = await FileHelper.getJSONData('funch/menu.json');
+    return data.map((e) => FunchCommonMenu.fromJson(e as Map<String, dynamic>)).toList();
   }
 
   @override

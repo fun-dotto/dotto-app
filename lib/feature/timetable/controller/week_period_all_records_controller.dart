@@ -7,7 +7,7 @@ final class WeekPeriodAllRecordsNotifier extends _$WeekPeriodAllRecordsNotifier 
   @override
   Future<List<Map<String, dynamic>>> build() async {
     final db = await SyllabusDatabaseHelper.getDatabase();
-    final List<Map<String, dynamic>> records = await db.rawQuery('SELECT * FROM week_period order by lessonId');
+    final records = await db.query('week_period', orderBy: 'lessonId');
     return records;
   }
 }
