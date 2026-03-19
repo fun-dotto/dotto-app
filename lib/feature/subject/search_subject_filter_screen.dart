@@ -34,7 +34,12 @@ class SearchSubjectFilterScreen extends HookWidget {
             onPressed: () => Navigator.of(context).pop(currentFilter.value),
             icon: const Icon(Icons.close),
           ),
-          actions: [TextButton(onPressed: () => currentFilter.value = SubjectFilter(), child: const Text('条件をクリア'))],
+          actions: [
+            TextButton(
+              onPressed: currentFilter.value.hasActiveFilters ? () => currentFilter.value = SubjectFilter() : null,
+              child: const Text('条件をクリア'),
+            ),
+          ],
         ),
         body: ListView(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),

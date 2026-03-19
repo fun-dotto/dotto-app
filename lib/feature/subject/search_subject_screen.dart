@@ -21,16 +21,6 @@ class SearchSubjectScreen extends HookConsumerWidget {
     final filter = useState(SubjectFilter());
     final subjects = useState<AsyncValue<List<SubjectSummary>>>(const AsyncData([]));
 
-    bool isEmptyFilter() =>
-        textEditingController.text.isEmpty &&
-        filter.value.grades.isEmpty &&
-        filter.value.courses.isEmpty &&
-        filter.value.classes.isEmpty &&
-        filter.value.classifications.isEmpty &&
-        filter.value.semesters.isEmpty &&
-        filter.value.requirements.isEmpty &&
-        filter.value.culturalSubjectCategories.isEmpty;
-
     Future<void> search() async {
       subjects
         ..value = const AsyncLoading()
@@ -52,8 +42,10 @@ class SearchSubjectScreen extends HookConsumerWidget {
               );
               if (result != null) {
                 filter.value = result;
+                if (result.hasActiveFilters) {
+                  await search();
+                }
               }
-              await search();
             },
             icon: Badge(isLabelVisible: filter.value.hasActiveFilters, child: const Icon(Icons.tune)),
           ),
@@ -73,7 +65,7 @@ class SearchSubjectScreen extends HookConsumerWidget {
             Expanded(
               child: switch (subjects.value) {
                 AsyncData(:final value) =>
-                  value.isEmpty && !isEmptyFilter()
+                  value.isEmpty && filter.value.hasActiveFilters
                       ? const Center(child: Text('科目が見つかりませんでした'))
                       : ListView.separated(
                           separatorBuilder: (_, _) => const Divider(height: 0),
@@ -94,7 +86,7 @@ class SearchSubjectScreen extends HookConsumerWidget {
                           },
                           keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
                         ),
-                AsyncError(:final error) => Center(child: Text('エラーが発生しました: $error')),
+                AsyncError() => const Center(child: Text('科目の検索に失敗しました。')),
                 AsyncLoading() => const Center(child: CircularProgressIndicator()),
               },
             ),
