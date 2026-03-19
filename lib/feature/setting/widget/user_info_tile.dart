@@ -14,12 +14,8 @@ final class UserInfoTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final semantic = Theme.of(context).extension<SemanticColor>()!;
     final photoURL = user.avatarUrl; // String? のまま
-    final name = (user.name.trim().isNotEmpty)
-        ? user.name.trim()
-        : '名前が設定されていません';
-    final email = user.email.trim().isNotEmpty
-    ? user.email.trim()
-    : 'メールアドレスが設定されていません';
+    final name = (user.name.trim().isNotEmpty) ? user.name.trim() : '名前が設定されていません';
+    final email = user.email.trim().isNotEmpty ? user.email.trim() : 'メールアドレスが設定されていません';
 
     final avatar = ClipOval(
       child: SizedBox(
