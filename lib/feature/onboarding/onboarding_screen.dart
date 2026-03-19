@@ -108,49 +108,46 @@ final class OnboardingScreen extends HookWidget {
             : maxWidthFactorForTop70;
         final imageViewportHeight = contentWidth * imageWidthFactor * imageAspectRatio * visibleTopRatio;
 
-        return Padding(
-          padding: EdgeInsets.zero,
-          child: Column(
-            children: [
-              Text(
-                page.title,
-                style: titleStyle?.copyWith(
-                  color: SemanticColor.light.accentPrimary,
-                  fontWeight: FontWeight.w600,
-                  fontSize: (titleStyle.fontSize ?? 24) - 2,
-                ),
+        return Column(
+          children: [
+            Text(
+              page.title,
+              style: titleStyle?.copyWith(
+                color: SemanticColor.light.accentPrimary,
+                fontWeight: FontWeight.w600,
+                fontSize: (titleStyle.fontSize ?? 24) - 2,
               ),
-              const SizedBox(height: titleToImageSpacing),
-              SizedBox(
-                width: double.infinity,
-                height: imageViewportHeight,
-                child: Align(
-                  alignment: Alignment.topCenter,
-                  child: FractionallySizedBox(
-                    widthFactor: imageWidthFactor,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(24),
-                      child: Image.asset(
-                        page.imagePath,
-                        fit: BoxFit.fitWidth,
-                        alignment: Alignment.topCenter,
-                        errorBuilder: (_, _, _) =>
-                            Image.asset(Asset.noImage, fit: BoxFit.fitWidth, alignment: Alignment.topCenter),
-                      ),
+            ),
+            const SizedBox(height: titleToImageSpacing),
+            SizedBox(
+              width: double.infinity,
+              height: imageViewportHeight,
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: FractionallySizedBox(
+                  widthFactor: imageWidthFactor,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(24),
+                    child: Image.asset(
+                      page.imagePath,
+                      fit: BoxFit.fitWidth,
+                      alignment: Alignment.topCenter,
+                      errorBuilder: (_, _, _) =>
+                          Image.asset(Asset.noImage, fit: BoxFit.fitWidth, alignment: Alignment.topCenter),
                     ),
                   ),
                 ),
               ),
-              const SizedBox(height: imageToDescriptionSpacing),
-              Text(
-                page.description,
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: bodyStyle,
-              ),
-            ],
-          ),
+            ),
+            const SizedBox(height: imageToDescriptionSpacing),
+            Text(
+              page.description,
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: bodyStyle,
+            ),
+          ],
         );
       },
     );
