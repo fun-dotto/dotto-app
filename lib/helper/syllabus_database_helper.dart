@@ -22,7 +22,7 @@ final class SyllabusDatabaseHelper {
         debugPrint('Database already exists');
       }
       return openDatabase(path, readOnly: true);
-    } catch (e) {
+    } on Exception catch (e) {
       debugPrint(e.toString());
       rethrow;
     }
