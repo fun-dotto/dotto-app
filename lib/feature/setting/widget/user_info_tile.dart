@@ -7,15 +7,19 @@ final class UserInfoTile extends StatelessWidget {
   const UserInfoTile({super.key, required this.user, this.onTap});
 
   /// 表示するユーザー（Firebase Auth の User）
-  final User user;
+  final DottoUser user;
   final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     final semantic = Theme.of(context).extension<SemanticColor>()!;
-    final photoURL = user.photoURL; // String? のまま
-    final name = (user.displayName?.trim().isNotEmpty ?? false) ? user.displayName!.trim() : '名前が設定されていません';
-    final email = user.email ?? '';
+    final photoURL = user.avatarUrl; // String? のまま
+    final name = (user.name.trim().isNotEmpty)
+        ? user.name.trim()
+        : '名前が設定されていません';
+    final email = user.email.trim().isNotEmpty
+    ? user.email.trim()
+    : 'メールアドレスが設定されていません';
 
     final avatar = ClipOval(
       child: SizedBox(
