@@ -79,11 +79,3 @@ lib/src/model/user_info.dart
 lib/src/model/users_v1_detail200_response.dart
 lib/src/serializers.dart
 pubspec.yaml
-test/course_registration_request_test.dart
-test/course_registration_test.dart
-test/course_registrations_api_test.dart
-test/course_registrations_v1_create201_response_test.dart
-test/course_registrations_v1_list200_response_test.dart
-test/timetable_item_test.dart
-test/timetable_items_api_test.dart
-test/timetable_items_v1_list200_response_test.dart
