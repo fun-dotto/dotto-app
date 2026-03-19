@@ -6,11 +6,7 @@ final class CourseDatabaseHelper {
     required String searchWord,
   }) async {
     final db = await SyllabusDatabaseHelper.getDatabase();
-    final records = await db.query(
-      'sort, detail',
-      where: 'sort.LessonId=detail.LessonId AND ?',
-      whereArgs: [whereClause],
-    );
+    final records = await db.query('sort, detail', where: 'sort.LessonId=detail.LessonId AND $whereClause');
     return records.where((record) => record['授業名']?.toString().contains(searchWord) ?? false).toList();
   }
 
