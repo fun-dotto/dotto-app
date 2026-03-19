@@ -28,12 +28,13 @@ class SearchSubjectFilterScreen extends HookWidget {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('フィルター'),
+          title: const Text('検索条件'),
           centerTitle: false,
           leading: IconButton(
             onPressed: () => Navigator.of(context).pop(currentFilter.value),
             icon: const Icon(Icons.close),
           ),
+          actions: [TextButton(onPressed: () => currentFilter.value = SubjectFilter(), child: const Text('条件をクリア'))],
         ),
         body: ListView(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
