@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:sqflite_common/sqflite_logger.dart';
 
 final class SyllabusDatabaseHelper {
   static Future<Database> getDatabase() async {
@@ -21,7 +22,13 @@ final class SyllabusDatabaseHelper {
       } else {
         debugPrint('Database already exists');
       }
-      return openDatabase(path, readOnly: true);
+      debugPrint('Opening database: $path');
+      final dbFactory = SqfliteDatabaseFactoryLogger(
+        databaseFactory,
+        options: SqfliteLoggerOptions(type: SqfliteDatabaseFactoryLoggerType.all),
+      );
+      final db = await dbFactory.openDatabase(path);
+      return db;
     } on Exception catch (e) {
       debugPrint(e.toString());
       rethrow;

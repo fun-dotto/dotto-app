@@ -47,10 +47,9 @@ final class KamokuDetailRepository {
 
   Future<Map<String, dynamic>> fetchDetails(int lessonId) async {
     final db = await SyllabusDatabaseHelper.getDatabase();
-    final List<Map<String, dynamic>> details = await db.query('detail', where: 'LessonId = ?', whereArgs: [lessonId]);
-
-    if (details.isNotEmpty) {
-      return details.first;
+    final records = await db.query('detail', where: 'LessonId = ?', whereArgs: [lessonId]);
+    if (records.isNotEmpty) {
+      return records.first;
     } else {
       throw Exception();
     }
