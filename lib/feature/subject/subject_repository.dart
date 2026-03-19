@@ -1,4 +1,5 @@
 import 'package:built_collection/built_collection.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dotto/domain/academic_area.dart';
 import 'package:dotto/domain/academic_class.dart';
 import 'package:dotto/domain/cultural_subject_category.dart';
@@ -11,6 +12,7 @@ import 'package:dotto/domain/subject.dart';
 import 'package:dotto/domain/subject_classification.dart';
 import 'package:dotto/domain/subject_eligible_attribute.dart';
 import 'package:dotto/domain/subject_faculty.dart';
+import 'package:dotto/domain/subject_feedback.dart';
 import 'package:dotto/domain/subject_filter.dart';
 import 'package:dotto/domain/subject_requirement.dart';
 import 'package:dotto/domain/subject_requirement_type.dart';
@@ -32,6 +34,13 @@ extension IterableToBuiltListOrNullExtension<E> on Iterable<E> {
 abstract class SubjectRepository {
   Future<List<SubjectSummary>> getSubjects(String query, SubjectFilter filter);
   Future<Subject> getSubject(String id);
+  Future<List<SubjectFeedback>> getFeedbacks(String lessonId);
+  Future<void> createFeedback({
+    required String userId,
+    required String lessonId,
+    required int score,
+    required String comment,
+  });
 }
 
 final class SubjectRepositoryImpl implements SubjectRepository {
@@ -325,6 +334,50 @@ final class SubjectRepositoryImpl implements SubjectRepository {
     } catch (e) {
       debugPrint(e.toString());
       rethrow;
+    }
+  }
+
+  @override
+  Future<List<SubjectFeedback>> getFeedbacks(String lessonId) async {
+    final querySnapshot = await FirebaseFirestore.instance
+        .collection('feedback')
+        .where('lessonId', isEqualTo: int.parse(lessonId))
+        .get();
+    final feedbacks = <SubjectFeedback>[];
+    for (final doc in querySnapshot.docs) {
+      final score = doc['score'] as double?;
+      final comment = doc['detail'] as String?;
+      if (score == null || comment == null) {
+        continue;
+      }
+      feedbacks.add(SubjectFeedback(score: score.toInt(), comment: comment));
+    }
+    return feedbacks;
+  }
+
+  @override
+  Future<void> createFeedback({
+    required String userId,
+    required String lessonId,
+    required int score,
+    required String comment,
+  }) async {
+    final querySnapshot = await FirebaseFirestore.instance
+        .collection('feedback')
+        .where('User', isEqualTo: userId)
+        .where('lessonId', isEqualTo: lessonId)
+        .get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      final docId = querySnapshot.docs[0].id;
+      await FirebaseFirestore.instance.collection('feedback').doc(docId).update({'score': score, 'detail': comment});
+    } else {
+      await FirebaseFirestore.instance.collection('feedback').add({
+        'User': userId,
+        'lessonId': int.parse(lessonId),
+        'score': score.toDouble(),
+        'detail': comment,
+      });
     }
   }
 }
