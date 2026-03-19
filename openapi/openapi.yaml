@@ -42,6 +42,8 @@ paths:
                       $ref: '#/components/schemas/Announcement'
                 required:
                   - announcements
+        '401':
+          description: Access is unauthorized.
       tags:
         - Announcements
   /v1/courseRegistrations:
@@ -77,6 +79,8 @@ paths:
                       $ref: '#/components/schemas/CourseRegistration'
                 required:
                   - courseRegistrations
+        '401':
+          description: Access is unauthorized.
       tags:
         - CourseRegistrations
     post:
@@ -95,6 +99,8 @@ paths:
                     $ref: '#/components/schemas/CourseRegistration'
                 required:
                   - courseRegistration
+        '401':
+          description: Access is unauthorized.
       tags:
         - CourseRegistrations
       requestBody:
@@ -118,6 +124,10 @@ paths:
       responses:
         '204':
           description: There is no content to send for this request, but the headers may be useful.
+        '401':
+          description: Access is unauthorized.
+        '404':
+          description: The server cannot find the requested resource.
       tags:
         - CourseRegistrations
   /v1/subjects:
@@ -212,6 +222,8 @@ paths:
                       $ref: '#/components/schemas/SubjectSummary'
                 required:
                   - subjects
+        '401':
+          description: Access is unauthorized.
       tags:
         - Subjects
   /v1/subjects/{id}:
@@ -235,6 +247,10 @@ paths:
                     $ref: '#/components/schemas/SubjectDetail'
                 required:
                   - subject
+        '401':
+          description: Access is unauthorized.
+        '404':
+          description: The server cannot find the requested resource.
       tags:
         - Subjects
   /v1/timetableItems:
@@ -279,6 +295,8 @@ paths:
                       $ref: '#/components/schemas/TimetableItem'
                 required:
                   - timetableItems
+        '401':
+          description: Access is unauthorized.
       tags:
         - TimetableItems
   /v1/users:
@@ -298,6 +316,8 @@ paths:
                     $ref: '#/components/schemas/UserInfo'
                 required:
                   - user
+        '401':
+          description: Access is unauthorized.
         '404':
           description: The server cannot find the requested resource.
       tags:
@@ -318,6 +338,8 @@ paths:
                     $ref: '#/components/schemas/UserInfo'
                 required:
                   - user
+        '401':
+          description: Access is unauthorized.
       tags:
         - Users
       requestBody:
@@ -327,6 +349,8 @@ paths:
             schema:
               $ref: '#/components/schemas/UserInfo'
         description: 作成または更新するユーザーの情報
+security:
+  - BearerAuth: []
 components:
   schemas:
     AcademicService.Faculty:
@@ -718,6 +742,10 @@ components:
           $ref: '#/components/schemas/DottoFoundationV1.Course'
         class:
           $ref: '#/components/schemas/DottoFoundationV1.Class'
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: Bearer
 servers:
   - url: http://localhost:8080
     description: Local
