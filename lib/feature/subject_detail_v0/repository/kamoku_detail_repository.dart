@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dotto/feature/search_subject_v0/repository/syllabus_database_config.dart';
+import 'package:dotto/helper/syllabus_database_helper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:sqflite/sqflite.dart';
 
 final class KamokuDetailRepository {
   factory KamokuDetailRepository() {
@@ -47,13 +46,8 @@ final class KamokuDetailRepository {
   }
 
   Future<Map<String, dynamic>> fetchDetails(int lessonId) async {
-    final dbPath = await SyllabusDatabaseConfig().getDBPath();
-    final database = await openDatabase(dbPath);
-    final List<Map<String, dynamic>> details = await database.query(
-      'detail',
-      where: 'LessonId = ?',
-      whereArgs: [lessonId],
-    );
+    final db = await SyllabusDatabaseHelper.getDatabase();
+    final List<Map<String, dynamic>> details = await db.query('detail', where: 'LessonId = ?', whereArgs: [lessonId]);
 
     if (details.isNotEmpty) {
       return details.first;

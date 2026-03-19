@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:dotto/helper/local_repository.dart';
 
 Future<String> readJsonFile(String fileName) async {
-  final filePath = await LocalRepository().getApplicationFilePath(fileName);
+  final filePath = await LocalRepository.getApplicationFilePath(fileName);
   final file = File(filePath);
 
   // ファイルの存在確認
