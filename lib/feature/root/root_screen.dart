@@ -90,7 +90,7 @@ final class RootScreen extends ConsumerWidget {
       case AsyncData(:final value):
         if (!value.hasShownAppTutorial) {
           debugPrint('Show App Tutorial');
-          return AppTutorial(onDismissed: () => ref.read(rootViewModelProvider.notifier).onAppTutorialDismissed());
+          return OnboardingScreen(onDismissed: ref.read(rootViewModelProvider.notifier).onAppTutorialDismissed);
         }
         if (!value.isValidAppVersion) {
           debugPrint('Invalid App Version');

@@ -1,48 +1,38 @@
 import 'package:dotto/asset.dart';
+import 'package:dotto/feature/onboarding/domain/onboarding_page_content.dart';
 import 'package:dotto_design_system/component/button.dart';
 import 'package:dotto_design_system/style/semantic_color.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 
-final class AppTutorial extends StatefulWidget {
-  const AppTutorial({required this.onDismissed, super.key});
+final class OnboardingScreen extends HookWidget {
+  OnboardingScreen({required this.onDismissed, super.key});
 
   final void Function() onDismissed;
 
-  @override
-  State<AppTutorial> createState() => _AppTutorialState();
-}
+  final PageController pageController = usePageController();
 
-final class _AppTutorialState extends State<AppTutorial> {
-  final _controller = PageController();
-  var _currentIndex = 0;
-
-  static const _pages = <_TutorialPageData>[
-    _TutorialPageData(welcomeTitle: 'ようこそ', welcomeBodyTop: 'Dottoで', welcomeBodyBottom: 'はこだて未来大学のすべてを'),
-    _TutorialPageData(
+  static const _pages = <OnboardingPageContent>[
+    OnboardingPageContent(welcomeTitle: 'ようこそ', welcomeBodyTop: 'Dottoで', welcomeBodyBottom: 'はこだて未来大学のすべてを'),
+    OnboardingPageContent(
       title: '時間割の管理',
       description: '自分の時間割を設定して\n休講/補講情報を受け取ろう',
       imagePath: Asset.tutorialTimetableMock,
     ),
-    _TutorialPageData(title: 'バスの時刻表', description: '大学から最寄りのバス停までの\n時刻表を確認しよう', imagePath: Asset.tutorialBusMock),
-    _TutorialPageData(title: '学内マップ', description: '空き教室を確認したり\n研究室を検索しよう', imagePath: Asset.tutorialCampusMapMock),
-    _TutorialPageData(title: '科目検索', description: 'レビューや過去問を\n閲覧しよう', imagePath: Asset.tutorialSubjectMock),
-    _TutorialPageData(title: '学食メニュー', description: '学食のメニューや価格を\n確認しよう', imagePath: Asset.tutorialCafeteriaMock),
+    OnboardingPageContent(title: 'バスの時刻表', description: '大学から最寄りのバス停までの\n時刻表を確認しよう', imagePath: Asset.tutorialBusMock),
+    OnboardingPageContent(title: '学内マップ', description: '空き教室を確認したり\n研究室を検索しよう', imagePath: Asset.tutorialCampusMapMock),
+    OnboardingPageContent(title: '科目検索', description: 'レビューや過去問を\n閲覧しよう', imagePath: Asset.tutorialSubjectMock),
+    OnboardingPageContent(title: '学食メニュー', description: '学食のメニューや価格を\n確認しよう', imagePath: Asset.tutorialCafeteriaMock),
   ];
 
-  bool get _isLastPage => _currentIndex == _pages.length - 1;
+  bool get isLastPage => pageController.page == _pages.length - 1;
 
-  void _goNextOrFinish() {
-    if (_isLastPage) {
-      widget.onDismissed();
+  Future<void> goNextOrFinish() async {
+    if (isLastPage) {
+      onDismissed();
       return;
     }
-    _controller.nextPage(duration: const Duration(milliseconds: 250), curve: Curves.easeOut);
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
+    await pageController.nextPage(duration: const Duration(milliseconds: 250), curve: Curves.easeOut);
   }
 
   Widget _buildTopBar(BuildContext context, {required bool visible}) {
@@ -60,7 +50,7 @@ final class _AppTutorialState extends State<AppTutorial> {
               ),
               const Spacer(),
               DottoButton(
-                onPressed: widget.onDismissed,
+                onPressed: onDismissed,
                 type: DottoButtonType.text,
                 style: DottoButton.styleFrom(
                   textStyle: Theme.of(context).textTheme.bodySmall,
@@ -75,7 +65,7 @@ final class _AppTutorialState extends State<AppTutorial> {
     );
   }
 
-  Widget _buildWelcomePage(BuildContext context, _TutorialPageData page) {
+  Widget _buildWelcomePage(BuildContext context, OnboardingPageContent page) {
     return LayoutBuilder(
       builder: (context, constraints) {
         return SingleChildScrollView(
@@ -115,7 +105,7 @@ final class _AppTutorialState extends State<AppTutorial> {
     );
   }
 
-  Widget _buildFeaturePage(BuildContext context, _TutorialPageData page) {
+  Widget _buildFeaturePage(BuildContext context, OnboardingPageContent page) {
     return LayoutBuilder(
       builder: (context, constraints) {
         final bodyStyle = Theme.of(context).textTheme.bodyLarge;
@@ -155,7 +145,7 @@ final class _AppTutorialState extends State<AppTutorial> {
                 style: titleStyle?.copyWith(
                   color: SemanticColor.light.accentPrimary,
                   fontWeight: FontWeight.w600,
-                  fontSize: (titleStyle?.fontSize ?? 24) - 2,
+                  fontSize: (titleStyle.fontSize ?? 24) - 2,
                 ),
               ),
               const SizedBox(height: titleToImageSpacing),
@@ -172,8 +162,8 @@ final class _AppTutorialState extends State<AppTutorial> {
                         page.imagePath!,
                         fit: BoxFit.fitWidth,
                         alignment: Alignment.topCenter,
-                        errorBuilder: (_, __, ___) =>
-                            Image.asset(page.fallbackImagePath!, fit: BoxFit.fitWidth, alignment: Alignment.topCenter),
+                        errorBuilder: (_, _, _) =>
+                            Image.asset(Asset.noImage, fit: BoxFit.fitWidth, alignment: Alignment.topCenter),
                       ),
                     ),
                   ),
@@ -196,7 +186,7 @@ final class _AppTutorialState extends State<AppTutorial> {
 
   Widget _buildBottomArea(BuildContext context) {
     final indicatorCount = _pages.length - 1;
-    final activeIndicatorIndex = _currentIndex <= 0 ? -1 : _currentIndex - 1;
+    final activeIndicatorIndex = pageController.page == 0 ? -1 : pageController.page! - 1;
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(40, 40, 40, 40),
@@ -221,7 +211,7 @@ final class _AppTutorialState extends State<AppTutorial> {
           const SizedBox(height: 16),
           SizedBox(
             width: double.infinity,
-            child: DottoButton(onPressed: _goNextOrFinish, child: Text(_isLastPage ? 'はじめる' : '次へ')),
+            child: DottoButton(onPressed: goNextOrFinish, child: Text(isLastPage ? 'はじめる' : '次へ')),
           ),
         ],
       ),
@@ -262,11 +252,11 @@ final class _AppTutorialState extends State<AppTutorial> {
             Positioned.fill(child: _buildBackgroundDottoText()),
             Column(
               children: [
-                _buildTopBar(context, visible: _currentIndex != 0),
+                _buildTopBar(context, visible: pageController.page != 0),
                 Expanded(
                   child: PageView.builder(
-                    controller: _controller,
-                    onPageChanged: (index) => setState(() => _currentIndex = index),
+                    controller: pageController,
+                    onPageChanged: (index) => pageController.jumpToPage(index),
                     itemCount: _pages.length,
                     itemBuilder: (context, index) {
                       final page = _pages[index];
@@ -285,26 +275,4 @@ final class _AppTutorialState extends State<AppTutorial> {
       ),
     );
   }
-}
-
-final class _TutorialPageData {
-  const _TutorialPageData({
-    this.title,
-    this.description,
-    this.imagePath,
-    this.fallbackImagePath,
-    this.welcomeTitle,
-    this.welcomeBodyTop,
-    this.welcomeBodyBottom,
-  });
-
-  final String? title;
-  final String? description;
-  final String? imagePath;
-  final String? fallbackImagePath;
-  final String? welcomeTitle;
-  final String? welcomeBodyTop;
-  final String? welcomeBodyBottom;
-
-  bool get isWelcome => welcomeTitle != null;
 }
