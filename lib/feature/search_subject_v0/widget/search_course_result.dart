@@ -1,5 +1,5 @@
-import 'package:dotto/feature/search_course/repository/search_course_repository.dart';
-import 'package:dotto/feature/search_course/widget/search_course_result_item.dart';
+import 'package:dotto/feature/search_subject_v0/repository/search_course_repository.dart';
+import 'package:dotto/feature/search_subject_v0/widget/search_course_result_item.dart';
 import 'package:flutter/material.dart';
 
 final class SearchCourseResult extends StatelessWidget {

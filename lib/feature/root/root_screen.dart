@@ -4,7 +4,7 @@ import 'package:dotto/feature/home/home.dart';
 import 'package:dotto/feature/map/map_screen.dart';
 import 'package:dotto/feature/root/root_viewmodel.dart';
 import 'package:dotto/feature/root/root_viewmodel_state.dart';
-import 'package:dotto/feature/search_course/search_course_screen.dart';
+import 'package:dotto/feature/search_subject_v0/search_course_screen.dart';
 import 'package:dotto/feature/setting/settings.dart';
 import 'package:dotto/widget/app_tutorial.dart';
 import 'package:dotto/widget/invalid_app_version_screen.dart';

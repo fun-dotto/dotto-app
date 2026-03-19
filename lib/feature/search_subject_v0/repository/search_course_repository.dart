@@ -1,8 +1,8 @@
-import 'package:dotto/feature/search_course/domain/search_course_filter_option_choice.dart';
-import 'package:dotto/feature/search_course/domain/search_course_filter_options.dart';
-import 'package:dotto/feature/search_course/repository/course_database_helper.dart';
-import 'package:dotto/feature/search_course/repository/course_filter_extractor.dart';
-import 'package:dotto/feature/search_course/repository/course_search_query_builder.dart';
+import 'package:dotto/feature/search_subject_v0/domain/search_course_filter_option_choice.dart';
+import 'package:dotto/feature/search_subject_v0/domain/search_course_filter_options.dart';
+import 'package:dotto/feature/search_subject_v0/repository/course_database_helper.dart';
+import 'package:dotto/feature/search_subject_v0/repository/course_filter_extractor.dart';
+import 'package:dotto/feature/search_subject_v0/repository/course_search_query_builder.dart';
 import 'package:flutter/material.dart';
 
 final class SearchCourseRepository {

@@ -1,4 +1,4 @@
-import 'package:dotto/feature/search_course/widget/add_course_button.dart';
+import 'package:dotto/feature/search_subject_v0/widget/add_course_button.dart';
 import 'package:flutter/material.dart';
 
 final class SearchCourseResultItem extends StatelessWidget {

@@ -1,4 +1,4 @@
-import 'package:dotto/feature/search_course/repository/syllabus_database_config.dart';
+import 'package:dotto/feature/search_subject_v0/repository/syllabus_database_config.dart';
 import 'package:sqflite/sqflite.dart';
 
 final class CourseDatabaseHelper {

@@ -1,13 +1,13 @@
 import 'package:dotto/controller/user_controller.dart';
 import 'package:dotto/feature/subject_detail_v0/kamoku_detail_screen.dart';
-import 'package:dotto/feature/search_course/domain/search_course_filter_option_choice.dart';
-import 'package:dotto/feature/search_course/domain/search_course_filter_options.dart';
-import 'package:dotto/feature/search_course/search_course_viewmodel.dart';
-import 'package:dotto/feature/search_course/search_course_viewmodel_state.dart';
-import 'package:dotto/feature/search_course/widget/search_course_action_buttons.dart';
-import 'package:dotto/feature/search_course/widget/search_course_box.dart';
-import 'package:dotto/feature/search_course/widget/search_course_filter_section.dart';
-import 'package:dotto/feature/search_course/widget/search_course_result_section.dart';
+import 'package:dotto/feature/search_subject_v0/domain/search_course_filter_option_choice.dart';
+import 'package:dotto/feature/search_subject_v0/domain/search_course_filter_options.dart';
+import 'package:dotto/feature/search_subject_v0/search_course_viewmodel.dart';
+import 'package:dotto/feature/search_subject_v0/search_course_viewmodel_state.dart';
+import 'package:dotto/feature/search_subject_v0/widget/search_course_action_buttons.dart';
+import 'package:dotto/feature/search_subject_v0/widget/search_course_box.dart';
+import 'package:dotto/feature/search_subject_v0/widget/search_course_filter_section.dart';
+import 'package:dotto/feature/search_subject_v0/widget/search_course_result_section.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
