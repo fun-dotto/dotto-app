@@ -4,7 +4,7 @@ import 'package:dotto/domain/cultural_subject_category.dart';
 import 'package:dotto/domain/grade.dart';
 import 'package:dotto/domain/semester.dart';
 import 'package:dotto/domain/subject_classification.dart';
-import 'package:dotto/domain/subject_requirement.dart';
+import 'package:dotto/domain/subject_requirement_type.dart';
 import 'package:dotto/feature/search_subject/domain/subject_filter.dart';
 import 'package:dotto_design_system/style/theme_extension.dart';
 import 'package:flutter/material.dart';
@@ -83,10 +83,10 @@ class SearchSubjectFilterScreen extends HookWidget {
               labelBuilder: (v) => v.label,
             ),
             const SizedBox(height: 12),
-            _buildFilterChipGroup<SubjectRequirement>(
+            _buildFilterChipGroup<SubjectRequirementType>(
               context: context,
               label: '必修・選択',
-              values: SubjectRequirement.values,
+              values: SubjectRequirementType.values,
               selected: currentFilter.value.requirements,
               onChanged: (v) => currentFilter.value = currentFilter.value.copyWith(requirements: v),
               labelBuilder: (v) => v.label,

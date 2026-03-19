@@ -10,7 +10,7 @@ import 'package:dotto/domain/period.dart';
 import 'package:dotto/domain/semester.dart';
 import 'package:dotto/domain/subject_classification.dart';
 import 'package:dotto/domain/subject_faculty.dart';
-import 'package:dotto/domain/subject_requirement.dart';
+import 'package:dotto/domain/subject_requirement_type.dart';
 import 'package:dotto/domain/subject_summary.dart';
 import 'package:dotto/feature/search_subject/domain/subject_filter.dart';
 import 'package:flutter/foundation.dart';
@@ -124,9 +124,9 @@ final class SubjectRepositoryImpl implements SubjectRepository {
             : BuiltList<DottoFoundationV1SubjectRequirementType>(
                 filter.requirements.map(
                   (e) => switch (e) {
-                    SubjectRequirement.required => DottoFoundationV1SubjectRequirementType.required_,
-                    SubjectRequirement.optional => DottoFoundationV1SubjectRequirementType.optional,
-                    SubjectRequirement.optionalRequired => DottoFoundationV1SubjectRequirementType.optionalRequired,
+                    SubjectRequirementType.required => DottoFoundationV1SubjectRequirementType.required_,
+                    SubjectRequirementType.optional => DottoFoundationV1SubjectRequirementType.optional,
+                    SubjectRequirementType.optionalRequired => DottoFoundationV1SubjectRequirementType.optionalRequired,
                   },
                 ),
               ),
