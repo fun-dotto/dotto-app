@@ -19,5 +19,6 @@ abstract class Subject with _$Subject {
     required List<SubjectEligibleAttribute> eligibleAttributes,
     required List<SubjectRequirement> requirements,
     required Syllabus syllabus,
+    required String kakomonId,
   }) = _Subject;
 }
