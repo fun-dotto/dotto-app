@@ -8,10 +8,14 @@ import 'package:dotto/domain/faculty.dart';
 import 'package:dotto/domain/grade.dart';
 import 'package:dotto/domain/period.dart';
 import 'package:dotto/domain/semester.dart';
+import 'package:dotto/domain/subject.dart';
 import 'package:dotto/domain/subject_classification.dart';
+import 'package:dotto/domain/subject_eligible_attribute.dart';
 import 'package:dotto/domain/subject_faculty.dart';
+import 'package:dotto/domain/subject_requirement.dart';
 import 'package:dotto/domain/subject_requirement_type.dart';
 import 'package:dotto/domain/subject_summary.dart';
+import 'package:dotto/domain/syllabus.dart';
 import 'package:dotto/feature/search_subject/domain/subject_filter.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -30,6 +34,7 @@ final subjectRepositoryProvider = Provider<SubjectRepository>((ref) => SubjectRe
 
 abstract class SubjectRepository {
   Future<List<SubjectSummary>> getSubjects(String query, SubjectFilter filter);
+  Future<Subject> getSubject(String id);
 }
 
 final class SubjectRepositoryImpl implements SubjectRepository {
@@ -187,6 +192,133 @@ final class SubjectRepositoryImpl implements SubjectRepository {
             ),
           )
           .toList();
+    } catch (e) {
+      debugPrint(e.toString());
+      rethrow;
+    }
+  }
+
+  @override
+  Future<Subject> getSubject(String id) async {
+    try {
+      final api = ref.read(apiClientProvider).getSubjectsApi();
+      final response = await api.subjectsV1Detail(id: id);
+      if (response.statusCode != 200) {
+        throw Exception('Failed to get subject');
+      }
+      final data = response.data;
+      if (data == null) {
+        throw Exception('Failed to get subject');
+      }
+      final subject = data.subject;
+      return Subject(
+        id: subject.id,
+        name: subject.name,
+        faculties: subject.faculties
+            .map(
+              (e) => SubjectFaculty(
+                faculty: Faculty(id: e.faculty.id, name: e.faculty.name, email: e.faculty.email),
+                isPrimary: e.isPrimary,
+              ),
+            )
+            .toList(),
+        year: subject.year,
+        semester: switch (subject.semester) {
+          DottoFoundationV1CourseSemester.h1 => Semester.spring,
+          DottoFoundationV1CourseSemester.h2 => Semester.fall,
+          DottoFoundationV1CourseSemester.allYear => Semester.allYear,
+          DottoFoundationV1CourseSemester.q1 => Semester.q1,
+          DottoFoundationV1CourseSemester.q2 => Semester.q2,
+          DottoFoundationV1CourseSemester.q3 => Semester.q3,
+          DottoFoundationV1CourseSemester.q4 => Semester.q4,
+          DottoFoundationV1CourseSemester.summerIntensive => Semester.summerIntensive,
+          DottoFoundationV1CourseSemester.winterIntensive => Semester.winterIntensive,
+          _ => throw Exception('Invalid semester'),
+        },
+        credit: subject.credit,
+        eligibleAttributes: subject.eligibleAttributes
+            .map(
+              (e) => SubjectEligibleAttribute(
+                grade: switch (e.grade) {
+                  DottoFoundationV1Grade.b1 => Grade.b1,
+                  DottoFoundationV1Grade.b2 => Grade.b2,
+                  DottoFoundationV1Grade.b3 => Grade.b3,
+                  DottoFoundationV1Grade.b4 => Grade.b4,
+                  DottoFoundationV1Grade.m1 => Grade.m1,
+                  DottoFoundationV1Grade.m2 => Grade.m2,
+                  DottoFoundationV1Grade.d1 => Grade.d1,
+                  DottoFoundationV1Grade.d2 => Grade.d2,
+                  DottoFoundationV1Grade.d3 => Grade.d3,
+                  _ => throw Exception('Invalid grade'),
+                },
+                class_: switch (e.class_) {
+                  DottoFoundationV1Class.A => AcademicClass.a,
+                  DottoFoundationV1Class.B => AcademicClass.b,
+                  DottoFoundationV1Class.C => AcademicClass.c,
+                  DottoFoundationV1Class.D => AcademicClass.d,
+                  DottoFoundationV1Class.E => AcademicClass.e,
+                  DottoFoundationV1Class.F => AcademicClass.f,
+                  DottoFoundationV1Class.G => AcademicClass.g,
+                  DottoFoundationV1Class.H => AcademicClass.h,
+                  DottoFoundationV1Class.I => AcademicClass.i,
+                  DottoFoundationV1Class.J => AcademicClass.j,
+                  DottoFoundationV1Class.K => AcademicClass.k,
+                  DottoFoundationV1Class.L => AcademicClass.l,
+                  _ => throw Exception('Invalid class'),
+                },
+              ),
+            )
+            .toList(),
+        requirements: subject.requirements
+            .map(
+              (e) => SubjectRequirement(
+                course: switch (e.course) {
+                  DottoFoundationV1Course.informationSystem => AcademicArea.informationSystemCourse,
+                  DottoFoundationV1Course.informationDesign => AcademicArea.informationDesignCourse,
+                  DottoFoundationV1Course.complexSystem => AcademicArea.complexCourse,
+                  DottoFoundationV1Course.intelligentSystem => AcademicArea.intelligenceSystemCourse,
+                  DottoFoundationV1Course.advancedICT => AcademicArea.advancedICTCourse,
+                  _ => throw Exception('Invalid course'),
+                },
+                requirementType: switch (e.requirementType) {
+                  DottoFoundationV1SubjectRequirementType.required_ => SubjectRequirementType.required,
+                  DottoFoundationV1SubjectRequirementType.optional => SubjectRequirementType.optional,
+                  DottoFoundationV1SubjectRequirementType.optionalRequired => SubjectRequirementType.optionalRequired,
+                  _ => throw Exception('Invalid requirement type'),
+                },
+              ),
+            )
+            .toList(),
+        syllabus: Syllabus(
+          id: subject.syllabus.id,
+          name: subject.syllabus.name,
+          enName: subject.syllabus.enName,
+          grades: subject.syllabus.grades,
+          credit: subject.syllabus.credit,
+          facultyNames: subject.syllabus.facultyNames,
+          practicalHomeFacultyCategory: subject.syllabus.practicalHomeFacultyCategory,
+          multiplePersonTeachingForm: subject.syllabus.multiplePersonTeachingForm,
+          teachingForm: subject.syllabus.teachingForm,
+          summary: subject.syllabus.summary,
+          learningOutcomes: subject.syllabus.learningOutcomes,
+          assignments: subject.syllabus.assignments,
+          evaluationMethod: subject.syllabus.evaluationMethod,
+          textbooks: subject.syllabus.textbooks,
+          referenceBooks: subject.syllabus.referenceBooks,
+          prerequisites: subject.syllabus.prerequisites,
+          preLearning: subject.syllabus.preLearning,
+          postLearning: subject.syllabus.postLearning,
+          notes: subject.syllabus.notes,
+          keywords: subject.syllabus.keywords,
+          targetCourses: subject.syllabus.targetCourses,
+          targetAreas: subject.syllabus.targetAreas,
+          classifications: subject.syllabus.classifications,
+          teachingLanguage: subject.syllabus.teachingLanguage,
+          contentsAndSchedule: subject.syllabus.contentsAndSchedule,
+          teachingAndExamForm: subject.syllabus.teachingAndExamForm,
+          dsopSubject: subject.syllabus.dsopSubject,
+        ),
+      );
     } catch (e) {
       debugPrint(e.toString());
       rethrow;
