@@ -1,15 +1,11 @@
 import 'package:dotto/domain/github_profile.dart';
 import 'package:dotto/feature/github_contributor/github_contributor_service.dart';
 import 'package:dotto/repository/github_contributor_repository.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
 import 'github_contributor_service_test.mocks.dart';
-
-/// テスト用の GitHubContributorService Provider
-final GitHubContributorServiceProvider = Provider<GitHubContributorService>(GitHubContributorService.new);
 
 @GenerateMocks([GitHubContributorRepository])
 void main() {
@@ -32,10 +28,6 @@ void main() {
     ),
   ];
 
-  ProviderContainer createContainer() => ProviderContainer(
-    overrides: [gitHubContributorRepositoryProvider.overrideWithValue(githubContributorRepository)],
-  );
-
   setUp(() {
     reset(githubContributorRepository);
   });
@@ -44,8 +36,7 @@ void main() {
     test('getContributors がGitHubプロフィール一覧を正しく取得する', () async {
       when(githubContributorRepository.getContributors()).thenAnswer((_) async => testGitHubProfiles);
 
-      final container = createContainer();
-      final service = container.read(GitHubContributorServiceProvider);
+      final service = GitHubContributorService(githubContributorRepository);
 
       final result = await service.getContributors();
 
@@ -64,8 +55,7 @@ void main() {
     test('getContributors が空のリストを正しく取得する', () async {
       when(githubContributorRepository.getContributors()).thenAnswer((_) async => <GitHubProfile>[]);
 
-      final container = createContainer();
-      final service = container.read(GitHubContributorServiceProvider);
+      final service = GitHubContributorService(githubContributorRepository);
 
       final result = await service.getContributors();
 
@@ -79,8 +69,7 @@ void main() {
     test('getContributors がリポジトリの例外をそのまま伝播する', () async {
       when(githubContributorRepository.getContributors()).thenThrow(Exception('Failed to get contributors'));
 
-      final container = createContainer();
-      final service = container.read(GitHubContributorServiceProvider);
+      final service = GitHubContributorService(githubContributorRepository);
 
       expect(() => service.getContributors(), throwsA(isA<Exception>()));
 

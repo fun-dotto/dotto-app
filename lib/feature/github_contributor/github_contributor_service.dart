@@ -1,14 +1,13 @@
 import 'package:dotto/domain/github_profile.dart';
 import 'package:dotto/repository/github_contributor_repository.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final class GitHubContributorService {
-  GitHubContributorService(this.ref);
+  GitHubContributorService(this.gitHubContributorRepository);
 
-  final Ref ref;
+  final GitHubContributorRepository gitHubContributorRepository;
 
   Future<List<GitHubProfile>> getContributors() async {
-    final contributors = await ref.read(gitHubContributorRepositoryProvider).getContributors();
+    final contributors = await gitHubContributorRepository.getContributors();
     contributors.sort((a, b) => b.contributions.compareTo(a.contributions));
     return contributors;
   }
