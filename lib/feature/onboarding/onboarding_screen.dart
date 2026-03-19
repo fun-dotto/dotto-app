@@ -81,9 +81,7 @@ final class _AppTutorialState extends State<AppTutorial> {
         return SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(24, 20, 24, 20),
           child: ConstrainedBox(
-            constraints: BoxConstraints(
-              minHeight: constraints.maxHeight > 40 ? constraints.maxHeight - 40 : 0,
-            ),
+            constraints: BoxConstraints(minHeight: constraints.maxHeight > 40 ? constraints.maxHeight - 40 : 0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
