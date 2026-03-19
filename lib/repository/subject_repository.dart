@@ -68,11 +68,6 @@ final class SubjectRepositoryImpl implements SubjectRepository {
             AcademicArea.complexCourse => DottoFoundationV1Course.complexSystem,
             AcademicArea.intelligenceSystemCourse => DottoFoundationV1Course.intelligentSystem,
             AcademicArea.advancedICTCourse => DottoFoundationV1Course.advancedICT,
-            AcademicArea.informationArchitectureArea => DottoFoundationV1Course.informationSystem,
-            AcademicArea.mediaDesignArea => DottoFoundationV1Course.informationDesign,
-            AcademicArea.complexInformationScienceArea => DottoFoundationV1Course.complexSystem,
-            AcademicArea.intelligenceInformationScienceArea => DottoFoundationV1Course.intelligentSystem,
-            AcademicArea.advancedICTArea => DottoFoundationV1Course.advancedICT,
           },
         ),
         class_: filter.classes.isEmpty
