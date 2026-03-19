@@ -16,6 +16,7 @@ import 'package:dotto/domain/subject_requirement.dart';
 import 'package:dotto/domain/subject_requirement_type.dart';
 import 'package:dotto/domain/subject_summary.dart';
 import 'package:dotto/domain/syllabus.dart';
+import 'package:dotto/helper/syllabus_database_helper.dart';
 import 'package:flutter/foundation.dart';
 import 'package:openapi/openapi.dart' hide SubjectFaculty, SubjectSummary;
 
@@ -202,6 +203,16 @@ final class SubjectRepositoryImpl implements SubjectRepository {
         throw Exception('Failed to get subject');
       }
       final subject = data.subject;
+      final db = await SyllabusDatabaseHelper.getDatabase();
+      final kakomonId =
+          (await db.query(
+                'detail',
+                columns: ['過去問'],
+                where: 'LessonId = ?',
+                whereArgs: [subject.syllabus.id],
+              )).firstOrNull?['過去問']
+              as String? ??
+          subject.syllabus.id;
       return Subject(
         id: subject.id,
         name: subject.name,
@@ -309,6 +320,7 @@ final class SubjectRepositoryImpl implements SubjectRepository {
           teachingAndExamForm: subject.syllabus.teachingAndExamForm,
           dsopSubject: subject.syllabus.dsopSubject,
         ),
+        kakomonId: kakomonId,
       );
     } catch (e) {
       debugPrint(e.toString());
