@@ -204,7 +204,7 @@ final class SubjectRepositoryImpl implements SubjectRepository {
       }
       final subject = data.subject;
       final db = await SyllabusDatabaseHelper.getDatabase();
-      final kakomonId =
+      final pastExamId =
           (await db.query(
                 'detail',
                 columns: ['過去問'],
@@ -320,7 +320,7 @@ final class SubjectRepositoryImpl implements SubjectRepository {
           teachingAndExamForm: subject.syllabus.teachingAndExamForm,
           dsopSubject: subject.syllabus.dsopSubject,
         ),
-        kakomonId: kakomonId,
+        pastExamId: pastExamId,
       );
     } catch (e) {
       debugPrint(e.toString());

@@ -1,9 +1,9 @@
 import 'package:dotto/api/api_client.dart';
 import 'package:dotto/controller/user_controller.dart';
+import 'package:dotto/feature/subject/subject_detail_past_exam_screen.dart';
 import 'package:dotto/feature/subject/subject_detail_syllabus_screen.dart';
 import 'package:dotto/feature/subject/subject_repository.dart';
 import 'package:dotto/feature/subject_detail_v0/kamoku_detail_feedback.dart';
-import 'package:dotto/feature/subject_detail_v0/kamoku_detail_kakomon_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -72,10 +72,7 @@ final class SubjectDetailScreen extends HookConsumerWidget {
             }
             if (subjectSnapshot.hasData) {
               final subject = subjectSnapshot.data!;
-              return KamokuDetailKakomonListScreen(
-                lessonId: int.parse(subject.kakomonId),
-                isAuthenticated: isAuthenticated,
-              );
+              return SubjectDetailPastExamScreen(pastExamId: subject.pastExamId, isAuthenticated: isAuthenticated);
             }
             return const SizedBox.shrink();
           }(),
