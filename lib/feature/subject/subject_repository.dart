@@ -1,5 +1,4 @@
 import 'package:built_collection/built_collection.dart';
-import 'package:dotto/api/api_client.dart';
 import 'package:dotto/domain/academic_area.dart';
 import 'package:dotto/domain/academic_class.dart';
 import 'package:dotto/domain/cultural_subject_category.dart';
@@ -18,7 +17,6 @@ import 'package:dotto/domain/subject_requirement_type.dart';
 import 'package:dotto/domain/subject_summary.dart';
 import 'package:dotto/domain/syllabus.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:openapi/openapi.dart' hide SubjectFaculty, SubjectSummary;
 
 extension IterableToBuiltListOrNullExtension<E> on Iterable<E> {
@@ -30,22 +28,20 @@ extension IterableToBuiltListOrNullExtension<E> on Iterable<E> {
   }
 }
 
-final subjectRepositoryProvider = Provider<SubjectRepository>((ref) => SubjectRepositoryImpl(ref));
-
 abstract class SubjectRepository {
   Future<List<SubjectSummary>> getSubjects(String query, SubjectFilter filter);
   Future<Subject> getSubject(String id);
 }
 
 final class SubjectRepositoryImpl implements SubjectRepository {
-  SubjectRepositoryImpl(this.ref);
+  SubjectRepositoryImpl(this.apiClient);
 
-  final Ref ref;
+  final Openapi apiClient;
 
   @override
   Future<List<SubjectSummary>> getSubjects(String query, SubjectFilter filter) async {
     try {
-      final api = ref.read(apiClientProvider).getSubjectsApi();
+      final api = apiClient.getSubjectsApi();
       final response = await api.subjectsV1List(
         q: query,
         grade: filter.grades.mapToBuiltListOrNull(
@@ -196,7 +192,7 @@ final class SubjectRepositoryImpl implements SubjectRepository {
   @override
   Future<Subject> getSubject(String id) async {
     try {
-      final api = ref.read(apiClientProvider).getSubjectsApi();
+      final api = apiClient.getSubjectsApi();
       final response = await api.subjectsV1Detail(id: id);
       if (response.statusCode != 200) {
         throw Exception('Failed to get subject');
