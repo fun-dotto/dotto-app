@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:dotto_design_system/style/semantic_color.dart';
 import 'package:dotto/asset.dart';
+import 'package:dotto/domain/dotto_user.dart';
 
 final class UserInfoTile extends StatelessWidget {
   const UserInfoTile({super.key, required this.user, this.onTap});
