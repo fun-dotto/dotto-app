@@ -1,5 +1,5 @@
 import 'package:dotto/api/api_environment.dart';
-import 'package:dotto/feature/search_subject/search_subject_screen.dart';
+import 'package:dotto/feature/subject/search_subject_screen.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';

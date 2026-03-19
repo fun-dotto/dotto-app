@@ -1,7 +1,7 @@
+import 'package:dotto/domain/subject_filter.dart';
 import 'package:dotto/domain/subject_summary.dart';
-import 'package:dotto/feature/search_subject/domain/subject_filter.dart';
-import 'package:dotto/feature/search_subject/search_subject_filter_screen.dart';
-import 'package:dotto/feature/subject_detail/subject_detail_screen.dart';
+import 'package:dotto/feature/subject/search_subject_filter_screen.dart';
+import 'package:dotto/feature/subject/subject_detail_screen.dart';
 import 'package:dotto/repository/subject_repository.dart';
 import 'package:dotto_design_system/component/text_field.dart';
 import 'package:flutter/material.dart';
