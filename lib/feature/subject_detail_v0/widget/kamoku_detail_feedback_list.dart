@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dotto/feature/kamoku_detail/repository/kamoku_detail_repository.dart';
+import 'package:dotto/feature/subject_detail_v0/repository/kamoku_detail_repository.dart';
 import 'package:dotto_design_system/style/semantic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';

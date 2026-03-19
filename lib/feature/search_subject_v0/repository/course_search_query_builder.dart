@@ -1,4 +1,4 @@
-import 'package:dotto/feature/search_course/domain/search_course_filter_options.dart';
+import 'package:dotto/feature/search_subject_v0/domain/search_course_filter_options.dart';
 
 final class CourseSearchQueryBuilder {
   static const String _graduateLessonIdPattern = '5_____';

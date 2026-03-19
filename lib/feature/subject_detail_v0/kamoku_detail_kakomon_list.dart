@@ -1,4 +1,4 @@
-import 'package:dotto/feature/kamoku_detail/widget/kamoku_detail_kakomon_list_objects.dart';
+import 'package:dotto/feature/subject_detail_v0/widget/kamoku_detail_kakomon_list_objects.dart';
 import 'package:dotto/helper/s3_repository.dart';
 import 'package:flutter/material.dart';
 

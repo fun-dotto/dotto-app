@@ -1,6 +1,6 @@
-import 'package:dotto/feature/kamoku_detail/kamoku_detail_feedback.dart';
-import 'package:dotto/feature/kamoku_detail/kamoku_detail_kakomon_list.dart';
-import 'package:dotto/feature/kamoku_detail/kamoku_detail_syllabus.dart';
+import 'package:dotto/feature/subject_detail_v0/kamoku_detail_feedback.dart';
+import 'package:dotto/feature/subject_detail_v0/kamoku_detail_kakomon_list.dart';
+import 'package:dotto/feature/subject_detail_v0/kamoku_detail_syllabus.dart';
 import 'package:flutter/material.dart';
 
 final class KamokuDetailScreen extends StatelessWidget {

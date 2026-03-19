@@ -1,9 +1,9 @@
 import 'package:collection/collection.dart';
-import 'package:dotto/feature/search_course/domain/search_course_filter_option_choice.dart';
-import 'package:dotto/feature/search_course/domain/search_course_filter_options.dart';
-import 'package:dotto/feature/search_course/repository/search_course_repository.dart';
-import 'package:dotto/feature/search_course/search_course_usecase.dart';
-import 'package:dotto/feature/search_course/search_course_viewmodel_state.dart';
+import 'package:dotto/feature/search_subject_v0/domain/search_course_filter_option_choice.dart';
+import 'package:dotto/feature/search_subject_v0/domain/search_course_filter_options.dart';
+import 'package:dotto/feature/search_subject_v0/repository/search_course_repository.dart';
+import 'package:dotto/feature/search_subject_v0/search_course_usecase.dart';
+import 'package:dotto/feature/search_subject_v0/search_course_viewmodel_state.dart';
 import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

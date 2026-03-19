@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dotto/feature/search_course/repository/syllabus_database_config.dart';
+import 'package:dotto/feature/search_subject_v0/repository/syllabus_database_config.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sqflite/sqflite.dart';
 

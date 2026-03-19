@@ -1,7 +1,7 @@
 import 'package:dotto/domain/academic_area.dart';
 import 'package:dotto/domain/grade.dart';
-import 'package:dotto/feature/search_course/domain/search_course_filter_option_choice.dart';
-import 'package:dotto/feature/search_course/domain/search_course_filter_options.dart';
+import 'package:dotto/feature/search_subject_v0/domain/search_course_filter_option_choice.dart';
+import 'package:dotto/feature/search_subject_v0/domain/search_course_filter_options.dart';
 import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
