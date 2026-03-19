@@ -1,39 +1,14 @@
 import 'package:dotto/asset.dart';
-import 'package:dotto/feature/onboarding/domain/onboarding_page_content.dart';
+import 'package:dotto/feature/onboarding/domain/onboarding_page.dart';
 import 'package:dotto_design_system/component/button.dart';
 import 'package:dotto_design_system/style/semantic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
 final class OnboardingScreen extends HookWidget {
-  OnboardingScreen({required this.onDismissed, super.key});
+  const OnboardingScreen({required this.onDismissed, super.key});
 
   final void Function() onDismissed;
-
-  final PageController pageController = usePageController();
-
-  static const _pages = <OnboardingPageContent>[
-    OnboardingPageContent(welcomeTitle: 'ようこそ', welcomeBodyTop: 'Dottoで', welcomeBodyBottom: 'はこだて未来大学のすべてを'),
-    OnboardingPageContent(
-      title: '時間割の管理',
-      description: '自分の時間割を設定して\n休講/補講情報を受け取ろう',
-      imagePath: Asset.tutorialTimetableMock,
-    ),
-    OnboardingPageContent(title: 'バスの時刻表', description: '大学から最寄りのバス停までの\n時刻表を確認しよう', imagePath: Asset.tutorialBusMock),
-    OnboardingPageContent(title: '学内マップ', description: '空き教室を確認したり\n研究室を検索しよう', imagePath: Asset.tutorialCampusMapMock),
-    OnboardingPageContent(title: '科目検索', description: 'レビューや過去問を\n閲覧しよう', imagePath: Asset.tutorialSubjectMock),
-    OnboardingPageContent(title: '学食メニュー', description: '学食のメニューや価格を\n確認しよう', imagePath: Asset.tutorialCafeteriaMock),
-  ];
-
-  bool get isLastPage => pageController.page == _pages.length - 1;
-
-  Future<void> goNextOrFinish() async {
-    if (isLastPage) {
-      onDismissed();
-      return;
-    }
-    await pageController.nextPage(duration: const Duration(milliseconds: 250), curve: Curves.easeOut);
-  }
 
   Widget _buildTopBar(BuildContext context, {required bool visible}) {
     return IgnorePointer(
@@ -65,7 +40,7 @@ final class OnboardingScreen extends HookWidget {
     );
   }
 
-  Widget _buildWelcomePage(BuildContext context, OnboardingPageContent page) {
+  Widget _buildWelcomePage(BuildContext context, OnboardingWelcomePage page) {
     return LayoutBuilder(
       builder: (context, constraints) {
         return SingleChildScrollView(
@@ -76,7 +51,7 @@ final class OnboardingScreen extends HookWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  page.welcomeTitle!,
+                  page.title,
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(color: SemanticColor.light.accentPrimary),
                 ),
                 const SizedBox(height: 20),
@@ -85,18 +60,16 @@ final class OnboardingScreen extends HookWidget {
                   child: Image.asset(Asset.icon1024, width: 140, height: 140),
                 ),
                 const SizedBox(height: 110),
-                if (page.welcomeBodyTop != null)
-                  Text(
-                    page.welcomeBodyTop!,
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: SemanticColor.light.labelPrimary),
-                    textAlign: TextAlign.center,
-                  ),
-                if (page.welcomeBodyBottom != null)
-                  Text(
-                    page.welcomeBodyBottom!,
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: SemanticColor.light.labelPrimary),
-                    textAlign: TextAlign.center,
-                  ),
+                Text(
+                  page.bodyTop,
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: SemanticColor.light.labelPrimary),
+                  textAlign: TextAlign.center,
+                ),
+                Text(
+                  page.bodyBottom,
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: SemanticColor.light.labelPrimary),
+                  textAlign: TextAlign.center,
+                ),
               ],
             ),
           ),
@@ -105,7 +78,7 @@ final class OnboardingScreen extends HookWidget {
     );
   }
 
-  Widget _buildFeaturePage(BuildContext context, OnboardingPageContent page) {
+  Widget _buildFeaturePage(BuildContext context, OnboardingContentPage page) {
     return LayoutBuilder(
       builder: (context, constraints) {
         final bodyStyle = Theme.of(context).textTheme.bodyLarge;
@@ -129,19 +102,18 @@ final class OnboardingScreen extends HookWidget {
         final contentWidth = constraints.maxWidth - (horizontalPadding * 2);
         const desiredImageWidthFactor = 1.0;
         final maxWidthFactorForTop70 = (availableImageHeight / (contentWidth * imageAspectRatio * visibleTopRatio))
-            .clamp(0.0, 1.0)
-            .toDouble();
+            .clamp(0.0, 1.0);
         final imageWidthFactor = desiredImageWidthFactor <= maxWidthFactorForTop70
             ? desiredImageWidthFactor
             : maxWidthFactorForTop70;
         final imageViewportHeight = contentWidth * imageWidthFactor * imageAspectRatio * visibleTopRatio;
 
         return Padding(
-          padding: const EdgeInsets.fromLTRB(horizontalPadding, topPadding, horizontalPadding, bottomPadding),
+          padding: EdgeInsets.zero,
           child: Column(
             children: [
               Text(
-                page.title!,
+                page.title,
                 style: titleStyle?.copyWith(
                   color: SemanticColor.light.accentPrimary,
                   fontWeight: FontWeight.w600,
@@ -159,7 +131,7 @@ final class OnboardingScreen extends HookWidget {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(24),
                       child: Image.asset(
-                        page.imagePath!,
+                        page.imagePath,
                         fit: BoxFit.fitWidth,
                         alignment: Alignment.topCenter,
                         errorBuilder: (_, _, _) =>
@@ -171,7 +143,7 @@ final class OnboardingScreen extends HookWidget {
               ),
               const SizedBox(height: imageToDescriptionSpacing),
               Text(
-                page.description!,
+                page.description,
                 textAlign: TextAlign.center,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
@@ -184,9 +156,8 @@ final class OnboardingScreen extends HookWidget {
     );
   }
 
-  Widget _buildBottomArea(BuildContext context) {
-    final indicatorCount = _pages.length - 1;
-    final activeIndicatorIndex = pageController.page == 0 ? -1 : pageController.page! - 1;
+  Widget _buildBottomArea({required int activeIndicatorIndex, required VoidCallback onNextButtonTapped}) {
+    final indicatorCount = OnboardingPage.pages.length - 1;
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(40, 40, 40, 40),
@@ -211,7 +182,10 @@ final class OnboardingScreen extends HookWidget {
           const SizedBox(height: 16),
           SizedBox(
             width: double.infinity,
-            child: DottoButton(onPressed: goNextOrFinish, child: Text(isLastPage ? 'はじめる' : '次へ')),
+            child: DottoButton(
+              onPressed: onNextButtonTapped,
+              child: Text(activeIndicatorIndex == indicatorCount ? 'はじめる' : '次へ'),
+            ),
           ),
         ],
       ),
@@ -243,6 +217,9 @@ final class OnboardingScreen extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    final pageController = usePageController();
+    final currentPage = useState(0);
+
     return Scaffold(
       appBar: AppBar(title: const Text('Dottoの使い方')),
       body: SafeArea(
@@ -252,22 +229,34 @@ final class OnboardingScreen extends HookWidget {
             Positioned.fill(child: _buildBackgroundDottoText()),
             Column(
               children: [
-                _buildTopBar(context, visible: pageController.page != 0),
+                _buildTopBar(context, visible: currentPage.value != 0),
                 Expanded(
                   child: PageView.builder(
                     controller: pageController,
-                    onPageChanged: (index) => pageController.jumpToPage(index),
-                    itemCount: _pages.length,
+                    onPageChanged: (index) => currentPage.value = index,
+                    itemCount: OnboardingPage.pages.length,
                     itemBuilder: (context, index) {
-                      final page = _pages[index];
-                      if (page.isWelcome) {
+                      final page = OnboardingPage.pages[index];
+                      if (page is OnboardingWelcomePage) {
                         return _buildWelcomePage(context, page);
+                      } else if (page is OnboardingContentPage) {
+                        return _buildFeaturePage(context, page);
+                      } else {
+                        return const SizedBox.shrink();
                       }
-                      return _buildFeaturePage(context, page);
                     },
                   ),
                 ),
-                _buildBottomArea(context),
+                _buildBottomArea(
+                  activeIndicatorIndex: currentPage.value == 0 ? -1 : currentPage.value - 1,
+                  onNextButtonTapped: () async {
+                    if (currentPage.value == OnboardingPage.pages.length - 1) {
+                      onDismissed();
+                      return;
+                    }
+                    await pageController.nextPage(duration: const Duration(milliseconds: 250), curve: Curves.easeOut);
+                  },
+                ),
               ],
             ),
           ],
