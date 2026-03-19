@@ -1,4 +1,4 @@
-import 'package:dotto/feature/kamoku_detail/repository/kamoku_detail_repository.dart';
+import 'package:dotto/feature/subject_detail_v0/repository/kamoku_detail_repository.dart';
 import 'package:flutter/material.dart';
 
 final class KamokuDetailSyllabusScreen extends StatelessWidget {

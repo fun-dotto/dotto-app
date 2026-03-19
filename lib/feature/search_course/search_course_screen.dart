@@ -1,5 +1,5 @@
 import 'package:dotto/controller/user_controller.dart';
-import 'package:dotto/feature/kamoku_detail/kamoku_detail_screen.dart';
+import 'package:dotto/feature/subject_detail_v0/kamoku_detail_screen.dart';
 import 'package:dotto/feature/search_course/domain/search_course_filter_option_choice.dart';
 import 'package:dotto/feature/search_course/domain/search_course_filter_options.dart';
 import 'package:dotto/feature/search_course/search_course_viewmodel.dart';
