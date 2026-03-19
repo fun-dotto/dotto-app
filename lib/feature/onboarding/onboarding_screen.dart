@@ -1,49 +1,14 @@
 import 'package:dotto/asset.dart';
+import 'package:dotto/feature/onboarding/domain/onboarding_page.dart';
 import 'package:dotto_design_system/component/button.dart';
 import 'package:dotto_design_system/style/semantic_color.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 
-final class AppTutorial extends StatefulWidget {
-  const AppTutorial({required this.onDismissed, super.key});
+final class OnboardingScreen extends HookWidget {
+  const OnboardingScreen({required this.onDismissed, super.key});
 
   final void Function() onDismissed;
-
-  @override
-  State<AppTutorial> createState() => _AppTutorialState();
-}
-
-final class _AppTutorialState extends State<AppTutorial> {
-  final _controller = PageController();
-  var _currentIndex = 0;
-
-  static const _pages = <_TutorialPageData>[
-    _TutorialPageData(welcomeTitle: 'ようこそ', welcomeBodyTop: 'Dottoで', welcomeBodyBottom: 'はこだて未来大学のすべてを'),
-    _TutorialPageData(
-      title: '時間割の管理',
-      description: '自分の時間割を設定して\n休講/補講情報を受け取ろう',
-      imagePath: Asset.tutorialTimetableMock,
-    ),
-    _TutorialPageData(title: 'バスの時刻表', description: '大学から最寄りのバス停までの\n時刻表を確認しよう', imagePath: Asset.tutorialBusMock),
-    _TutorialPageData(title: '学内マップ', description: '空き教室を確認したり\n研究室を検索しよう', imagePath: Asset.tutorialCampusMapMock),
-    _TutorialPageData(title: '科目検索', description: 'レビューや過去問を\n閲覧しよう', imagePath: Asset.tutorialSubjectMock),
-    _TutorialPageData(title: '学食メニュー', description: '学食のメニューや価格を\n確認しよう', imagePath: Asset.tutorialCafeteriaMock),
-  ];
-
-  bool get _isLastPage => _currentIndex == _pages.length - 1;
-
-  void _goNextOrFinish() {
-    if (_isLastPage) {
-      widget.onDismissed();
-      return;
-    }
-    _controller.nextPage(duration: const Duration(milliseconds: 250), curve: Curves.easeOut);
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
 
   Widget _buildTopBar(BuildContext context, {required bool visible}) {
     return IgnorePointer(
@@ -60,7 +25,7 @@ final class _AppTutorialState extends State<AppTutorial> {
               ),
               const Spacer(),
               DottoButton(
-                onPressed: widget.onDismissed,
+                onPressed: onDismissed,
                 type: DottoButtonType.text,
                 style: DottoButton.styleFrom(
                   textStyle: Theme.of(context).textTheme.bodySmall,
@@ -75,20 +40,18 @@ final class _AppTutorialState extends State<AppTutorial> {
     );
   }
 
-  Widget _buildWelcomePage(BuildContext context, _TutorialPageData page) {
+  Widget _buildWelcomePage(BuildContext context, OnboardingWelcomePage page) {
     return LayoutBuilder(
       builder: (context, constraints) {
         return SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(24, 20, 24, 20),
           child: ConstrainedBox(
-            constraints: BoxConstraints(
-              minHeight: constraints.maxHeight > 40 ? constraints.maxHeight - 40 : 0,
-            ),
+            constraints: BoxConstraints(minHeight: constraints.maxHeight > 40 ? constraints.maxHeight - 40 : 0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  page.welcomeTitle!,
+                  page.title,
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(color: SemanticColor.light.accentPrimary),
                 ),
                 const SizedBox(height: 20),
@@ -97,18 +60,16 @@ final class _AppTutorialState extends State<AppTutorial> {
                   child: Image.asset(Asset.icon1024, width: 140, height: 140),
                 ),
                 const SizedBox(height: 110),
-                if (page.welcomeBodyTop != null)
-                  Text(
-                    page.welcomeBodyTop!,
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: SemanticColor.light.labelPrimary),
-                    textAlign: TextAlign.center,
-                  ),
-                if (page.welcomeBodyBottom != null)
-                  Text(
-                    page.welcomeBodyBottom!,
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: SemanticColor.light.labelPrimary),
-                    textAlign: TextAlign.center,
-                  ),
+                Text(
+                  page.bodyTop,
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: SemanticColor.light.labelPrimary),
+                  textAlign: TextAlign.center,
+                ),
+                Text(
+                  page.bodyBottom,
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: SemanticColor.light.labelPrimary),
+                  textAlign: TextAlign.center,
+                ),
               ],
             ),
           ),
@@ -117,7 +78,7 @@ final class _AppTutorialState extends State<AppTutorial> {
     );
   }
 
-  Widget _buildFeaturePage(BuildContext context, _TutorialPageData page) {
+  Widget _buildFeaturePage(BuildContext context, OnboardingContentPage page) {
     return LayoutBuilder(
       builder: (context, constraints) {
         final bodyStyle = Theme.of(context).textTheme.bodyLarge;
@@ -141,64 +102,59 @@ final class _AppTutorialState extends State<AppTutorial> {
         final contentWidth = constraints.maxWidth - (horizontalPadding * 2);
         const desiredImageWidthFactor = 1.0;
         final maxWidthFactorForTop70 = (availableImageHeight / (contentWidth * imageAspectRatio * visibleTopRatio))
-            .clamp(0.0, 1.0)
-            .toDouble();
+            .clamp(0.0, 1.0);
         final imageWidthFactor = desiredImageWidthFactor <= maxWidthFactorForTop70
             ? desiredImageWidthFactor
             : maxWidthFactorForTop70;
         final imageViewportHeight = contentWidth * imageWidthFactor * imageAspectRatio * visibleTopRatio;
 
-        return Padding(
-          padding: const EdgeInsets.fromLTRB(horizontalPadding, topPadding, horizontalPadding, bottomPadding),
-          child: Column(
-            children: [
-              Text(
-                page.title!,
-                style: titleStyle?.copyWith(
-                  color: SemanticColor.light.accentPrimary,
-                  fontWeight: FontWeight.w600,
-                  fontSize: (titleStyle?.fontSize ?? 24) - 2,
-                ),
+        return Column(
+          children: [
+            Text(
+              page.title,
+              style: titleStyle?.copyWith(
+                color: SemanticColor.light.accentPrimary,
+                fontWeight: FontWeight.w600,
+                fontSize: (titleStyle.fontSize ?? 24) - 2,
               ),
-              const SizedBox(height: titleToImageSpacing),
-              SizedBox(
-                width: double.infinity,
-                height: imageViewportHeight,
-                child: Align(
-                  alignment: Alignment.topCenter,
-                  child: FractionallySizedBox(
-                    widthFactor: imageWidthFactor,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(24),
-                      child: Image.asset(
-                        page.imagePath!,
-                        fit: BoxFit.fitWidth,
-                        alignment: Alignment.topCenter,
-                        errorBuilder: (_, __, ___) =>
-                            Image.asset(page.fallbackImagePath!, fit: BoxFit.fitWidth, alignment: Alignment.topCenter),
-                      ),
+            ),
+            const SizedBox(height: titleToImageSpacing),
+            SizedBox(
+              width: double.infinity,
+              height: imageViewportHeight,
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: FractionallySizedBox(
+                  widthFactor: imageWidthFactor,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(24),
+                    child: Image.asset(
+                      page.imagePath,
+                      fit: BoxFit.fitWidth,
+                      alignment: Alignment.topCenter,
+                      errorBuilder: (_, _, _) =>
+                          Image.asset(Asset.noImage, fit: BoxFit.fitWidth, alignment: Alignment.topCenter),
                     ),
                   ),
                 ),
               ),
-              const SizedBox(height: imageToDescriptionSpacing),
-              Text(
-                page.description!,
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: bodyStyle,
-              ),
-            ],
-          ),
+            ),
+            const SizedBox(height: imageToDescriptionSpacing),
+            Text(
+              page.description,
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: bodyStyle,
+            ),
+          ],
         );
       },
     );
   }
 
-  Widget _buildBottomArea(BuildContext context) {
-    final indicatorCount = _pages.length - 1;
-    final activeIndicatorIndex = _currentIndex <= 0 ? -1 : _currentIndex - 1;
+  Widget _buildBottomArea({required int activeIndicatorIndex, required VoidCallback onNextButtonTapped}) {
+    final indicatorCount = OnboardingPage.pages.length - 1;
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(40, 40, 40, 40),
@@ -223,7 +179,10 @@ final class _AppTutorialState extends State<AppTutorial> {
           const SizedBox(height: 16),
           SizedBox(
             width: double.infinity,
-            child: DottoButton(onPressed: _goNextOrFinish, child: Text(_isLastPage ? 'はじめる' : '次へ')),
+            child: DottoButton(
+              onPressed: onNextButtonTapped,
+              child: Text(activeIndicatorIndex == indicatorCount ? 'はじめる' : '次へ'),
+            ),
           ),
         ],
       ),
@@ -255,6 +214,9 @@ final class _AppTutorialState extends State<AppTutorial> {
 
   @override
   Widget build(BuildContext context) {
+    final pageController = usePageController();
+    final currentPage = useState(0);
+
     return Scaffold(
       appBar: AppBar(title: const Text('Dottoの使い方')),
       body: SafeArea(
@@ -264,22 +226,34 @@ final class _AppTutorialState extends State<AppTutorial> {
             Positioned.fill(child: _buildBackgroundDottoText()),
             Column(
               children: [
-                _buildTopBar(context, visible: _currentIndex != 0),
+                _buildTopBar(context, visible: currentPage.value != 0),
                 Expanded(
                   child: PageView.builder(
-                    controller: _controller,
-                    onPageChanged: (index) => setState(() => _currentIndex = index),
-                    itemCount: _pages.length,
+                    controller: pageController,
+                    onPageChanged: (index) => currentPage.value = index,
+                    itemCount: OnboardingPage.pages.length,
                     itemBuilder: (context, index) {
-                      final page = _pages[index];
-                      if (page.isWelcome) {
+                      final page = OnboardingPage.pages[index];
+                      if (page is OnboardingWelcomePage) {
                         return _buildWelcomePage(context, page);
+                      } else if (page is OnboardingContentPage) {
+                        return _buildFeaturePage(context, page);
+                      } else {
+                        return const SizedBox.shrink();
                       }
-                      return _buildFeaturePage(context, page);
                     },
                   ),
                 ),
-                _buildBottomArea(context),
+                _buildBottomArea(
+                  activeIndicatorIndex: currentPage.value == 0 ? -1 : currentPage.value - 1,
+                  onNextButtonTapped: () async {
+                    if (currentPage.value == OnboardingPage.pages.length - 1) {
+                      onDismissed();
+                      return;
+                    }
+                    await pageController.nextPage(duration: const Duration(milliseconds: 250), curve: Curves.easeOut);
+                  },
+                ),
               ],
             ),
           ],
@@ -287,26 +261,4 @@ final class _AppTutorialState extends State<AppTutorial> {
       ),
     );
   }
-}
-
-final class _TutorialPageData {
-  const _TutorialPageData({
-    this.title,
-    this.description,
-    this.imagePath,
-    this.fallbackImagePath,
-    this.welcomeTitle,
-    this.welcomeBodyTop,
-    this.welcomeBodyBottom,
-  });
-
-  final String? title;
-  final String? description;
-  final String? imagePath;
-  final String? fallbackImagePath;
-  final String? welcomeTitle;
-  final String? welcomeBodyTop;
-  final String? welcomeBodyBottom;
-
-  bool get isWelcome => welcomeTitle != null;
 }
