@@ -52,7 +52,13 @@ class CourseRegistrationsApi {
         ...?headers,
       },
       extra: <String, dynamic>{
-        'secure': <Map<String, String>>[],
+        'secure': <Map<String, String>>[
+          {
+            'type': 'http',
+            'scheme': 'Bearer',
+            'name': 'BearerAuth',
+          },
+        ],
         ...?extra,
       },
       contentType: 'application/json',
@@ -147,7 +153,13 @@ class CourseRegistrationsApi {
         ...?headers,
       },
       extra: <String, dynamic>{
-        'secure': <Map<String, String>>[],
+        'secure': <Map<String, String>>[
+          {
+            'type': 'http',
+            'scheme': 'Bearer',
+            'name': 'BearerAuth',
+          },
+        ],
         ...?extra,
       },
       validateStatus: validateStatus,
@@ -196,7 +208,13 @@ class CourseRegistrationsApi {
         ...?headers,
       },
       extra: <String, dynamic>{
-        'secure': <Map<String, String>>[],
+        'secure': <Map<String, String>>[
+          {
+            'type': 'http',
+            'scheme': 'Bearer',
+            'name': 'BearerAuth',
+          },
+        ],
         ...?extra,
       },
       validateStatus: validateStatus,

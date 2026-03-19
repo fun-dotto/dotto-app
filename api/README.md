@@ -110,7 +110,11 @@ Class | Method | HTTP request | Description
 
 ## Documentation For Authorization
 
-Endpoints do not require authorization.
+
+Authentication schemes defined for the API:
+### BearerAuth
+
+- **Type**: HTTP Bearer Token authentication
 
 
 ## Author
