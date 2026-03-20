@@ -1,6 +1,6 @@
-import 'package:dotto/feature/timetable/controller/is_filtered_only_taking_course_cancellation_controller.dart';
-import 'package:dotto/feature/timetable/domain/course_cancellation.dart';
-import 'package:dotto/feature/timetable/repository/timetable_repository.dart';
+import 'package:dotto/feature/timetable_v0/controller/is_filtered_only_taking_course_cancellation_controller.dart';
+import 'package:dotto/feature/timetable_v0/domain/course_cancellation.dart';
+import 'package:dotto/feature/timetable_v0/repository/timetable_repository.dart';
 import 'package:dotto/helper/file_helper.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

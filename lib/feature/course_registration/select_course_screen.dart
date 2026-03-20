@@ -5,7 +5,7 @@ import 'package:dotto/domain/period.dart';
 import 'package:dotto/domain/semester.dart';
 import 'package:dotto/domain/timetable_item.dart';
 import 'package:dotto/feature/course_registration/course_registration_repository.dart';
-import 'package:dotto/feature/timetable/widget/timetable_is_over_selected_snack_bar.dart';
+import 'package:dotto/feature/timetable_v0/widget/timetable_is_over_selected_snack_bar.dart';
 import 'package:dotto_design_system/component/button.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
