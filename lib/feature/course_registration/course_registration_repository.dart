@@ -12,6 +12,8 @@ import 'package:openapi/openapi.dart' hide CourseRegistration, SubjectFaculty, S
 abstract class CourseRegistrationRepository {
   Future<List<TimetableItem>> getTimetableItems(Semester semester);
   Future<List<CourseRegistration>> getCourseRegistrations(Semester semester);
+  Future<void> registerCourse(String subjectId);
+  Future<void> unregisterCourse(String id);
 }
 
 final class CourseRegistrationRepositoryImpl implements CourseRegistrationRepository {
@@ -37,11 +39,11 @@ final class CourseRegistrationRepositoryImpl implements CourseRegistrationReposi
         },
       );
       if (response.statusCode != 200) {
-        throw Exception('Failed to get subjects');
+        throw Exception('Failed to get timetable items');
       }
       final data = response.data;
       if (data == null) {
-        throw Exception('Failed to get subjects');
+        throw Exception('Failed to get timetable items');
       }
       return data.timetableItems
           .map(
@@ -125,11 +127,11 @@ final class CourseRegistrationRepositoryImpl implements CourseRegistrationReposi
         },
       );
       if (response.statusCode != 200) {
-        throw Exception('Failed to get subjects');
+        throw Exception('Failed to get course registrations');
       }
       final data = response.data;
       if (data == null) {
-        throw Exception('Failed to get subjects');
+        throw Exception('Failed to get course registrations');
       }
       return data.courseRegistrations
           .map(
@@ -170,6 +172,35 @@ final class CourseRegistrationRepositoryImpl implements CourseRegistrationReposi
             ),
           )
           .toList();
+    } catch (e) {
+      debugPrint(e.toString());
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> registerCourse(String subjectId) async {
+    try {
+      final api = apiClient.getCourseRegistrationsApi();
+      final request = CourseRegistrationRequest((b) => b.subjectId = subjectId);
+      final response = await api.courseRegistrationsV1Create(courseRegistrationRequest: request);
+      if (response.statusCode != 201) {
+        throw Exception('Failed to register course');
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> unregisterCourse(String id) async {
+    try {
+      final api = apiClient.getCourseRegistrationsApi();
+      final response = await api.courseRegistrationsV1Delete(id: id);
+      if (response.statusCode != 204) {
+        throw Exception('Failed to unregister course');
+      }
     } catch (e) {
       debugPrint(e.toString());
       rethrow;
