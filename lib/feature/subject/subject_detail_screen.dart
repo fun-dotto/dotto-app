@@ -38,11 +38,11 @@ final class SubjectDetailScreen extends HookConsumerWidget {
           children: <Widget>[
             () {
               if (subjectSnapshot.connectionState == ConnectionState.waiting) {
-                return const CircularProgressIndicator();
+                return const Center(child: CircularProgressIndicator());
               }
               if (subjectSnapshot.hasError) {
                 debugPrint(subjectSnapshot.error.toString());
-                return const Text('シラバスの読み込みに失敗しました。');
+                return const Center(child: Text('科目情報の読み込みに失敗しました。'));
               }
               if (subjectSnapshot.hasData) {
                 final subject = subjectSnapshot.data!;
@@ -52,11 +52,11 @@ final class SubjectDetailScreen extends HookConsumerWidget {
             }(),
             () {
               if (subjectSnapshot.connectionState == ConnectionState.waiting) {
-                return const CircularProgressIndicator();
+                return const Center(child: CircularProgressIndicator());
               }
               if (subjectSnapshot.hasError) {
                 debugPrint(subjectSnapshot.error.toString());
-                return const Text('シラバスの読み込みに失敗しました。');
+                return const Center(child: Text('科目情報の読み込みに失敗しました。'));
               }
               if (subjectSnapshot.hasData) {
                 final subject = subjectSnapshot.data!;
@@ -66,11 +66,11 @@ final class SubjectDetailScreen extends HookConsumerWidget {
             }(),
             () {
               if (subjectSnapshot.connectionState == ConnectionState.waiting) {
-                return const CircularProgressIndicator();
+                return const Center(child: CircularProgressIndicator());
               }
               if (subjectSnapshot.hasError) {
                 debugPrint(subjectSnapshot.error.toString());
-                return const Text('シラバスの読み込みに失敗しました。');
+                return const Center(child: Text('科目情報の読み込みに失敗しました。'));
               }
               if (subjectSnapshot.hasData) {
                 final subject = subjectSnapshot.data!;
