@@ -1,7 +1,7 @@
 import 'package:dotto/controller/user_controller.dart';
 import 'package:dotto/domain/day_of_week.dart';
 import 'package:dotto/domain/period.dart';
-import 'package:dotto/feature/kamoku_detail/kamoku_detail_screen.dart';
+import 'package:dotto/feature/subject_detail_v0/kamoku_detail_screen.dart';
 import 'package:dotto/feature/timetable/controller/focused_timetable_date_controller.dart';
 import 'package:dotto/feature/timetable/controller/timetable_period_style_controller.dart';
 import 'package:dotto/feature/timetable/controller/two_week_timetable_controller.dart';

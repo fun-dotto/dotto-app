@@ -1,15 +1,11 @@
 import 'package:dotto/domain/github_profile.dart';
 import 'package:dotto/feature/github_contributor/github_contributor_service.dart';
 import 'package:dotto/repository/github_contributor_repository.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
 import 'github_contributor_service_test.mocks.dart';
-
-/// テスト用の GitHubContributorService Provider
-final GitHubContributorServiceProvider = Provider<GitHubContributorService>(GitHubContributorService.new);
 
 @GenerateMocks([GitHubContributorRepository])
 void main() {
@@ -21,18 +17,16 @@ void main() {
       login: 'GitHubUser1',
       avatarUrl: 'https://avatars.githubusercontent.com/u/1?v=4',
       htmlUrl: 'https://github.com/GitHubUser1',
+      contributions: 50,
     ),
     GitHubProfile(
       id: '2',
       login: 'GitHubUser2',
       avatarUrl: 'https://avatars.githubusercontent.com/u/2?v=4',
       htmlUrl: 'https://github.com/GitHubUser2',
+      contributions: 100,
     ),
   ];
-
-  ProviderContainer createContainer() => ProviderContainer(
-    overrides: [gitHubContributorRepositoryProvider.overrideWithValue(githubContributorRepository)],
-  );
 
   setUp(() {
     reset(githubContributorRepository);
@@ -42,17 +36,18 @@ void main() {
     test('getContributors がGitHubプロフィール一覧を正しく取得する', () async {
       when(githubContributorRepository.getContributors()).thenAnswer((_) async => testGitHubProfiles);
 
-      final container = createContainer();
-      final service = container.read(gitHubContributorRepositoryProvider);
+      final service = GitHubContributorService(githubContributorRepository);
 
       final result = await service.getContributors();
 
-      expect(result, testGitHubProfiles);
-      expect(result.length, 2);
-      expect(result[0].id, '1');
-      expect(result[0].login, 'GitHubUser1');
-      expect(result[1].id, '2');
-      expect(result[1].login, 'GitHubUser2');
+      // Service 経由で取得した結果が contributions の降順 (100 → 50) になっていることを確認
+      expect(result[0].contributions, 100);
+      expect(result[1].contributions, 50);
+      // contributions に応じて並び順が変わっていることを確認
+      expect(result[0].id, '2');
+      expect(result[0].login, 'GitHubUser2');
+      expect(result[1].id, '1');
+      expect(result[1].login, 'GitHubUser1');
 
       verify(githubContributorRepository.getContributors()).called(1);
     });
@@ -60,8 +55,7 @@ void main() {
     test('getContributors が空のリストを正しく取得する', () async {
       when(githubContributorRepository.getContributors()).thenAnswer((_) async => <GitHubProfile>[]);
 
-      final container = createContainer();
-      final service = container.read(GitHubContributorServiceProvider);
+      final service = GitHubContributorService(githubContributorRepository);
 
       final result = await service.getContributors();
 
@@ -75,8 +69,7 @@ void main() {
     test('getContributors がリポジトリの例外をそのまま伝播する', () async {
       when(githubContributorRepository.getContributors()).thenThrow(Exception('Failed to get contributors'));
 
-      final container = createContainer();
-      final service = container.read(GitHubContributorServiceProvider);
+      final service = GitHubContributorService(githubContributorRepository);
 
       expect(() => service.getContributors(), throwsA(isA<Exception>()));
 
