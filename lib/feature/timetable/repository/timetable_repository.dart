@@ -60,11 +60,12 @@ final class TimetableRepository {
 
   Future<List<String>> getLessonNameList(List<int> lessonIdList) async {
     final db = await SyllabusDatabaseHelper.getDatabase();
+    final placeholders = List.filled(lessonIdList.length, '?').join(',');
     final records = await db.query(
       'sort',
       columns: ['授業名'],
-      where: 'LessonId IN (?)',
-      whereArgs: [lessonIdList.join(',')],
+      where: 'LessonId IN ($placeholders)',
+      whereArgs: lessonIdList,
     );
     final lessonNameList = records.map((e) => e['授業名'] as String).toList();
     return lessonNameList;
@@ -265,16 +266,19 @@ final class TimetableRepository {
     final personalTimetableList = await _getPersonalTimetableList();
     final db = await SyllabusDatabaseHelper.getDatabase();
     final loadPersonalTimetableMap = <String, int>{};
+    final placeholders = List.filled(personalTimetableList.length, '?').join(',');
     final records = await db.query(
       'sort',
       columns: ['LessonId', '授業名'],
-      where: 'LessonId IN (?)',
-      whereArgs: [personalTimetableList.join(',')],
+      where: 'LessonId IN ($placeholders)',
+      whereArgs: personalTimetableList,
     );
     for (final record in records) {
-      final lessonName = record['授業名'] as String;
-      final lessonId = record['LessonId'] as int;
-      loadPersonalTimetableMap[lessonName] = lessonId;
+      final lessonName = record['授業名'] as String?;
+      final lessonId = record['LessonId'] as int?;
+      if (lessonName != null && lessonId != null) {
+        loadPersonalTimetableMap[lessonName] = lessonId;
+      }
     }
     return loadPersonalTimetableMap;
   }

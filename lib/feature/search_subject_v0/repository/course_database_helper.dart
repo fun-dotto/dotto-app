@@ -12,7 +12,8 @@ final class CourseDatabaseHelper {
 
   static Future<List<Map<String, dynamic>>> fetchWeekPeriod(List<int> lessonIdList) async {
     final db = await SyllabusDatabaseHelper.getDatabase();
-    final records = await db.query('week_period', where: 'lessonId IN (?)', whereArgs: [lessonIdList.join(',')]);
+    final placeholders = List.filled(lessonIdList.length, '?').join(',');
+    final records = await db.query('week_period', where: 'lessonId IN ($placeholders)', whereArgs: lessonIdList);
     return records;
   }
 }

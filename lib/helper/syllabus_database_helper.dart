@@ -23,12 +23,14 @@ final class SyllabusDatabaseHelper {
         debugPrint('Database already exists');
       }
       debugPrint('Opening database: $path');
-      final dbFactory = SqfliteDatabaseFactoryLogger(
-        databaseFactory,
-        options: SqfliteLoggerOptions(type: SqfliteDatabaseFactoryLoggerType.all),
-      );
-      final db = await dbFactory.openDatabase(path);
-      return db;
+      if (kDebugMode) {
+        final dbFactory = SqfliteDatabaseFactoryLogger(
+          databaseFactory,
+          options: SqfliteLoggerOptions(type: SqfliteDatabaseFactoryLoggerType.all),
+        );
+        return await dbFactory.openDatabase(path);
+      }
+      return openDatabase(path, readOnly: true);
     } on Exception catch (e) {
       debugPrint(e.toString());
       rethrow;

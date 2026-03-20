@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:built_collection/built_collection.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dotto/domain/academic_area.dart';
@@ -213,15 +215,13 @@ final class SubjectRepositoryImpl implements SubjectRepository {
       }
       final subject = data.subject;
       final db = await SyllabusDatabaseHelper.getDatabase();
-      final pastExamId =
-          (await db.query(
-                'detail',
-                columns: ['過去問'],
-                where: 'LessonId = ?',
-                whereArgs: [subject.syllabus.id],
-              )).firstOrNull?['過去問']
-              as String? ??
-          subject.syllabus.id;
+      final records = await db.query(
+        'detail',
+        columns: ['過去問'],
+        where: 'LessonId = ?',
+        whereArgs: [subject.syllabus.id],
+      );
+      final pastExamId = records.firstOrNull?['過去問'] as String? ?? subject.syllabus.id;
       return Subject(
         id: subject.id,
         name: subject.name,
@@ -365,7 +365,7 @@ final class SubjectRepositoryImpl implements SubjectRepository {
     final querySnapshot = await FirebaseFirestore.instance
         .collection('feedback')
         .where('User', isEqualTo: userId)
-        .where('lessonId', isEqualTo: lessonId)
+        .where('lessonId', isEqualTo: int.parse(lessonId))
         .get();
 
     if (querySnapshot.docs.isNotEmpty) {

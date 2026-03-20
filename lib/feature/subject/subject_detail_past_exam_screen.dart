@@ -37,7 +37,7 @@ final class SubjectDetailPastExamScreen extends HookWidget {
   Widget _kakomonListRow(BuildContext context, String url) {
     final exp = RegExp(r'/(.*)$');
     final match = exp.firstMatch(url);
-    final filename = match![1] ?? url;
+    final filename = match?.group(1) ?? url;
     return Column(
       children: [
         TextButton(
