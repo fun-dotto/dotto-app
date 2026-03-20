@@ -7,9 +7,9 @@ import 'package:dotto/feature/announcement/announcement_screen.dart';
 import 'package:dotto/feature/assignment/setup_hope_continuity_screen.dart';
 import 'package:dotto/feature/debug/debug_screen.dart';
 import 'package:dotto/feature/github_contributor/github_contributor_screen.dart';
+import 'package:dotto/feature/onboarding/onboarding_screen.dart';
 import 'package:dotto/feature/setting/widget/license.dart';
 import 'package:dotto/feature/timetable/repository/timetable_repository.dart';
-import 'package:dotto/widget/app_tutorial.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -233,7 +233,7 @@ final class SettingsScreen extends ConsumerWidget {
                 onPressed: (_) {
                   Navigator.of(context).push(
                     MaterialPageRoute<void>(
-                      builder: (_) => AppTutorial(onDismissed: () => Navigator.of(context).pop()),
+                      builder: (_) => OnboardingScreen(onDismissed: () => Navigator.of(context).pop()),
                       settings: const RouteSettings(name: '/setting/app_tutorial'),
                     ),
                   );

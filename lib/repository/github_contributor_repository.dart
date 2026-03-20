@@ -2,18 +2,13 @@ import 'package:dio/dio.dart';
 import 'package:dotto/domain/github_profile.dart';
 import 'package:dotto/repository/model/github_profile_response.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-final gitHubContributorRepositoryProvider = Provider<GitHubContributorRepository>(GitHubContributorRepositoryImpl.new);
 
 abstract class GitHubContributorRepository {
   Future<List<GitHubProfile>> getContributors();
 }
 
 final class GitHubContributorRepositoryImpl implements GitHubContributorRepository {
-  GitHubContributorRepositoryImpl(this.ref);
-
-  final Ref ref;
+  GitHubContributorRepositoryImpl();
 
   @override
   Future<List<GitHubProfile>> getContributors() async {
@@ -39,7 +34,15 @@ final class GitHubContributorRepositoryImpl implements GitHubContributorReposito
           .toList();
 
       return githubProfileResponses
-          .map((e) => GitHubProfile(id: e.id.toString(), login: e.login, avatarUrl: e.avatarUrl, htmlUrl: e.htmlUrl))
+          .map(
+            (e) => GitHubProfile(
+              id: e.id.toString(),
+              login: e.login,
+              avatarUrl: e.avatarUrl,
+              htmlUrl: e.htmlUrl,
+              contributions: e.contributions,
+            ),
+          )
           .toList();
     } catch (e) {
       debugPrint(e.toString());

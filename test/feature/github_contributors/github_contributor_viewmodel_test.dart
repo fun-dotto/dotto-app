@@ -24,12 +24,14 @@ void main() {
       login: 'GitHubUser1',
       avatarUrl: 'https://avatars.githubusercontent.com/u/1?v=4',
       htmlUrl: 'https://github.com/GitHubUser1',
+      contributions: 50,
     ),
     GitHubProfile(
       id: '2',
       login: 'GitHubUser2',
       avatarUrl: 'https://avatars.githubusercontent.com/u/2?v=4',
       htmlUrl: 'https://github.com/GitHubUser2',
+      contributions: 100,
     ),
   ];
 
@@ -71,10 +73,10 @@ void main() {
 
       expect(initialState.contributors, testGitHubContributors);
       expect(initialState.contributors.length, 2);
-      expect(initialState.contributors[0].id, '1');
-      expect(initialState.contributors[0].login, 'GitHubUser1');
-      expect(initialState.contributors[1].id, '2');
-      expect(initialState.contributors[1].login, 'GitHubUser2');
+      expect(initialState.contributors[0].id, '2');
+      expect(initialState.contributors[0].login, 'GitHubUser2');
+      expect(initialState.contributors[1].id, '1');
+      expect(initialState.contributors[1].login, 'GitHubUser1');
 
       // listener が呼ばれたことを確認
       verify(listener.call(any, any)).called(greaterThan(0));
@@ -96,6 +98,33 @@ void main() {
 
       // listener が呼ばれたことを確認
       verify(listener.call(any, any)).called(greaterThan(0));
+    });
+  });
+
+  group('GitHubContributorViewModel 並び順', () {
+    setUp(() {
+      when(githubContributorRepository.getContributors()).thenAnswer((_) async => testGitHubContributors);
+    });
+    test('contributors は contributions の降順で並び替えられる', () async {
+      final container = createContainer()
+        ..listen(gitHubContributorViewModelProvider, listener.call, fireImmediately: true);
+      // AsyncValue が値を持つまで待機
+      var asyncValue = container.read(gitHubContributorViewModelProvider);
+      var attempts = 0;
+      while (!asyncValue.hasValue && !asyncValue.hasError && attempts < 100) {
+        await Future<void>.delayed(const Duration(milliseconds: 10));
+        asyncValue = container.read(gitHubContributorViewModelProvider);
+        attempts++;
+      }
+      expect(asyncValue.hasError, isFalse);
+      expect(asyncValue.hasValue, isTrue);
+      final state = asyncValue.requireValue;
+      final contributors = state.contributors;
+      expect(contributors.length, 2);
+      // testGitHubContributors は 50, 100 の順で渡しているが、
+      // ViewModel からは 100, 50 の降順で返ってくることを確認する
+      expect(contributors[0].contributions, 100);
+      expect(contributors[1].contributions, 50);
     });
   });
 
