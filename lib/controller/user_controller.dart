@@ -20,7 +20,7 @@ final class UserNotifier extends _$UserNotifier {
     state = null;
   }
 
-  bool get isLoggedin {
+  bool get isAuthenticated {
     return state != null;
   }
 }
