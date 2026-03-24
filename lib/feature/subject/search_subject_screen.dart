@@ -1,7 +1,9 @@
+import 'package:dotto/api/api_client.dart';
+import 'package:dotto/domain/subject_filter.dart';
 import 'package:dotto/domain/subject_summary.dart';
-import 'package:dotto/feature/search_subject/domain/subject_filter.dart';
-import 'package:dotto/feature/search_subject/search_subject_filter_screen.dart';
-import 'package:dotto/repository/subject_repository.dart';
+import 'package:dotto/feature/subject/search_subject_filter_screen.dart';
+import 'package:dotto/feature/subject/subject_detail_screen.dart';
+import 'package:dotto/feature/subject/subject_repository.dart';
 import 'package:dotto_design_system/component/text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -12,27 +14,17 @@ class SearchSubjectScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final apiClient = ref.read(apiClientProvider);
+    final subjectRepository = SubjectRepositoryImpl(apiClient);
     final textEditingController = useTextEditingController();
     final focusNode = useFocusNode();
     final filter = useState(SubjectFilter());
     final subjects = useState<AsyncValue<List<SubjectSummary>>>(const AsyncData([]));
 
-    bool isEmptyFilter() =>
-        textEditingController.text.isEmpty &&
-        filter.value.grades.isEmpty &&
-        filter.value.courses.isEmpty &&
-        filter.value.classes.isEmpty &&
-        filter.value.classifications.isEmpty &&
-        filter.value.semesters.isEmpty &&
-        filter.value.requirements.isEmpty &&
-        filter.value.culturalSubjectCategories.isEmpty;
-
     Future<void> search() async {
       subjects
         ..value = const AsyncLoading()
-        ..value = await AsyncValue.guard(
-          () => ref.read(subjectRepositoryProvider).getSubjects(textEditingController.text, filter.value),
-        );
+        ..value = await AsyncValue.guard(() => subjectRepository.getSubjects(textEditingController.text, filter.value));
     }
 
     return Scaffold(
@@ -50,8 +42,10 @@ class SearchSubjectScreen extends HookConsumerWidget {
               );
               if (result != null) {
                 filter.value = result;
+                if (result.hasActiveFilters) {
+                  await search();
+                }
               }
-              await search();
             },
             icon: Badge(isLabelVisible: filter.value.hasActiveFilters, child: const Icon(Icons.tune)),
           ),
@@ -71,7 +65,7 @@ class SearchSubjectScreen extends HookConsumerWidget {
             Expanded(
               child: switch (subjects.value) {
                 AsyncData(:final value) =>
-                  value.isEmpty && !isEmptyFilter()
+                  value.isEmpty && filter.value.hasActiveFilters
                       ? const Center(child: Text('科目が見つかりませんでした'))
                       : ListView.separated(
                           separatorBuilder: (_, _) => const Divider(height: 0),
@@ -81,14 +75,18 @@ class SearchSubjectScreen extends HookConsumerWidget {
                             return ListTile(
                               title: Text(subject.name),
                               subtitle: Text('${subject.dayOfWeek.label}${subject.period.number}'),
-                              onTap: () {},
+                              onTap: () async {
+                                await Navigator.of(context).push(
+                                  MaterialPageRoute<void>(builder: (context) => SubjectDetailScreen(id: subject.id)),
+                                );
+                              },
                               trailing: const Icon(Icons.chevron_right),
                               leading: Icon(subject.isAddedToTimetable ? Icons.check : Icons.add),
                             );
                           },
                           keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
                         ),
-                AsyncError(:final error) => Center(child: Text('エラーが発生しました: $error')),
+                AsyncError() => const Center(child: Text('科目の検索に失敗しました。')),
                 AsyncLoading() => const Center(child: CircularProgressIndicator()),
               },
             ),

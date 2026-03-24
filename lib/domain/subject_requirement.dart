@@ -1,11 +1,11 @@
-enum SubjectRequirement {
-  required,
-  optional,
-  optionalRequired;
+import 'package:dotto/domain/academic_area.dart';
+import 'package:dotto/domain/subject_requirement_type.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  String get label => switch (this) {
-    SubjectRequirement.required => '必修',
-    SubjectRequirement.optional => '選択',
-    SubjectRequirement.optionalRequired => '選択必修',
-  };
+part 'subject_requirement.freezed.dart';
+
+@freezed
+abstract class SubjectRequirement with _$SubjectRequirement {
+  const factory SubjectRequirement({required AcademicArea course, required SubjectRequirementType requirementType}) =
+      _SubjectRequirement;
 }

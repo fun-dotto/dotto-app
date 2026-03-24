@@ -1,7 +1,6 @@
 import 'package:collection/collection.dart';
 
 enum AcademicArea {
-  // 学部コース
   informationSystemCourse,
   informationDesignCourse,
   complexCourse,
@@ -9,11 +8,11 @@ enum AcademicArea {
   advancedICTCourse;
 
   String get label => switch (this) {
-    AcademicArea.informationSystemCourse => '情報システムコース',
-    AcademicArea.informationDesignCourse => '情報デザインコース',
-    AcademicArea.complexCourse => '複雑系コース',
-    AcademicArea.intelligenceSystemCourse => '知能システムコース',
-    AcademicArea.advancedICTCourse => '高度ICTコース',
+    AcademicArea.informationSystemCourse => '情報システム/情報アーキテクチャ',
+    AcademicArea.informationDesignCourse => '情報デザイン/メディアデザイン',
+    AcademicArea.complexCourse => '複雑系/複雑系情報科学',
+    AcademicArea.intelligenceSystemCourse => '知能システム/知能情報科学',
+    AcademicArea.advancedICTCourse => '高度ICT',
   };
   String? get deprecatedUserPreferenceKey => switch (this) {
     AcademicArea.informationSystemCourse => '情報システム',

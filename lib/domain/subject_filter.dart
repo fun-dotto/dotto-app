@@ -4,7 +4,7 @@ import 'package:dotto/domain/cultural_subject_category.dart';
 import 'package:dotto/domain/grade.dart';
 import 'package:dotto/domain/semester.dart';
 import 'package:dotto/domain/subject_classification.dart';
-import 'package:dotto/domain/subject_requirement.dart';
+import 'package:dotto/domain/subject_requirement_type.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'subject_filter.freezed.dart';
@@ -19,7 +19,7 @@ abstract class SubjectFilter with _$SubjectFilter {
     @Default([]) List<AcademicClass> classes,
     @Default([]) List<SubjectClassification> classifications,
     @Default([]) List<Semester> semesters,
-    @Default([]) List<SubjectRequirement> requirements,
+    @Default([]) List<SubjectRequirementType> requirements,
     @Default([]) List<CulturalSubjectCategory> culturalSubjectCategories,
   }) = _SubjectFilter;
 
