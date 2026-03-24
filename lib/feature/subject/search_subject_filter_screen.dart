@@ -4,8 +4,8 @@ import 'package:dotto/domain/cultural_subject_category.dart';
 import 'package:dotto/domain/grade.dart';
 import 'package:dotto/domain/semester.dart';
 import 'package:dotto/domain/subject_classification.dart';
-import 'package:dotto/domain/subject_requirement.dart';
-import 'package:dotto/feature/search_subject/domain/subject_filter.dart';
+import 'package:dotto/domain/subject_filter.dart';
+import 'package:dotto/domain/subject_requirement_type.dart';
 import 'package:dotto_design_system/style/theme_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -28,12 +28,18 @@ class SearchSubjectFilterScreen extends HookWidget {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('フィルター'),
+          title: const Text('検索条件'),
           centerTitle: false,
           leading: IconButton(
             onPressed: () => Navigator.of(context).pop(currentFilter.value),
             icon: const Icon(Icons.close),
           ),
+          actions: [
+            TextButton(
+              onPressed: currentFilter.value.hasActiveFilters ? () => currentFilter.value = SubjectFilter() : null,
+              child: const Text('条件をクリア'),
+            ),
+          ],
         ),
         body: ListView(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -83,10 +89,10 @@ class SearchSubjectFilterScreen extends HookWidget {
               labelBuilder: (v) => v.label,
             ),
             const SizedBox(height: 12),
-            _buildFilterChipGroup<SubjectRequirement>(
+            _buildFilterChipGroup<SubjectRequirementType>(
               context: context,
               label: '必修・選択',
-              values: SubjectRequirement.values,
+              values: SubjectRequirementType.values,
               selected: currentFilter.value.requirements,
               onChanged: (v) => currentFilter.value = currentFilter.value.copyWith(requirements: v),
               labelBuilder: (v) => v.label,

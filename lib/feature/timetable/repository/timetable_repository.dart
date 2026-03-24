@@ -4,15 +4,14 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dotto/controller/user_controller.dart';
 import 'package:dotto/domain/user_preference_keys.dart';
-import 'package:dotto/feature/search_subject_v0/repository/syllabus_database_config.dart';
 import 'package:dotto/feature/timetable/controller/personal_lesson_id_list_controller.dart';
 import 'package:dotto/feature/timetable/controller/week_period_all_records_controller.dart';
 import 'package:dotto/feature/timetable/domain/timetable_course.dart';
-import 'package:dotto/helper/read_json_file.dart';
+import 'package:dotto/helper/file_helper.dart';
+import 'package:dotto/helper/syllabus_database_helper.dart';
 import 'package:dotto/helper/user_preference_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sqflite/sqflite.dart';
 
 /// 時間割データの取得・管理を行うリポジトリクラス
 final class TimetableRepository {
@@ -46,10 +45,13 @@ final class TimetableRepository {
 
   /// 指定された授業IDでデータベースから授業情報を取得する
   Future<Map<String, dynamic>?> fetchDB(int lessonId) async {
-    final dbPath = await SyllabusDatabaseConfig().getDBPath();
-    final database = await openDatabase(dbPath);
-
-    final records = await database.rawQuery('SELECT LessonId, 過去問, 授業名 FROM sort where LessonId = ?', [lessonId]);
+    final db = await SyllabusDatabaseHelper.getDatabase();
+    final records = await db.query(
+      'sort',
+      columns: ['LessonId', '過去問', '授業名'],
+      where: 'LessonId = ?',
+      whereArgs: [lessonId],
+    );
     if (records.isEmpty) {
       return null;
     }
@@ -57,11 +59,13 @@ final class TimetableRepository {
   }
 
   Future<List<String>> getLessonNameList(List<int> lessonIdList) async {
-    final dbPath = await SyllabusDatabaseConfig().getDBPath();
-    final database = await openDatabase(dbPath);
-
-    final List<Map<String, dynamic>> records = await database.rawQuery(
-      'SELECT 授業名 FROM sort WHERE LessonId in (${lessonIdList.join(",")})',
+    final db = await SyllabusDatabaseHelper.getDatabase();
+    final placeholders = List.filled(lessonIdList.length, '?').join(',');
+    final records = await db.query(
+      'sort',
+      columns: ['授業名'],
+      where: 'LessonId IN ($placeholders)',
+      whereArgs: lessonIdList,
     );
     final lessonNameList = records.map((e) => e['授業名'] as String).toList();
     return lessonNameList;
@@ -260,31 +264,33 @@ final class TimetableRepository {
 
   Future<Map<String, int>> loadPersonalTimetableMapString() async {
     final personalTimetableList = await _getPersonalTimetableList();
-    final dbPath = await SyllabusDatabaseConfig().getDBPath();
-    final database = await openDatabase(dbPath);
+    final db = await SyllabusDatabaseHelper.getDatabase();
     final loadPersonalTimetableMap = <String, int>{};
-    final List<Map<String, dynamic>> records = await database.rawQuery(
-      'select LessonId, 授業名 from sort where LessonId in '
-      '(${personalTimetableList.join(",")})',
+    final placeholders = List.filled(personalTimetableList.length, '?').join(',');
+    final records = await db.query(
+      'sort',
+      columns: ['LessonId', '授業名'],
+      where: 'LessonId IN ($placeholders)',
+      whereArgs: personalTimetableList,
     );
     for (final record in records) {
-      final lessonName = record['授業名'] as String;
-      final lessonId = record['LessonId'] as int;
-      loadPersonalTimetableMap[lessonName] = lessonId;
+      final lessonName = record['授業名'] as String?;
+      final lessonId = record['LessonId'] as int?;
+      if (lessonName != null && lessonId != null) {
+        loadPersonalTimetableMap[lessonName] = lessonId;
+      }
     }
     return loadPersonalTimetableMap;
   }
 
   // 施設予約のjsonファイルの中から取得している科目のみに絞り込み
   Future<List<dynamic>> filterTimetable() async {
-    const fileName = 'map/oneweek_schedule.json';
     try {
-      final jsonString = await readJsonFile(fileName);
-      final jsonData = json.decode(jsonString) as List<dynamic>;
+      final data = await FileHelper.getJSONData('map/oneweek_schedule.json');
       final personalTimetableList = await _getPersonalTimetableList();
       final filteredData = <dynamic>[];
       for (final lessonId in personalTimetableList) {
-        for (final item in jsonData) {
+        for (final item in data) {
           final itemMap = item as Map<String, dynamic>;
           if (itemMap['lessonId'] == lessonId.toString()) {
             filteredData.add(item);
@@ -340,10 +346,8 @@ final class TimetableRepository {
       }
     }
 
-    var jsonData = await readJsonFile('home/cancel_lecture.json');
-    final cancelLectureData = jsonDecode(jsonData) as List<dynamic>;
-    jsonData = await readJsonFile('home/sup_lecture.json');
-    final supLectureData = jsonDecode(jsonData) as List<dynamic>;
+    final cancelLectureData = await FileHelper.getJSONData('home/cancel_lecture.json');
+    final supLectureData = await FileHelper.getJSONData('home/sup_lecture.json');
     final loadPersonalTimetableMap = await loadPersonalTimetableMapString();
 
     for (final cancelLecture in cancelLectureData) {
@@ -376,10 +380,8 @@ final class TimetableRepository {
   }
 
   Future<List<Map<String, dynamic>>> fetchRecords() async {
-    final dbPath = await SyllabusDatabaseConfig().getDBPath();
-    final database = await openDatabase(dbPath);
-
-    final List<Map<String, dynamic>> records = await database.rawQuery('SELECT * FROM week_period order by lessonId');
+    final db = await SyllabusDatabaseHelper.getDatabase();
+    final records = await db.query('week_period', orderBy: 'lessonId');
     return records;
   }
 
