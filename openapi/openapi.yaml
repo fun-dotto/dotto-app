@@ -704,35 +704,29 @@ components:
           allOf:
             - $ref: '#/components/schemas/DottoFoundationV1.DayOfWeek'
           description: |-
-            TODO: Timetable API から曜日を取得する
+            TODO
             曜日
         period:
           allOf:
             - $ref: '#/components/schemas/DottoFoundationV1.Period'
           description: |-
-            TODO: Timetable API から時限を取得する
+            TODO
             時限
         isAddedToTimetable:
           type: boolean
           description: |-
-            TODO: 時間割APIを作成したら、時間割に追加されているかを取得する
+            TODO
             時間割に追加されているか
     TimetableItem:
       type: object
       required:
         - id
         - subject
-        - dayOfWeek
-        - period
       properties:
         id:
           type: string
         subject:
           $ref: '#/components/schemas/SubjectSummary'
-        dayOfWeek:
-          $ref: '#/components/schemas/DottoFoundationV1.DayOfWeek'
-        period:
-          $ref: '#/components/schemas/DottoFoundationV1.Period'
     UserInfo:
       type: object
       properties:
