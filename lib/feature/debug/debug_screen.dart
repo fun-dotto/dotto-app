@@ -1,5 +1,7 @@
 import 'package:dotto/api/api_environment.dart';
-import 'package:dotto/feature/search_subject/search_subject_screen.dart';
+import 'package:dotto/feature/subject/search_subject_screen.dart';
+import 'package:dotto/feature/subject/subject_detail_feedback_screen.dart';
+import 'package:dotto/feature/subject/subject_detail_past_exam_screen.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -16,8 +18,8 @@ final class DebugScreen extends HookConsumerWidget {
     final idToken = useFuture(useMemoized(() => FirebaseAuth.instance.currentUser?.getIdToken()));
     final environment = ref.watch(apiEnvironmentProvider);
 
-    void showEnvironmentPicker() {
-      showDialog<void>(
+    Future<void> showEnvironmentPicker() async {
+      await showDialog<void>(
         context: context,
         builder: (context) => SimpleDialog(
           title: const Text('Environment'),
@@ -45,7 +47,10 @@ final class DebugScreen extends HookConsumerWidget {
     if (appCheckToken.hasError || idToken.hasError) {
       return Scaffold(
         appBar: AppBar(title: const Text('Debug')),
-        body: Center(child: Text('Error: ${appCheckToken.error ?? idToken.error}')),
+        body: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Center(child: Text('${appCheckToken.error ?? idToken.error}')),
+        ),
       );
     }
 
@@ -90,6 +95,26 @@ final class DebugScreen extends HookConsumerWidget {
               MaterialPageRoute<void>(
                 builder: (context) => const SearchSubjectScreen(),
                 settings: const RouteSettings(name: '/search_subject'),
+              ),
+            ),
+          ),
+          ListTile(
+            title: const Text('Subject Feedback (103501)'),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (context) => const SubjectDetailFeedbackScreen(lessonId: '103501'),
+                settings: const RouteSettings(name: '/subjects/103501/feedback'),
+              ),
+            ),
+          ),
+          ListTile(
+            title: const Text('Subject Past Exam (103501)'),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (context) => const SubjectDetailPastExamScreen(pastExamId: '103501', isAuthenticated: true),
+                settings: const RouteSettings(name: '/subjects/103501/past_exam'),
               ),
             ),
           ),
