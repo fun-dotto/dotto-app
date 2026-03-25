@@ -1,7 +1,7 @@
-[mcp_servers.figma]
+[mcp_servers.dotto_figma]
 url = "https://mcp.figma.com/mcp"
 
-[mcp_servers.notion]
+[mcp_servers.dotto_notion]
 url = "https://mcp.notion.com/mcp"
 
 [mcp_servers.serena]
