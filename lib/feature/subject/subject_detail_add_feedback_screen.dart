@@ -1,4 +1,5 @@
 import 'package:dotto/api/api_client.dart';
+import 'package:dotto/controller/user_controller.dart';
 import 'package:dotto/domain/subject_feedback.dart';
 import 'package:dotto/feature/subject/subject_repository.dart';
 import 'package:dotto_design_system/style/semantic_color.dart';
@@ -8,13 +9,13 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 final class SubjectDetailAddFeedbackScreen extends HookConsumerWidget {
-  const SubjectDetailAddFeedbackScreen({required this.lessonId, required this.userId, super.key});
+  const SubjectDetailAddFeedbackScreen({required this.lessonId, super.key});
 
   final String lessonId;
-  final String userId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final user = ref.watch(userProvider);
     final apiClient = ref.read(apiClientProvider);
     final subjectRepository = SubjectRepositoryImpl(apiClient);
     final score = useState<int?>(null);
@@ -31,28 +32,31 @@ final class SubjectDetailAddFeedbackScreen extends HookConsumerWidget {
         ),
         actions: [
           TextButton(
-            onPressed: () async {
-              try {
-                if (score.value == null) {
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('満足度を入力してください。')));
-                  return;
+            onPressed: switch (user) {
+              AsyncData(:final value) => () async {
+                try {
+                  if (score.value == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('満足度を入力してください。')));
+                    return;
+                  }
+                  final feedback = SubjectFeedback(score: score.value!, comment: commentTextEditingController.text);
+                  await subjectRepository.createFeedback(
+                    userId: value.id,
+                    lessonId: lessonId,
+                    score: feedback.score,
+                    comment: feedback.comment,
+                  );
+                  if (context.mounted) {
+                    Navigator.of(context).pop(feedback);
+                  }
+                } on Exception catch (e) {
+                  debugPrint(e.toString());
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('フィードバックの投稿に失敗しました。')));
+                  }
                 }
-                final feedback = SubjectFeedback(score: score.value!, comment: commentTextEditingController.text);
-                await subjectRepository.createFeedback(
-                  userId: userId,
-                  lessonId: lessonId,
-                  score: feedback.score,
-                  comment: feedback.comment,
-                );
-                if (context.mounted) {
-                  Navigator.of(context).pop(feedback);
-                }
-              } on Exception catch (e) {
-                debugPrint(e.toString());
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('フィードバックの投稿に失敗しました。')));
-                }
-              }
+              },
+              _ => null,
             },
             child: const Text('投稿する'),
           ),
