@@ -36,18 +36,16 @@ final class SettingsScreen extends ConsumerWidget {
       appBar: AppBar(title: const Text('設定'), centerTitle: false),
       body: Column(
         children: [
-          if (isAuthenticated && user.value != null)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-
-              child: UserInfoTile(
-                user: user.value!,
-
-                onTap: () {
-                  // ここにタップ時の挙動（必要なら）
-                },
-              ),
+          //if (isAuthenticated && user.value != null)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: UserInfoTile(
+              user: user.value!,
+              onTap: () {
+                // ここにタップ時の挙動（必要なら）
+              },
             ),
+          ),
           Expanded(
             child: SettingsList(
               sections: [
