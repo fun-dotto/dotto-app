@@ -16,7 +16,6 @@ final class SubjectDetailFeedbackScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final user = ref.watch(userProvider);
     final isAuthenticated = ref.watch(userProvider.notifier).isAuthenticated;
     final apiClient = ref.read(apiClientProvider);
     final subjectRepository = SubjectRepositoryImpl(apiClient);
@@ -57,7 +56,7 @@ final class SubjectDetailFeedbackScreen extends HookConsumerWidget {
             context: context,
             isScrollControlled: true,
             useSafeArea: true,
-            builder: (_) => SubjectDetailAddFeedbackScreen(lessonId: lessonId, userId: user?.uid ?? ''),
+            builder: (_) => SubjectDetailAddFeedbackScreen(lessonId: lessonId),
           );
           if (result != null && context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('フィードバックを投稿しました。')));
