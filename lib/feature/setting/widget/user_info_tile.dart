@@ -8,11 +8,10 @@ final class UserInfoTile extends StatelessWidget {
 
   /// 表示するユーザー（Firebase Auth の User）
   final DottoUser user;
-  final VoidCallback? onTap;
+  final void Function()? onTap;
 
   @override
   Widget build(BuildContext context) {
-    final semantic = Theme.of(context).extension<SemanticColor>()!;
     final photoURL = user.avatarUrl; // String? のまま
     final name = (user.name.trim().isNotEmpty) ? user.name.trim() : 'ログイン';
     final email = user.email.trim().isNotEmpty ? '${user.email.trim()}でログイン中' : 'Google アカウント (@fun.ac.jp) でログイン';
@@ -36,32 +35,24 @@ final class UserInfoTile extends StatelessWidget {
     );
     final content = Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      decoration: BoxDecoration(
-        color: semantic.backgroundSecondary,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: semantic.borderPrimary),
-      ),
       child: Row(
+        spacing: 12,
         children: [
           avatar,
-          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [Text(name), const SizedBox(height: 2), Text(email)],
             ),
           ),
-          const SizedBox(width: 8),
-          Icon(Icons.chevron_right, color: semantic.labelSecondary),
+          Icon(Icons.chevron_right, color: SemanticColor.light.labelSecondary),
         ],
       ),
     );
-    //もし処理がなければcontentを返してただのカードを表示して終了する
-    if (onTap == null) return content;
-    //処理があればtapできて波紋波紋エフェクトが出る
     return Material(
-      color: Colors.transparent,
-      child: InkWell(onTap: onTap, borderRadius: BorderRadius.circular(14), child: content),
+      color: SemanticColor.light.backgroundSecondary,
+      borderRadius: BorderRadius.circular(12),
+      child: InkWell(onTap: onTap, child: content),
     );
   }
 }

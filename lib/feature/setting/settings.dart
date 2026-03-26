@@ -11,6 +11,7 @@ import 'package:dotto/feature/onboarding/onboarding_screen.dart';
 import 'package:dotto/feature/setting/widget/license.dart';
 import 'package:dotto/feature/setting/widget/user_info_tile.dart';
 import 'package:dotto/feature/timetable/repository/timetable_repository.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -37,30 +38,21 @@ final class SettingsScreen extends ConsumerWidget {
       body: Column(
         children: [
           //if (isAuthenticated && user.value != null)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: UserInfoTile(
-              user: user.value!,
-              onTap: () {
-                // ここにタップ時の挙動（必要なら）
-              },
-            ),
-          ),
           Expanded(
             child: SettingsList(
               sections: [
                 SettingsSection(
-                  tiles: <SettingsTile>[
-                    // Googleでログイン
-                    SettingsTile.navigation(
-                      title: Text(isAuthenticated ? '${user.value?.email}でログイン中' : 'Google アカウント (@fun.ac.jp) でログイン'),
-                      leading: Icon(isAuthenticated ? Icons.logout : Icons.login),
-                      onPressed: isAuthenticated
-                          ? (_) => ref.read(userProvider.notifier).signOut()
-                          : (_) async {
-                              await ref.read(userProvider.notifier).signIn();
-                              await TimetableRepository().loadPersonalTimetableListOnLogin(context, ref);
-                            },
+                  tiles: <AbstractSettingsTile>[
+                    CustomSettingsTile(
+                      child: UserInfoTile(
+                        user: user.value!,
+                        onTap: isAuthenticated
+                            ? () => ref.read(userProvider.notifier).signOut()
+                            : () async {
+                                await ref.read(userProvider.notifier).signIn();
+                                await TimetableRepository().loadPersonalTimetableListOnLogin(context, ref);
+                              },
+                      ),
                     ),
                   ],
                 ),
