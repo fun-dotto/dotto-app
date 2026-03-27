@@ -71,4 +71,36 @@ final class SearchSubjectReducer extends _$SearchSubjectReducer {
       ).toList();
     });
   }
+
+  Future<void> registerSubject(String subjectId) async {
+    final courseRegistrationRepository = ref.read(courseRegistrationRepositoryProvider);
+    await courseRegistrationRepository.registerCourse(subjectId);
+    _updateSubjectRegistrationState(subjectId: subjectId, isAddedToTimetable: true);
+  }
+
+  Future<void> unregisterSubject(String subjectId) async {
+    final courseRegistrationRepository = ref.read(courseRegistrationRepositoryProvider);
+    final courseRegistrations = await courseRegistrationRepository.getCourseRegistrations(Semester.values);
+    final targets = courseRegistrations.where((registration) => registration.subject.id == subjectId);
+    if (targets.isEmpty) {
+      return;
+    }
+    await courseRegistrationRepository.unregisterCourse(targets.first.id);
+    _updateSubjectRegistrationState(subjectId: subjectId, isAddedToTimetable: false);
+  }
+
+  void _updateSubjectRegistrationState({required String subjectId, required bool isAddedToTimetable}) {
+    final subjects = state.valueOrNull;
+    if (subjects == null) {
+      return;
+    }
+    state = AsyncData(
+      subjects.map((subject) {
+        if (subject.id != subjectId) {
+          return subject;
+        }
+        return subject.copyWith(isAddedToTimetable: isAddedToTimetable);
+      }).toList(),
+    );
+  }
 }

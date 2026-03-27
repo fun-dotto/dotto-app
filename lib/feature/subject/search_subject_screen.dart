@@ -15,12 +15,35 @@ class SearchSubjectScreen extends HookConsumerWidget {
     final textEditingController = useTextEditingController();
     final focusNode = useFocusNode();
     final filter = useState(SubjectFilter());
+    final processingSubjectIds = useState(<String>{});
     final subjects = ref.watch(searchSubjectReducerProvider);
 
     Future<void> search() async {
       await ref
           .read(searchSubjectReducerProvider.notifier)
           .search(query: textEditingController.text, filter: filter.value);
+    }
+
+    Future<void> toggleCourseRegistration({required String subjectId, required bool isAddedToTimetable}) async {
+      final processing = processingSubjectIds.value;
+      if (processing.contains(subjectId)) {
+        return;
+      }
+      processingSubjectIds.value = {...processing, subjectId};
+      try {
+        final notifier = ref.read(searchSubjectReducerProvider.notifier);
+        if (isAddedToTimetable) {
+          await notifier.unregisterSubject(subjectId);
+        } else {
+          await notifier.registerSubject(subjectId);
+        }
+      } catch (_) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('履修登録の更新に失敗しました')));
+        }
+      } finally {
+        processingSubjectIds.value = {...processingSubjectIds.value.where((id) => id != subjectId)};
+      }
     }
 
     return Scaffold(
@@ -84,7 +107,19 @@ class SearchSubjectScreen extends HookConsumerWidget {
                               leading: () {
                                 final isAddedToTimetable = subject.isAddedToTimetable;
                                 if (isAddedToTimetable == null) return null;
-                                return Icon(isAddedToTimetable ? Icons.check : Icons.add);
+                                final isProcessing = processingSubjectIds.value.contains(subject.id);
+                                return IconButton(
+                                  onPressed: isProcessing
+                                      ? null
+                                      : () => toggleCourseRegistration(
+                                          subjectId: subject.id,
+                                          isAddedToTimetable: isAddedToTimetable,
+                                        ),
+                                  icon: Icon(
+                                    isAddedToTimetable ? Icons.remove_circle_outline : Icons.add_circle_outline,
+                                  ),
+                                  tooltip: isAddedToTimetable ? '履修解除' : '履修登録',
+                                );
                               }(),
                             );
                           },
