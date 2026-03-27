@@ -48,7 +48,8 @@ final class UserInfoTile extends StatelessWidget {
     return Material(
       color: SemanticColor.light.backgroundSecondary,
       borderRadius: BorderRadius.circular(12),
-      child: InkWell(onTap: onTap, child: content),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(onTap: onTap, borderRadius: BorderRadius.circular(12), child: content),
     );
   }
 }
