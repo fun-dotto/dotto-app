@@ -1,6 +1,6 @@
 import 'package:dotto/domain/day_of_week.dart';
 import 'package:dotto/domain/period.dart';
-import 'package:dotto/domain/semester.dart';
+import 'package:dotto/domain/timetable_semester.dart';
 import 'package:dotto/feature/timetable/controller/personal_lesson_id_list_controller.dart';
 import 'package:dotto/feature/timetable/controller/week_period_all_records_controller.dart';
 import 'package:dotto/feature/timetable/repository/timetable_repository.dart';
@@ -12,7 +12,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 final class SelectCourseScreen extends ConsumerWidget {
   const SelectCourseScreen(this.semester, this.dayOfWeek, this.period, {super.key});
 
-  final Semester semester;
+  final TimetableSemester semester;
   final DayOfWeek dayOfWeek;
   final Period period;
 
