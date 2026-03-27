@@ -1,9 +1,14 @@
+import 'package:built_collection/built_collection.dart';
 import 'package:dotto/api/api_client.dart';
+import 'package:dotto/domain/semester.dart';
 import 'package:dotto/domain/subject_filter.dart';
 import 'package:dotto/domain/subject_summary.dart';
+import 'package:dotto/domain/timetable_item.dart';
 import 'package:dotto/feature/subject/search_subject_filter_screen.dart';
 import 'package:dotto/feature/subject/subject_detail_screen.dart';
+import 'package:dotto/repository/course_registration_repository.dart';
 import 'package:dotto/repository/subject_repository.dart';
+import 'package:dotto/repository/timetable_repository.dart';
 import 'package:dotto_design_system/component/text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -15,16 +20,43 @@ class SearchSubjectScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final apiClient = ref.read(apiClientProvider);
+    final courseRegistrationRepository = CourseRegistrationRepositoryImpl(apiClient);
     final subjectRepository = SubjectRepositoryImpl(apiClient);
+    final timetableRepository = TimetableRepositoryImpl(apiClient);
     final textEditingController = useTextEditingController();
     final focusNode = useFocusNode();
     final filter = useState(SubjectFilter());
     final subjects = useState<AsyncValue<List<SubjectSummary>>>(const AsyncData([]));
+    final cachedTimetableItems = useState<List<TimetableItem>?>(null);
 
     Future<void> search() async {
       subjects
         ..value = const AsyncLoading()
-        ..value = await AsyncValue.guard(() => subjectRepository.getSubjects(textEditingController.text, filter.value));
+        ..value = await AsyncValue.guard(() async {
+          var timetableItems = cachedTimetableItems.value;
+          if (timetableItems == null) {
+            timetableItems = await timetableRepository.getTimetableItems(Semester.values);
+            cachedTimetableItems.value = timetableItems;
+          }
+          final courseRegistrationsFuture = courseRegistrationRepository.getCourseRegistrations(Semester.values);
+          final subjectsFuture = subjectRepository.getSubjects(textEditingController.text, filter.value);
+          final courseRegistrations = await courseRegistrationsFuture;
+          final subjects = await subjectsFuture;
+          final registeredSubjectIds = courseRegistrations.map((e) => e.subject.id).toSet();
+          final timetableSlotsBySubjectId = {
+            for (final item in timetableItems)
+              if (item.subject.slot != null) item.subject.id: item.subject.slot,
+          };
+          final newSubjects = BuiltList<SubjectSummary>(
+            subjects.map((subject) {
+              return subject.copyWith(
+                slot: timetableSlotsBySubjectId[subject.id],
+                isAddedToTimetable: registeredSubjectIds.contains(subject.id),
+              );
+            }),
+          );
+          return newSubjects.toList();
+        });
     }
 
     return Scaffold(
@@ -77,7 +109,7 @@ class SearchSubjectScreen extends HookConsumerWidget {
                               subtitle: () {
                                 final slot = subject.slot;
                                 if (slot == null) return null;
-                                Text('${slot.dayOfWeek.label}${slot.period.number}');
+                                return Text('${slot.dayOfWeek.label}${slot.period.number}');
                               }(),
                               onTap: () async {
                                 await Navigator.of(context).push(
@@ -88,7 +120,7 @@ class SearchSubjectScreen extends HookConsumerWidget {
                               leading: () {
                                 final isAddedToTimetable = subject.isAddedToTimetable;
                                 if (isAddedToTimetable == null) return null;
-                                Icon(isAddedToTimetable ? Icons.check : Icons.add);
+                                return Icon(isAddedToTimetable ? Icons.check : Icons.add);
                               }(),
                             );
                           },
