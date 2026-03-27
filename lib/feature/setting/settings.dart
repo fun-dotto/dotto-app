@@ -11,8 +11,6 @@ import 'package:dotto/feature/onboarding/onboarding_screen.dart';
 import 'package:dotto/feature/setting/widget/license.dart';
 import 'package:dotto/feature/setting/widget/user_info_tile.dart';
 import 'package:dotto/feature/timetable/repository/timetable_repository.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
