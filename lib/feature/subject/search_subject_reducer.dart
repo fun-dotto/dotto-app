@@ -7,9 +7,25 @@ import 'package:dotto/domain/timetable_item.dart';
 import 'package:dotto/repository/course_registration_repository.dart';
 import 'package:dotto/repository/subject_repository.dart';
 import 'package:dotto/repository/timetable_repository.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'search_subject_reducer.g.dart';
+
+final courseRegistrationRepositoryProvider = Provider<CourseRegistrationRepository>((ref) {
+  final apiClient = ref.watch(apiClientProvider);
+  return CourseRegistrationRepositoryImpl(apiClient);
+});
+
+final subjectRepositoryProvider = Provider<SubjectRepository>((ref) {
+  final apiClient = ref.watch(apiClientProvider);
+  return SubjectRepositoryImpl(apiClient);
+});
+
+final timetableRepositoryProvider = Provider<TimetableRepository>((ref) {
+  final apiClient = ref.watch(apiClientProvider);
+  return TimetableRepositoryImpl(apiClient);
+});
 
 @riverpod
 final class SearchSubjectReducer extends _$SearchSubjectReducer {
@@ -23,10 +39,9 @@ final class SearchSubjectReducer extends _$SearchSubjectReducer {
   Future<void> search({required String query, required SubjectFilter filter}) async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
-      final apiClient = ref.read(apiClientProvider);
-      final courseRegistrationRepository = CourseRegistrationRepositoryImpl(apiClient);
-      final subjectRepository = SubjectRepositoryImpl(apiClient);
-      final timetableRepository = TimetableRepositoryImpl(apiClient);
+      final courseRegistrationRepository = ref.read(courseRegistrationRepositoryProvider);
+      final subjectRepository = ref.read(subjectRepositoryProvider);
+      final timetableRepository = ref.read(timetableRepositoryProvider);
 
       var timetableItems = _cachedTimetableItems;
       if (timetableItems == null) {
