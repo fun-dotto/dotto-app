@@ -1,6 +1,6 @@
 final class RemoteConfigKeys {
-  /// 廃止予定: Design System v2 feature flag
-  static const String isDesignV2Enabled = 'is_design_v2_enabled';
+  /// v2 feature flag
+  static const String isV2Enabled = 'is_v2_enabled';
 
   /// Funch feature flag
   static const String isFunchEnabled = 'is_funch_enabled';

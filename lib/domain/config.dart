@@ -5,7 +5,7 @@ part 'config.freezed.dart';
 @freezed
 abstract class Config with _$Config {
   const factory Config({
-    required bool isDesignV2Enabled,
+    required bool isV2Enabled,
     required bool isFunchEnabled,
     required bool isValidAppVersion,
     required bool isLatestAppVersion,

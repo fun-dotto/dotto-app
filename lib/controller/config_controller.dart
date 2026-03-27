@@ -11,7 +11,7 @@ final class ConfigNotifier extends _$ConfigNotifier {
   Config build() {
     final remoteConfigRepository = ref.read(remoteConfigHelperProvider);
 
-    final isDesignV2Enabled = remoteConfigRepository.getBool(RemoteConfigKeys.isDesignV2Enabled);
+    final isV2Enabled = remoteConfigRepository.getBool(RemoteConfigKeys.isV2Enabled);
     final isFunchEnabled = remoteConfigRepository.getBool(RemoteConfigKeys.isFunchEnabled);
     final isValidAppVersion = remoteConfigRepository.getBool(RemoteConfigKeys.isValidAppVersion);
     final isLatestAppVersion = remoteConfigRepository.getBool(RemoteConfigKeys.isLatestAppVersion);
@@ -24,7 +24,7 @@ final class ConfigNotifier extends _$ConfigNotifier {
     final timetable2PdfUrl = remoteConfigRepository.getString(RemoteConfigKeys.timetable2PdfUrl);
 
     return Config(
-      isDesignV2Enabled: isDesignV2Enabled,
+      isV2Enabled: isV2Enabled,
       isFunchEnabled: isFunchEnabled,
       isValidAppVersion: isValidAppVersion,
       isLatestAppVersion: isLatestAppVersion,
