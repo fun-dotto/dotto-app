@@ -11,6 +11,7 @@ import 'package:dotto/feature/onboarding/onboarding_screen.dart';
 import 'package:dotto/feature/setting/widget/license.dart';
 import 'package:dotto/feature/setting/widget/user_info_tile.dart';
 import 'package:dotto/feature/timetable/repository/timetable_repository.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -43,16 +44,23 @@ final class SettingsScreen extends ConsumerWidget {
               sections: [
                 SettingsSection(
                   tiles: <AbstractSettingsTile>[
-                    CustomSettingsTile(
-                      child: UserInfoTile(
-                        user: user.value!,
-                        onTap: isAuthenticated
-                            ? () => ref.read(userProvider.notifier).signOut()
-                            : () async {
-                                await ref.read(userProvider.notifier).signIn();
-                                await TimetableRepository().loadPersonalTimetableListOnLogin(context, ref);
-                              },
+                    user.when(
+                      data: (value) => CustomSettingsTile(
+                        child: UserInfoTile(
+                          user: value,
+                          onTap:
+                              value
+                                  .id
+                                  .isNotEmpty // isAuthenticated の代わりに value.id をチェック
+                              ? () => ref.read(userProvider.notifier).signOut()
+                              : () async {
+                                  await ref.read(userProvider.notifier).signIn();
+                                  await TimetableRepository().loadPersonalTimetableListOnLogin(context, ref);
+                                },
+                        ),
                       ),
+                      loading: () => CustomSettingsTile(child: SizedBox.shrink()),
+                      error: (err, stack) => CustomSettingsTile(child: SizedBox.shrink()),
                     ),
                   ],
                 ),
