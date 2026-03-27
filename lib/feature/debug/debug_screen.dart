@@ -1,5 +1,5 @@
 import 'package:dotto/api/api_environment.dart';
-import 'package:dotto/feature/course_registration/course_registration_screen.dart';
+import 'package:dotto/feature/course_registration/course_screen.dart';
 import 'package:dotto/feature/subject/search_subject_screen.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -88,22 +88,22 @@ final class DebugScreen extends HookConsumerWidget {
             onTap: showEnvironmentPicker,
           ),
           ListTile(
+            title: const Text('Course'),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (context) => CourseScreen(),
+                settings: const RouteSettings(name: '/course'),
+              ),
+            ),
+          ),
+          ListTile(
             title: const Text('Search Subject'),
             trailing: const Icon(Icons.chevron_right),
             onTap: () => Navigator.of(context).push(
               MaterialPageRoute<void>(
                 builder: (context) => const SearchSubjectScreen(),
-                settings: const RouteSettings(name: '/search_subject'),
-              ),
-            ),
-          ),
-          ListTile(
-            title: const Text('Course Registration'),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(
-                builder: (context) => const CourseRegistrationScreen(),
-                settings: const RouteSettings(name: '/course_registration'),
+                settings: const RouteSettings(name: '/subjects/'),
               ),
             ),
           ),

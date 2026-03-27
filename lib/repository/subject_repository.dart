@@ -222,7 +222,7 @@ final class SubjectRepositoryImpl implements SubjectRepository {
           DottoFoundationV1CourseSemester.q4 => Semester.q4,
           DottoFoundationV1CourseSemester.summerIntensive => Semester.summerIntensive,
           DottoFoundationV1CourseSemester.winterIntensive => Semester.winterIntensive,
-          _ => throw Exception('Invalid semester'),
+          _ => throw Exception('Invalid semester: ${subject.semester}'),
         },
         credit: subject.credit,
         eligibleAttributes: subject.eligibleAttributes
@@ -238,7 +238,7 @@ final class SubjectRepositoryImpl implements SubjectRepository {
                   DottoFoundationV1Grade.d1 => Grade.d1,
                   DottoFoundationV1Grade.d2 => Grade.d2,
                   DottoFoundationV1Grade.d3 => Grade.d3,
-                  _ => throw Exception('Invalid grade'),
+                  _ => throw Exception('Invalid grade: ${e.grade}'),
                 },
                 class_: switch (e.class_) {
                   DottoFoundationV1Class.A => AcademicClass.a,
@@ -253,7 +253,8 @@ final class SubjectRepositoryImpl implements SubjectRepository {
                   DottoFoundationV1Class.J => AcademicClass.j,
                   DottoFoundationV1Class.K => AcademicClass.k,
                   DottoFoundationV1Class.L => AcademicClass.l,
-                  _ => throw Exception('Invalid class'),
+                  null => null,
+                  _ => throw Exception('Invalid class: ${e.class_}'),
                 },
               ),
             )
@@ -267,13 +268,13 @@ final class SubjectRepositoryImpl implements SubjectRepository {
                   DottoFoundationV1Course.complexSystem => AcademicArea.complexCourse,
                   DottoFoundationV1Course.intelligentSystem => AcademicArea.intelligenceSystemCourse,
                   DottoFoundationV1Course.advancedICT => AcademicArea.advancedICTCourse,
-                  _ => throw Exception('Invalid course'),
+                  _ => throw Exception('Invalid course: ${e.course}'),
                 },
                 requirementType: switch (e.requirementType) {
                   DottoFoundationV1SubjectRequirementType.required_ => SubjectRequirementType.required,
                   DottoFoundationV1SubjectRequirementType.optional => SubjectRequirementType.optional,
                   DottoFoundationV1SubjectRequirementType.optionalRequired => SubjectRequirementType.optionalRequired,
-                  _ => throw Exception('Invalid requirement type'),
+                  _ => throw Exception('Invalid requirement type: ${e.requirementType}'),
                 },
               ),
             )

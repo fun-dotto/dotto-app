@@ -3,7 +3,7 @@ import 'package:dotto/domain/day_of_week.dart';
 import 'package:dotto/domain/period.dart';
 import 'package:dotto/domain/timetable_item.dart';
 import 'package:dotto/domain/timetable_semester.dart';
-import 'package:dotto/feature/timetable/widget/timetable_is_over_selected_snack_bar.dart';
+import 'package:dotto/feature/timetable_v0/widget/timetable_is_over_selected_snack_bar.dart';
 import 'package:dotto/repository/course_registration_repository.dart';
 import 'package:dotto_design_system/component/button.dart';
 import 'package:flutter/material.dart';

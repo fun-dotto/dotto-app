@@ -1,10 +1,10 @@
 import 'package:dotto/domain/day_of_week.dart';
 import 'package:dotto/domain/period.dart';
 import 'package:dotto/domain/timetable_semester.dart';
-import 'package:dotto/feature/timetable/controller/personal_lesson_id_list_controller.dart';
-import 'package:dotto/feature/timetable/controller/week_period_all_records_controller.dart';
-import 'package:dotto/feature/timetable/repository/timetable_repository.dart';
-import 'package:dotto/feature/timetable/widget/timetable_is_over_selected_snack_bar.dart';
+import 'package:dotto/feature/timetable_v0/controller/personal_lesson_id_list_controller.dart';
+import 'package:dotto/feature/timetable_v0/controller/week_period_all_records_controller.dart';
+import 'package:dotto/feature/timetable_v0/repository/timetable_repository.dart';
+import 'package:dotto/feature/timetable_v0/widget/timetable_is_over_selected_snack_bar.dart';
 import 'package:dotto_design_system/component/button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
