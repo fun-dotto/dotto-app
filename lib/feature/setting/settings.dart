@@ -55,8 +55,38 @@ final class SettingsScreen extends ConsumerWidget {
                                 },
                         ),
                       ),
-                      loading: () => CustomSettingsTile(child: SizedBox.shrink()),
-                      error: (err, stack) => CustomSettingsTile(child: SizedBox.shrink()),
+                      loading: () {
+                        final previousUser = user.valueOrNull;
+                        final isAuthenticated = previousUser?.id.isNotEmpty ?? false;
+                        return CustomSettingsTile(
+                          child: UserInfoTile(
+                            user: previousUser,
+                            onTap: isAuthenticated
+                                ? () => ref.read(userProvider.notifier).signOut()
+                                : () async {
+                                    await ref.read(userProvider.notifier).signIn();
+                                    await TimetableRepository()
+                                        .loadPersonalTimetableListOnLogin(context, ref);
+                                  },
+                          ),
+                        );
+                      },
+                      error: (err, stack) {
+                        final previousUser = user.valueOrNull;
+                        final isAuthenticated = previousUser?.id.isNotEmpty ?? false;
+                        return CustomSettingsTile(
+                          child: UserInfoTile(
+                            user: previousUser,
+                            onTap: isAuthenticated
+                                ? () => ref.read(userProvider.notifier).signOut()
+                                : () async {
+                                    await ref.read(userProvider.notifier).signIn();
+                                    await TimetableRepository()
+                                        .loadPersonalTimetableListOnLogin(context, ref);
+                                  },
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),
