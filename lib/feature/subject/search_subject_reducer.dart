@@ -73,7 +73,7 @@ final class SearchSubjectReducer extends _$SearchSubjectReducer {
   }
 
   Future<void> registerSubject(String subjectId) async {
-    final previousSubjects = state.valueOrNull;
+    final previousSubjects = state.asData?.value;
     if (previousSubjects == null) {
       return;
     }
@@ -88,7 +88,7 @@ final class SearchSubjectReducer extends _$SearchSubjectReducer {
   }
 
   Future<void> unregisterSubject(String subjectId) async {
-    final previousSubjects = state.valueOrNull;
+    final previousSubjects = state.asData?.value;
     if (previousSubjects == null) {
       return;
     }
@@ -108,7 +108,7 @@ final class SearchSubjectReducer extends _$SearchSubjectReducer {
   }
 
   void _updateSubjectRegistrationState({required String subjectId, required bool isAddedToTimetable}) {
-    final subjects = state.valueOrNull;
+    final subjects = state.asData?.value;
     if (subjects == null) {
       return;
     }
