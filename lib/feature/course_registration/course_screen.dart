@@ -4,6 +4,8 @@ import 'package:dotto/feature/course_registration/course_registration_screen.dar
 import 'package:dotto/feature/course_registration/personal_timetable_calendar_reducer.dart';
 import 'package:dotto/feature/course_registration/personal_timetable_calendar_view.dart';
 import 'package:dotto/feature/subject/search_subject_screen.dart';
+import 'package:dotto/feature/subject/subject_detail_screen.dart';
+import 'package:dotto/feature/timetable_v0/course_cancellation_screen.dart';
 import 'package:dotto_design_system/component/button.dart';
 import 'package:dotto_design_system/style/semantic_color.dart';
 import 'package:flutter/material.dart';
@@ -54,9 +56,12 @@ final class CourseScreen extends HookConsumerWidget {
                     personalTimetableDays: days,
                     selectedDate: selectedDate.value,
                     onDateSelected: (newDate) => selectedDate.value = newDate,
-                    onSubjectSelected: (subject) {
-                      // TODO: Push navigation to SubjectDetailScreen
-                    },
+                    onSubjectSelected: (subject) => Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (context) => SubjectDetailScreen(id: subject.id),
+                        settings: RouteSettings(name: '/course/subjects/${subject.id}'),
+                      ),
+                    ),
                   ),
                 ),
                 Row(
@@ -109,7 +114,17 @@ final class CourseScreen extends HookConsumerWidget {
                 ),
               ),
             ),
-            _featureButton(context, icon: Icons.calendar_month, label: '休講・補講', onPressed: null),
+            _featureButton(
+              context,
+              icon: Icons.calendar_month,
+              label: '休講・補講',
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (context) => const CourseCancellationScreen(),
+                  settings: const RouteSettings(name: '/course/cancellations'),
+                ),
+              ),
+            ),
           ],
         ),
       ),
