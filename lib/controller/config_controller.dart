@@ -15,8 +15,6 @@ final class ConfigNotifier extends _$ConfigNotifier {
     final isFunchEnabled = remoteConfigRepository.getBool(RemoteConfigKeys.isFunchEnabled);
     final isValidAppVersion = remoteConfigRepository.getBool(RemoteConfigKeys.isValidAppVersion);
     final isLatestAppVersion = remoteConfigRepository.getBool(RemoteConfigKeys.isLatestAppVersion);
-    final announcementsUrl = remoteConfigRepository.getString(RemoteConfigKeys.announcementsUrl);
-    final assignmentSetupUrl = remoteConfigRepository.getString(RemoteConfigKeys.assignmentSetupUrl);
     final feedbackFormUrl = remoteConfigRepository.getString(RemoteConfigKeys.feedbackFormUrl);
     final termsOfServiceUrl = remoteConfigRepository.getString(RemoteConfigKeys.termsOfServiceUrl);
     final privacyPolicyUrl = remoteConfigRepository.getString(RemoteConfigKeys.privacyPolicyUrl);
@@ -30,8 +28,6 @@ final class ConfigNotifier extends _$ConfigNotifier {
       isFunchEnabled: isFunchEnabled,
       isValidAppVersion: isValidAppVersion,
       isLatestAppVersion: isLatestAppVersion,
-      announcementsUrl: announcementsUrl,
-      assignmentSetupUrl: assignmentSetupUrl,
       feedbackFormUrl: feedbackFormUrl,
       termsOfServiceUrl: termsOfServiceUrl,
       privacyPolicyUrl: privacyPolicyUrl,
