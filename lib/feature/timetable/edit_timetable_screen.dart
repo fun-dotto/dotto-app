@@ -1,7 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:dotto/domain/day_of_week.dart';
 import 'package:dotto/domain/period.dart';
-import 'package:dotto/domain/semester.dart';
+import 'package:dotto/domain/timetable_semester.dart';
 import 'package:dotto/feature/timetable/controller/personal_lesson_id_list_controller.dart';
 import 'package:dotto/feature/timetable/controller/selected_semester_controller.dart';
 import 'package:dotto/feature/timetable/controller/timetable_view_style_controller.dart';
@@ -25,9 +25,9 @@ class _EditTimetableScreenState extends ConsumerState<EditTimetableScreen> with 
     super.initState();
     final initialSemester = ref.read(selectedSemesterProvider);
     _tabController = TabController(
-      length: Semester.onEditTimetableScreen.length,
+      length: TimetableSemester.values.length,
       vsync: this,
-      initialIndex: Semester.onEditTimetableScreen.indexOf(initialSemester),
+      initialIndex: TimetableSemester.values.indexOf(initialSemester),
     );
     _tabController.addListener(_handleTabSelection);
   }
@@ -37,7 +37,7 @@ class _EditTimetableScreenState extends ConsumerState<EditTimetableScreen> with 
       return;
     }
     final current = ref.read(selectedSemesterProvider);
-    final selected = Semester.onEditTimetableScreen[_tabController.index];
+    final selected = TimetableSemester.values[_tabController.index];
     if (current != selected) {
       ref.read(selectedSemesterProvider.notifier).value = selected;
     }
@@ -55,7 +55,7 @@ class _EditTimetableScreenState extends ConsumerState<EditTimetableScreen> with 
     BuildContext context,
     DayOfWeek dayOfWeek,
     Period period,
-    Semester semester,
+    TimetableSemester semester,
     List<Map<String, dynamic>> records,
   ) {
     final personalLessonIdList = ref.watch(personalLessonIdListProvider);
@@ -121,7 +121,7 @@ class _EditTimetableScreenState extends ConsumerState<EditTimetableScreen> with 
     );
   }
 
-  Widget _takingCourseTable(Semester semester) {
+  Widget _takingCourseTable(TimetableSemester semester) {
     final weekPeriodAllRecords = ref.watch(weekPeriodAllRecordsProvider);
     return SingleChildScrollView(
       child: Padding(
@@ -162,7 +162,7 @@ class _EditTimetableScreenState extends ConsumerState<EditTimetableScreen> with 
     );
   }
 
-  Widget _takingCourseList(Semester semester) {
+  Widget _takingCourseList(TimetableSemester semester) {
     final personalLessonIdList = ref.watch(personalLessonIdListProvider);
     final weekPeriodAllRecords = ref.watch(weekPeriodAllRecordsProvider);
     return weekPeriodAllRecords.when(
@@ -205,7 +205,7 @@ class _EditTimetableScreenState extends ConsumerState<EditTimetableScreen> with 
     );
   }
 
-  Widget _timetable(Semester semester) {
+  Widget _timetable(TimetableSemester semester) {
     final timetableViewStyle = ref.watch(timetableViewStyleProvider);
     switch (timetableViewStyle) {
       case TimetableViewStyle.table:
@@ -219,7 +219,7 @@ class _EditTimetableScreenState extends ConsumerState<EditTimetableScreen> with 
   Widget build(BuildContext context) {
     final timetableViewStyle = ref.watch(timetableViewStyleProvider);
     final selectedSemester = ref.watch(selectedSemesterProvider);
-    final selectedIndex = Semester.onEditTimetableScreen.indexOf(selectedSemester);
+    final selectedIndex = TimetableSemester.values.indexOf(selectedSemester);
     if (_tabController.index != selectedIndex && !_tabController.indexIsChanging) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) {
@@ -245,10 +245,10 @@ class _EditTimetableScreenState extends ConsumerState<EditTimetableScreen> with 
         bottom: TabBar(
           dividerColor: Colors.transparent,
           controller: _tabController,
-          tabs: Semester.onEditTimetableScreen.map((e) => Tab(text: e.label)).toList(),
+          tabs: TimetableSemester.values.map((e) => Tab(text: e.label)).toList(),
         ),
       ),
-      body: TabBarView(controller: _tabController, children: Semester.onEditTimetableScreen.map(_timetable).toList()),
+      body: TabBarView(controller: _tabController, children: TimetableSemester.values.map(_timetable).toList()),
     );
   }
 }

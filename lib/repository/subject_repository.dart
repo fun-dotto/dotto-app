@@ -113,8 +113,8 @@ final class SubjectRepositoryImpl implements SubjectRepository {
             : BuiltList<DottoFoundationV1CourseSemester>(
                 filter.semesters.map(
                   (e) => switch (e) {
-                    Semester.spring => DottoFoundationV1CourseSemester.h1,
-                    Semester.fall => DottoFoundationV1CourseSemester.h2,
+                    Semester.h1 => DottoFoundationV1CourseSemester.h1,
+                    Semester.h2 => DottoFoundationV1CourseSemester.h2,
                     Semester.allYear => DottoFoundationV1CourseSemester.allYear,
                     Semester.q1 => DottoFoundationV1CourseSemester.q1,
                     Semester.q2 => DottoFoundationV1CourseSemester.q2,
@@ -213,8 +213,8 @@ final class SubjectRepositoryImpl implements SubjectRepository {
             .toList(),
         year: subject.year,
         semester: switch (subject.semester) {
-          DottoFoundationV1CourseSemester.h1 => Semester.spring,
-          DottoFoundationV1CourseSemester.h2 => Semester.fall,
+          DottoFoundationV1CourseSemester.h1 => Semester.h1,
+          DottoFoundationV1CourseSemester.h2 => Semester.h2,
           DottoFoundationV1CourseSemester.allYear => Semester.allYear,
           DottoFoundationV1CourseSemester.q1 => Semester.q1,
           DottoFoundationV1CourseSemester.q2 => Semester.q2,
