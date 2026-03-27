@@ -13,7 +13,8 @@ enum UserPreferenceKeys {
   myBusStop(key: 'myBusStop', type: int),
   didSaveFCMToken(key: 'didSaveFCMToken', type: bool),
   timetablePeriodStyle(key: 'timetablePeriodStyle', type: String),
-  isV2EnabledOverride(key: 'isV2EnabledOverride', type: bool);
+  isV2EnabledOverride(key: 'isV2EnabledOverride', type: bool),
+  isFunchEnabledOverride(key: 'isFunchEnabledOverride', type: bool);
 
   const UserPreferenceKeys({required this.key, required this.type});
 
