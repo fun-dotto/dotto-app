@@ -74,16 +74,22 @@ class SearchSubjectScreen extends HookConsumerWidget {
                             final subject = value[index];
                             return ListTile(
                               title: Text(subject.name),
-                              // TODO
-                              // subtitle: Text('${subject.slot.dayOfWeek.label}${subject.slot.period.number}'),
+                              subtitle: () {
+                                final slot = subject.slot;
+                                if (slot == null) return null;
+                                Text('${slot.dayOfWeek.label}${slot.period.number}');
+                              }(),
                               onTap: () async {
                                 await Navigator.of(context).push(
                                   MaterialPageRoute<void>(builder: (context) => SubjectDetailScreen(id: subject.id)),
                                 );
                               },
                               trailing: const Icon(Icons.chevron_right),
-                              // TODO
-                              // leading: Icon(subject.isAddedToTimetable ? Icons.check : Icons.add),
+                              leading: () {
+                                final isAddedToTimetable = subject.isAddedToTimetable;
+                                if (isAddedToTimetable == null) return null;
+                                Icon(isAddedToTimetable ? Icons.check : Icons.add);
+                              }(),
                             );
                           },
                           keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
