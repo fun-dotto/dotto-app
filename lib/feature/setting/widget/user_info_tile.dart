@@ -19,7 +19,7 @@ final class UserInfoTile extends StatelessWidget {
       child: SizedBox(
         width: 44,
         height: 44,
-        //photoURLがnullまたは空文字列でない場合はImage.networkを使用し、それ以外の場合はImage.assetを使用する
+        // photoURL が空文字列でない場合は Image.network を使用し、それ以外の場合は Image.asset を使用する
         child: (photoURL.trim().isNotEmpty)
             ? Image.network(
                 photoURL,
