@@ -73,38 +73,20 @@ final class SearchSubjectReducer extends _$SearchSubjectReducer {
   }
 
   Future<void> registerSubject(String subjectId) async {
-    final previousSubjects = state.asData?.value;
-    if (previousSubjects == null) {
-      return;
-    }
-    _updateSubjectRegistrationState(subjectId: subjectId, isAddedToTimetable: true);
     final courseRegistrationRepository = ref.read(courseRegistrationRepositoryProvider);
-    try {
-      await courseRegistrationRepository.registerCourse(subjectId);
-    } catch (_) {
-      _restoreSubjects(previousSubjects);
-      rethrow;
-    }
+    await courseRegistrationRepository.registerCourse(subjectId);
+    _updateSubjectRegistrationState(subjectId: subjectId, isAddedToTimetable: true);
   }
 
   Future<void> unregisterSubject(String subjectId) async {
-    final previousSubjects = state.asData?.value;
-    if (previousSubjects == null) {
+    final courseRegistrationRepository = ref.read(courseRegistrationRepositoryProvider);
+    final courseRegistrations = await courseRegistrationRepository.getCourseRegistrations(Semester.values);
+    final targets = courseRegistrations.where((registration) => registration.subject.id == subjectId);
+    if (targets.isEmpty) {
       return;
     }
+    await courseRegistrationRepository.unregisterCourse(targets.first.id);
     _updateSubjectRegistrationState(subjectId: subjectId, isAddedToTimetable: false);
-    final courseRegistrationRepository = ref.read(courseRegistrationRepositoryProvider);
-    try {
-      final courseRegistrations = await courseRegistrationRepository.getCourseRegistrations(Semester.values);
-      final targets = courseRegistrations.where((registration) => registration.subject.id == subjectId);
-      if (targets.isEmpty) {
-        throw Exception('Failed to find course registration for subject: $subjectId');
-      }
-      await courseRegistrationRepository.unregisterCourse(targets.first.id);
-    } catch (_) {
-      _restoreSubjects(previousSubjects);
-      rethrow;
-    }
   }
 
   void _updateSubjectRegistrationState({required String subjectId, required bool isAddedToTimetable}) {
@@ -120,9 +102,5 @@ final class SearchSubjectReducer extends _$SearchSubjectReducer {
         return subject.copyWith(isAddedToTimetable: isAddedToTimetable);
       }).toList(),
     );
-  }
-
-  void _restoreSubjects(List<SubjectSummary> subjects) {
-    state = AsyncData(subjects);
   }
 }

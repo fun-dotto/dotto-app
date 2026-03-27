@@ -115,8 +115,27 @@ class SearchSubjectScreen extends HookConsumerWidget {
                                           subjectId: subject.id,
                                           isAddedToTimetable: isAddedToTimetable,
                                         ),
-                                  icon: Icon(
-                                    isAddedToTimetable ? Icons.remove_circle_outline : Icons.add_circle_outline,
+                                  icon: AnimatedSwitcher(
+                                    duration: const Duration(milliseconds: 220),
+                                    switchInCurve: Curves.easeOutBack,
+                                    switchOutCurve: Curves.easeIn,
+                                    transitionBuilder: (child, animation) {
+                                      return FadeTransition(
+                                        opacity: animation,
+                                        child: ScaleTransition(scale: animation, child: child),
+                                      );
+                                    },
+                                    child: isProcessing
+                                        ? const SizedBox(
+                                            key: ValueKey('loading'),
+                                            width: 20,
+                                            height: 20,
+                                            child: CircularProgressIndicator(strokeWidth: 2),
+                                          )
+                                        : Icon(
+                                            isAddedToTimetable ? Icons.check : Icons.add,
+                                            key: ValueKey(isAddedToTimetable ? 'registered' : 'unregistered'),
+                                          ),
                                   ),
                                   tooltip: isAddedToTimetable ? '履修解除' : '履修登録',
                                 );
