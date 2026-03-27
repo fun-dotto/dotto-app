@@ -29,10 +29,15 @@ import 'package:openapi/src/model/dotto_foundation_v1_course.dart';
 import 'package:openapi/src/model/dotto_foundation_v1_course_semester.dart';
 import 'package:openapi/src/model/dotto_foundation_v1_cultural_subject_category.dart';
 import 'package:openapi/src/model/dotto_foundation_v1_day_of_week.dart';
+import 'package:openapi/src/model/dotto_foundation_v1_floor.dart';
 import 'package:openapi/src/model/dotto_foundation_v1_grade.dart';
 import 'package:openapi/src/model/dotto_foundation_v1_period.dart';
 import 'package:openapi/src/model/dotto_foundation_v1_subject_classification.dart';
 import 'package:openapi/src/model/dotto_foundation_v1_subject_requirement_type.dart';
+import 'package:openapi/src/model/dotto_foundation_v1_timetable_slot.dart';
+import 'package:openapi/src/model/personal_calendar_item.dart';
+import 'package:openapi/src/model/personal_calendar_items_v1_list200_response.dart';
+import 'package:openapi/src/model/room.dart';
 import 'package:openapi/src/model/subject_detail.dart';
 import 'package:openapi/src/model/subject_faculty.dart';
 import 'package:openapi/src/model/subject_summary.dart';
@@ -61,10 +66,15 @@ part 'serializers.g.dart';
   DottoFoundationV1CourseSemester,
   DottoFoundationV1CulturalSubjectCategory,
   DottoFoundationV1DayOfWeek,
+  DottoFoundationV1Floor,
   DottoFoundationV1Grade,
   DottoFoundationV1Period,
   DottoFoundationV1SubjectClassification,
   DottoFoundationV1SubjectRequirementType,
+  DottoFoundationV1TimetableSlot,
+  PersonalCalendarItem,
+  PersonalCalendarItemsV1List200Response,
+  Room,
   SubjectDetail,
   SubjectFaculty,
   SubjectSummary,
@@ -89,6 +99,10 @@ Serializers serializers = (_$serializers.toBuilder()
         () => ListBuilder<DottoFoundationV1CourseSemester>(),
       )
       ..addBuilderFactory(
+        const FullType(BuiltList, [FullType(DateTime)]),
+        () => ListBuilder<DateTime>(),
+      )
+      ..addBuilderFactory(
         const FullType(BuiltList, [FullType(DottoFoundationV1Class)]),
         () => ListBuilder<DottoFoundationV1Class>(),
       )
@@ -107,10 +121,6 @@ Serializers serializers = (_$serializers.toBuilder()
       ..addBuilderFactory(
         const FullType(BuiltList, [FullType(DottoFoundationV1Course)]),
         () => ListBuilder<DottoFoundationV1Course>(),
-      )
-      ..addBuilderFactory(
-        const FullType(BuiltList, [FullType(DottoFoundationV1DayOfWeek)]),
-        () => ListBuilder<DottoFoundationV1DayOfWeek>(),
       )
       ..add(const OneOfSerializer())
       ..add(const AnyOfSerializer())

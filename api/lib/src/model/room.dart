@@ -3,51 +3,51 @@
 //
 
 // ignore_for_file: unused_element
-import 'package:built_collection/built_collection.dart';
-import 'package:openapi/src/model/subject_faculty.dart';
+import 'package:openapi/src/model/dotto_foundation_v1_floor.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 
-part 'subject_summary.g.dart';
+part 'room.g.dart';
 
-/// SubjectSummary
+/// Room
 ///
 /// Properties:
 /// * [id] 
 /// * [name] 
-/// * [faculties] 
+/// * [floor] 
 @BuiltValue()
-abstract class SubjectSummary implements Built<SubjectSummary, SubjectSummaryBuilder> {
+abstract class Room implements Built<Room, RoomBuilder> {
   @BuiltValueField(wireName: r'id')
   String get id;
 
   @BuiltValueField(wireName: r'name')
   String get name;
 
-  @BuiltValueField(wireName: r'faculties')
-  BuiltList<SubjectFaculty> get faculties;
+  @BuiltValueField(wireName: r'floor')
+  DottoFoundationV1Floor get floor;
+  // enum floorEnum {  Floor1,  Floor2,  Floor3,  Floor4,  Floor5,  Floor6,  Floor7,  };
 
-  SubjectSummary._();
+  Room._();
 
-  factory SubjectSummary([void updates(SubjectSummaryBuilder b)]) = _$SubjectSummary;
+  factory Room([void updates(RoomBuilder b)]) = _$Room;
 
   @BuiltValueHook(initializeBuilder: true)
-  static void _defaults(SubjectSummaryBuilder b) => b;
+  static void _defaults(RoomBuilder b) => b;
 
   @BuiltValueSerializer(custom: true)
-  static Serializer<SubjectSummary> get serializer => _$SubjectSummarySerializer();
+  static Serializer<Room> get serializer => _$RoomSerializer();
 }
 
-class _$SubjectSummarySerializer implements PrimitiveSerializer<SubjectSummary> {
+class _$RoomSerializer implements PrimitiveSerializer<Room> {
   @override
-  final Iterable<Type> types = const [SubjectSummary, _$SubjectSummary];
+  final Iterable<Type> types = const [Room, _$Room];
 
   @override
-  final String wireName = r'SubjectSummary';
+  final String wireName = r'Room';
 
   Iterable<Object?> _serializeProperties(
     Serializers serializers,
-    SubjectSummary object, {
+    Room object, {
     FullType specifiedType = FullType.unspecified,
   }) sync* {
     yield r'id';
@@ -60,17 +60,17 @@ class _$SubjectSummarySerializer implements PrimitiveSerializer<SubjectSummary> 
       object.name,
       specifiedType: const FullType(String),
     );
-    yield r'faculties';
+    yield r'floor';
     yield serializers.serialize(
-      object.faculties,
-      specifiedType: const FullType(BuiltList, [FullType(SubjectFaculty)]),
+      object.floor,
+      specifiedType: const FullType(DottoFoundationV1Floor),
     );
   }
 
   @override
   Object serialize(
     Serializers serializers,
-    SubjectSummary object, {
+    Room object, {
     FullType specifiedType = FullType.unspecified,
   }) {
     return _serializeProperties(serializers, object, specifiedType: specifiedType).toList();
@@ -81,7 +81,7 @@ class _$SubjectSummarySerializer implements PrimitiveSerializer<SubjectSummary> 
     Object serialized, {
     FullType specifiedType = FullType.unspecified,
     required List<Object?> serializedList,
-    required SubjectSummaryBuilder result,
+    required RoomBuilder result,
     required List<Object?> unhandled,
   }) {
     for (var i = 0; i < serializedList.length; i += 2) {
@@ -102,12 +102,12 @@ class _$SubjectSummarySerializer implements PrimitiveSerializer<SubjectSummary> 
           ) as String;
           result.name = valueDes;
           break;
-        case r'faculties':
+        case r'floor':
           final valueDes = serializers.deserialize(
             value,
-            specifiedType: const FullType(BuiltList, [FullType(SubjectFaculty)]),
-          ) as BuiltList<SubjectFaculty>;
-          result.faculties.replace(valueDes);
+            specifiedType: const FullType(DottoFoundationV1Floor),
+          ) as DottoFoundationV1Floor;
+          result.floor = valueDes;
           break;
         default:
           unhandled.add(key);
@@ -118,12 +118,12 @@ class _$SubjectSummarySerializer implements PrimitiveSerializer<SubjectSummary> 
   }
 
   @override
-  SubjectSummary deserialize(
+  Room deserialize(
     Serializers serializers,
     Object serialized, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final result = SubjectSummaryBuilder();
+    final result = RoomBuilder();
     final serializedList = (serialized as Iterable<Object?>).toList();
     final unhandled = <Object?>[];
     _deserializeProperties(

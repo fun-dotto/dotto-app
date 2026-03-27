@@ -69,6 +69,7 @@ Class | Method | HTTP request | Description
 [*CourseRegistrationsApi*](doc/CourseRegistrationsApi.md) | [**courseRegistrationsV1Create**](doc/CourseRegistrationsApi.md#courseregistrationsv1create) | **POST** /v1/courseRegistrations | 
 [*CourseRegistrationsApi*](doc/CourseRegistrationsApi.md) | [**courseRegistrationsV1Delete**](doc/CourseRegistrationsApi.md#courseregistrationsv1delete) | **DELETE** /v1/courseRegistrations/{id} | 
 [*CourseRegistrationsApi*](doc/CourseRegistrationsApi.md) | [**courseRegistrationsV1List**](doc/CourseRegistrationsApi.md#courseregistrationsv1list) | **GET** /v1/courseRegistrations | 
+[*PersonalCalendarItemsApi*](doc/PersonalCalendarItemsApi.md) | [**personalCalendarItemsV1List**](doc/PersonalCalendarItemsApi.md#personalcalendaritemsv1list) | **GET** /v1/personalCalendarItems | 
 [*SubjectsApi*](doc/SubjectsApi.md) | [**subjectsV1Detail**](doc/SubjectsApi.md#subjectsv1detail) | **GET** /v1/subjects/{id} | 
 [*SubjectsApi*](doc/SubjectsApi.md) | [**subjectsV1List**](doc/SubjectsApi.md#subjectsv1list) | **GET** /v1/subjects | 
 [*TimetableItemsApi*](doc/TimetableItemsApi.md) | [**timetableItemsV1List**](doc/TimetableItemsApi.md#timetableitemsv1list) | **GET** /v1/timetableItems | 
@@ -93,10 +94,15 @@ Class | Method | HTTP request | Description
  - [DottoFoundationV1CourseSemester](doc/DottoFoundationV1CourseSemester.md)
  - [DottoFoundationV1CulturalSubjectCategory](doc/DottoFoundationV1CulturalSubjectCategory.md)
  - [DottoFoundationV1DayOfWeek](doc/DottoFoundationV1DayOfWeek.md)
+ - [DottoFoundationV1Floor](doc/DottoFoundationV1Floor.md)
  - [DottoFoundationV1Grade](doc/DottoFoundationV1Grade.md)
  - [DottoFoundationV1Period](doc/DottoFoundationV1Period.md)
  - [DottoFoundationV1SubjectClassification](doc/DottoFoundationV1SubjectClassification.md)
  - [DottoFoundationV1SubjectRequirementType](doc/DottoFoundationV1SubjectRequirementType.md)
+ - [DottoFoundationV1TimetableSlot](doc/DottoFoundationV1TimetableSlot.md)
+ - [PersonalCalendarItem](doc/PersonalCalendarItem.md)
+ - [PersonalCalendarItemsV1List200Response](doc/PersonalCalendarItemsV1List200Response.md)
+ - [Room](doc/Room.md)
  - [SubjectDetail](doc/SubjectDetail.md)
  - [SubjectFaculty](doc/SubjectFaculty.md)
  - [SubjectSummary](doc/SubjectSummary.md)
