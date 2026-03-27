@@ -12,17 +12,17 @@ final class UserInfoTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final photoURL = user.avatarUrl;
+    final photoUrl = user.avatarUrl;
     final name = (user.name.trim().isNotEmpty) ? user.name.trim() : 'ログイン';
     final email = user.email.trim().isNotEmpty ? '${user.email.trim()}でログイン中' : 'Google アカウント (@fun.ac.jp) でログイン';
     final avatar = ClipOval(
       child: SizedBox(
         width: 44,
         height: 44,
-        // photoURL が空文字列でない場合は Image.network を使用し、それ以外の場合は Image.asset を使用する
-        child: (photoURL.trim().isNotEmpty)
+        // photoUrl が空文字列でない場合は Image.network を使用し、それ以外の場合は Image.asset を使用する
+        child: (photoUrl.trim().isNotEmpty)
             ? Image.network(
-                photoURL,
+                photoUrl,
                 fit: BoxFit.cover,
                 errorBuilder: (_, __, ___) => Image.asset(Asset.noImage, fit: BoxFit.cover),
               )
