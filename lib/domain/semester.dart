@@ -1,6 +1,6 @@
 enum Semester {
-  spring,
-  fall,
+  h1,
+  h2,
   allYear,
   q1,
   q2,
@@ -10,8 +10,8 @@ enum Semester {
   winterIntensive;
 
   String get label => switch (this) {
-    Semester.spring => '前期',
-    Semester.fall => '後期',
+    Semester.h1 => '前期',
+    Semester.h2 => '後期',
     Semester.allYear => '通年',
     Semester.q1 => '第1クォータ',
     Semester.q2 => '第2クォータ',
@@ -20,18 +20,4 @@ enum Semester {
     Semester.summerIntensive => '夏期集中',
     Semester.winterIntensive => '冬期集中',
   };
-
-  // Legacy: syllabus.dbで使用。移行完了までは削除しないこと。
-  int get number {
-    switch (this) {
-      case Semester.spring:
-        return 10;
-      case Semester.fall:
-        return 20;
-      default:
-        return 0;
-    }
-  }
-
-  static List<Semester> get onEditTimetableScreen => [spring, fall];
 }

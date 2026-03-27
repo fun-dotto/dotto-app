@@ -100,7 +100,7 @@ void (empty response body)
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **courseRegistrationsV1List**
-> CourseRegistrationsV1List200Response courseRegistrationsV1List(semester, year)
+> CourseRegistrationsV1List200Response courseRegistrationsV1List(semesters, year)
 
 
 
@@ -111,11 +111,11 @@ void (empty response body)
 import 'package:openapi/api.dart';
 
 final api = Openapi().getCourseRegistrationsApi();
-final DottoFoundationV1CourseSemester semester = ; // DottoFoundationV1CourseSemester | 開講時期
+final BuiltList<DottoFoundationV1CourseSemester> semesters = ; // BuiltList<DottoFoundationV1CourseSemester> | 開講時期
 final int year = 56; // int | 開講年度; 指定しない場合は今年度が選択される
 
 try {
-    final response = api.courseRegistrationsV1List(semester, year);
+    final response = api.courseRegistrationsV1List(semesters, year);
     print(response);
 } on DioException catch (e) {
     print('Exception when calling CourseRegistrationsApi->courseRegistrationsV1List: $e\n');
@@ -126,7 +126,7 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **semester** | [**DottoFoundationV1CourseSemester**](.md)| 開講時期 | 
+ **semesters** | [**BuiltList&lt;DottoFoundationV1CourseSemester&gt;**](DottoFoundationV1CourseSemester.md)| 開講時期 | 
  **year** | **int**| 開講年度; 指定しない場合は今年度が選択される | [optional] 
 
 ### Return type

@@ -17,10 +17,20 @@ part 'root_viewmodel.g.dart';
 
 @riverpod
 class RootViewModel extends _$RootViewModel {
+  List<TabItem> _activeTabs({required bool isV2Enabled, required bool isFunchEnabled}) {
+    final baseTabs = isV2Enabled ? TabItem.v2 : TabItem.v1;
+    if (!isV2Enabled || isFunchEnabled) {
+      return baseTabs;
+    }
+    return baseTabs.where((tab) => tab != TabItem.funch).toList();
+  }
+
   @override
   Future<RootViewModelState> build() async {
     // Setup Remote Config
     await ref.read(remoteConfigHelperProvider).setup();
+    // Load local debug overrides
+    await ref.read(configProvider.notifier).loadOverrides();
     // Setup Notification
     await ref.read(notificationHelperProvider).setupInteractedMessage();
     // Setup Logger
@@ -47,9 +57,28 @@ class RootViewModel extends _$RootViewModel {
         await UserPreferenceRepository.getBool(UserPreferenceKeys.isAppTutorialComplete) ?? false;
 
     final config = ref.read(configProvider);
+    final tabs = _activeTabs(isV2Enabled: config.isV2Enabled, isFunchEnabled: config.isFunchEnabled);
+
+    ref.listen(configProvider, (_, next) {
+      final currentState = switch (state) {
+        AsyncData(:final value) => value,
+        _ => null,
+      };
+      if (currentState == null) return;
+
+      final activeTabs = _activeTabs(isV2Enabled: next.isV2Enabled, isFunchEnabled: next.isFunchEnabled);
+      state = AsyncValue.data(
+        currentState.copyWith(
+          selectedTab: activeTabs.contains(currentState.selectedTab) ? currentState.selectedTab : activeTabs.first,
+          isValidAppVersion: next.isValidAppVersion,
+          isLatestAppVersion: next.isLatestAppVersion,
+          appStorePageUrl: next.appStorePageUrl,
+        ),
+      );
+    });
 
     return RootViewModelState(
-      selectedTab: TabItem.home,
+      selectedTab: tabs.first,
       hasShownAppTutorial: hasShownAppTutorial,
       hasShownUpdateAlert: false,
       isValidAppVersion: config.isValidAppVersion,
@@ -60,7 +89,9 @@ class RootViewModel extends _$RootViewModel {
   }
 
   void onTabItemTapped(int index) {
-    final selectedTab = TabItem.values.elementAtOrNull(index);
+    final config = ref.read(configProvider);
+    final activeTabs = _activeTabs(isV2Enabled: config.isV2Enabled, isFunchEnabled: config.isFunchEnabled);
+    final selectedTab = activeTabs.elementAtOrNull(index);
     if (selectedTab == null) {
       return;
     }

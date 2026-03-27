@@ -3,13 +3,15 @@ import 'package:dotto/controller/user_controller.dart';
 import 'package:dotto/domain/academic_area.dart';
 import 'package:dotto/domain/academic_class.dart';
 import 'package:dotto/domain/grade.dart';
+import 'package:dotto/domain/user_preference_keys.dart';
 import 'package:dotto/feature/announcement/announcement_screen.dart';
-import 'package:dotto/feature/assignment/setup_hope_continuity_screen.dart';
 import 'package:dotto/feature/debug/debug_screen.dart';
 import 'package:dotto/feature/github_contributor/github_contributor_screen.dart';
 import 'package:dotto/feature/onboarding/onboarding_screen.dart';
 import 'package:dotto/feature/setting/widget/license.dart';
-import 'package:dotto/feature/timetable/repository/timetable_repository.dart';
+import 'package:dotto/feature/timetable_v0/repository/timetable_repository.dart';
+import 'package:dotto/helper/user_preference_repository.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -19,6 +21,70 @@ import 'package:url_launcher/url_launcher_string.dart';
 
 final class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
+
+  Future<bool> canOpenDebugScreen() async {
+    if (!kDebugMode) {
+      return false;
+    }
+
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      return false;
+    }
+
+    try {
+      final tokenResult = await user.getIdTokenResult(true);
+      final developerClaim = tokenResult.claims?['developer'];
+
+      if (developerClaim is bool) {
+        return developerClaim;
+      }
+      if (developerClaim is String) {
+        return developerClaim.toLowerCase() == 'true';
+      }
+      if (developerClaim is num) {
+        return developerClaim != 0;
+      }
+      return developerClaim != null;
+    } on Exception {
+      return false;
+    }
+  }
+
+  Widget listDialog(BuildContext context, String title, UserPreferenceKeys userPreferenceKeys, List<String> list) {
+    return AlertDialog(
+      title: Text(title),
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10))),
+      content: SingleChildScrollView(
+        child: SizedBox(
+          width: double.maxFinite,
+          child: Column(
+            children: [
+              const Divider(),
+              ConstrainedBox(
+                constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.5),
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: list.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return ListTile(
+                      title: Text(list[index]),
+                      onTap: () async {
+                        await UserPreferenceRepository.setString(userPreferenceKeys, list[index]);
+                        if (context.mounted) {
+                          Navigator.of(context).pop(list[index]);
+                        }
+                      },
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -166,26 +232,6 @@ final class SettingsScreen extends ConsumerWidget {
                 title: const Text('クラス'),
                 value: Text(user.value?.class_?.label ?? '未設定'),
               ),
-              // HOPE連携
-              SettingsTile.navigation(
-                title: const Text('HOPE連携'),
-                leading: const Icon(Icons.assignment),
-                onPressed: (_) {
-                  Navigator.of(context).push(
-                    MaterialPageRoute<void>(
-                      builder: (_) => Scaffold(
-                        appBar: AppBar(title: const Text('HOPE連携')),
-                        body: SetupHopeContinuityScreen(
-                          onUserKeySaved: () {
-                            Navigator.of(context).pop();
-                          },
-                        ),
-                      ),
-                      settings: const RouteSettings(name: '/setting/hope_continuity'),
-                    ),
-                  );
-                },
-              ),
             ],
           ),
 
@@ -269,8 +315,9 @@ final class SettingsScreen extends ConsumerWidget {
                 },
                 // バージョン
                 description: GestureDetector(
-                  onTap: () {
-                    if (!kDebugMode) {
+                  onTap: () async {
+                    final canOpen = await canOpenDebugScreen();
+                    if (!canOpen || !context.mounted) {
                       return;
                     }
                     Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const DebugScreen()));

@@ -3,9 +3,10 @@
 //
 
 // ignore_for_file: unused_element
-import 'package:openapi/src/model/dotto_foundation_v1_period.dart';
+import 'package:openapi/src/model/room.dart';
+import 'package:built_collection/built_collection.dart';
+import 'package:openapi/src/model/dotto_foundation_v1_timetable_slot.dart';
 import 'package:openapi/src/model/subject_summary.dart';
-import 'package:openapi/src/model/dotto_foundation_v1_day_of_week.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 
@@ -16,8 +17,8 @@ part 'timetable_item.g.dart';
 /// Properties:
 /// * [id] 
 /// * [subject] 
-/// * [dayOfWeek] 
-/// * [period] 
+/// * [slot] - 集中講義など、時間割に含まれていない場合はnull
+/// * [rooms] 
 @BuiltValue()
 abstract class TimetableItem implements Built<TimetableItem, TimetableItemBuilder> {
   @BuiltValueField(wireName: r'id')
@@ -26,13 +27,12 @@ abstract class TimetableItem implements Built<TimetableItem, TimetableItemBuilde
   @BuiltValueField(wireName: r'subject')
   SubjectSummary get subject;
 
-  @BuiltValueField(wireName: r'dayOfWeek')
-  DottoFoundationV1DayOfWeek get dayOfWeek;
-  // enum dayOfWeekEnum {  Sunday,  Monday,  Tuesday,  Wednesday,  Thursday,  Friday,  Saturday,  };
+  /// 集中講義など、時間割に含まれていない場合はnull
+  @BuiltValueField(wireName: r'slot')
+  DottoFoundationV1TimetableSlot? get slot;
 
-  @BuiltValueField(wireName: r'period')
-  DottoFoundationV1Period get period;
-  // enum periodEnum {  Period1,  Period2,  Period3,  Period4,  Period5,  Period6,  };
+  @BuiltValueField(wireName: r'rooms')
+  BuiltList<Room> get rooms;
 
   TimetableItem._();
 
@@ -67,15 +67,17 @@ class _$TimetableItemSerializer implements PrimitiveSerializer<TimetableItem> {
       object.subject,
       specifiedType: const FullType(SubjectSummary),
     );
-    yield r'dayOfWeek';
+    if (object.slot != null) {
+      yield r'slot';
+      yield serializers.serialize(
+        object.slot,
+        specifiedType: const FullType(DottoFoundationV1TimetableSlot),
+      );
+    }
+    yield r'rooms';
     yield serializers.serialize(
-      object.dayOfWeek,
-      specifiedType: const FullType(DottoFoundationV1DayOfWeek),
-    );
-    yield r'period';
-    yield serializers.serialize(
-      object.period,
-      specifiedType: const FullType(DottoFoundationV1Period),
+      object.rooms,
+      specifiedType: const FullType(BuiltList, [FullType(Room)]),
     );
   }
 
@@ -114,19 +116,19 @@ class _$TimetableItemSerializer implements PrimitiveSerializer<TimetableItem> {
           ) as SubjectSummary;
           result.subject.replace(valueDes);
           break;
-        case r'dayOfWeek':
+        case r'slot':
           final valueDes = serializers.deserialize(
             value,
-            specifiedType: const FullType(DottoFoundationV1DayOfWeek),
-          ) as DottoFoundationV1DayOfWeek;
-          result.dayOfWeek = valueDes;
+            specifiedType: const FullType(DottoFoundationV1TimetableSlot),
+          ) as DottoFoundationV1TimetableSlot;
+          result.slot.replace(valueDes);
           break;
-        case r'period':
+        case r'rooms':
           final valueDes = serializers.deserialize(
             value,
-            specifiedType: const FullType(DottoFoundationV1Period),
-          ) as DottoFoundationV1Period;
-          result.period = valueDes;
+            specifiedType: const FullType(BuiltList, [FullType(Room)]),
+          ) as BuiltList<Room>;
+          result.rooms.replace(valueDes);
           break;
         default:
           unhandled.add(key);

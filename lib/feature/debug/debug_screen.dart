@@ -1,7 +1,7 @@
 import 'package:dotto/api/api_environment.dart';
-import 'package:dotto/feature/subject/search_subject_screen.dart';
-import 'package:dotto/feature/subject/subject_detail_feedback_screen.dart';
-import 'package:dotto/feature/subject/subject_detail_past_exam_screen.dart';
+import 'package:dotto/controller/config_controller.dart';
+import 'package:dotto/domain/remote_config_keys.dart';
+import 'package:dotto/helper/remote_config_helper.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +17,12 @@ final class DebugScreen extends HookConsumerWidget {
     final appCheckToken = useFuture(useMemoized(() => FirebaseAppCheck.instance.getToken()));
     final idToken = useFuture(useMemoized(() => FirebaseAuth.instance.currentUser?.getIdToken()));
     final environment = ref.watch(apiEnvironmentProvider);
+    final config = ref.watch(configProvider);
+    final configNotifier = ref.read(configProvider.notifier);
+    final isV2EnabledOverride = configNotifier.isV2EnabledOverride;
+    final isFunchEnabledOverride = configNotifier.isFunchEnabledOverride;
+    final remoteConfigIsV2Enabled = ref.read(remoteConfigHelperProvider).getBool(RemoteConfigKeys.isV2Enabled);
+    final remoteConfigIsFunchEnabled = ref.read(remoteConfigHelperProvider).getBool(RemoteConfigKeys.isFunchEnabled);
 
     Future<void> showEnvironmentPicker() async {
       await showDialog<void>(
@@ -32,6 +38,96 @@ final class DebugScreen extends HookConsumerWidget {
               child: ListTile(title: Text(env.label), trailing: Icon(env == environment ? Icons.check : null)),
             );
           }).toList(),
+        ),
+      );
+    }
+
+    Future<void> showIsV2EnabledOverridePicker() async {
+      await showDialog<void>(
+        context: context,
+        builder: (dialogContext) => SimpleDialog(
+          title: const Text('isV2Enabled Override'),
+          children: [
+            SimpleDialogOption(
+              onPressed: () async {
+                Navigator.of(dialogContext).pop();
+                await configNotifier.setIsV2EnabledOverride(value: null);
+              },
+              child: ListTile(
+                contentPadding: EdgeInsets.zero,
+                title: const Text('Use Remote Config'),
+                subtitle: Text('Remote Config: $remoteConfigIsV2Enabled'),
+                trailing: isV2EnabledOverride == null ? const Icon(Icons.check) : null,
+              ),
+            ),
+            SimpleDialogOption(
+              onPressed: () async {
+                Navigator.of(dialogContext).pop();
+                await configNotifier.setIsV2EnabledOverride(value: true);
+              },
+              child: ListTile(
+                contentPadding: EdgeInsets.zero,
+                title: const Text('Force true'),
+                trailing: isV2EnabledOverride == true ? const Icon(Icons.check) : null,
+              ),
+            ),
+            SimpleDialogOption(
+              onPressed: () async {
+                Navigator.of(dialogContext).pop();
+                await configNotifier.setIsV2EnabledOverride(value: false);
+              },
+              child: ListTile(
+                contentPadding: EdgeInsets.zero,
+                title: const Text('Force false'),
+                trailing: isV2EnabledOverride == false ? const Icon(Icons.check) : null,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    Future<void> showIsFunchEnabledOverridePicker() async {
+      await showDialog<void>(
+        context: context,
+        builder: (dialogContext) => SimpleDialog(
+          title: const Text('isFunchEnabled Override'),
+          children: [
+            SimpleDialogOption(
+              onPressed: () async {
+                Navigator.of(dialogContext).pop();
+                await configNotifier.setIsFunchEnabledOverride(value: null);
+              },
+              child: ListTile(
+                contentPadding: EdgeInsets.zero,
+                title: const Text('Use Remote Config'),
+                subtitle: Text('Remote Config: $remoteConfigIsFunchEnabled'),
+                trailing: isFunchEnabledOverride == null ? const Icon(Icons.check) : null,
+              ),
+            ),
+            SimpleDialogOption(
+              onPressed: () async {
+                Navigator.of(dialogContext).pop();
+                await configNotifier.setIsFunchEnabledOverride(value: true);
+              },
+              child: ListTile(
+                contentPadding: EdgeInsets.zero,
+                title: const Text('Force true'),
+                trailing: isFunchEnabledOverride == true ? const Icon(Icons.check) : null,
+              ),
+            ),
+            SimpleDialogOption(
+              onPressed: () async {
+                Navigator.of(dialogContext).pop();
+                await configNotifier.setIsFunchEnabledOverride(value: false);
+              },
+              child: ListTile(
+                contentPadding: EdgeInsets.zero,
+                title: const Text('Force false'),
+                trailing: isFunchEnabledOverride == false ? const Icon(Icons.check) : null,
+              ),
+            ),
+          ],
         ),
       );
     }
@@ -89,34 +185,24 @@ final class DebugScreen extends HookConsumerWidget {
             onTap: showEnvironmentPicker,
           ),
           ListTile(
-            title: const Text('Search Subject'),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(
-                builder: (context) => const SearchSubjectScreen(),
-                settings: const RouteSettings(name: '/search_subject'),
-              ),
-            ),
+            title: const Text('isV2Enabled Override'),
+            subtitle: Text(switch (isV2EnabledOverride) {
+              true => 'Forced: true',
+              false => 'Forced: false',
+              null => 'Use Remote Config ($remoteConfigIsV2Enabled)',
+            }),
+            trailing: Text('Effective: ${config.isV2Enabled}'),
+            onTap: showIsV2EnabledOverridePicker,
           ),
           ListTile(
-            title: const Text('Subject Feedback (103501)'),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(
-                builder: (context) => const SubjectDetailFeedbackScreen(lessonId: '103501'),
-                settings: const RouteSettings(name: '/subjects/103501/feedback'),
-              ),
-            ),
-          ),
-          ListTile(
-            title: const Text('Subject Past Exam (103501)'),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(
-                builder: (context) => const SubjectDetailPastExamScreen(pastExamId: '103501', isAuthenticated: true),
-                settings: const RouteSettings(name: '/subjects/103501/past_exam'),
-              ),
-            ),
+            title: const Text('isFunchEnabled Override'),
+            subtitle: Text(switch (isFunchEnabledOverride) {
+              true => 'Forced: true',
+              false => 'Forced: false',
+              null => 'Use Remote Config ($remoteConfigIsFunchEnabled)',
+            }),
+            trailing: Text('Effective: ${config.isFunchEnabled}'),
+            onTap: showIsFunchEnabledOverridePicker,
           ),
         ],
       ),

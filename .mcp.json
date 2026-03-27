@@ -7,14 +7,6 @@
     "dotto_notion": {
       "url": "https://mcp.notion.com/mcp",
       "type": "http"
-    },
-    "serena": {
-      "command": "uvx",
-      "args": [
-        "--from",
-        "git+https://github.com/oraios/serena.git",
-        "serena-mcp-server"
-      ]
     }
   }
 }
