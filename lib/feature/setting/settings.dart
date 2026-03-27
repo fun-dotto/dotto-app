@@ -36,7 +36,6 @@ final class SettingsScreen extends ConsumerWidget {
       appBar: AppBar(title: const Text('設定'), centerTitle: false),
       body: Column(
         children: [
-          //if (isAuthenticated && user.value != null)
           Expanded(
             child: SettingsList(
               sections: [
