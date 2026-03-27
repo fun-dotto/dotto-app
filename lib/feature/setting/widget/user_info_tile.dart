@@ -15,19 +15,15 @@ final class UserInfoTile extends StatelessWidget {
     final photoURL = user.avatarUrl;
     final name = (user.name.trim().isNotEmpty) ? user.name.trim() : 'ログイン';
     final email = user.email.trim().isNotEmpty ? '${user.email.trim()}でログイン中' : 'Google アカウント (@fun.ac.jp) でログイン';
-
     final avatar = ClipOval(
       child: SizedBox(
         width: 44,
-
         height: 44,
         //photoURLがnullまたは空文字列でない場合はImage.networkを使用し、それ以外の場合はImage.assetを使用する
         child: (photoURL.trim().isNotEmpty)
             ? Image.network(
                 photoURL,
-
                 fit: BoxFit.cover,
-
                 errorBuilder: (_, __, ___) => Image.asset(Asset.noImage, fit: BoxFit.cover),
               )
             : Image.asset(Asset.noImage, fit: BoxFit.cover),
