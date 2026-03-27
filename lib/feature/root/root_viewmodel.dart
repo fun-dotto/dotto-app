@@ -5,7 +5,6 @@ import 'package:dotto/controller/config_controller.dart';
 import 'package:dotto/domain/tab_item.dart';
 import 'package:dotto/domain/user_preference_keys.dart';
 import 'package:dotto/feature/root/root_viewmodel_state.dart';
-import 'package:dotto/feature/setting/controller/hope_continuation_user_key_controller.dart';
 import 'package:dotto/helper/logger.dart';
 import 'package:dotto/helper/notification_helper.dart';
 import 'package:dotto/helper/remote_config_helper.dart';
@@ -36,22 +35,9 @@ class RootViewModel extends _$RootViewModel {
     // Setup Logger
     await ref.read(loggerProvider).setup();
     // Setup Universal Links
-    AppLinks().uriLinkStream
-        .listen((event) {
-          if (event.path != '/config/' || !event.hasQuery) return;
-          final query = event.queryParameters;
-          if (!query.containsKey('userkey')) return;
-          final userKey = query['userkey'];
-          if (userKey == null) return;
-          final userKeyPattern = RegExp(r'^[a-zA-Z0-9]{16}$');
-          if (userKey.isEmpty || (userKey.length == 16 && userKeyPattern.hasMatch(userKey))) {
-            ref.read(hopeContinuationUserKeyProvider.notifier).set(userKey);
-            return;
-          }
-        })
-        .onError((Object error, StackTrace stackTrace) {
-          debugPrint(error.toString());
-        });
+    AppLinks().uriLinkStream.listen((event) {}).onError((Object error, StackTrace stackTrace) {
+      debugPrint(error.toString());
+    });
 
     final hasShownAppTutorial =
         await UserPreferenceRepository.getBool(UserPreferenceKeys.isAppTutorialComplete) ?? false;
