@@ -15,6 +15,17 @@
 
 default_platform(:ios)
 
+def flutter_build_release_with_dotenvx_defines
+  decrypted = sh("dotenvx", "decrypt", "--stdout", log: false)
+  dart_defines = decrypted
+    .lines
+    .map(&:strip)
+    .reject { |line| line.empty? || line.start_with?("#") }
+    .map { |line| "--dart-define=#{line}" }
+
+  sh("flutter", "build", "ios", "--release", *dart_defines)
+end
+
 platform :ios do
   ENV["FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT"] = "30"
 
@@ -28,7 +39,7 @@ platform :ios do
   desc "Build for Ad Hoc"
   lane :build_adhoc do
     match_adhoc_readonly
-    sh( "flutter", "build", "ios", "--release", "$(dotenvx decrypt --stdout | grep -v '^#' | sed 's/^/--dart-define=/')" )
+    flutter_build_release_with_dotenvx_defines
     build_app(
       clean: true,
       export_method: "ad-hoc",
@@ -43,7 +54,7 @@ platform :ios do
   desc "Build for App Store"
   lane :build_appstore do
     match_appstore_readonly
-    sh( "flutter", "build", "ios", "--release", "$(dotenvx decrypt --stdout | grep -v '^#' | sed 's/^/--dart-define=/')" )
+    flutter_build_release_with_dotenvx_defines
     build_app(
       export_method: "app-store",
       export_options: {

@@ -11,7 +11,6 @@ import 'package:dio/dio.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:openapi/src/api_util.dart';
 import 'package:openapi/src/model/dotto_foundation_v1_course_semester.dart';
-import 'package:openapi/src/model/dotto_foundation_v1_day_of_week.dart';
 import 'package:openapi/src/model/timetable_items_v1_list200_response.dart';
 
 class TimetableItemsApi {
@@ -26,9 +25,8 @@ class TimetableItemsApi {
   /// 時間割を取得する
   ///
   /// Parameters:
-  /// * [semester] - 開講時期
+  /// * [semesters] - 開講時期
   /// * [year] - 開講年度; 指定しない場合は今年度が選択される
-  /// * [dayOfWeek] - 曜日; 複数指定時はORでフィルタリングされる; 指定しない場合は全ての曜日が選択される
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
   /// * [headers] - Can be used to add additional headers to the request
   /// * [extras] - Can be used to add flags to the request
@@ -39,9 +37,8 @@ class TimetableItemsApi {
   /// Returns a [Future] containing a [Response] with a [TimetableItemsV1List200Response] as data
   /// Throws [DioException] if API call or serialization fails
   Future<Response<TimetableItemsV1List200Response>> timetableItemsV1List({ 
-    required DottoFoundationV1CourseSemester semester,
+    required BuiltList<DottoFoundationV1CourseSemester> semesters,
     int? year,
-    BuiltList<DottoFoundationV1DayOfWeek>? dayOfWeek,
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
     Map<String, dynamic>? extra,
@@ -70,8 +67,7 @@ class TimetableItemsApi {
 
     final _queryParameters = <String, dynamic>{
       if (year != null) r'year': encodeQueryParameter(_serializers, year, const FullType(int)),
-      r'semester': encodeQueryParameter(_serializers, semester, const FullType(DottoFoundationV1CourseSemester)),
-      if (dayOfWeek != null) r'dayOfWeek': encodeCollectionQueryParameter<DottoFoundationV1DayOfWeek>(_serializers, dayOfWeek, const FullType(BuiltList, [FullType(DottoFoundationV1DayOfWeek)]), format: ListFormat.csv,),
+      r'semesters': encodeCollectionQueryParameter<DottoFoundationV1CourseSemester>(_serializers, semesters, const FullType(BuiltList, [FullType(DottoFoundationV1CourseSemester)]), format: ListFormat.csv,),
     };
 
     final _response = await _dio.request<Object>(

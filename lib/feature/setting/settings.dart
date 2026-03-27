@@ -2,15 +2,16 @@ import 'package:dotto/controller/config_controller.dart';
 import 'package:dotto/controller/user_controller.dart';
 import 'package:dotto/domain/academic_area.dart';
 import 'package:dotto/domain/academic_class.dart';
+import 'package:dotto/domain/dotto_user.dart';
 import 'package:dotto/domain/grade.dart';
 import 'package:dotto/feature/announcement/announcement_screen.dart';
-import 'package:dotto/feature/assignment/setup_hope_continuity_screen.dart';
 import 'package:dotto/feature/debug/debug_screen.dart';
 import 'package:dotto/feature/github_contributor/github_contributor_screen.dart';
 import 'package:dotto/feature/onboarding/onboarding_screen.dart';
 import 'package:dotto/feature/setting/widget/license.dart';
 import 'package:dotto/feature/setting/widget/user_info_tile.dart';
-import 'package:dotto/feature/timetable/repository/timetable_repository.dart';
+import 'package:dotto/feature/timetable_v0/repository/timetable_repository.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -20,6 +21,52 @@ import 'package:url_launcher/url_launcher_string.dart';
 
 final class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
+
+  static const _emptyUser = DottoUser(
+    id: '',
+    name: '',
+    email: '',
+    avatarUrl: '',
+    grade: null,
+    course: null,
+    class_: null,
+  );
+
+  Widget _settingValueText(String text) {
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 180),
+      child: Text(text, maxLines: 1, overflow: TextOverflow.ellipsis, softWrap: false, textAlign: TextAlign.end),
+    );
+  }
+
+  Future<bool> canOpenDebugScreen() async {
+    if (!kDebugMode) {
+      return false;
+    }
+
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      return false;
+    }
+
+    try {
+      final tokenResult = await user.getIdTokenResult(true);
+      final developerClaim = tokenResult.claims?['developer'];
+
+      if (developerClaim is bool) {
+        return developerClaim;
+      }
+      if (developerClaim is String) {
+        return developerClaim.toLowerCase() == 'true';
+      }
+      if (developerClaim is num) {
+        return developerClaim != 0;
+      }
+      return developerClaim != null;
+    } on Exception {
+      return false;
+    }
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -44,10 +91,7 @@ final class SettingsScreen extends ConsumerWidget {
                       data: (value) => CustomSettingsTile(
                         child: UserInfoTile(
                           user: value,
-                          onTap:
-                              value
-                                  .id
-                                  .isNotEmpty // isAuthenticated の代わりに value.id をチェック
+                          onTap: value.id.isNotEmpty
                               ? () => ref.read(userProvider.notifier).signOut()
                               : () async {
                                   await ref.read(userProvider.notifier).signIn();
@@ -56,8 +100,8 @@ final class SettingsScreen extends ConsumerWidget {
                         ),
                       ),
                       loading: () {
-                        final previousUser = user.valueOrNull;
-                        final isAuthenticated = previousUser?.id.isNotEmpty ?? false;
+                        final previousUser = user.value ?? _emptyUser;
+                        final isAuthenticated = previousUser.id.isNotEmpty;
                         return CustomSettingsTile(
                           child: UserInfoTile(
                             user: previousUser,
@@ -65,15 +109,14 @@ final class SettingsScreen extends ConsumerWidget {
                                 ? () => ref.read(userProvider.notifier).signOut()
                                 : () async {
                                     await ref.read(userProvider.notifier).signIn();
-                                    await TimetableRepository()
-                                        .loadPersonalTimetableListOnLogin(context, ref);
+                                    await TimetableRepository().loadPersonalTimetableListOnLogin(context, ref);
                                   },
                           ),
                         );
                       },
                       error: (err, stack) {
-                        final previousUser = user.valueOrNull;
-                        final isAuthenticated = previousUser?.id.isNotEmpty ?? false;
+                        final previousUser = user.value ?? _emptyUser;
+                        final isAuthenticated = previousUser.id.isNotEmpty;
                         return CustomSettingsTile(
                           child: UserInfoTile(
                             user: previousUser,
@@ -81,8 +124,7 @@ final class SettingsScreen extends ConsumerWidget {
                                 ? () => ref.read(userProvider.notifier).signOut()
                                 : () async {
                                     await ref.read(userProvider.notifier).signIn();
-                                    await TimetableRepository()
-                                        .loadPersonalTimetableListOnLogin(context, ref);
+                                    await TimetableRepository().loadPersonalTimetableListOnLogin(context, ref);
                                   },
                           ),
                         );
@@ -128,7 +170,7 @@ final class SettingsScreen extends ConsumerWidget {
                       },
                       leading: const Icon(Icons.school),
                       title: const Text('学年'),
-                      value: Text(user.value?.grade?.label ?? '未設定'),
+                      value: _settingValueText(user.value?.grade?.label ?? '未設定'),
                     ),
                     // コース
                     SettingsTile.navigation(
@@ -166,7 +208,7 @@ final class SettingsScreen extends ConsumerWidget {
                       },
                       leading: const Icon(Icons.school),
                       title: const Text('コース'),
-                      value: Text(user.value?.course?.label ?? '未設定'),
+                      value: _settingValueText(user.value?.course?.label ?? '未設定'),
                     ),
                     // クラス
                     SettingsTile.navigation(
@@ -204,32 +246,10 @@ final class SettingsScreen extends ConsumerWidget {
                       },
                       leading: const Icon(Icons.school),
                       title: const Text('クラス'),
-                      value: Text(user.value?.class_?.label ?? '未設定'),
-                    ),
-                    // HOPE連携
-                    SettingsTile.navigation(
-                      title: const Text('HOPE連携'),
-                      leading: const Icon(Icons.assignment),
-                      onPressed: (_) {
-                        Navigator.of(context).push(
-                          MaterialPageRoute<void>(
-                            builder: (_) => Scaffold(
-                              appBar: AppBar(title: const Text('HOPE連携')),
-                              body: SetupHopeContinuityScreen(
-                                onUserKeySaved: () {
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                            ),
-                            settings: const RouteSettings(name: '/setting/hope_continuity'),
-                          ),
-                        );
-                      },
+                      value: _settingValueText(user.value?.class_?.label ?? '未設定'),
                     ),
                   ],
                 ),
-
-                // その他
                 SettingsSection(
                   tiles: <SettingsTile>[
                     // お知らせ
@@ -309,8 +329,9 @@ final class SettingsScreen extends ConsumerWidget {
                       },
                       // バージョン
                       description: GestureDetector(
-                        onTap: () {
-                          if (!kDebugMode) {
+                        onTap: () async {
+                          final canOpen = await canOpenDebugScreen();
+                          if (!canOpen || !context.mounted) {
                             return;
                           }
                           Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const DebugScreen()));

@@ -28,31 +28,27 @@ final class _RemoteConfigHelperImpl implements RemoteConfigHelper {
 
     if (kDebugMode) {
       await FirebaseRemoteConfig.instance.setDefaults(const {
-        RemoteConfigKeys.isDesignV2Enabled: false,
+        RemoteConfigKeys.isV2Enabled: false,
         RemoteConfigKeys.isFunchEnabled: true,
         RemoteConfigKeys.isValidAppVersion: true,
         RemoteConfigKeys.isLatestAppVersion: false,
-        RemoteConfigKeys.announcementsUrl: 'https://fun-dotto.github.io/data/announcements.json',
-        RemoteConfigKeys.assignmentSetupUrl: 'https://dotto.web.app/',
         RemoteConfigKeys.feedbackFormUrl: 'https://forms.gle/ruo8iBxLMmvScNMFA',
         RemoteConfigKeys.appStorePageUrl: 'https://fun-dotto.github.io',
-        RemoteConfigKeys.officialCalendarPdfUrl: 'https://fun-dotto.github.io/files/official_calendar_2025.pdf',
-        RemoteConfigKeys.timetable1PdfUrl: 'https://fun-dotto.github.io/files/timetable_2025_1.pdf',
-        RemoteConfigKeys.timetable2PdfUrl: 'https://fun-dotto.github.io/files/timetable_2025_2.pdf',
+        RemoteConfigKeys.officialCalendarPdfUrl: 'https://fun-dotto.github.io/files/official_calendar_2026.pdf',
+        RemoteConfigKeys.timetable1PdfUrl: 'https://fun-dotto.github.io/files/timetable_2026_1.pdf',
+        RemoteConfigKeys.timetable2PdfUrl: 'https://fun-dotto.github.io/files/timetable_2026_2.pdf',
       });
     } else {
       await FirebaseRemoteConfig.instance.setDefaults(const {
-        RemoteConfigKeys.isDesignV2Enabled: false,
+        RemoteConfigKeys.isV2Enabled: false,
         RemoteConfigKeys.isFunchEnabled: false,
         RemoteConfigKeys.isValidAppVersion: true,
         RemoteConfigKeys.isLatestAppVersion: true,
-        RemoteConfigKeys.announcementsUrl: 'https://fun-dotto.github.io/data/announcements.json',
-        RemoteConfigKeys.assignmentSetupUrl: 'https://dotto.web.app/',
         RemoteConfigKeys.feedbackFormUrl: 'https://forms.gle/ruo8iBxLMmvScNMFA',
         RemoteConfigKeys.appStorePageUrl: 'https://fun-dotto.github.io',
-        RemoteConfigKeys.officialCalendarPdfUrl: 'https://fun-dotto.github.io/files/official_calendar_2025.pdf',
-        RemoteConfigKeys.timetable1PdfUrl: 'https://fun-dotto.github.io/files/timetable_2025_1.pdf',
-        RemoteConfigKeys.timetable2PdfUrl: 'https://fun-dotto.github.io/files/timetable_2025_2.pdf',
+        RemoteConfigKeys.officialCalendarPdfUrl: 'https://fun-dotto.github.io/files/official_calendar_2026.pdf',
+        RemoteConfigKeys.timetable1PdfUrl: 'https://fun-dotto.github.io/files/timetable_2026_1.pdf',
+        RemoteConfigKeys.timetable2PdfUrl: 'https://fun-dotto.github.io/files/timetable_2026_2.pdf',
       });
     }
 

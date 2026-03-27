@@ -1,7 +1,7 @@
-import 'package:dotto/feature/timetable/controller/personal_lesson_id_list_controller.dart';
-import 'package:dotto/feature/timetable/controller/two_week_timetable_controller.dart';
-import 'package:dotto/feature/timetable/repository/timetable_repository.dart';
-import 'package:dotto/feature/timetable/widget/timetable_is_over_selected_snack_bar.dart';
+import 'package:dotto/feature/timetable_v0/controller/personal_lesson_id_list_controller.dart';
+import 'package:dotto/feature/timetable_v0/controller/two_week_timetable_controller.dart';
+import 'package:dotto/feature/timetable_v0/repository/timetable_repository.dart';
+import 'package:dotto/feature/timetable_v0/widget/timetable_is_over_selected_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

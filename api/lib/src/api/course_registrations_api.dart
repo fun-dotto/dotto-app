@@ -8,6 +8,7 @@ import 'package:built_value/json_object.dart';
 import 'package:built_value/serializer.dart';
 import 'package:dio/dio.dart';
 
+import 'package:built_collection/built_collection.dart';
 import 'package:openapi/src/api_util.dart';
 import 'package:openapi/src/model/course_registration_request.dart';
 import 'package:openapi/src/model/course_registrations_v1_create201_response.dart';
@@ -180,7 +181,7 @@ class CourseRegistrationsApi {
   /// 履修情報を取得する
   ///
   /// Parameters:
-  /// * [semester] - 開講時期
+  /// * [semesters] - 開講時期
   /// * [year] - 開講年度; 指定しない場合は今年度が選択される
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
   /// * [headers] - Can be used to add additional headers to the request
@@ -192,7 +193,7 @@ class CourseRegistrationsApi {
   /// Returns a [Future] containing a [Response] with a [CourseRegistrationsV1List200Response] as data
   /// Throws [DioException] if API call or serialization fails
   Future<Response<CourseRegistrationsV1List200Response>> courseRegistrationsV1List({ 
-    required DottoFoundationV1CourseSemester semester,
+    required BuiltList<DottoFoundationV1CourseSemester> semesters,
     int? year,
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
@@ -222,7 +223,7 @@ class CourseRegistrationsApi {
 
     final _queryParameters = <String, dynamic>{
       if (year != null) r'year': encodeQueryParameter(_serializers, year, const FullType(int)),
-      r'semester': encodeQueryParameter(_serializers, semester, const FullType(DottoFoundationV1CourseSemester)),
+      r'semesters': encodeCollectionQueryParameter<DottoFoundationV1CourseSemester>(_serializers, semesters, const FullType(BuiltList, [FullType(DottoFoundationV1CourseSemester)]), format: ListFormat.csv,),
     };
 
     final _response = await _dio.request<Object>(

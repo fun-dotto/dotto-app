@@ -1,6 +1,6 @@
 final class RemoteConfigKeys {
-  /// 廃止予定: Design System v2 feature flag
-  static const String isDesignV2Enabled = 'is_design_v2_enabled';
+  /// v2 feature flag
+  static const String isV2Enabled = 'is_v2_enabled';
 
   /// Funch feature flag
   static const String isFunchEnabled = 'is_funch_enabled';
@@ -24,12 +24,6 @@ final class RemoteConfigKeys {
   ///
   /// オフラインの場合は、バイパスする
   static const String isLatestAppVersion = 'is_latest_app_version';
-
-  /// API導入後に廃止予定: お知らせJSON URL
-  static const String announcementsUrl = 'announcements_url';
-
-  /// HOPE連携マニュアルURL
-  static const String assignmentSetupUrl = 'assignment_setup_url';
 
   /// フィードバックフォームURL
   static const String feedbackFormUrl = 'feedback_form_url';

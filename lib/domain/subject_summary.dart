@@ -1,6 +1,5 @@
-import 'package:dotto/domain/day_of_week.dart';
-import 'package:dotto/domain/period.dart';
 import 'package:dotto/domain/subject_faculty.dart';
+import 'package:dotto/domain/timetable_slot.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'subject_summary.freezed.dart';
@@ -11,8 +10,9 @@ abstract class SubjectSummary with _$SubjectSummary {
     required String id,
     required String name,
     required List<SubjectFaculty> faculties,
-    required DayOfWeek dayOfWeek,
-    required Period period,
-    required bool isAddedToTimetable,
+    // 科目検索画面で使用
+    List<TimetableSlot>? slots,
+    // 科目検索画面で使用
+    bool? isAddedToTimetable,
   }) = _SubjectSummary;
 }

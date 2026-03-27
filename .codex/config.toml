@@ -3,11 +3,3 @@ url = "https://mcp.figma.com/mcp"
 
 [mcp_servers.dotto_notion]
 url = "https://mcp.notion.com/mcp"
-
-[mcp_servers.serena]
-command = "uvx"
-args = [
-  "--from",
-  "git+https://github.com/oraios/serena.git",
-  "serena-mcp-server"
-]
