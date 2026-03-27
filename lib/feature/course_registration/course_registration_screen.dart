@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dotto/domain/day_of_week.dart';
 import 'package:dotto/domain/period.dart';
 import 'package:dotto/domain/timetable_item.dart';
@@ -18,10 +20,10 @@ class CourseRegistrationScreen extends HookConsumerWidget {
 
     useEffect(() {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        ref.read(courseRegistrationReducerProvider.notifier).refresh(TimetableSemester.values[tabController.index]);
+        unawaited(ref.read(courseRegistrationReducerProvider.notifier).refresh());
       });
       return null;
-    }, [tabController.index]);
+    }, const []);
 
     return Scaffold(
       appBar: AppBar(
@@ -34,10 +36,13 @@ class CourseRegistrationScreen extends HookConsumerWidget {
         ),
       ),
       body: switch (state) {
-        AsyncData(value: final timetableItems) => TabBarView(
+        AsyncData(value: final timetableItemsBySemester) => TabBarView(
           controller: tabController,
           children: TimetableSemester.values
-              .map((e) => _personalWeeklyTimetable(context, ref, e, timetableItems))
+              .map(
+                (e) =>
+                    _personalWeeklyTimetable(context, ref, e, timetableItemsBySemester[e] ?? const <TimetableItem>[]),
+              )
               .toList(),
         ),
         AsyncLoading() => const Center(child: CircularProgressIndicator()),
@@ -52,54 +57,58 @@ class CourseRegistrationScreen extends HookConsumerWidget {
     TimetableSemester semester,
     List<TimetableItem> timetableItems,
   ) {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(8),
-        child: Table(
-          columnWidths: {for (final e in Period.values) e.number: const FlexColumnWidth()},
-          children: <TableRow>[
-            TableRow(
-              children: DayOfWeek.weekdays
-                  .map(
-                    (e) => TableCell(
-                      child: Center(child: Text(e.label, style: Theme.of(context).textTheme.labelMedium)),
-                    ),
-                  )
-                  .toList(),
-            ),
-            ...Period.values.map(
-              (period) => TableRow(
-                children: DayOfWeek.weekdays.map((dayOfWeek) {
-                  final filteredTimetableItems = timetableItems
-                      .where((item) => item.slot?.dayOfWeek == dayOfWeek && item.slot?.period == period)
-                      .toList();
-                  final filteredRegisteredTimetableItems = filteredTimetableItems
-                      .where((item) => item.isAddedToTimetable ?? false)
-                      .toList();
-                  return _personalWeeklyTimetableCell(
-                    context,
-                    filteredRegisteredTimetableItems,
-                    onTap: () async {
-                      await showModalBottomSheet<void>(
-                        context: context,
-                        isScrollControlled: true,
-                        useSafeArea: true,
-                        builder: (_) => SelectCourseScreen(
-                          semester,
-                          dayOfWeek,
-                          period,
-                          filteredTimetableItems,
-                          onChanged: () async {
-                            await ref.read(courseRegistrationReducerProvider.notifier).refresh(semester);
-                          },
-                        ),
-                      );
-                    },
-                  );
-                }).toList(),
+    return RefreshIndicator(
+      onRefresh: () => ref.read(courseRegistrationReducerProvider.notifier).refresh(),
+      child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        child: Padding(
+          padding: const EdgeInsets.all(8),
+          child: Table(
+            columnWidths: {for (final e in Period.values) e.number: const FlexColumnWidth()},
+            children: <TableRow>[
+              TableRow(
+                children: DayOfWeek.weekdays
+                    .map(
+                      (e) => TableCell(
+                        child: Center(child: Text(e.label, style: Theme.of(context).textTheme.labelMedium)),
+                      ),
+                    )
+                    .toList(),
               ),
-            ),
-          ],
+              ...Period.values.map(
+                (period) => TableRow(
+                  children: DayOfWeek.weekdays.map((dayOfWeek) {
+                    final filteredTimetableItems = timetableItems
+                        .where((item) => item.slot?.dayOfWeek == dayOfWeek && item.slot?.period == period)
+                        .toList();
+                    final filteredRegisteredTimetableItems = filteredTimetableItems
+                        .where((item) => item.isAddedToTimetable ?? false)
+                        .toList();
+                    return _personalWeeklyTimetableCell(
+                      context,
+                      filteredRegisteredTimetableItems,
+                      onTap: () async {
+                        await showModalBottomSheet<void>(
+                          context: context,
+                          isScrollControlled: true,
+                          useSafeArea: true,
+                          builder: (_) => SelectCourseScreen(
+                            semester,
+                            dayOfWeek,
+                            period,
+                            filteredTimetableItems,
+                            onChanged: () async {
+                              await ref.read(courseRegistrationReducerProvider.notifier).refresh();
+                            },
+                          ),
+                        );
+                      },
+                    );
+                  }).toList(),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
