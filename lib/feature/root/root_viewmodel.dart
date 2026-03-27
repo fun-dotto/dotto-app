@@ -21,6 +21,8 @@ class RootViewModel extends _$RootViewModel {
   Future<RootViewModelState> build() async {
     // Setup Remote Config
     await ref.read(remoteConfigHelperProvider).setup();
+    // Load local debug overrides
+    await ref.read(configProvider.notifier).loadIsV2EnabledOverride();
     // Setup Notification
     await ref.read(notificationHelperProvider).setupInteractedMessage();
     // Setup Logger

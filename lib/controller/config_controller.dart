@@ -1,17 +1,31 @@
+import 'dart:async';
+
 import 'package:dotto/domain/config.dart';
 import 'package:dotto/domain/remote_config_keys.dart';
+import 'package:dotto/domain/user_preference_keys.dart';
 import 'package:dotto/helper/remote_config_helper.dart';
+import 'package:dotto/helper/user_preference_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'config_controller.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 final class ConfigNotifier extends _$ConfigNotifier {
+  bool? _isV2EnabledOverride;
+  bool _didStartLoadingOverride = false;
+
+  bool? get isV2EnabledOverride => _isV2EnabledOverride;
+
   @override
   Config build() {
-    final remoteConfigRepository = ref.read(remoteConfigHelperProvider);
+    if (!_didStartLoadingOverride) {
+      _didStartLoadingOverride = true;
+      unawaited(loadIsV2EnabledOverride());
+    }
 
-    final isV2Enabled = remoteConfigRepository.getBool(RemoteConfigKeys.isV2Enabled);
+    final remoteConfigRepository = ref.read(remoteConfigHelperProvider);
+    final remoteConfigIsV2Enabled = remoteConfigRepository.getBool(RemoteConfigKeys.isV2Enabled);
+    final isV2Enabled = _isV2EnabledOverride ?? remoteConfigIsV2Enabled;
     final isFunchEnabled = remoteConfigRepository.getBool(RemoteConfigKeys.isFunchEnabled);
     final isValidAppVersion = remoteConfigRepository.getBool(RemoteConfigKeys.isValidAppVersion);
     final isLatestAppVersion = remoteConfigRepository.getBool(RemoteConfigKeys.isLatestAppVersion);
@@ -40,5 +54,20 @@ final class ConfigNotifier extends _$ConfigNotifier {
 
   void refresh() {
     state = build();
+  }
+
+  Future<void> loadIsV2EnabledOverride() async {
+    _isV2EnabledOverride = await UserPreferenceRepository.getBool(UserPreferenceKeys.isV2EnabledOverride);
+    refresh();
+  }
+
+  Future<void> setIsV2EnabledOverride({required bool? value}) async {
+    _isV2EnabledOverride = value;
+    if (value == null) {
+      await UserPreferenceRepository.remove(UserPreferenceKeys.isV2EnabledOverride);
+    } else {
+      await UserPreferenceRepository.setBool(UserPreferenceKeys.isV2EnabledOverride, value: value);
+    }
+    refresh();
   }
 }

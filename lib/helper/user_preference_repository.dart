@@ -43,4 +43,9 @@ final class UserPreferenceRepository {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getInt(key.key);
   }
+
+  static Future<void> remove(UserPreferenceKeys key) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(key.key);
+  }
 }
