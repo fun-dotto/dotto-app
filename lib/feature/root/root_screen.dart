@@ -1,4 +1,8 @@
+import 'package:dotto/controller/config_controller.dart';
 import 'package:dotto/domain/tab_item.dart';
+import 'package:dotto/feature/bus/bus.dart';
+import 'package:dotto/feature/course_registration/course_screen.dart';
+import 'package:dotto/feature/funch/funch.dart';
 import 'package:dotto/feature/home/home.dart';
 import 'package:dotto/feature/map/map_screen.dart';
 import 'package:dotto/feature/onboarding/onboarding_screen.dart';
@@ -13,6 +17,14 @@ import 'package:url_launcher/url_launcher_string.dart';
 
 final class RootScreen extends ConsumerWidget {
   const RootScreen({super.key});
+
+  List<TabItem> _activeTabs({required bool isV2Enabled, required bool isFunchEnabled}) {
+    final baseTabs = isV2Enabled ? TabItem.v2 : TabItem.v1;
+    if (!isV2Enabled || isFunchEnabled) {
+      return baseTabs;
+    }
+    return baseTabs.where((tab) => tab != TabItem.funch).toList();
+  }
 
   Widget _updateAlertDialog({required BuildContext context, required String appStorePageUrl}) {
     return AlertDialog(
@@ -31,23 +43,27 @@ final class RootScreen extends ConsumerWidget {
   Widget _body({
     required BuildContext context,
     required RootViewModelState viewModel,
+    required List<TabItem> tabs,
     required void Function() onGoToSettingButtonTapped,
   }) {
     return SafeArea(
       child: Stack(
-        children: TabItem.values
+        children: tabs
             .map(
-              (tabItemOnce) => Offstage(
-                offstage: viewModel.selectedTab != tabItemOnce,
+              (item) => Offstage(
+                offstage: viewModel.selectedTab != item,
                 child: Navigator(
-                  key: viewModel.navigatorStates[tabItemOnce],
+                  key: viewModel.navigatorStates[item],
                   onGenerateRoute: (settings) {
                     return MaterialPageRoute(
-                      builder: (context) => switch (tabItemOnce) {
-                        TabItem.home => const HomeScreen(),
+                      builder: (context) => switch (item) {
+                        TabItem.course => const CourseScreen(),
+                        TabItem.funch => const FunchScreen(),
                         TabItem.map => MapScreen(onGoToSettingButtonTapped: onGoToSettingButtonTapped),
-                        TabItem.course => const SearchCourseScreen(),
+                        TabItem.bus => const BusScreen(),
                         TabItem.setting => const SettingsScreen(),
+                        TabItem.home => const HomeScreen(),
+                        TabItem.subject => const SearchCourseScreen(),
                       },
                     );
                   },
@@ -62,12 +78,14 @@ final class RootScreen extends ConsumerWidget {
   Widget _bottomNavigationBar({
     required BuildContext context,
     required RootViewModelState viewModel,
+    required List<TabItem> tabs,
     required void Function(int) onTabItemTapped,
   }) {
+    final currentIndex = tabs.indexOf(viewModel.selectedTab);
     return BottomNavigationBar(
       type: BottomNavigationBarType.fixed,
-      currentIndex: TabItem.values.indexOf(viewModel.selectedTab),
-      items: TabItem.values
+      currentIndex: currentIndex >= 0 ? currentIndex : 0,
+      items: tabs
           .map(
             (tabItem) => BottomNavigationBarItem(
               icon: Icon(tabItem.icon),
@@ -83,6 +101,8 @@ final class RootScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final viewModelAsync = ref.watch(rootViewModelProvider);
+    final configFlags = ref.watch(configProvider.select((config) => (config.isV2Enabled, config.isFunchEnabled)));
+    final activeTabs = _activeTabs(isV2Enabled: configFlags.$1, isFunchEnabled: configFlags.$2);
 
     switch (viewModelAsync) {
       case AsyncData(:final value):
@@ -111,11 +131,13 @@ final class RootScreen extends ConsumerWidget {
           body: _body(
             context: context,
             viewModel: value,
+            tabs: activeTabs,
             onGoToSettingButtonTapped: () => ref.read(rootViewModelProvider.notifier).onGoToSettingButtonTapped(),
           ),
           bottomNavigationBar: _bottomNavigationBar(
             context: context,
             viewModel: value,
+            tabs: activeTabs,
             onTabItemTapped: (index) => ref.read(rootViewModelProvider.notifier).onTabItemTapped(index),
           ),
         );

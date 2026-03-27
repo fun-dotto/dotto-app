@@ -6,14 +6,15 @@ enum UserPreferenceKeys {
   kadaiFinishList(key: 'finishListKey', type: String),
   kadaiAlertList(key: 'alertListKey', type: String),
   kadaiDeleteList(key: 'deleteListKey', type: String),
-  personalTimetableListKey(key: 'personalTimetableListKey2025', type: String),
+  personalTimetableListKey(key: 'personalTimetableListKey2026', type: String),
   personalTimetableLastUpdateKey(key: 'personalTimetableLastUpdateKey', type: int),
   isAppTutorialComplete(key: 'isAppTutorialCompleted', type: bool),
   isKadaiTutorialComplete(key: 'isKadaiTutorialCompleted', type: bool),
   myBusStop(key: 'myBusStop', type: int),
   didSaveFCMToken(key: 'didSaveFCMToken', type: bool),
   timetablePeriodStyle(key: 'timetablePeriodStyle', type: String),
-  isV2EnabledOverride(key: 'isV2EnabledOverride', type: bool);
+  isV2EnabledOverride(key: 'isV2EnabledOverride', type: bool),
+  isFunchEnabledOverride(key: 'isFunchEnabledOverride', type: bool);
 
   const UserPreferenceKeys({required this.key, required this.type});
 
