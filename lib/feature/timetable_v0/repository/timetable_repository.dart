@@ -94,7 +94,7 @@ final class TimetableRepository {
         final localLastUpdated =
             await UserPreferenceRepository.getInt(UserPreferenceKeys.personalTimetableLastUpdateKey) ?? 0;
         final diff = localLastUpdated - firestoreLastUpdated.millisecondsSinceEpoch;
-        final firestoreList = List<int>.from(data['2025'] as List);
+        final firestoreList = List<int>.from(data['2026'] as List);
         final localList = await _getPersonalTimetableList();
         if (localList.isEmpty) {
           personalTimetableList = firestoreList;
@@ -185,7 +185,7 @@ final class TimetableRepository {
           final localLastUpdated =
               await UserPreferenceRepository.getInt(UserPreferenceKeys.personalTimetableLastUpdateKey) ?? 0;
           final diff = localLastUpdated - firestoreLastUpdated.millisecondsSinceEpoch;
-          final firestoreList = List<int>.from(data['2025'] as List);
+          final firestoreList = List<int>.from(data['2026'] as List);
           final localList = await _getPersonalTimetableList();
           // ここなぜか取得できない
           if (localList.isEmpty) {
@@ -216,7 +216,7 @@ final class TimetableRepository {
     }
     final doc = db.collection('user_taking_course').doc(user.uid);
     await doc.update({
-      '2025': FieldValue.arrayUnion([lessonId]),
+      '2026': FieldValue.arrayUnion([lessonId]),
       'last_updated': FieldValue.serverTimestamp(),
     });
     // .onError((error, stackTrace) async {
@@ -231,7 +231,7 @@ final class TimetableRepository {
     }
     final doc = db.collection('user_taking_course').doc(user.uid);
     await doc.update({
-      '2025': FieldValue.arrayRemove([lessonId]),
+      '2026': FieldValue.arrayRemove([lessonId]),
       'last_updated': FieldValue.serverTimestamp(),
     });
     // .onError((error, stackTrace) async {
@@ -245,7 +245,7 @@ final class TimetableRepository {
       return;
     }
     final doc = db.collection('user_taking_course').doc(user.uid);
-    await doc.set({'2025': personalTimetableList, 'last_updated': FieldValue.serverTimestamp()});
+    await doc.set({'2026': personalTimetableList, 'last_updated': FieldValue.serverTimestamp()});
   }
 
   Future<void> savePersonalTimetableList(List<int> personalTimetableList, WidgetRef ref) async {
