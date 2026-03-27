@@ -7,13 +7,12 @@ import 'package:dotto/domain/timetable_item.dart';
 import 'package:dotto/repository/course_registration_repository.dart';
 import 'package:dotto/repository/subject_repository.dart';
 import 'package:dotto/repository/timetable_repository.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-final searchSubjectReducerProvider = AutoDisposeAsyncNotifierProvider<SearchSubjectReducer, List<SubjectSummary>>(
-  SearchSubjectReducer.new,
-);
+part 'search_subject_reducer.g.dart';
 
-final class SearchSubjectReducer extends AutoDisposeAsyncNotifier<List<SubjectSummary>> {
+@riverpod
+final class SearchSubjectReducer extends _$SearchSubjectReducer {
   List<TimetableItem>? _cachedTimetableItems;
 
   @override
