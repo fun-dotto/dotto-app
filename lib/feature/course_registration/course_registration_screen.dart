@@ -4,8 +4,8 @@ import 'package:dotto/api/api_client.dart';
 import 'package:dotto/domain/course_registration.dart';
 import 'package:dotto/domain/day_of_week.dart';
 import 'package:dotto/domain/period.dart';
-import 'package:dotto/domain/semester.dart';
 import 'package:dotto/domain/timetable_item.dart';
+import 'package:dotto/domain/timetable_semester.dart';
 import 'package:dotto/feature/course_registration/course_registration_repository.dart';
 import 'package:dotto/feature/course_registration/select_course_screen.dart';
 import 'package:flutter/material.dart';
@@ -21,20 +21,20 @@ class CourseRegistrationScreen extends HookConsumerWidget {
     final courseRegistrationRepository = CourseRegistrationRepositoryImpl(apiClient);
     final timetableItems = useState<AsyncValue<List<TimetableItem>>>(const AsyncLoading());
     final courseRegistrations = useState<AsyncValue<List<CourseRegistration>>>(const AsyncLoading());
-    final tabController = useTabController(initialLength: Semester.onEditTimetableScreen.length);
+    final tabController = useTabController(initialLength: TimetableSemester.values.length);
 
     Future<void> refresh() async {
       timetableItems.value = const AsyncLoading();
       courseRegistrations.value = const AsyncLoading();
       Future.wait([
         courseRegistrationRepository
-            .getTimetableItems(Semester.onEditTimetableScreen[tabController.index])
+            .getTimetableItems(TimetableSemester.values[tabController.index])
             .then(
               (value) => timetableItems.value = AsyncData(value),
               onError: (Object e, StackTrace st) => timetableItems.value = AsyncError(e, st),
             ),
         courseRegistrationRepository
-            .getCourseRegistrations(Semester.onEditTimetableScreen[tabController.index])
+            .getCourseRegistrations(TimetableSemester.values[tabController.index])
             .then(
               (value) => courseRegistrations.value = AsyncData(value),
               onError: (Object e, StackTrace st) => courseRegistrations.value = AsyncError(e, st),
@@ -59,13 +59,13 @@ class CourseRegistrationScreen extends HookConsumerWidget {
         bottom: TabBar(
           dividerColor: Colors.transparent,
           controller: tabController,
-          tabs: Semester.onEditTimetableScreen.map((e) => Tab(text: e.label)).toList(),
+          tabs: TimetableSemester.values.map((e) => Tab(text: e.label)).toList(),
         ),
       ),
       body: switch ((timetableItems.value, courseRegistrations.value)) {
         (AsyncData(value: final timetableItems), AsyncData(value: final courseRegistrations)) => TabBarView(
           controller: tabController,
-          children: Semester.onEditTimetableScreen
+          children: TimetableSemester.values
               .map((e) => _personalWeeklyTimetable(context, e, timetableItems, courseRegistrations))
               .toList(),
         ),
@@ -79,7 +79,7 @@ class CourseRegistrationScreen extends HookConsumerWidget {
 
   Widget _personalWeeklyTimetable(
     BuildContext context,
-    Semester semester,
+    TimetableSemester semester,
     List<TimetableItem> timetableItems,
     List<CourseRegistration> courseRegistrations,
   ) {
@@ -102,10 +102,10 @@ class CourseRegistrationScreen extends HookConsumerWidget {
               (period) => TableRow(
                 children: DayOfWeek.weekdays.map((dayOfWeek) {
                   final filteredTimetableItems = timetableItems
-                      .where((item) => item.subject.dayOfWeek == dayOfWeek && item.subject.period == period)
+                      .where((item) => item.subject.slot?.dayOfWeek == dayOfWeek && item.subject.slot?.period == period)
                       .toList();
                   final filteredCourseRegistrations = courseRegistrations
-                      .where((item) => item.subject.dayOfWeek == dayOfWeek && item.subject.period == period)
+                      .where((item) => item.subject.slot?.dayOfWeek == dayOfWeek && item.subject.slot?.period == period)
                       .toList();
                   return _personalWeeklyTimetableCell(
                     context,

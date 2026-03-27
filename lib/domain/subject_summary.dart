@@ -1,4 +1,5 @@
 import 'package:dotto/domain/subject_faculty.dart';
+import 'package:dotto/domain/timetable_slot.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'subject_summary.freezed.dart';
@@ -9,9 +10,7 @@ abstract class SubjectSummary with _$SubjectSummary {
     required String id,
     required String name,
     required List<SubjectFaculty> faculties,
-    // TODO
-    // required TimetableSlot slot,
-    // TODO
-    // required bool isAddedToTimetable,
+    TimetableSlot? slot,
+    bool? isAddedToTimetable,
   }) = _SubjectSummary;
 }

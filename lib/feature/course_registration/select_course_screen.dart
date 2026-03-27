@@ -2,8 +2,8 @@ import 'package:dotto/api/api_client.dart';
 import 'package:dotto/domain/course_registration.dart';
 import 'package:dotto/domain/day_of_week.dart';
 import 'package:dotto/domain/period.dart';
-import 'package:dotto/domain/semester.dart';
 import 'package:dotto/domain/timetable_item.dart';
+import 'package:dotto/domain/timetable_semester.dart';
 import 'package:dotto/feature/course_registration/course_registration_repository.dart';
 import 'package:dotto/feature/timetable/widget/timetable_is_over_selected_snack_bar.dart';
 import 'package:dotto_design_system/component/button.dart';
@@ -20,7 +20,7 @@ final class SelectCourseScreen extends HookConsumerWidget {
     super.key,
   });
 
-  final Semester semester;
+  final TimetableSemester semester;
   final DayOfWeek dayOfWeek;
   final Period period;
   final List<TimetableItem> timetableItems;
@@ -41,9 +41,12 @@ final class SelectCourseScreen extends HookConsumerWidget {
           itemCount: timetableItems.length,
           itemBuilder: (context, index) {
             final item = timetableItems[index];
+            final isAddedToTimetable = courseRegistrations.any(
+              (courseRegistration) => courseRegistration.subject == item.subject,
+            );
             return ListTile(
               title: Text(item.subject.name),
-              trailing: item.subject.isAddedToTimetable
+              trailing: isAddedToTimetable
                   ? DottoButton(
                       onPressed: () async {
                         final courseRegistration = courseRegistrations.firstWhere(
