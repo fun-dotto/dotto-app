@@ -94,9 +94,11 @@ class SearchSubjectScreen extends HookConsumerWidget {
                             return ListTile(
                               title: Text(subject.name),
                               subtitle: () {
-                                final slot = subject.slot;
-                                if (slot == null) return null;
-                                return Text('${slot.dayOfWeek.label}${slot.period.number}');
+                                final slots = subject.slots;
+                                if (slots == null || slots.isEmpty) return null;
+                                return Text(
+                                  slots.map((slot) => '${slot.dayOfWeek.label}${slot.period.number}').join(' / '),
+                                );
                               }(),
                               onTap: () async {
                                 await Navigator.of(context).push(

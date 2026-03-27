@@ -62,32 +62,32 @@ final class TimetableRepositoryImpl implements TimetableRepository {
                       ),
                     )
                     .toList(),
-                slot: () {
-                  final slot = e.slot;
-                  if (slot == null) return null;
-                  TimetableSlot(
-                    dayOfWeek: switch (slot.dayOfWeek) {
-                      DottoFoundationV1DayOfWeek.monday => DayOfWeek.monday,
-                      DottoFoundationV1DayOfWeek.tuesday => DayOfWeek.tuesday,
-                      DottoFoundationV1DayOfWeek.wednesday => DayOfWeek.wednesday,
-                      DottoFoundationV1DayOfWeek.thursday => DayOfWeek.thursday,
-                      DottoFoundationV1DayOfWeek.friday => DayOfWeek.friday,
-                      DottoFoundationV1DayOfWeek.saturday => DayOfWeek.saturday,
-                      DottoFoundationV1DayOfWeek.sunday => DayOfWeek.sunday,
-                      _ => throw Exception('Invalid day of week'),
-                    },
-                    period: switch (slot.period) {
-                      DottoFoundationV1Period.period1 => Period.first,
-                      DottoFoundationV1Period.period2 => Period.second,
-                      DottoFoundationV1Period.period3 => Period.third,
-                      DottoFoundationV1Period.period4 => Period.fourth,
-                      DottoFoundationV1Period.period5 => Period.fifth,
-                      DottoFoundationV1Period.period6 => Period.sixth,
-                      _ => throw Exception('Invalid period'),
-                    },
-                  );
-                }(),
               ),
+              slot: () {
+                final slot = e.slot;
+                if (slot == null) return null;
+                return TimetableSlot(
+                  dayOfWeek: switch (slot.dayOfWeek) {
+                    DottoFoundationV1DayOfWeek.monday => DayOfWeek.monday,
+                    DottoFoundationV1DayOfWeek.tuesday => DayOfWeek.tuesday,
+                    DottoFoundationV1DayOfWeek.wednesday => DayOfWeek.wednesday,
+                    DottoFoundationV1DayOfWeek.thursday => DayOfWeek.thursday,
+                    DottoFoundationV1DayOfWeek.friday => DayOfWeek.friday,
+                    DottoFoundationV1DayOfWeek.saturday => DayOfWeek.saturday,
+                    DottoFoundationV1DayOfWeek.sunday => DayOfWeek.sunday,
+                    _ => throw Exception('Invalid day of week'),
+                  },
+                  period: switch (slot.period) {
+                    DottoFoundationV1Period.period1 => Period.first,
+                    DottoFoundationV1Period.period2 => Period.second,
+                    DottoFoundationV1Period.period3 => Period.third,
+                    DottoFoundationV1Period.period4 => Period.fourth,
+                    DottoFoundationV1Period.period5 => Period.fifth,
+                    DottoFoundationV1Period.period6 => Period.sixth,
+                    _ => throw Exception('Invalid period'),
+                  },
+                );
+              }(),
             ),
           )
           .toList();

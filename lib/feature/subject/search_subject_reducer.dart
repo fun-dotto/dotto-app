@@ -4,6 +4,7 @@ import 'package:dotto/domain/semester.dart';
 import 'package:dotto/domain/subject_filter.dart';
 import 'package:dotto/domain/subject_summary.dart';
 import 'package:dotto/domain/timetable_item.dart';
+import 'package:dotto/domain/timetable_slot.dart';
 import 'package:dotto/repository/course_registration_repository.dart';
 import 'package:dotto/repository/subject_repository.dart';
 import 'package:dotto/repository/timetable_repository.dart';
@@ -43,28 +44,32 @@ final class SearchSubjectReducer extends _$SearchSubjectReducer {
       final subjectRepository = ref.read(subjectRepositoryProvider);
       final timetableRepository = ref.read(timetableRepositoryProvider);
 
+      final courseRegistrationsFuture = courseRegistrationRepository.getCourseRegistrations(Semester.values);
+      final subjectsFuture = subjectRepository.getSubjects(query, filter);
+
       var timetableItems = _cachedTimetableItems;
       if (timetableItems == null) {
         timetableItems = await timetableRepository.getTimetableItems(Semester.values);
         _cachedTimetableItems = timetableItems;
       }
 
-      final courseRegistrationsFuture = courseRegistrationRepository.getCourseRegistrations(Semester.values);
-      final subjectsFuture = subjectRepository.getSubjects(query, filter);
-
       final courseRegistrations = await courseRegistrationsFuture;
       final subjects = await subjectsFuture;
 
       final registeredSubjectIds = courseRegistrations.map((e) => e.subject.id).toSet();
-      final timetableSlotsBySubjectId = {
-        for (final item in timetableItems)
-          if (item.subject.slot != null) item.subject.id: item.subject.slot,
-      };
+      final timetableSlotsBySubjectId = <String, List<TimetableSlot>>{};
+      for (final item in timetableItems) {
+        final slot = item.slot;
+        if (slot == null) {
+          continue;
+        }
+        timetableSlotsBySubjectId.putIfAbsent(item.subject.id, () => []).add(slot);
+      }
 
       return BuiltList<SubjectSummary>(
         subjects.map((subject) {
           return subject.copyWith(
-            slot: timetableSlotsBySubjectId[subject.id],
+            slots: timetableSlotsBySubjectId[subject.id],
             isAddedToTimetable: registeredSubjectIds.contains(subject.id),
           );
         }),

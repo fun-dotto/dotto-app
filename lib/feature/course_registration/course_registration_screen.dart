@@ -104,10 +104,11 @@ class CourseRegistrationScreen extends HookConsumerWidget {
               (period) => TableRow(
                 children: DayOfWeek.weekdays.map((dayOfWeek) {
                   final filteredTimetableItems = timetableItems
-                      .where((item) => item.subject.slot?.dayOfWeek == dayOfWeek && item.subject.slot?.period == period)
+                      .where((item) => item.slot?.dayOfWeek == dayOfWeek && item.slot?.period == period)
                       .toList();
+                  final timetableSubjectIds = filteredTimetableItems.map((item) => item.subject.id).toSet();
                   final filteredCourseRegistrations = courseRegistrations
-                      .where((item) => item.subject.slot?.dayOfWeek == dayOfWeek && item.subject.slot?.period == period)
+                      .where((item) => timetableSubjectIds.contains(item.subject.id))
                       .toList();
                   return _personalWeeklyTimetableCell(
                     context,

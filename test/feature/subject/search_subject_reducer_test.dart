@@ -101,7 +101,7 @@ void main() {
     );
   }
 
-  test('search で slot と isAddedToTimetable がマージされる', () async {
+  test('search で slots と isAddedToTimetable がマージされる', () async {
     final withSlot = SubjectSummary(id: 'subject-1', name: 'Math', faculties: const []);
     final withoutSlot = SubjectSummary(id: 'subject-2', name: 'English', faculties: const []);
 
@@ -117,9 +117,8 @@ void main() {
       result: [
         TimetableItem(
           id: 'item-1',
-          subject: withSlot.copyWith(
-            slot: const TimetableSlot(dayOfWeek: DayOfWeek.monday, period: Period.first),
-          ),
+          subject: withSlot,
+          slot: const TimetableSlot(dayOfWeek: DayOfWeek.monday, period: Period.first),
         ),
       ],
     );
@@ -137,10 +136,10 @@ void main() {
 
     expect(value, hasLength(2));
     expect(value[0].id, 'subject-1');
-    expect(value[0].slot, const TimetableSlot(dayOfWeek: DayOfWeek.monday, period: Period.first));
+    expect(value[0].slots, [const TimetableSlot(dayOfWeek: DayOfWeek.monday, period: Period.first)]);
     expect(value[0].isAddedToTimetable, isTrue);
     expect(value[1].id, 'subject-2');
-    expect(value[1].slot, isNull);
+    expect(value[1].slots, isNull);
     expect(value[1].isAddedToTimetable, isFalse);
   });
 
