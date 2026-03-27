@@ -22,6 +22,35 @@ import 'package:url_launcher/url_launcher_string.dart';
 final class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
 
+  Future<bool> canOpenDebugScreen() async {
+    if (!kDebugMode) {
+      return false;
+    }
+
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      return false;
+    }
+
+    try {
+      final tokenResult = await user.getIdTokenResult(true);
+      final developerClaim = tokenResult.claims?['developer'];
+
+      if (developerClaim is bool) {
+        return developerClaim;
+      }
+      if (developerClaim is String) {
+        return developerClaim.toLowerCase() == 'true';
+      }
+      if (developerClaim is num) {
+        return developerClaim != 0;
+      }
+      return developerClaim != null;
+    } on Exception {
+      return false;
+    }
+  }
+
   Widget listDialog(BuildContext context, String title, UserPreferenceKeys userPreferenceKeys, List<String> list) {
     return AlertDialog(
       title: Text(title),
@@ -214,8 +243,9 @@ final class SettingsScreen extends ConsumerWidget {
                 },
                 // バージョン
                 description: GestureDetector(
-                  onTap: () {
-                    if (!kDebugMode) {
+                  onTap: () async {
+                    final canOpen = await canOpenDebugScreen();
+                    if (!canOpen || !context.mounted) {
                       return;
                     }
                     Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const DebugScreen()));
