@@ -6,13 +6,13 @@ import 'package:flutter/material.dart';
 final class UserInfoTile extends StatelessWidget {
   const UserInfoTile({super.key, required this.user, this.onTap});
 
-  /// 表示するユーザー（Firebase Auth の User）
+  /// 表示するユーザー（DottoUser）
   final DottoUser user;
   final void Function()? onTap;
 
   @override
   Widget build(BuildContext context) {
-    final photoURL = user.avatarUrl; // String? のまま
+    final photoURL = user.avatarUrl;
     final name = (user.name.trim().isNotEmpty) ? user.name.trim() : 'ログイン';
     final email = user.email.trim().isNotEmpty ? '${user.email.trim()}でログイン中' : 'Google アカウント (@fun.ac.jp) でログイン';
 
