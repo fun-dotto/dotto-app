@@ -8,6 +8,3 @@ FutureProvider<String> settingsGradeProvider = FutureProvider((ref) async {
 FutureProvider<String> settingsCourseProvider = FutureProvider((ref) async {
   return await UserPreferenceRepository.getString(UserPreferenceKeys.course) ?? 'なし';
 });
-FutureProvider<String> settingsUserKeyProvider = FutureProvider((ref) async {
-  return await UserPreferenceRepository.getString(UserPreferenceKeys.userKey) ?? '';
-});

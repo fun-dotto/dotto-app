@@ -1,5 +1,4 @@
 import 'package:dotto/domain/tab_item.dart';
-import 'package:dotto/feature/assignment/assignment_list_screen.dart';
 import 'package:dotto/feature/home/home.dart';
 import 'package:dotto/feature/map/map_screen.dart';
 import 'package:dotto/feature/onboarding/onboarding_screen.dart';
@@ -48,7 +47,6 @@ final class RootScreen extends ConsumerWidget {
                         TabItem.home => const HomeScreen(),
                         TabItem.map => MapScreen(onGoToSettingButtonTapped: onGoToSettingButtonTapped),
                         TabItem.course => const SearchCourseScreen(),
-                        TabItem.assignment => const AssignmentListScreen(),
                         TabItem.setting => const SettingsScreen(),
                       },
                     );

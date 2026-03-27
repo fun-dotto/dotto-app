@@ -25,12 +25,6 @@ final class RemoteConfigKeys {
   /// オフラインの場合は、バイパスする
   static const String isLatestAppVersion = 'is_latest_app_version';
 
-  /// API導入後に廃止予定: お知らせJSON URL
-  static const String announcementsUrl = 'announcements_url';
-
-  /// HOPE連携マニュアルURL
-  static const String assignmentSetupUrl = 'assignment_setup_url';
-
   /// フィードバックフォームURL
   static const String feedbackFormUrl = 'feedback_form_url';
 
