@@ -1,4 +1,3 @@
-import 'package:dotto/asset.dart';
 import 'package:dotto/domain/dotto_user.dart';
 import 'package:dotto_design_system/style/semantic_color.dart';
 import 'package:flutter/material.dart';
@@ -15,18 +14,22 @@ final class UserInfoTile extends StatelessWidget {
     final photoUrl = user.avatarUrl;
     final name = (user.name.trim().isNotEmpty) ? user.name.trim() : 'ログイン';
     final email = user.email.trim().isNotEmpty ? '${user.email.trim()}でログイン中' : 'Google アカウント (@fun.ac.jp) でログイン';
-    final avatar = ClipOval(
-      child: SizedBox(
-        width: 44,
-        height: 44,
-        // photoUrl が空文字列でない場合は Image.network を使用し、それ以外の場合は Image.asset を使用する
-        child: (photoUrl.trim().isNotEmpty)
-            ? Image.network(
-                photoUrl,
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => Image.asset(Asset.noImage, fit: BoxFit.cover),
-              )
-            : Image.asset(Asset.noImage, fit: BoxFit.cover),
+    final avatar = Container(
+      width: 44,
+      height: 44,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(color: SemanticColor.light.borderPrimary),
+      ),
+      child: ClipOval(
+        child: SizedBox(
+          width: 44,
+          height: 44,
+          // photoUrl が空文字列でない場合は Image.network を使用し、それ以外の場合は Image.asset を使用する
+          child: (photoUrl.trim().isNotEmpty)
+              ? Image.network(photoUrl, fit: BoxFit.cover, errorBuilder: (_, _, _) => Icon(Icons.person))
+              : const Icon(Icons.person),
+        ),
       ),
     );
     final content = Container(
