@@ -1,11 +1,17 @@
 import 'dart:async';
 
+import 'package:dotto/controller/config_controller.dart';
+import 'package:dotto/domain/quick_link.dart';
 import 'package:dotto/feature/course_registration/course_registration_screen.dart';
 import 'package:dotto/feature/course_registration/personal_timetable_calendar_reducer.dart';
 import 'package:dotto/feature/course_registration/personal_timetable_calendar_view.dart';
+import 'package:dotto/feature/home/component/file_grid.dart';
+import 'package:dotto/feature/home/component/file_tile.dart';
+import 'package:dotto/feature/home/component/link_grid.dart';
 import 'package:dotto/feature/subject/search_subject_screen.dart';
 import 'package:dotto/feature/subject/subject_detail_screen.dart';
 import 'package:dotto/feature/timetable_v0/course_cancellation_screen.dart';
+import 'package:dotto/widget/web_pdf_viewer.dart';
 import 'package:dotto_design_system/component/button.dart';
 import 'package:dotto_design_system/style/semantic_color.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +23,29 @@ final class CourseScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final config = ref.watch(configProvider);
+    // final timetablePeriodStyle = ref.watch(timetablePeriodStyleProvider);
+    final fileItems = <(String label, String url, IconData icon)>[
+      ('学年暦', config.officialCalendarPdfUrl, Icons.event_note),
+      ('時間割 前期', config.timetable1PdfUrl, Icons.calendar_month),
+      ('時間割 後期', config.timetable2PdfUrl, Icons.calendar_month),
+    ];
+    final infoTiles = <Widget>[
+      ...fileItems.map(
+        (item) => FileTile(
+          onPressed: () {
+            Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (_) => WebPdfViewer(url: item.$2, filename: item.$1),
+                settings: RouteSettings(name: '/home/web_pdf_viewer?url=${item.$2}'),
+              ),
+            );
+          },
+          icon: item.$3,
+          title: item.$1,
+        ),
+      ),
+    ];
     final state = ref.watch(personalTimetableCalendarReducerProvider);
     final selectedDate = useState<DateTime?>(null);
 
@@ -80,6 +109,25 @@ final class CourseScreen extends HookConsumerWidget {
                   ],
                 ),
                 Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child: _featureButtons(context)),
+                Padding(
+                  padding: const EdgeInsetsGeometry.all(16),
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 480),
+                    child: Column(
+                      spacing: 16,
+                      children: [
+                        // const BusCardHome(),
+                        Column(
+                          spacing: 8,
+                          children: [
+                            FileGrid(children: infoTiles),
+                            const LinkGrid(links: QuickLink.links),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
