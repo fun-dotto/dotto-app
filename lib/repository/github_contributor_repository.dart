@@ -3,13 +3,13 @@ import 'package:dotto/domain/github_profile.dart';
 import 'package:dotto/repository/model/github_profile_response.dart';
 import 'package:flutter/foundation.dart';
 
-//
-// ignore: one_member_abstracts
 abstract class GitHubContributorRepository {
   Future<List<GitHubProfile>> getContributors();
 }
 
 final class GitHubContributorRepositoryImpl implements GitHubContributorRepository {
+  GitHubContributorRepositoryImpl();
+
   @override
   Future<List<GitHubProfile>> getContributors() async {
     try {

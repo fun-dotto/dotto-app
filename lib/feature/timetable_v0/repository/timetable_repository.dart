@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dotto/controller/user_controller.dart';
 import 'package:dotto/domain/user_preference_keys.dart';
 import 'package:dotto/feature/timetable_v0/controller/personal_lesson_id_list_controller.dart';
 import 'package:dotto/feature/timetable_v0/controller/week_period_all_records_controller.dart';
@@ -10,6 +9,7 @@ import 'package:dotto/feature/timetable_v0/domain/timetable_course.dart';
 import 'package:dotto/helper/file_helper.dart';
 import 'package:dotto/helper/syllabus_database_helper.dart';
 import 'package:dotto/helper/user_preference_repository.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -79,8 +79,27 @@ final class TimetableRepository {
     return [];
   }
 
+  List<int> _readFirestoreTimetableList(Map<String, dynamic> data) {
+    final raw = data['2026'];
+    if (raw is! List) {
+      return [];
+    }
+    return raw
+        .map((e) {
+          if (e is int) {
+            return e;
+          }
+          if (e is num) {
+            return e.toInt();
+          }
+          return int.tryParse(e.toString());
+        })
+        .whereType<int>()
+        .toList();
+  }
+
   Future<void> loadPersonalTimetableListOnLogin(BuildContext context, WidgetRef ref) async {
-    final user = ref.read(userProvider);
+    final user = FirebaseAuth.instance.currentUser;
     if (user == null) {
       return;
     }
@@ -90,11 +109,14 @@ final class TimetableRepository {
     if (docSnapshot.exists) {
       final data = docSnapshot.data();
       if (data != null) {
-        final firestoreLastUpdated = data['last_updated'] as Timestamp;
+        final firestoreLastUpdated = data['last_updated'];
+        final firestoreLastUpdatedMillis = firestoreLastUpdated is Timestamp
+            ? firestoreLastUpdated.millisecondsSinceEpoch
+            : 0;
         final localLastUpdated =
             await UserPreferenceRepository.getInt(UserPreferenceKeys.personalTimetableLastUpdateKey) ?? 0;
-        final diff = localLastUpdated - firestoreLastUpdated.millisecondsSinceEpoch;
-        final firestoreList = List<int>.from(data['2026'] as List);
+        final diff = localLastUpdated - firestoreLastUpdatedMillis;
+        final firestoreList = _readFirestoreTimetableList(data);
         final localList = await _getPersonalTimetableList();
         if (localList.isEmpty) {
           personalTimetableList = firestoreList;
@@ -171,7 +193,7 @@ final class TimetableRepository {
   }
 
   Future<List<int>> loadPersonalTimetableList(WidgetRef ref) async {
-    final user = ref.read(userProvider);
+    final user = FirebaseAuth.instance.currentUser;
     var personalTimetableList = <int>[];
     if (user == null) {
       personalTimetableList = await _getPersonalTimetableList();
@@ -181,11 +203,14 @@ final class TimetableRepository {
       if (docSnapshot.exists) {
         final data = docSnapshot.data();
         if (data != null) {
-          final firestoreLastUpdated = data['last_updated'] as Timestamp;
+          final firestoreLastUpdated = data['last_updated'];
+          final firestoreLastUpdatedMillis = firestoreLastUpdated is Timestamp
+              ? firestoreLastUpdated.millisecondsSinceEpoch
+              : 0;
           final localLastUpdated =
               await UserPreferenceRepository.getInt(UserPreferenceKeys.personalTimetableLastUpdateKey) ?? 0;
-          final diff = localLastUpdated - firestoreLastUpdated.millisecondsSinceEpoch;
-          final firestoreList = List<int>.from(data['2026'] as List);
+          final diff = localLastUpdated - firestoreLastUpdatedMillis;
+          final firestoreList = _readFirestoreTimetableList(data);
           final localList = await _getPersonalTimetableList();
           // ここなぜか取得できない
           if (localList.isEmpty) {
@@ -210,7 +235,7 @@ final class TimetableRepository {
   }
 
   Future<void> addPersonalTimetableListToFirestore(int lessonId, WidgetRef ref) async {
-    final user = ref.read(userProvider);
+    final user = FirebaseAuth.instance.currentUser;
     if (user == null) {
       return;
     }
@@ -225,7 +250,7 @@ final class TimetableRepository {
   }
 
   Future<void> removePersonalTimetableListFromFirestore(int lessonId, WidgetRef ref) async {
-    final user = ref.read(userProvider);
+    final user = FirebaseAuth.instance.currentUser;
     if (user == null) {
       return;
     }
@@ -240,7 +265,7 @@ final class TimetableRepository {
   }
 
   Future<void> savePersonalTimetableListToFirestore(List<int> personalTimetableList, WidgetRef ref) async {
-    final user = ref.read(userProvider);
+    final user = FirebaseAuth.instance.currentUser;
     if (user == null) {
       return;
     }
