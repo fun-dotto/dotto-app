@@ -13,7 +13,7 @@ Method | HTTP request | Description
 
 
 # **timetableItemsV1List**
-> TimetableItemsV1List200Response timetableItemsV1List(semester, year, dayOfWeek)
+> TimetableItemsV1List200Response timetableItemsV1List(semesters, year)
 
 
 
@@ -24,12 +24,11 @@ Method | HTTP request | Description
 import 'package:openapi/api.dart';
 
 final api = Openapi().getTimetableItemsApi();
-final DottoFoundationV1CourseSemester semester = ; // DottoFoundationV1CourseSemester | 開講時期
+final BuiltList<DottoFoundationV1CourseSemester> semesters = ; // BuiltList<DottoFoundationV1CourseSemester> | 開講時期
 final int year = 56; // int | 開講年度; 指定しない場合は今年度が選択される
-final BuiltList<DottoFoundationV1DayOfWeek> dayOfWeek = ; // BuiltList<DottoFoundationV1DayOfWeek> | 曜日; 複数指定時はORでフィルタリングされる; 指定しない場合は全ての曜日が選択される
 
 try {
-    final response = api.timetableItemsV1List(semester, year, dayOfWeek);
+    final response = api.timetableItemsV1List(semesters, year);
     print(response);
 } on DioException catch (e) {
     print('Exception when calling TimetableItemsApi->timetableItemsV1List: $e\n');
@@ -40,9 +39,8 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **semester** | [**DottoFoundationV1CourseSemester**](.md)| 開講時期 | 
+ **semesters** | [**BuiltList&lt;DottoFoundationV1CourseSemester&gt;**](DottoFoundationV1CourseSemester.md)| 開講時期 | 
  **year** | **int**| 開講年度; 指定しない場合は今年度が選択される | [optional] 
- **dayOfWeek** | [**BuiltList&lt;DottoFoundationV1DayOfWeek&gt;**](DottoFoundationV1DayOfWeek.md)| 曜日; 複数指定時はORでフィルタリングされる; 指定しない場合は全ての曜日が選択される | [optional] 
 
 ### Return type
 

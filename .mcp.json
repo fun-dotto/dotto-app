@@ -1,10 +1,10 @@
 {
   "mcpServers": {
-    "figma": {
+    "dotto_figma": {
       "url": "https://mcp.figma.com/mcp",
       "type": "http"
     },
-    "notion": {
+    "dotto_notion": {
       "url": "https://mcp.notion.com/mcp",
       "type": "http"
     },

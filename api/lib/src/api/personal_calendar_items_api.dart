@@ -10,23 +10,21 @@ import 'package:dio/dio.dart';
 
 import 'package:built_collection/built_collection.dart';
 import 'package:openapi/src/api_util.dart';
-import 'package:openapi/src/model/dotto_foundation_v1_course_semester.dart';
-import 'package:openapi/src/model/timetable_items_v1_list200_response.dart';
+import 'package:openapi/src/model/personal_calendar_items_v1_list200_response.dart';
 
-class TimetableItemsApi {
+class PersonalCalendarItemsApi {
 
   final Dio _dio;
 
   final Serializers _serializers;
 
-  const TimetableItemsApi(this._dio, this._serializers);
+  const PersonalCalendarItemsApi(this._dio, this._serializers);
 
-  /// timetableItemsV1List
-  /// 時間割を取得する
+  /// personalCalendarItemsV1List
+  /// 個人カレンダーアイテム一覧を取得する
   ///
   /// Parameters:
-  /// * [semesters] - 開講時期
-  /// * [year] - 開講年度; 指定しない場合は今年度が選択される
+  /// * [dates] - 日付のリスト; 指定した日付の個人カレンダーアイテムのみを取得する
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
   /// * [headers] - Can be used to add additional headers to the request
   /// * [extras] - Can be used to add flags to the request
@@ -34,11 +32,10 @@ class TimetableItemsApi {
   /// * [onSendProgress] - A [ProgressCallback] that can be used to get the send progress
   /// * [onReceiveProgress] - A [ProgressCallback] that can be used to get the receive progress
   ///
-  /// Returns a [Future] containing a [Response] with a [TimetableItemsV1List200Response] as data
+  /// Returns a [Future] containing a [Response] with a [PersonalCalendarItemsV1List200Response] as data
   /// Throws [DioException] if API call or serialization fails
-  Future<Response<TimetableItemsV1List200Response>> timetableItemsV1List({ 
-    required BuiltList<DottoFoundationV1CourseSemester> semesters,
-    int? year,
+  Future<Response<PersonalCalendarItemsV1List200Response>> personalCalendarItemsV1List({ 
+    required BuiltList<DateTime> dates,
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
     Map<String, dynamic>? extra,
@@ -46,7 +43,7 @@ class TimetableItemsApi {
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
   }) async {
-    final _path = r'/v1/timetableItems';
+    final _path = r'/v1/personalCalendarItems';
     final _options = Options(
       method: r'GET',
       headers: <String, dynamic>{
@@ -66,8 +63,7 @@ class TimetableItemsApi {
     );
 
     final _queryParameters = <String, dynamic>{
-      if (year != null) r'year': encodeQueryParameter(_serializers, year, const FullType(int)),
-      r'semesters': encodeCollectionQueryParameter<DottoFoundationV1CourseSemester>(_serializers, semesters, const FullType(BuiltList, [FullType(DottoFoundationV1CourseSemester)]), format: ListFormat.csv,),
+      r'dates': encodeCollectionQueryParameter<DateTime>(_serializers, dates, const FullType(BuiltList, [FullType(DateTime)]), format: ListFormat.csv,),
     };
 
     final _response = await _dio.request<Object>(
@@ -79,14 +75,14 @@ class TimetableItemsApi {
       onReceiveProgress: onReceiveProgress,
     );
 
-    TimetableItemsV1List200Response? _responseData;
+    PersonalCalendarItemsV1List200Response? _responseData;
 
     try {
       final rawResponse = _response.data;
       _responseData = rawResponse == null ? null : _serializers.deserialize(
         rawResponse,
-        specifiedType: const FullType(TimetableItemsV1List200Response),
-      ) as TimetableItemsV1List200Response;
+        specifiedType: const FullType(PersonalCalendarItemsV1List200Response),
+      ) as PersonalCalendarItemsV1List200Response;
 
     } catch (error, stackTrace) {
       throw DioException(
@@ -98,7 +94,7 @@ class TimetableItemsApi {
       );
     }
 
-    return Response<TimetableItemsV1List200Response>(
+    return Response<PersonalCalendarItemsV1List200Response>(
       data: _responseData,
       headers: _response.headers,
       isRedirect: _response.isRedirect,
