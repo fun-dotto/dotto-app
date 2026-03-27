@@ -1,72 +1,38 @@
-import 'dart:async';
-
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dotto/domain/lecture_status.dart';
 import 'package:dotto/domain/period.dart';
 import 'package:dotto/domain/personal_timetable_day.dart';
 import 'package:dotto/domain/personal_timetable_item.dart';
 import 'package:dotto/domain/subject_summary.dart';
-import 'package:dotto/feature/course_registration/personal_timetable_calendar_reducer.dart';
 import 'package:dotto/helper/date_formatter.dart';
 import 'package:dotto_design_system/style/semantic_color.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-final class PersonalTimetableCalendarView extends HookConsumerWidget {
-  const PersonalTimetableCalendarView({required this.onSubjectSelected, super.key});
+final class PersonalTimetableCalendarView extends StatelessWidget {
+  const PersonalTimetableCalendarView({
+    required this.personalTimetableDays,
+    required this.selectedDate,
+    required this.onDateSelected,
+    required this.onSubjectSelected,
+    super.key,
+  });
 
+  final List<PersonalTimetableDay> personalTimetableDays;
+  final DateTime? selectedDate;
+  final void Function(DateTime) onDateSelected;
   final void Function(SubjectSummary) onSubjectSelected;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(personalTimetableCalendarReducerProvider);
-    final selectedDate = useState<DateTime?>(null);
-
-    useEffect(() {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        unawaited(ref.read(personalTimetableCalendarReducerProvider.notifier).refresh());
-      });
-      return null;
-    }, []);
-
-    useEffect(() {
-      final days = state.value;
-      if (days == null || days.isEmpty) {
-        return null;
-      }
-      if (selectedDate.value == null || !days.any((e) => _isSameDate(e.date, selectedDate.value!))) {
-        final now = DateTime.now();
-        final today = DateTime(now.year, now.month, now.day);
-        final todayEntry = days.where((e) => _isSameDate(e.date, today));
-        selectedDate.value = todayEntry.isNotEmpty ? todayEntry.first.date : days.first.date;
-      }
-      return null;
-    }, [state]);
-
-    return Scaffold(
-      appBar: AppBar(title: const Text('時間割')),
-      body: switch (state) {
-        AsyncData(value: final days) => RefreshIndicator(
-          onRefresh: () => ref.read(personalTimetableCalendarReducerProvider.notifier).refresh(),
-          child: SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            child: Padding(
-              padding: const EdgeInsets.all(8),
-              child: _calendar(
-                context,
-                days: days,
-                selectedDate: selectedDate.value ?? (days.isNotEmpty ? days.first.date : DateTime.now()),
-                onDateSelected: (date) {
-                  selectedDate.value = date;
-                },
-              ),
-            ),
-          ),
-        ),
-        AsyncLoading() => const Center(child: CircularProgressIndicator()),
-        AsyncError() => const Center(child: Text('データの取得に失敗しました')),
-      },
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 8),
+      child: _calendar(
+        context,
+        days: personalTimetableDays,
+        selectedDate:
+            selectedDate ?? (personalTimetableDays.isNotEmpty ? personalTimetableDays.first.date : DateTime.now()),
+        onDateSelected: onDateSelected,
+      ),
     );
   }
 
