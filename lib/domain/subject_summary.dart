@@ -10,7 +10,9 @@ abstract class SubjectSummary with _$SubjectSummary {
     required String id,
     required String name,
     required List<SubjectFaculty> faculties,
-    TimetableSlot? slot,
+    // 科目検索画面で使用
+    List<TimetableSlot>? slots,
+    // 科目検索画面で使用
     bool? isAddedToTimetable,
   }) = _SubjectSummary;
 }
