@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dotto/domain/user_preference_keys.dart';
-import 'package:dotto/feature/setting/controller/settings_controller.dart';
 import 'package:dotto/feature/timetable_v0/repository/timetable_repository.dart';
 import 'package:dotto/helper/firebase_auth_repository.dart';
 import 'package:dotto/helper/user_preference_repository.dart';
@@ -15,19 +14,6 @@ final class SettingsRepository {
   }
   SettingsRepository._internal();
   static final SettingsRepository _instance = SettingsRepository._internal();
-
-  Future<void> setUserKey(String userKey, WidgetRef ref) async {
-    final userKeyPattern = RegExp(r'^[a-zA-Z0-9]{16}$');
-    if (userKey.length == 16 && userKeyPattern.hasMatch(userKey)) {
-      await UserPreferenceRepository.setString(UserPreferenceKeys.userKey, userKey);
-      ref.invalidate(settingsUserKeyProvider);
-      return;
-    }
-    if (userKey.isEmpty) {
-      await UserPreferenceRepository.setString(UserPreferenceKeys.userKey, userKey);
-      ref.invalidate(settingsUserKeyProvider);
-    }
-  }
 
   Future<void> saveFCMToken(User user) async {
     final fcmToken = await FirebaseMessaging.instance.getToken();

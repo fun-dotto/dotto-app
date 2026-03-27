@@ -4,7 +4,6 @@ import 'package:dotto/controller/config_controller.dart';
 import 'package:dotto/controller/user_controller.dart';
 import 'package:dotto/domain/user_preference_keys.dart';
 import 'package:dotto/feature/announcement/announcement_screen.dart';
-import 'package:dotto/feature/assignment/setup_hope_continuity_screen.dart';
 import 'package:dotto/feature/debug/debug_screen.dart';
 import 'package:dotto/feature/github_contributor/github_contributor_screen.dart';
 import 'package:dotto/feature/onboarding/onboarding_screen.dart';
@@ -131,26 +130,6 @@ final class SettingsScreen extends ConsumerWidget {
                 leading: const Icon(Icons.school),
                 title: const Text('コース'),
                 value: Text(ref.watch(settingsCourseProvider).value ?? 'なし'),
-              ),
-              // HOPE連携
-              SettingsTile.navigation(
-                title: const Text('HOPE連携'),
-                leading: const Icon(Icons.assignment),
-                onPressed: (_) {
-                  Navigator.of(context).push(
-                    MaterialPageRoute<void>(
-                      builder: (_) => Scaffold(
-                        appBar: AppBar(title: const Text('HOPE連携')),
-                        body: SetupHopeContinuityScreen(
-                          onUserKeySaved: () {
-                            Navigator.of(context).pop();
-                          },
-                        ),
-                      ),
-                      settings: const RouteSettings(name: '/setting/hope_continuity'),
-                    ),
-                  );
-                },
               ),
             ],
           ),
