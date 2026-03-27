@@ -5,10 +5,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dotto/domain/academic_area.dart';
 import 'package:dotto/domain/academic_class.dart';
 import 'package:dotto/domain/cultural_subject_category.dart';
-import 'package:dotto/domain/day_of_week.dart';
 import 'package:dotto/domain/faculty.dart';
 import 'package:dotto/domain/grade.dart';
-import 'package:dotto/domain/period.dart';
 import 'package:dotto/domain/semester.dart';
 import 'package:dotto/domain/subject.dart';
 import 'package:dotto/domain/subject_classification.dart';
@@ -172,26 +170,6 @@ final class SubjectRepositoryImpl implements SubjectRepository {
                     ),
                   )
                   .toList(),
-              dayOfWeek: switch (e.dayOfWeek) {
-                DottoFoundationV1DayOfWeek.monday => DayOfWeek.monday,
-                DottoFoundationV1DayOfWeek.tuesday => DayOfWeek.tuesday,
-                DottoFoundationV1DayOfWeek.wednesday => DayOfWeek.wednesday,
-                DottoFoundationV1DayOfWeek.thursday => DayOfWeek.thursday,
-                DottoFoundationV1DayOfWeek.friday => DayOfWeek.friday,
-                DottoFoundationV1DayOfWeek.saturday => DayOfWeek.saturday,
-                DottoFoundationV1DayOfWeek.sunday => DayOfWeek.sunday,
-                _ => throw Exception('Invalid day of week'),
-              },
-              period: switch (e.period) {
-                DottoFoundationV1Period.period1 => Period.first,
-                DottoFoundationV1Period.period2 => Period.second,
-                DottoFoundationV1Period.period3 => Period.third,
-                DottoFoundationV1Period.period4 => Period.fourth,
-                DottoFoundationV1Period.period5 => Period.fifth,
-                DottoFoundationV1Period.period6 => Period.sixth,
-                _ => throw Exception('Invalid period'),
-              },
-              isAddedToTimetable: e.isAddedToTimetable,
             ),
           )
           .toList();
