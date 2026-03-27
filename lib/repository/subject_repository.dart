@@ -5,10 +5,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dotto/domain/academic_area.dart';
 import 'package:dotto/domain/academic_class.dart';
 import 'package:dotto/domain/cultural_subject_category.dart';
-import 'package:dotto/domain/day_of_week.dart';
 import 'package:dotto/domain/faculty.dart';
 import 'package:dotto/domain/grade.dart';
-import 'package:dotto/domain/period.dart';
 import 'package:dotto/domain/semester.dart';
 import 'package:dotto/domain/subject.dart';
 import 'package:dotto/domain/subject_classification.dart';
@@ -56,7 +54,7 @@ final class SubjectRepositoryImpl implements SubjectRepository {
       final api = apiClient.getSubjectsApi();
       final response = await api.subjectsV1List(
         q: query,
-        grade: filter.grades.mapToBuiltListOrNull(
+        grades: filter.grades.mapToBuiltListOrNull(
           (e) => switch (e) {
             Grade.b1 => DottoFoundationV1Grade.b1,
             Grade.b2 => DottoFoundationV1Grade.b2,
@@ -78,7 +76,7 @@ final class SubjectRepositoryImpl implements SubjectRepository {
             AcademicArea.advancedICTCourse => DottoFoundationV1Course.advancedICT,
           },
         ),
-        class_: filter.classes.isEmpty
+        classes: filter.classes.isEmpty
             ? null
             : BuiltList<DottoFoundationV1Class>(
                 filter.classes.map(
@@ -98,7 +96,7 @@ final class SubjectRepositoryImpl implements SubjectRepository {
                   },
                 ),
               ),
-        classification: filter.classifications.isEmpty
+        classifications: filter.classifications.isEmpty
             ? null
             : BuiltList<DottoFoundationV1SubjectClassification>(
                 filter.classifications.map(
@@ -110,13 +108,13 @@ final class SubjectRepositoryImpl implements SubjectRepository {
                   },
                 ),
               ),
-        semester: filter.semesters.isEmpty
+        semesters: filter.semesters.isEmpty
             ? null
             : BuiltList<DottoFoundationV1CourseSemester>(
                 filter.semesters.map(
                   (e) => switch (e) {
-                    Semester.spring => DottoFoundationV1CourseSemester.h1,
-                    Semester.fall => DottoFoundationV1CourseSemester.h2,
+                    Semester.h1 => DottoFoundationV1CourseSemester.h1,
+                    Semester.h2 => DottoFoundationV1CourseSemester.h2,
                     Semester.allYear => DottoFoundationV1CourseSemester.allYear,
                     Semester.q1 => DottoFoundationV1CourseSemester.q1,
                     Semester.q2 => DottoFoundationV1CourseSemester.q2,
@@ -127,7 +125,7 @@ final class SubjectRepositoryImpl implements SubjectRepository {
                   },
                 ),
               ),
-        requirementType: filter.requirements.isEmpty
+        requirementTypes: filter.requirements.isEmpty
             ? null
             : BuiltList<DottoFoundationV1SubjectRequirementType>(
                 filter.requirements.map(
@@ -138,7 +136,7 @@ final class SubjectRepositoryImpl implements SubjectRepository {
                   },
                 ),
               ),
-        culturalSubjectCategory: filter.culturalSubjectCategories.isEmpty
+        culturalSubjectCategories: filter.culturalSubjectCategories.isEmpty
             ? null
             : BuiltList<DottoFoundationV1CulturalSubjectCategory>(
                 filter.culturalSubjectCategories.map(
@@ -172,26 +170,6 @@ final class SubjectRepositoryImpl implements SubjectRepository {
                     ),
                   )
                   .toList(),
-              dayOfWeek: switch (e.dayOfWeek) {
-                DottoFoundationV1DayOfWeek.monday => DayOfWeek.monday,
-                DottoFoundationV1DayOfWeek.tuesday => DayOfWeek.tuesday,
-                DottoFoundationV1DayOfWeek.wednesday => DayOfWeek.wednesday,
-                DottoFoundationV1DayOfWeek.thursday => DayOfWeek.thursday,
-                DottoFoundationV1DayOfWeek.friday => DayOfWeek.friday,
-                DottoFoundationV1DayOfWeek.saturday => DayOfWeek.saturday,
-                DottoFoundationV1DayOfWeek.sunday => DayOfWeek.sunday,
-                _ => throw Exception('Invalid day of week'),
-              },
-              period: switch (e.period) {
-                DottoFoundationV1Period.period1 => Period.first,
-                DottoFoundationV1Period.period2 => Period.second,
-                DottoFoundationV1Period.period3 => Period.third,
-                DottoFoundationV1Period.period4 => Period.fourth,
-                DottoFoundationV1Period.period5 => Period.fifth,
-                DottoFoundationV1Period.period6 => Period.sixth,
-                _ => throw Exception('Invalid period'),
-              },
-              isAddedToTimetable: e.isAddedToTimetable,
             ),
           )
           .toList();
@@ -235,8 +213,8 @@ final class SubjectRepositoryImpl implements SubjectRepository {
             .toList(),
         year: subject.year,
         semester: switch (subject.semester) {
-          DottoFoundationV1CourseSemester.h1 => Semester.spring,
-          DottoFoundationV1CourseSemester.h2 => Semester.fall,
+          DottoFoundationV1CourseSemester.h1 => Semester.h1,
+          DottoFoundationV1CourseSemester.h2 => Semester.h2,
           DottoFoundationV1CourseSemester.allYear => Semester.allYear,
           DottoFoundationV1CourseSemester.q1 => Semester.q1,
           DottoFoundationV1CourseSemester.q2 => Semester.q2,

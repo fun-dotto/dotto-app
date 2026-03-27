@@ -1,12 +1,10 @@
 import 'dart:async';
 
-import 'package:dotto/api/api_client.dart';
-import 'package:dotto/domain/course_registration.dart';
 import 'package:dotto/domain/day_of_week.dart';
 import 'package:dotto/domain/period.dart';
-import 'package:dotto/domain/semester.dart';
 import 'package:dotto/domain/timetable_item.dart';
-import 'package:dotto/feature/course_registration/course_registration_repository.dart';
+import 'package:dotto/domain/timetable_semester.dart';
+import 'package:dotto/feature/course_registration/course_registration_reducer.dart';
 import 'package:dotto/feature/course_registration/select_course_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -17,40 +15,15 @@ class CourseRegistrationScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final apiClient = ref.read(apiClientProvider);
-    final courseRegistrationRepository = CourseRegistrationRepositoryImpl(apiClient);
-    final timetableItems = useState<AsyncValue<List<TimetableItem>>>(const AsyncLoading());
-    final courseRegistrations = useState<AsyncValue<List<CourseRegistration>>>(const AsyncLoading());
-    final tabController = useTabController(initialLength: Semester.onEditTimetableScreen.length);
-
-    Future<void> refresh() async {
-      timetableItems.value = const AsyncLoading();
-      courseRegistrations.value = const AsyncLoading();
-      Future.wait([
-        courseRegistrationRepository
-            .getTimetableItems(Semester.onEditTimetableScreen[tabController.index])
-            .then(
-              (value) => timetableItems.value = AsyncData(value),
-              onError: (Object e, StackTrace st) => timetableItems.value = AsyncError(e, st),
-            ),
-        courseRegistrationRepository
-            .getCourseRegistrations(Semester.onEditTimetableScreen[tabController.index])
-            .then(
-              (value) => courseRegistrations.value = AsyncData(value),
-              onError: (Object e, StackTrace st) => courseRegistrations.value = AsyncError(e, st),
-            ),
-      ]);
-    }
+    final state = ref.watch(courseRegistrationReducerProvider);
+    final tabController = useTabController(initialLength: TimetableSemester.values.length);
 
     useEffect(() {
-      unawaited(refresh());
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        unawaited(ref.read(courseRegistrationReducerProvider.notifier).refresh());
+      });
       return null;
     }, const []);
-
-    useEffect(() {
-      unawaited(refresh());
-      return null;
-    }, [tabController.index]);
 
     return Scaffold(
       appBar: AppBar(
@@ -59,77 +32,83 @@ class CourseRegistrationScreen extends HookConsumerWidget {
         bottom: TabBar(
           dividerColor: Colors.transparent,
           controller: tabController,
-          tabs: Semester.onEditTimetableScreen.map((e) => Tab(text: e.label)).toList(),
+          tabs: TimetableSemester.values.map((e) => Tab(text: e.label)).toList(),
         ),
       ),
-      body: switch ((timetableItems.value, courseRegistrations.value)) {
-        (AsyncData(value: final timetableItems), AsyncData(value: final courseRegistrations)) => TabBarView(
+      body: switch (state) {
+        AsyncData(value: final timetableItemsBySemester) => TabBarView(
           controller: tabController,
-          children: Semester.onEditTimetableScreen
-              .map((e) => _personalWeeklyTimetable(context, e, timetableItems, courseRegistrations))
+          children: TimetableSemester.values
+              .map(
+                (e) =>
+                    _personalWeeklyTimetable(context, ref, e, timetableItemsBySemester[e] ?? const <TimetableItem>[]),
+              )
               .toList(),
         ),
-        (AsyncLoading(), _) => const Center(child: CircularProgressIndicator()),
-        (_, AsyncLoading()) => const Center(child: CircularProgressIndicator()),
-        (AsyncError(), _) => const Center(child: Text('時間割の取得に失敗しました')),
-        (_, AsyncError()) => const Center(child: Text('履修情報の取得に失敗しました')),
+        AsyncLoading() => const Center(child: CircularProgressIndicator()),
+        AsyncError() => const Center(child: Text('データの取得に失敗しました')),
       },
     );
   }
 
   Widget _personalWeeklyTimetable(
     BuildContext context,
-    Semester semester,
+    WidgetRef ref,
+    TimetableSemester semester,
     List<TimetableItem> timetableItems,
-    List<CourseRegistration> courseRegistrations,
   ) {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(8),
-        child: Table(
-          columnWidths: {for (final e in Period.values) e.number: const FlexColumnWidth()},
-          children: <TableRow>[
-            TableRow(
-              children: DayOfWeek.weekdays
-                  .map(
-                    (e) => TableCell(
-                      child: Center(child: Text(e.label, style: Theme.of(context).textTheme.labelMedium)),
-                    ),
-                  )
-                  .toList(),
-            ),
-            ...Period.values.map(
-              (period) => TableRow(
-                children: DayOfWeek.weekdays.map((dayOfWeek) {
-                  final filteredTimetableItems = timetableItems
-                      .where((item) => item.subject.dayOfWeek == dayOfWeek && item.subject.period == period)
-                      .toList();
-                  final filteredCourseRegistrations = courseRegistrations
-                      .where((item) => item.subject.dayOfWeek == dayOfWeek && item.subject.period == period)
-                      .toList();
-                  return _personalWeeklyTimetableCell(
-                    context,
-                    filteredTimetableItems,
-                    filteredCourseRegistrations,
-                    onTap: () async {
-                      await showModalBottomSheet<void>(
-                        context: context,
-                        isScrollControlled: true,
-                        useSafeArea: true,
-                        builder: (_) => SelectCourseScreen(
-                          semester,
-                          dayOfWeek,
-                          period,
-                          filteredTimetableItems,
-                          filteredCourseRegistrations,
-                        ),
-                      );
-                    },
-                  );
-                }).toList(),
+    return RefreshIndicator(
+      onRefresh: () => ref.read(courseRegistrationReducerProvider.notifier).refresh(),
+      child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        child: Padding(
+          padding: const EdgeInsets.all(8),
+          child: Table(
+            columnWidths: {for (final e in Period.values) e.number: const FlexColumnWidth()},
+            children: <TableRow>[
+              TableRow(
+                children: DayOfWeek.weekdays
+                    .map(
+                      (e) => TableCell(
+                        child: Center(child: Text(e.label, style: Theme.of(context).textTheme.labelMedium)),
+                      ),
+                    )
+                    .toList(),
               ),
-            ),
-          ],
+              ...Period.values.map(
+                (period) => TableRow(
+                  children: DayOfWeek.weekdays.map((dayOfWeek) {
+                    final filteredTimetableItems = timetableItems
+                        .where((item) => item.slot?.dayOfWeek == dayOfWeek && item.slot?.period == period)
+                        .toList();
+                    final filteredRegisteredTimetableItems = filteredTimetableItems
+                        .where((item) => item.isAddedToTimetable ?? false)
+                        .toList();
+                    return _personalWeeklyTimetableCell(
+                      context,
+                      filteredRegisteredTimetableItems,
+                      onTap: () async {
+                        await showModalBottomSheet<void>(
+                          context: context,
+                          isScrollControlled: true,
+                          useSafeArea: true,
+                          builder: (_) => SelectCourseScreen(
+                            semester,
+                            dayOfWeek,
+                            period,
+                            filteredTimetableItems,
+                            onChanged: () async {
+                              await ref.read(courseRegistrationReducerProvider.notifier).refresh();
+                            },
+                          ),
+                        );
+                      },
+                    );
+                  }).toList(),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -137,8 +116,7 @@ class CourseRegistrationScreen extends HookConsumerWidget {
 
   Widget _personalWeeklyTimetableCell(
     BuildContext context,
-    List<TimetableItem> timetableItems,
-    List<CourseRegistration> courseRegistrations, {
+    List<TimetableItem> registeredTimetableItems, {
     required VoidCallback onTap,
   }) {
     return InkWell(
@@ -146,9 +124,9 @@ class CourseRegistrationScreen extends HookConsumerWidget {
       child: Container(
         margin: const EdgeInsets.all(2),
         height: 100,
-        child: courseRegistrations.isNotEmpty
+        child: registeredTimetableItems.isNotEmpty
             ? Column(
-                children: courseRegistrations
+                children: registeredTimetableItems
                     .map(
                       (item) => Expanded(
                         child: Container(

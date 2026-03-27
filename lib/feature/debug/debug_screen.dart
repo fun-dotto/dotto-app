@@ -1,8 +1,7 @@
 import 'package:dotto/api/api_environment.dart';
+import 'package:dotto/feature/course_registration/course_registration_screen.dart';
 import 'package:dotto/feature/course_registration/personal_timetable_calendar_view.dart';
 import 'package:dotto/feature/subject/search_subject_screen.dart';
-import 'package:dotto/feature/subject/subject_detail_feedback_screen.dart';
-import 'package:dotto/feature/subject/subject_detail_past_exam_screen.dart';
 import 'package:dotto/feature/subject/subject_detail_screen.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -101,22 +100,12 @@ final class DebugScreen extends HookConsumerWidget {
             ),
           ),
           ListTile(
-            title: const Text('Subject Feedback (103501)'),
+            title: const Text('Course Registration'),
             trailing: const Icon(Icons.chevron_right),
             onTap: () => Navigator.of(context).push(
               MaterialPageRoute<void>(
-                builder: (context) => const SubjectDetailFeedbackScreen(lessonId: '103501'),
-                settings: const RouteSettings(name: '/subjects/103501/feedback'),
-              ),
-            ),
-          ),
-          ListTile(
-            title: const Text('Subject Past Exam (103501)'),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(
-                builder: (context) => const SubjectDetailPastExamScreen(pastExamId: '103501', isAuthenticated: true),
-                settings: const RouteSettings(name: '/subjects/103501/past_exam'),
+                builder: (context) => const CourseRegistrationScreen(),
+                settings: const RouteSettings(name: '/course_registration'),
               ),
             ),
           ),

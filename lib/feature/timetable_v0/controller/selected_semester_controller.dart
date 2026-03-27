@@ -1,21 +1,21 @@
-import 'package:dotto/domain/semester.dart';
+import 'package:dotto/domain/timetable_semester.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'selected_semester_controller.g.dart';
 
 @riverpod
 final class SelectedSemesterNotifier extends _$SelectedSemesterNotifier {
   @override
-  Semester build() {
+  TimetableSemester build() {
     final now = DateTime.now();
     if ((now.month >= 9) || (now.month <= 2)) {
-      return Semester.fall;
+      return TimetableSemester.fall;
     }
-    return Semester.spring;
+    return TimetableSemester.spring;
   }
 
-  Semester get value => state;
+  TimetableSemester get value => state;
 
-  set value(Semester newValue) {
+  set value(TimetableSemester newValue) {
     state = newValue;
   }
 }

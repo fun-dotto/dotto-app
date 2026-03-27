@@ -1,5 +1,5 @@
 import 'package:dotto/domain/personal_timetable_item.dart';
-import 'package:dotto/feature/course_registration/course_registration_repository.dart';
+import 'package:dotto/repository/course_registration_repository.dart';
 
 final class PersonalTimetableCalendarService {
   PersonalTimetableCalendarService(this.courseRegistrationRepository);

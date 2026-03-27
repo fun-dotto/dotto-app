@@ -8,7 +8,7 @@ import 'package:built_value/serializer.dart';
 
 part 'academic_service_faculty.g.dart';
 
-/// 教員
+/// AcademicServiceFaculty
 ///
 /// Properties:
 /// * [id] 
