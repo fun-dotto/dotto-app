@@ -22,6 +22,13 @@ import 'package:url_launcher/url_launcher_string.dart';
 final class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
 
+  Widget _settingValueText(String text) {
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 180),
+      child: Text(text, maxLines: 1, overflow: TextOverflow.ellipsis, softWrap: false, textAlign: TextAlign.end),
+    );
+  }
+
   Future<bool> canOpenDebugScreen() async {
     if (!kDebugMode) {
       return false;
@@ -154,7 +161,7 @@ final class SettingsScreen extends ConsumerWidget {
                 },
                 leading: const Icon(Icons.school),
                 title: const Text('学年'),
-                value: Text(user.value?.grade?.label ?? '未設定'),
+                value: _settingValueText(user.value?.grade?.label ?? '未設定'),
               ),
               // コース
               SettingsTile.navigation(
@@ -192,7 +199,7 @@ final class SettingsScreen extends ConsumerWidget {
                 },
                 leading: const Icon(Icons.school),
                 title: const Text('コース'),
-                value: Text(user.value?.course?.label ?? '未設定'),
+                value: _settingValueText(user.value?.course?.label ?? '未設定'),
               ),
               // クラス
               SettingsTile.navigation(
@@ -230,7 +237,7 @@ final class SettingsScreen extends ConsumerWidget {
                 },
                 leading: const Icon(Icons.school),
                 title: const Text('クラス'),
-                value: Text(user.value?.class_?.label ?? '未設定'),
+                value: _settingValueText(user.value?.class_?.label ?? '未設定'),
               ),
             ],
           ),
