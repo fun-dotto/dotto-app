@@ -6,8 +6,9 @@ import 'package:dotto/domain/day_of_week.dart';
 import 'package:dotto/domain/period.dart';
 import 'package:dotto/domain/timetable_item.dart';
 import 'package:dotto/domain/timetable_semester.dart';
-import 'package:dotto/feature/course_registration/course_registration_repository.dart';
 import 'package:dotto/feature/course_registration/select_course_screen.dart';
+import 'package:dotto/repository/course_registration_repository.dart';
+import 'package:dotto/repository/timetable_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -19,6 +20,7 @@ class CourseRegistrationScreen extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final apiClient = ref.read(apiClientProvider);
     final courseRegistrationRepository = CourseRegistrationRepositoryImpl(apiClient);
+    final timetableRepository = TimetableRepositoryImpl(apiClient);
     final timetableItems = useState<AsyncValue<List<TimetableItem>>>(const AsyncLoading());
     final courseRegistrations = useState<AsyncValue<List<CourseRegistration>>>(const AsyncLoading());
     final tabController = useTabController(initialLength: TimetableSemester.values.length);
@@ -27,14 +29,14 @@ class CourseRegistrationScreen extends HookConsumerWidget {
       timetableItems.value = const AsyncLoading();
       courseRegistrations.value = const AsyncLoading();
       Future.wait([
-        courseRegistrationRepository
-            .getTimetableItems(TimetableSemester.values[tabController.index])
+        timetableRepository
+            .getTimetableItems(TimetableSemester.values[tabController.index].semesters)
             .then(
               (value) => timetableItems.value = AsyncData(value),
               onError: (Object e, StackTrace st) => timetableItems.value = AsyncError(e, st),
             ),
         courseRegistrationRepository
-            .getCourseRegistrations(TimetableSemester.values[tabController.index])
+            .getCourseRegistrations(TimetableSemester.values[tabController.index].semesters)
             .then(
               (value) => courseRegistrations.value = AsyncData(value),
               onError: (Object e, StackTrace st) => courseRegistrations.value = AsyncError(e, st),

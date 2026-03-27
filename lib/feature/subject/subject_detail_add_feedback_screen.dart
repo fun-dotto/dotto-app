@@ -1,6 +1,6 @@
 import 'package:dotto/api/api_client.dart';
 import 'package:dotto/domain/subject_feedback.dart';
-import 'package:dotto/feature/subject/subject_repository.dart';
+import 'package:dotto/repository/subject_repository.dart';
 import 'package:dotto_design_system/style/semantic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
