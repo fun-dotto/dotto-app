@@ -91,9 +91,3 @@ lib/src/model/user_info.dart
 lib/src/model/users_v1_detail200_response.dart
 lib/src/serializers.dart
 pubspec.yaml
-test/dotto_foundation_v1_floor_test.dart
-test/dotto_foundation_v1_timetable_slot_test.dart
-test/personal_calendar_item_test.dart
-test/personal_calendar_items_api_test.dart
-test/personal_calendar_items_v1_list200_response_test.dart
-test/room_test.dart

@@ -54,7 +54,7 @@ final class SubjectRepositoryImpl implements SubjectRepository {
       final api = apiClient.getSubjectsApi();
       final response = await api.subjectsV1List(
         q: query,
-        grade: filter.grades.mapToBuiltListOrNull(
+        grades: filter.grades.mapToBuiltListOrNull(
           (e) => switch (e) {
             Grade.b1 => DottoFoundationV1Grade.b1,
             Grade.b2 => DottoFoundationV1Grade.b2,
@@ -76,7 +76,7 @@ final class SubjectRepositoryImpl implements SubjectRepository {
             AcademicArea.advancedICTCourse => DottoFoundationV1Course.advancedICT,
           },
         ),
-        class_: filter.classes.isEmpty
+        classes: filter.classes.isEmpty
             ? null
             : BuiltList<DottoFoundationV1Class>(
                 filter.classes.map(
@@ -96,7 +96,7 @@ final class SubjectRepositoryImpl implements SubjectRepository {
                   },
                 ),
               ),
-        classification: filter.classifications.isEmpty
+        classifications: filter.classifications.isEmpty
             ? null
             : BuiltList<DottoFoundationV1SubjectClassification>(
                 filter.classifications.map(
@@ -108,7 +108,7 @@ final class SubjectRepositoryImpl implements SubjectRepository {
                   },
                 ),
               ),
-        semester: filter.semesters.isEmpty
+        semesters: filter.semesters.isEmpty
             ? null
             : BuiltList<DottoFoundationV1CourseSemester>(
                 filter.semesters.map(
@@ -125,7 +125,7 @@ final class SubjectRepositoryImpl implements SubjectRepository {
                   },
                 ),
               ),
-        requirementType: filter.requirements.isEmpty
+        requirementTypes: filter.requirements.isEmpty
             ? null
             : BuiltList<DottoFoundationV1SubjectRequirementType>(
                 filter.requirements.map(
@@ -136,7 +136,7 @@ final class SubjectRepositoryImpl implements SubjectRepository {
                   },
                 ),
               ),
-        culturalSubjectCategory: filter.culturalSubjectCategories.isEmpty
+        culturalSubjectCategories: filter.culturalSubjectCategories.isEmpty
             ? null
             : BuiltList<DottoFoundationV1CulturalSubjectCategory>(
                 filter.culturalSubjectCategories.map(

@@ -181,7 +181,7 @@ paths:
           schema:
             type: string
           explode: false
-        - name: grade
+        - name: grades
           in: query
           required: false
           description: 学年
@@ -199,7 +199,7 @@ paths:
             items:
               $ref: '#/components/schemas/DottoFoundationV1.Course'
           explode: false
-        - name: class
+        - name: classes
           in: query
           required: false
           description: クラス; 大学院の学年を選択した場合は選択できない
@@ -208,7 +208,7 @@ paths:
             items:
               $ref: '#/components/schemas/DottoFoundationV1.Class'
           explode: false
-        - name: classification
+        - name: classifications
           in: query
           required: false
           description: '学部: 専門・教養; 大学院: 専門・研究指導'
@@ -217,7 +217,7 @@ paths:
             items:
               $ref: '#/components/schemas/DottoFoundationV1.SubjectClassification'
           explode: false
-        - name: semester
+        - name: semesters
           in: query
           required: false
           description: 開講時期
@@ -226,7 +226,7 @@ paths:
             items:
               $ref: '#/components/schemas/DottoFoundationV1.CourseSemester'
           explode: false
-        - name: requirementType
+        - name: requirementTypes
           in: query
           required: false
           description: 必修・選択・選択必修
@@ -235,7 +235,7 @@ paths:
             items:
               $ref: '#/components/schemas/DottoFoundationV1.SubjectRequirementType'
           explode: false
-        - name: culturalSubjectCategory
+        - name: culturalSubjectCategories
           in: query
           required: false
           description: 教養科目カテゴリ
