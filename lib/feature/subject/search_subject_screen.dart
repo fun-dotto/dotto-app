@@ -1,3 +1,4 @@
+import 'package:dotto/domain/subject_faculty.dart';
 import 'package:dotto/domain/subject_filter.dart';
 import 'package:dotto/feature/subject/search_subject_filter_screen.dart';
 import 'package:dotto/feature/subject/search_subject_reducer.dart';
@@ -9,6 +10,25 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class SearchSubjectScreen extends HookConsumerWidget {
   const SearchSubjectScreen({super.key});
+
+  String? _buildFacultyLabel(List<SubjectFaculty> faculties) {
+    if (faculties.isEmpty) {
+      return null;
+    }
+
+    final primaryNames = faculties
+        .where((faculty) => faculty.isPrimary)
+        .map((faculty) => faculty.faculty.name)
+        .toList();
+    if (primaryNames.isNotEmpty) {
+      final otherCount = faculties.length - primaryNames.length;
+      return otherCount > 0 ? '${primaryNames.join(', ')} 他$otherCount名' : primaryNames.join(', ');
+    }
+
+    final fallbackNames = faculties.map((faculty) => faculty.faculty.name).toList();
+    final otherCount = fallbackNames.length - 1;
+    return otherCount > 0 ? '${fallbackNames.first} 他$otherCount名' : fallbackNames.first;
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -94,11 +114,21 @@ class SearchSubjectScreen extends HookConsumerWidget {
                             return ListTile(
                               title: Text(subject.name),
                               subtitle: () {
+                                final lines = <String>[];
                                 final slots = subject.slots;
-                                if (slots == null || slots.isEmpty) return null;
-                                return Text(
-                                  slots.map((slot) => '${slot.dayOfWeek.label}${slot.period.number}').join(' / '),
-                                );
+                                if (slots != null && slots.isNotEmpty) {
+                                  lines.add(
+                                    slots.map((slot) => '${slot.dayOfWeek.label}${slot.period.number}').join(' / '),
+                                  );
+                                }
+                                final facultyLabel = _buildFacultyLabel(subject.faculties);
+                                if (facultyLabel != null) {
+                                  lines.add(facultyLabel);
+                                }
+                                if (lines.isEmpty) {
+                                  return null;
+                                }
+                                return Text(lines.join('\n'));
                               }(),
                               onTap: () async {
                                 await Navigator.of(context).push(
