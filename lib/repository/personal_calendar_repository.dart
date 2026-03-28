@@ -6,11 +6,6 @@ import 'package:dotto/domain/personal_timetable_item.dart';
 import 'package:dotto/domain/room_assignment_index.dart';
 import 'package:dotto/domain/subject_summary.dart';
 import 'package:dotto/domain/timetable_item.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-final personalCalendarRepositoryProvider = Provider<PersonalCalendarRepository>(
-  (_) => PersonalCalendarRepositoryImpl(),
-);
 
 abstract class PersonalCalendarRepository {
   List<PersonalTimetableDay> getPersonalTimetableDays({

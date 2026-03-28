@@ -1,11 +1,6 @@
 import 'package:dotto/domain/lecture_override.dart';
 import 'package:dotto/domain/period.dart';
 import 'package:dotto/helper/file_helper.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-final lectureCancellationRepositoryProvider = Provider<LectureCancellationRepository>(
-  (_) => LectureCancellationRepositoryImpl(),
-);
 
 abstract class LectureCancellationRepository {
   Future<LectureCancellationData> getLectureCancellationData();

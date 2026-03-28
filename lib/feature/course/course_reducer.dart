@@ -3,9 +3,7 @@ import 'package:dotto/domain/semester.dart';
 import 'package:dotto/domain/subject_summary.dart';
 import 'package:dotto/feature/course/course_state.dart';
 import 'package:dotto/repository/course_registration_repository.dart';
-import 'package:dotto/repository/lecture_cancellation_repository.dart';
-import 'package:dotto/repository/personal_calendar_repository.dart';
-import 'package:dotto/repository/room_repository.dart';
+import 'package:dotto/repository/repository_provider.dart';
 import 'package:dotto/repository/timetable_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
