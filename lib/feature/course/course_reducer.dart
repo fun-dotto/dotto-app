@@ -1,10 +1,7 @@
-import 'package:dotto/api/api_client.dart';
 import 'package:dotto/domain/semester.dart';
 import 'package:dotto/domain/subject_summary.dart';
 import 'package:dotto/feature/course/course_state.dart';
-import 'package:dotto/repository/course_registration_repository.dart';
 import 'package:dotto/repository/repository_provider.dart';
-import 'package:dotto/repository/timetable_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'course_reducer.g.dart';
@@ -22,10 +19,9 @@ final class CourseReducer extends _$CourseReducer {
   }
 
   Future<CourseState> _createCourseState() async {
-    final apiClient = ref.read(apiClientProvider);
-    final courseRegistrationRepository = CourseRegistrationRepositoryImpl(apiClient);
+    final courseRegistrationRepository = ref.read(courseRegistrationRepositoryProvider);
     final lectureCancellationRepository = ref.read(lectureCancellationRepositoryProvider);
-    final timetableRepository = TimetableRepositoryImpl(apiClient);
+    final timetableRepository = ref.read(timetableRepositoryProvider);
     final roomRepository = ref.read(roomRepositoryProvider);
     final personalCalendarRepository = ref.read(personalCalendarRepositoryProvider);
 

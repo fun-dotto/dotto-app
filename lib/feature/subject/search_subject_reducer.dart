@@ -5,27 +5,16 @@ import 'package:dotto/domain/subject_filter.dart';
 import 'package:dotto/domain/subject_summary.dart';
 import 'package:dotto/domain/timetable_item.dart';
 import 'package:dotto/domain/timetable_slot.dart';
-import 'package:dotto/repository/course_registration_repository.dart';
+import 'package:dotto/repository/repository_provider.dart';
 import 'package:dotto/repository/subject_repository.dart';
-import 'package:dotto/repository/timetable_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'search_subject_reducer.g.dart';
 
-final courseRegistrationRepositoryProvider = Provider<CourseRegistrationRepository>((ref) {
-  final apiClient = ref.watch(apiClientProvider);
-  return CourseRegistrationRepositoryImpl(apiClient);
-});
-
 final subjectRepositoryProvider = Provider<SubjectRepository>((ref) {
   final apiClient = ref.watch(apiClientProvider);
   return SubjectRepositoryImpl(apiClient);
-});
-
-final timetableRepositoryProvider = Provider<TimetableRepository>((ref) {
-  final apiClient = ref.watch(apiClientProvider);
-  return TimetableRepositoryImpl(apiClient);
 });
 
 @riverpod
