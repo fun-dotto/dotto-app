@@ -40,8 +40,8 @@ final class SettingsScreen extends ConsumerWidget {
   }
 
   Future<bool> canOpenDebugScreen() async {
-    if (!kDebugMode) {
-      return false;
+    if (kDebugMode) {
+      return true;
     }
 
     final user = FirebaseAuth.instance.currentUser;
