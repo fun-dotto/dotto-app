@@ -35,7 +35,7 @@ final class CourseCancellationScreen extends HookConsumerWidget {
         title: const Text('休講・補講'),
         actions: [
           DottoButton(
-            onPressed: () => ref.read(courseCancellationReducerProvider.notifier).toggleFilter(),
+            onPressed: () => unawaited(ref.read(courseCancellationReducerProvider.notifier).toggleFilter()),
             type: DottoButtonType.text,
             child: Row(
               spacing: 4,
