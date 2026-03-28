@@ -9,13 +9,13 @@ includes:
     dir: ./api
 
 vars:
-  DART: dart
-  DOTENVX: dotenvx
-  FASTLANE: bundle exec fastlane
-  FLUTTER: flutter
-  GENHTML: genhtml
-  LCOV: lcov
-  OPENAPI_GENERATOR: openapi-generator-cli
+  DART: mise x -- dart
+  DOTENVX: mise x -- dotenvx
+  FASTLANE: mise x -- bundle exec fastlane
+  FLUTTER: mise x -- flutter
+  GENHTML: mise x -- genhtml
+  LCOV: mise x -- lcov
+  OPENAPI_GENERATOR: mise x -- openapi-generator-cli
 
 tasks:
   default:
