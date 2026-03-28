@@ -1,12 +1,16 @@
 {
   "mcpServers": {
-    "dotto_figma": {
+    "dotto-figma": {
       "url": "https://mcp.figma.com/mcp",
       "type": "http"
     },
-    "dotto_notion": {
+    "dotto-notion": {
       "url": "https://mcp.notion.com/mcp",
       "type": "http"
+    },
+    "firebase-mcp-server": {
+      "command": "npx",
+      "args": ["-y", "firebase-tools@latest", "mcp"]
     }
   }
 }

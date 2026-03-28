@@ -1,1 +1,34 @@
-CLAUDE.md
+# ツール
+
+- dotto-figma
+  - Figmaのリンクが提供されたときには、MCPを使用してアクセスすること。
+- dotto-notion
+  - Notionのリンクが提供されたときには、MCPを使用してアクセスすること。
+- firebase-mcp-server
+  - Crashlyticsを使用したCrashの分析に使用すること。
+
+# ルール
+
+- DRY 原則を遵守する
+- SOLID 原則を遵守する
+- ビルドやテスト、フォーマット、分析などのコマンドは [`Taskfile.yml`](Taskfile.yml) にあるものを使用すること。
+- コミット
+  - 変更は都度コミットすること。
+  - できるだけ小さい粒度でコミットすること。
+  - メッセージは日本語で記述すること。
+- Pull Request
+  - ドラフトで作成すること。
+  - 自分自身をAssigneeとして設定すること。
+  - 現時点から最も近い将来のマイルストーンを設定すること。
+  - タイトルと本文は全て日本語で記述すること。
+  - 本文はテンプレートの形式を引き継ぐこと。
+- Riverpod
+  - riverpod_annotationを使用すること。
+- Freezed
+  - ドメインモデルのclassでは、freezed_annotationを使用すること。
+- アーキテクチャ
+  - クリーンアーキテクチャを意識した設計を準州すること。
+  - Hooks + Riverpod + Reducer + Repository パターンで実装すること。
+  - MVVM + UseCase + Repository パターンが使われていることがあるが、現在は非推奨。
+  - RepositoryはRiverpodに依存しないこと。
+  - Repositoryは互いに独立していること。
