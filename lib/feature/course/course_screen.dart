@@ -6,6 +6,7 @@ import 'package:dotto/domain/quick_link.dart';
 import 'package:dotto/feature/course/course_cancellation_screen.dart';
 import 'package:dotto/feature/course/course_registration_screen.dart';
 import 'package:dotto/feature/course/course_reducer.dart';
+import 'package:dotto/feature/course/course_state.dart';
 import 'package:dotto/feature/course/personal_timetable_calendar_view.dart';
 import 'package:dotto/feature/home/component/file_grid.dart';
 import 'package:dotto/feature/home/component/file_tile.dart';
@@ -48,15 +49,18 @@ final class CourseScreen extends HookConsumerWidget {
         ),
       ),
     ];
-    final state = ref.watch(courseReducerProvider);
+    final state = isAuthenticated ? ref.watch(courseReducerProvider) : const AsyncData(CourseState());
     final selectedDate = useState<DateTime?>(null);
 
     useEffect(() {
+      if (!isAuthenticated) {
+        return null;
+      }
       WidgetsBinding.instance.addPostFrameCallback((_) {
         unawaited(ref.read(courseReducerProvider.notifier).refresh());
       });
       return null;
-    }, []);
+    }, [isAuthenticated]);
 
     useEffect(() {
       final days = state.value?.days;

@@ -9,9 +9,21 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'course_reducer.g.dart';
 
 typedef Clock = DateTime Function();
+typedef CourseCanFetchProtectedData = Future<bool> Function();
 
 final clockProvider = Provider<Clock>((_) => DateTime.now);
-final courseIsAuthenticatedProvider = Provider<bool>((_) => FirebaseAuth.instance.currentUser != null);
+final courseCanFetchProtectedDataProvider = Provider<CourseCanFetchProtectedData>((_) {
+  return () async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return false;
+    try {
+      final idToken = await user.getIdToken();
+      return idToken != null && idToken.isNotEmpty;
+    } on Exception {
+      return false;
+    }
+  };
+});
 
 @riverpod
 final class CourseReducer extends _$CourseReducer {
@@ -25,7 +37,8 @@ final class CourseReducer extends _$CourseReducer {
   }
 
   Future<CourseState> _createCourseState() async {
-    if (!ref.read(courseIsAuthenticatedProvider)) {
+    final canFetchProtectedData = await ref.read(courseCanFetchProtectedDataProvider)();
+    if (!canFetchProtectedData) {
       return const CourseState();
     }
 

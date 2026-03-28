@@ -127,7 +127,7 @@ void main() {
         timetableRepositoryProvider.overrideWithValue(timetableRepository),
         roomRepositoryProvider.overrideWithValue(roomRepository),
         personalCalendarRepositoryProvider.overrideWithValue(personalCalendarRepository),
-        courseIsAuthenticatedProvider.overrideWithValue(isAuthenticated),
+        courseCanFetchProtectedDataProvider.overrideWithValue(() async => isAuthenticated),
         clockProvider.overrideWithValue(() => DateTime(2026, 4, 8, 12)),
       ],
     );
