@@ -77,7 +77,7 @@ Future<void> main() async {
 
   // アプリの起動
   final container = ProviderContainer();
-  await container.read(apiEnvironmentProvider.notifier).load();
+  await container.read(apiEnvironmentProvider.notifier).loadOverride();
   runApp(UncontrolledProviderScope(container: container, child: const MyApp()));
 }
 

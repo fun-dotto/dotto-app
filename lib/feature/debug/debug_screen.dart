@@ -17,6 +17,8 @@ final class DebugScreen extends HookConsumerWidget {
     final appCheckToken = useFuture(useMemoized(() => FirebaseAppCheck.instance.getToken()));
     final idToken = useFuture(useMemoized(() => FirebaseAuth.instance.currentUser?.getIdToken()));
     final environment = ref.watch(apiEnvironmentProvider);
+    final apiEnvironmentNotifier = ref.read(apiEnvironmentProvider.notifier);
+    final environmentOverride = apiEnvironmentNotifier.environmentOverride;
     final config = ref.watch(configProvider);
     final configNotifier = ref.read(configProvider.notifier);
     final isV2EnabledOverride = configNotifier.isV2EnabledOverride;
@@ -27,17 +29,35 @@ final class DebugScreen extends HookConsumerWidget {
     Future<void> showEnvironmentPicker() async {
       await showDialog<void>(
         context: context,
-        builder: (context) => SimpleDialog(
-          title: const Text('Environment'),
-          children: Environment.values.map((env) {
-            return MaterialButton(
-              onPressed: () {
-                ref.read(apiEnvironmentProvider.notifier).value = env;
-                Navigator.of(context).pop();
+        builder: (dialogContext) => SimpleDialog(
+          title: const Text('API Environment Override'),
+          children: [
+            SimpleDialogOption(
+              onPressed: () async {
+                Navigator.of(dialogContext).pop();
+                await apiEnvironmentNotifier.setOverride(value: null);
               },
-              child: ListTile(title: Text(env.label), trailing: Icon(env == environment ? Icons.check : null)),
-            );
-          }).toList(),
+              child: ListTile(
+                contentPadding: EdgeInsets.zero,
+                title: const Text('Use Default'),
+                subtitle: Text('Default: ${apiEnvironmentNotifier.defaultEnvironment.label}'),
+                trailing: environmentOverride == null ? const Icon(Icons.check) : null,
+              ),
+            ),
+            ...Environment.values.map((env) {
+              return SimpleDialogOption(
+                onPressed: () async {
+                  Navigator.of(dialogContext).pop();
+                  await apiEnvironmentNotifier.setOverride(value: env);
+                },
+                child: ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: Text('Force ${env.label}'),
+                  trailing: environmentOverride == env ? const Icon(Icons.check) : null,
+                ),
+              );
+            }),
+          ],
         ),
       );
     }
@@ -179,9 +199,12 @@ final class DebugScreen extends HookConsumerWidget {
             ),
           ),
           ListTile(
-            title: const Text('Environment'),
-            subtitle: Text(environment.label),
-            trailing: const Icon(Icons.chevron_right),
+            title: const Text('API Environment Override'),
+            subtitle: Text(switch (environmentOverride) {
+              null => 'Use Default (${apiEnvironmentNotifier.defaultEnvironment.label})',
+              final value => 'Forced: ${value.label}',
+            }),
+            trailing: Text('Effective: ${environment.label}'),
             onTap: showEnvironmentPicker,
           ),
           ListTile(
