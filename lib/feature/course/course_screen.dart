@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:dotto/controller/config_controller.dart';
 import 'package:dotto/domain/quick_link.dart';
+import 'package:dotto/feature/course/course_cancellation_screen.dart';
 import 'package:dotto/feature/course/course_registration_screen.dart';
 import 'package:dotto/feature/course/course_reducer.dart';
 import 'package:dotto/feature/course/personal_timetable_calendar_view.dart';
@@ -10,7 +11,6 @@ import 'package:dotto/feature/home/component/file_tile.dart';
 import 'package:dotto/feature/home/component/link_grid.dart';
 import 'package:dotto/feature/subject/search_subject_screen.dart';
 import 'package:dotto/feature/subject/subject_detail_screen.dart';
-import 'package:dotto/feature/timetable_v0/course_cancellation_screen.dart';
 import 'package:dotto/widget/web_pdf_viewer.dart';
 import 'package:dotto_design_system/component/button.dart';
 import 'package:dotto_design_system/style/semantic_color.dart';
