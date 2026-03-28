@@ -10,24 +10,31 @@ import 'package:dotto/repository/user_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'user_controller.g.dart';
+
+final firebaseAuthStateChangesProvider = StreamProvider.autoDispose<User?>((ref) {
+  return FirebaseAuth.instance.authStateChanges();
+});
+
+final isAuthenticatedProvider = Provider.autoDispose<bool>((ref) {
+  final authState = ref.watch(firebaseAuthStateChangesProvider);
+  return authState.value != null;
+});
 
 @riverpod
 final class UserNotifier extends _$UserNotifier {
   @override
   Future<DottoUser> build() async {
+    ref.watch(firebaseAuthStateChangesProvider);
     final firebaseUser = FirebaseAuth.instance.currentUser;
     final didSaveFCMToken = await UserPreferenceRepository.getBool(UserPreferenceKeys.didSaveFCMToken);
     if (firebaseUser != null && didSaveFCMToken == false) {
       await _saveFCMToken(firebaseUser);
     }
     return _syncUser();
-  }
-
-  bool get isAuthenticated {
-    return FirebaseAuth.instance.currentUser != null;
   }
 
   Future<void> refresh() async {

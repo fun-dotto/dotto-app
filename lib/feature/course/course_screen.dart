@@ -26,7 +26,7 @@ final class CourseScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final config = ref.watch(configProvider);
-    final isAuthenticated = ref.watch(userProvider.notifier).isAuthenticated;
+    final isAuthenticated = ref.watch(isAuthenticatedProvider);
     // final timetablePeriodStyle = ref.watch(timetablePeriodStyleProvider);
     final fileItems = <(String label, String url, IconData icon)>[
       ('学年暦', config.officialCalendarPdfUrl, Icons.event_note),
