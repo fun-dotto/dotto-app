@@ -2,9 +2,14 @@ import 'package:dotto/domain/semester.dart';
 import 'package:dotto/domain/subject_summary.dart';
 import 'package:dotto/feature/course/course_state.dart';
 import 'package:dotto/repository/repository_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'course_reducer.g.dart';
+
+typedef Clock = DateTime Function();
+
+final clockProvider = Provider<Clock>((_) => DateTime.now);
 
 @riverpod
 final class CourseReducer extends _$CourseReducer {
@@ -14,7 +19,6 @@ final class CourseReducer extends _$CourseReducer {
   }
 
   Future<void> refresh() async {
-    state = const AsyncLoading();
     state = await AsyncValue.guard(_createCourseState);
   }
 
@@ -36,7 +40,8 @@ final class CourseReducer extends _$CourseReducer {
     final registeredSubjectsByName = <String, SubjectSummary>{
       for (final registration in courseRegistrations) registration.subject.name: registration.subject,
     };
-    final today = DateTime.now();
+    final now = ref.read(clockProvider);
+    final today = now();
     final todayDate = DateTime(today.year, today.month, today.day);
     final thisWeekMonday = todayDate.subtract(Duration(days: todayDate.weekday - 1));
     final targetDates = List.generate(
