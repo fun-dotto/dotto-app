@@ -1,5 +1,9 @@
-[mcp_servers.dotto_figma]
+[mcp_servers.dotto-figma]
 url = "https://mcp.figma.com/mcp"
 
-[mcp_servers.dotto_notion]
+[mcp_servers.dotto-notion]
 url = "https://mcp.notion.com/mcp"
+
+[mcp_servers.firebase-mcp-server]
+command = "npx"
+args = ["-y", "firebase-tools@latest", "mcp"]
