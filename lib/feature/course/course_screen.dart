@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:dotto/controller/config_controller.dart';
 import 'package:dotto/domain/quick_link.dart';
 import 'package:dotto/feature/course/course_registration_screen.dart';
-import 'package:dotto/feature/course/personal_timetable_calendar_reducer.dart';
+import 'package:dotto/feature/course/course_reducer.dart';
 import 'package:dotto/feature/course/personal_timetable_calendar_view.dart';
 import 'package:dotto/feature/home/component/file_grid.dart';
 import 'package:dotto/feature/home/component/file_tile.dart';
@@ -46,12 +46,12 @@ final class CourseScreen extends HookConsumerWidget {
         ),
       ),
     ];
-    final state = ref.watch(personalTimetableCalendarReducerProvider);
+    final state = ref.watch(courseReducerProvider);
     final selectedDate = useState<DateTime?>(null);
 
     useEffect(() {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        unawaited(ref.read(personalTimetableCalendarReducerProvider.notifier).refresh());
+        unawaited(ref.read(courseReducerProvider.notifier).refresh());
       });
       return null;
     }, []);
@@ -74,7 +74,7 @@ final class CourseScreen extends HookConsumerWidget {
       appBar: AppBar(title: const Text('講義'), centerTitle: false),
       body: switch (state) {
         AsyncData(value: final days) => RefreshIndicator(
-          onRefresh: () => ref.read(personalTimetableCalendarReducerProvider.notifier).refresh(),
+          onRefresh: () => ref.read(courseReducerProvider.notifier).refresh(),
           child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
             child: Column(

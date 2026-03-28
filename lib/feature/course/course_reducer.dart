@@ -11,10 +11,10 @@ import 'package:dotto/repository/course_registration_repository.dart';
 import 'package:dotto/repository/timetable_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-part 'personal_timetable_calendar_reducer.g.dart';
+part 'course_reducer.g.dart';
 
 @riverpod
-final class PersonalTimetableCalendarReducer extends _$PersonalTimetableCalendarReducer {
+final class CourseReducer extends _$CourseReducer {
   static const _roomNameByResourceId = <int, String>{
     1: '講堂',
     2: '大講義室',
