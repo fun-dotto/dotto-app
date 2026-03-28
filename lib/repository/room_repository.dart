@@ -80,8 +80,12 @@ final class RoomRepositoryImpl implements RoomRepository {
     }
 
     return RoomAssignmentIndex(
-      roomNamesBySlotAndTitle: {for (final entry in roomNamesBySlotAndTitle.entries) entry.key: entry.value.join(', ')},
-      roomNamesByTitle: {for (final entry in roomNamesByTitle.entries) entry.key: entry.value.join(', ')},
+      roomNamesBySlotAndTitle: {
+        for (final entry in roomNamesBySlotAndTitle.entries) entry.key: (entry.value.toList()..sort()).join(', '),
+      },
+      roomNamesByTitle: {
+        for (final entry in roomNamesByTitle.entries) entry.key: (entry.value.toList()..sort()).join(', '),
+      },
     );
   }
 
