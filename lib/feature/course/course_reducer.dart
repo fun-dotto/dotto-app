@@ -9,6 +9,7 @@ import 'package:dotto/domain/subject_summary.dart';
 import 'package:dotto/feature/course/course_state.dart';
 import 'package:dotto/helper/file_helper.dart';
 import 'package:dotto/repository/course_registration_repository.dart';
+import 'package:dotto/repository/room_repository.dart';
 import 'package:dotto/repository/timetable_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -16,32 +17,6 @@ part 'course_reducer.g.dart';
 
 @riverpod
 final class CourseReducer extends _$CourseReducer {
-  static const _roomNameByResourceId = <int, String>{
-    1: '講堂',
-    2: '大講義室',
-    3: '493',
-    4: '593',
-    5: '594',
-    6: '595',
-    7: 'R791',
-    8: '494C&D',
-    9: '495C&D',
-    10: '484',
-    11: '583',
-    12: '584',
-    13: '585',
-    14: 'R781',
-    15: 'R782',
-    16: '363',
-    17: '364',
-    18: '365',
-    19: '483',
-    50: 'アトリエ',
-    51: '体育館',
-    90: 'その他',
-    99: 'オンライン',
-  };
-
   @override
   Future<CourseState> build() async {
     return _createCourseState();
@@ -56,18 +31,18 @@ final class CourseReducer extends _$CourseReducer {
     final apiClient = ref.read(apiClientProvider);
     final courseRegistrationRepository = CourseRegistrationRepositoryImpl(apiClient);
     final timetableRepository = TimetableRepositoryImpl(apiClient);
+    final roomRepository = ref.read(roomRepositoryProvider);
 
-    final (courseRegistrations, timetableItems) = await (
+    final (courseRegistrations, timetableItems, roomAssignmentIndex) = await (
       courseRegistrationRepository.getCourseRegistrations(Semester.values),
       timetableRepository.getTimetableItems(Semester.values),
+      roomRepository.getRoomAssignmentIndex(),
     ).wait;
 
     final registeredSubjectIds = courseRegistrations.map((e) => e.subject.id).toSet();
     final registeredSubjectsByName = <String, SubjectSummary>{
       for (final registration in courseRegistrations) registration.subject.name: registration.subject,
     };
-    final roomNameBySlotAndTitle = await _loadRoomNameBySlotAndTitle();
-    final roomNameByTitle = await _loadRoomNameByTitle();
     final cancelledByDate = await _loadLectureOverrides('home/cancel_lecture.json');
     final madeUpByDate = await _loadLectureOverrides('home/sup_lecture.json');
     final today = DateTime.now();
@@ -89,17 +64,16 @@ final class CourseReducer extends _$CourseReducer {
                     item.slot!.dayOfWeek == timetableDayOfWeek,
               )
               .map((item) {
-                final slotKey = _slotTitleKey(
+                final roomName = roomAssignmentIndex.roomName(
                   dayOfWeek: timetableDayOfWeek,
                   period: item.slot!.period,
                   title: item.subject.name,
                 );
-                final roomName = roomNameBySlotAndTitle[slotKey] ?? roomNameByTitle[item.subject.name] ?? '';
                 return PersonalTimetableItem(
                   period: item.slot!.period,
                   subject: item.subject,
                   lectureStatus: LectureStatus.normal,
-                  roomName: roomName,
+                  roomName: roomName ?? '',
                 );
               })
               .toList()
@@ -121,7 +95,7 @@ final class CourseReducer extends _$CourseReducer {
               period: override.period,
               subject: subject,
               lectureStatus: LectureStatus.cancelled,
-              roomName: roomNameByTitle[override.lessonName] ?? '',
+              roomName: roomAssignmentIndex.roomNameByTitle(override.lessonName) ?? '',
             ),
           );
         }
@@ -140,45 +114,6 @@ final class CourseReducer extends _$CourseReducer {
       return PersonalTimetableDay(date: date, items: items, timetableDayOfWeek: timetableDayOfWeek);
     }).toList();
     return CourseState(days: days);
-  }
-
-  Future<Map<String, String>> _loadRoomNameBySlotAndTitle() async {
-    final data = await _loadJsonList('map/oneweek_schedule.json');
-    final map = <String, Set<String>>{};
-    for (final row in data) {
-      if (row is! Map<String, dynamic>) continue;
-      final title = row['title'] as String?;
-      final start = row['start'] as String?;
-      final periodNumber = row['period'] as int?;
-      final resourceIdRaw = row['resourceId'] as String?;
-      if (title == null || start == null || periodNumber == null || resourceIdRaw == null) continue;
-      final period = _toPeriod(periodNumber);
-      if (period == null) continue;
-      final resourceId = int.tryParse(resourceIdRaw);
-      final roomName = resourceId == null ? null : _roomNameByResourceId[resourceId];
-      if (roomName == null) continue;
-      final date = DateTime.tryParse(start);
-      if (date == null) continue;
-      final key = _slotTitleKey(dayOfWeek: DayOfWeek.fromDateTime(date), period: period, title: title);
-      map.putIfAbsent(key, () => <String>{}).add(roomName);
-    }
-    return {for (final entry in map.entries) entry.key: entry.value.join(', ')};
-  }
-
-  Future<Map<String, String>> _loadRoomNameByTitle() async {
-    final data = await _loadJsonList('map/oneweek_schedule.json');
-    final map = <String, Set<String>>{};
-    for (final row in data) {
-      if (row is! Map<String, dynamic>) continue;
-      final title = row['title'] as String?;
-      final resourceIdRaw = row['resourceId'] as String?;
-      if (title == null || resourceIdRaw == null) continue;
-      final resourceId = int.tryParse(resourceIdRaw);
-      final roomName = resourceId == null ? null : _roomNameByResourceId[resourceId];
-      if (roomName == null) continue;
-      map.putIfAbsent(title, () => <String>{}).add(roomName);
-    }
-    return {for (final entry in map.entries) entry.key: entry.value.join(', ')};
   }
 
   Future<Map<String, List<_LectureOverride>>> _loadLectureOverrides(String path) async {
@@ -208,10 +143,6 @@ final class CourseReducer extends _$CourseReducer {
     } on Exception {
       return const <dynamic>[];
     }
-  }
-
-  String _slotTitleKey({required DayOfWeek dayOfWeek, required Period period, required String title}) {
-    return '${dayOfWeek.number}-${period.number}-$title';
   }
 
   String _dateKey(DateTime date) {
