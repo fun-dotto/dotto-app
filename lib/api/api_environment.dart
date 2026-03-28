@@ -7,28 +7,55 @@ part 'api_environment.g.dart';
 
 @Riverpod(keepAlive: true)
 final class ApiEnvironment extends _$ApiEnvironment {
+  Environment? _environmentOverride;
+
   @override
   Environment build() {
-    if (kReleaseMode) return Environment.production;
-    return Environment.staging;
+    return _effectiveEnvironment;
   }
+
+  Environment get defaultEnvironment => kReleaseMode ? Environment.production : Environment.staging;
+
+  Environment get _effectiveEnvironment => _environmentOverride ?? defaultEnvironment;
 
   Environment get value => state;
 
-  set value(Environment newValue) {
-    state = newValue;
-    _save();
-  }
+  Environment? get environmentOverride => _environmentOverride;
 
-  Future<void> load() async {
-    final environment = await UserPreferenceRepository.getString(UserPreferenceKeys.environment);
-    if (environment != null) {
-      state = Environment.values.firstWhere((e) => e.tag == environment, orElse: () => state);
+  Future<void> setOverride({required Environment? value}) async {
+    _environmentOverride = value;
+    if (value == null) {
+      await UserPreferenceRepository.remove(UserPreferenceKeys.apiEnvironmentOverride);
+    } else {
+      await UserPreferenceRepository.setString(UserPreferenceKeys.apiEnvironmentOverride, value.tag);
     }
+    state = _effectiveEnvironment;
   }
 
-  Future<void> _save() async {
-    await UserPreferenceRepository.setString(UserPreferenceKeys.environment, state.tag);
+  Future<void> loadOverride() async {
+    final overrideTag = await UserPreferenceRepository.getString(UserPreferenceKeys.apiEnvironmentOverride);
+    if (overrideTag != null) {
+      _environmentOverride = Environment.values.firstWhere(
+        (environment) => environment.tag == overrideTag,
+        orElse: () => defaultEnvironment,
+      );
+      state = _effectiveEnvironment;
+      return;
+    }
+
+    final legacyTag = await UserPreferenceRepository.getString(UserPreferenceKeys.environment);
+    if (legacyTag == null) {
+      state = _effectiveEnvironment;
+      return;
+    }
+
+    _environmentOverride = Environment.values.firstWhere(
+      (environment) => environment.tag == legacyTag,
+      orElse: () => defaultEnvironment,
+    );
+    await UserPreferenceRepository.setString(UserPreferenceKeys.apiEnvironmentOverride, _environmentOverride!.tag);
+    await UserPreferenceRepository.remove(UserPreferenceKeys.environment);
+    state = _effectiveEnvironment;
   }
 }
 

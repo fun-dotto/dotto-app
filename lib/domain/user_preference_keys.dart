@@ -1,5 +1,6 @@
 enum UserPreferenceKeys {
   environment(key: 'environment', type: String),
+  apiEnvironmentOverride(key: 'apiEnvironmentOverride', type: String),
   grade(key: 'grade', type: String),
   course(key: 'course', type: String),
   class_(key: 'class', type: String),
