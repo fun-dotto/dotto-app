@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:dotto/controller/config_controller.dart';
 import 'package:dotto/domain/quick_link.dart';
-import 'package:dotto/feature/course_registration/course_registration_screen.dart';
-import 'package:dotto/feature/course_registration/personal_timetable_calendar_reducer.dart';
-import 'package:dotto/feature/course_registration/personal_timetable_calendar_view.dart';
+import 'package:dotto/feature/course/course_registration_screen.dart';
+import 'package:dotto/feature/course/personal_timetable_calendar_reducer.dart';
+import 'package:dotto/feature/course/personal_timetable_calendar_view.dart';
 import 'package:dotto/feature/home/component/file_grid.dart';
 import 'package:dotto/feature/home/component/file_tile.dart';
 import 'package:dotto/feature/home/component/link_grid.dart';
