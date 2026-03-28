@@ -6,6 +6,7 @@ import 'package:dotto/domain/personal_timetable_day.dart';
 import 'package:dotto/domain/personal_timetable_item.dart';
 import 'package:dotto/domain/semester.dart';
 import 'package:dotto/domain/subject_summary.dart';
+import 'package:dotto/feature/course/course_state.dart';
 import 'package:dotto/helper/file_helper.dart';
 import 'package:dotto/repository/course_registration_repository.dart';
 import 'package:dotto/repository/timetable_repository.dart';
@@ -42,8 +43,8 @@ final class CourseReducer extends _$CourseReducer {
   };
 
   @override
-  Future<List<PersonalTimetableDay>> build() async {
-    return const [];
+  Future<CourseState> build() async {
+    return const CourseState();
   }
 
   Future<void> refresh() async {
@@ -74,7 +75,7 @@ final class CourseReducer extends _$CourseReducer {
         (index) => thisWeekMonday.add(Duration(days: index)),
       ).where((date) => date.weekday <= DateTime.friday).toList();
 
-      return targetDates.map((date) {
+      final days = targetDates.map((date) {
         final timetableDayOfWeek = DayOfWeek.fromDateTime(date);
         final items =
             timetableItems
@@ -135,6 +136,7 @@ final class CourseReducer extends _$CourseReducer {
         items.sort((a, b) => a.period.number.compareTo(b.period.number));
         return PersonalTimetableDay(date: date, items: items, timetableDayOfWeek: timetableDayOfWeek);
       }).toList();
+      return CourseState(days: days);
     });
   }
 

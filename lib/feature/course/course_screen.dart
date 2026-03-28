@@ -57,7 +57,7 @@ final class CourseScreen extends HookConsumerWidget {
     }, []);
 
     useEffect(() {
-      final days = state.value;
+      final days = state.value?.days;
       if (days == null || days.isEmpty) {
         return null;
       }
@@ -73,7 +73,7 @@ final class CourseScreen extends HookConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('講義'), centerTitle: false),
       body: switch (state) {
-        AsyncData(value: final days) => RefreshIndicator(
+        AsyncData(value: final courseState) => RefreshIndicator(
           onRefresh: () => ref.read(courseReducerProvider.notifier).refresh(),
           child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
@@ -82,7 +82,7 @@ final class CourseScreen extends HookConsumerWidget {
                 Padding(
                   padding: const EdgeInsetsGeometry.symmetric(horizontal: 8),
                   child: PersonalTimetableCalendarView(
-                    personalTimetableDays: days,
+                    personalTimetableDays: courseState.days,
                     selectedDate: selectedDate.value,
                     onDateSelected: (newDate) => selectedDate.value = newDate,
                     onSubjectSelected: (subject) => Navigator.of(context).push(
