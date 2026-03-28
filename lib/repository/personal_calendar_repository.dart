@@ -1,6 +1,6 @@
 import 'package:dotto/domain/day_of_week.dart';
+import 'package:dotto/domain/lecture_override.dart';
 import 'package:dotto/domain/lecture_status.dart';
-import 'package:dotto/domain/period.dart';
 import 'package:dotto/domain/personal_timetable_day.dart';
 import 'package:dotto/domain/personal_timetable_item.dart';
 import 'package:dotto/domain/room_assignment_index.dart';
@@ -19,8 +19,8 @@ abstract class PersonalCalendarRepository {
     required Set<String> registeredSubjectIds,
     required Map<String, SubjectSummary> registeredSubjectsByName,
     required RoomAssignmentIndex roomAssignmentIndex,
-    required Map<String, List<PersonalCalendarOverride>> cancelledByDate,
-    required Map<String, List<PersonalCalendarOverride>> madeUpByDate,
+    required Map<String, List<LectureOverride>> cancelledByDate,
+    required Map<String, List<LectureOverride>> madeUpByDate,
   });
 }
 
@@ -34,8 +34,8 @@ final class PersonalCalendarRepositoryImpl implements PersonalCalendarRepository
     required Set<String> registeredSubjectIds,
     required Map<String, SubjectSummary> registeredSubjectsByName,
     required RoomAssignmentIndex roomAssignmentIndex,
-    required Map<String, List<PersonalCalendarOverride>> cancelledByDate,
-    required Map<String, List<PersonalCalendarOverride>> madeUpByDate,
+    required Map<String, List<LectureOverride>> cancelledByDate,
+    required Map<String, List<LectureOverride>> madeUpByDate,
   }) {
     return targetDates.map((date) {
       final timetableDayOfWeek = DayOfWeek.fromDateTime(date);
@@ -64,7 +64,7 @@ final class PersonalCalendarRepositoryImpl implements PersonalCalendarRepository
             ..sort((a, b) => a.period.number.compareTo(b.period.number));
 
       final dateKey = _dateKey(date);
-      for (final override in cancelledByDate[dateKey] ?? const <PersonalCalendarOverride>[]) {
+      for (final override in cancelledByDate[dateKey] ?? const <LectureOverride>[]) {
         final targetIndex = items.indexWhere(
           (item) => item.period == override.period && item.subject.name == override.lessonName,
         );
@@ -85,7 +85,7 @@ final class PersonalCalendarRepositoryImpl implements PersonalCalendarRepository
         }
       }
 
-      for (final override in madeUpByDate[dateKey] ?? const <PersonalCalendarOverride>[]) {
+      for (final override in madeUpByDate[dateKey] ?? const <LectureOverride>[]) {
         final targetIndex = items.indexWhere(
           (item) => item.period == override.period && item.subject.name == override.lessonName,
         );
@@ -102,11 +102,4 @@ final class PersonalCalendarRepositoryImpl implements PersonalCalendarRepository
   String _dateKey(DateTime date) {
     return '${date.year}-${date.month}-${date.day}';
   }
-}
-
-final class PersonalCalendarOverride {
-  PersonalCalendarOverride({required this.lessonName, required this.period});
-
-  final String lessonName;
-  final Period period;
 }
