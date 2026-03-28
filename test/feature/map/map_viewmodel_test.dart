@@ -6,6 +6,7 @@ import 'package:dotto/domain/room_schedule.dart';
 import 'package:dotto/feature/map/fun_map.dart';
 import 'package:dotto/feature/map/map_viewmodel.dart';
 import 'package:dotto/feature/map/map_viewstate.dart';
+import 'package:dotto/repository/repository_provider.dart';
 import 'package:dotto/repository/room_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
