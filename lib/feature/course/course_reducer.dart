@@ -2,6 +2,7 @@ import 'package:dotto/domain/semester.dart';
 import 'package:dotto/domain/subject_summary.dart';
 import 'package:dotto/feature/course/course_state.dart';
 import 'package:dotto/repository/repository_provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -10,6 +11,7 @@ part 'course_reducer.g.dart';
 typedef Clock = DateTime Function();
 
 final clockProvider = Provider<Clock>((_) => DateTime.now);
+final courseIsAuthenticatedProvider = Provider<bool>((_) => FirebaseAuth.instance.currentUser != null);
 
 @riverpod
 final class CourseReducer extends _$CourseReducer {
@@ -23,6 +25,10 @@ final class CourseReducer extends _$CourseReducer {
   }
 
   Future<CourseState> _createCourseState() async {
+    if (!ref.read(courseIsAuthenticatedProvider)) {
+      return const CourseState();
+    }
+
     final courseRegistrationRepository = ref.read(courseRegistrationRepositoryProvider);
     final lectureCancellationRepository = ref.read(lectureCancellationRepositoryProvider);
     final timetableRepository = ref.read(timetableRepositoryProvider);

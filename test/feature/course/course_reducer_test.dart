@@ -1,4 +1,5 @@
 import 'package:dotto/domain/course_registration.dart';
+import 'package:dotto/domain/course_cancellation.dart';
 import 'package:dotto/domain/day_of_week.dart';
 import 'package:dotto/domain/lecture_override.dart';
 import 'package:dotto/domain/personal_timetable_day.dart';
@@ -50,6 +51,11 @@ final class FakeLectureCancellationRepository implements LectureCancellationRepo
   Future<LectureCancellationData> getLectureCancellationData() async {
     getLectureCancellationDataCallCount += 1;
     return result;
+  }
+
+  @override
+  Future<List<CourseCancellation>> getCourseCancellations() {
+    throw UnimplementedError();
   }
 }
 
@@ -112,6 +118,7 @@ void main() {
     required FakeTimetableRepository timetableRepository,
     required FakeRoomRepository roomRepository,
     required FakePersonalCalendarRepository personalCalendarRepository,
+    bool isAuthenticated = true,
   }) {
     return ProviderContainer(
       overrides: [
@@ -120,6 +127,7 @@ void main() {
         timetableRepositoryProvider.overrideWithValue(timetableRepository),
         roomRepositoryProvider.overrideWithValue(roomRepository),
         personalCalendarRepositoryProvider.overrideWithValue(personalCalendarRepository),
+        courseIsAuthenticatedProvider.overrideWithValue(isAuthenticated),
         clockProvider.overrideWithValue(() => DateTime(2026, 4, 8, 12)),
       ],
     );
@@ -165,5 +173,39 @@ void main() {
     expect(targetDates!.first, DateTime(2026, 4, 6));
     expect(targetDates.last, DateTime(2026, 4, 17));
     expect(targetDates.every((date) => date.weekday <= DateTime.friday), isTrue);
+  });
+
+  test('未認証時は PersonalTimetableDay を取得しない', () async {
+    final subject = SubjectSummary(id: 'subject-1', name: 'Math', faculties: const []);
+    final courseRegistrationRepository = FakeCourseRegistrationRepository(
+      result: [CourseRegistration(id: 'registration-1', subject: subject)],
+    );
+    final lectureCancellationRepository = FakeLectureCancellationRepository(
+      result: LectureCancellationData(cancelledByDate: {}, madeUpByDate: {}),
+    );
+    final timetableRepository = FakeTimetableRepository(result: const []);
+    final roomRepository = FakeRoomRepository(
+      roomAssignmentIndex: RoomAssignmentIndex(roomNamesBySlotAndTitle: {}, roomNamesByTitle: {}),
+    );
+    final personalCalendarRepository = FakePersonalCalendarRepository(result: const []);
+
+    final container = createContainer(
+      courseRegistrationRepository: courseRegistrationRepository,
+      lectureCancellationRepository: lectureCancellationRepository,
+      timetableRepository: timetableRepository,
+      roomRepository: roomRepository,
+      personalCalendarRepository: personalCalendarRepository,
+      isAuthenticated: false,
+    );
+    addTearDown(container.dispose);
+
+    final state = await container.read(courseReducerProvider.future);
+
+    expect(state.days, isEmpty);
+    expect(courseRegistrationRepository.getCourseRegistrationsCallCount, 0);
+    expect(lectureCancellationRepository.getLectureCancellationDataCallCount, 0);
+    expect(timetableRepository.getTimetableItemsCallCount, 0);
+    expect(roomRepository.getRoomAssignmentIndexCallCount, 0);
+    expect(personalCalendarRepository.capturedTargetDates, isNull);
   });
 }
