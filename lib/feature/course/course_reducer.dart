@@ -1,14 +1,11 @@
 import 'package:dotto/api/api_client.dart';
-import 'package:dotto/domain/day_of_week.dart';
-import 'package:dotto/domain/lecture_status.dart';
 import 'package:dotto/domain/period.dart';
-import 'package:dotto/domain/personal_timetable_day.dart';
-import 'package:dotto/domain/personal_timetable_item.dart';
 import 'package:dotto/domain/semester.dart';
 import 'package:dotto/domain/subject_summary.dart';
 import 'package:dotto/feature/course/course_state.dart';
 import 'package:dotto/helper/file_helper.dart';
 import 'package:dotto/repository/course_registration_repository.dart';
+import 'package:dotto/repository/personal_calendar_repository.dart';
 import 'package:dotto/repository/room_repository.dart';
 import 'package:dotto/repository/timetable_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -32,6 +29,7 @@ final class CourseReducer extends _$CourseReducer {
     final courseRegistrationRepository = CourseRegistrationRepositoryImpl(apiClient);
     final timetableRepository = TimetableRepositoryImpl(apiClient);
     final roomRepository = ref.read(roomRepositoryProvider);
+    final personalCalendarRepository = ref.read(personalCalendarRepositoryProvider);
 
     final (courseRegistrations, timetableItems, roomAssignmentIndex) = await (
       courseRegistrationRepository.getCourseRegistrations(Semester.values),
@@ -53,72 +51,21 @@ final class CourseReducer extends _$CourseReducer {
       (index) => thisWeekMonday.add(Duration(days: index)),
     ).where((date) => date.weekday <= DateTime.friday).toList();
 
-    final days = targetDates.map((date) {
-      final timetableDayOfWeek = DayOfWeek.fromDateTime(date);
-      final items =
-          timetableItems
-              .where(
-                (item) =>
-                    item.slot != null &&
-                    registeredSubjectIds.contains(item.subject.id) &&
-                    item.slot!.dayOfWeek == timetableDayOfWeek,
-              )
-              .map((item) {
-                final roomName = roomAssignmentIndex.roomName(
-                  dayOfWeek: timetableDayOfWeek,
-                  period: item.slot!.period,
-                  title: item.subject.name,
-                );
-                return PersonalTimetableItem(
-                  period: item.slot!.period,
-                  subject: item.subject,
-                  lectureStatus: LectureStatus.normal,
-                  roomName: roomName ?? '',
-                );
-              })
-              .toList()
-            ..sort((a, b) => a.period.number.compareTo(b.period.number));
-
-      final dateKey = _dateKey(date);
-      for (final override in cancelledByDate[dateKey] ?? const <_LectureOverride>[]) {
-        final targetIndex = items.indexWhere(
-          (item) => item.period == override.period && item.subject.name == override.lessonName,
-        );
-        if (targetIndex >= 0) {
-          items[targetIndex] = items[targetIndex].copyWith(lectureStatus: LectureStatus.cancelled);
-          continue;
-        }
-        final subject = registeredSubjectsByName[override.lessonName];
-        if (subject != null) {
-          items.add(
-            PersonalTimetableItem(
-              period: override.period,
-              subject: subject,
-              lectureStatus: LectureStatus.cancelled,
-              roomName: roomAssignmentIndex.roomNameByTitle(override.lessonName) ?? '',
-            ),
-          );
-        }
-      }
-
-      for (final override in madeUpByDate[dateKey] ?? const <_LectureOverride>[]) {
-        final targetIndex = items.indexWhere(
-          (item) => item.period == override.period && item.subject.name == override.lessonName,
-        );
-        if (targetIndex >= 0) {
-          items[targetIndex] = items[targetIndex].copyWith(lectureStatus: LectureStatus.madeUp);
-        }
-      }
-
-      items.sort((a, b) => a.period.number.compareTo(b.period.number));
-      return PersonalTimetableDay(date: date, items: items, timetableDayOfWeek: timetableDayOfWeek);
-    }).toList();
+    final days = personalCalendarRepository.getPersonalTimetableDays(
+      targetDates: targetDates,
+      timetableItems: timetableItems,
+      registeredSubjectIds: registeredSubjectIds,
+      registeredSubjectsByName: registeredSubjectsByName,
+      roomAssignmentIndex: roomAssignmentIndex,
+      cancelledByDate: cancelledByDate,
+      madeUpByDate: madeUpByDate,
+    );
     return CourseState(days: days);
   }
 
-  Future<Map<String, List<_LectureOverride>>> _loadLectureOverrides(String path) async {
+  Future<Map<String, List<PersonalCalendarOverride>>> _loadLectureOverrides(String path) async {
     final data = await _loadJsonList(path);
-    final result = <String, List<_LectureOverride>>{};
+    final result = <String, List<PersonalCalendarOverride>>{};
     for (final row in data) {
       if (row is! Map<String, dynamic>) continue;
       final dateRaw = row['date'] as String?;
@@ -129,10 +76,10 @@ final class CourseReducer extends _$CourseReducer {
       if (period == null) continue;
       final date = DateTime.tryParse(dateRaw);
       if (date == null) continue;
-      final dateKey = _dateKey(date);
+      final dateKey = _formatDateKey(date);
       result
-          .putIfAbsent(dateKey, () => <_LectureOverride>[])
-          .add(_LectureOverride(lessonName: lessonName, period: period));
+          .putIfAbsent(dateKey, () => <PersonalCalendarOverride>[])
+          .add(PersonalCalendarOverride(lessonName: lessonName, period: period));
     }
     return result;
   }
@@ -145,7 +92,7 @@ final class CourseReducer extends _$CourseReducer {
     }
   }
 
-  String _dateKey(DateTime date) {
+  String _formatDateKey(DateTime date) {
     return '${date.year}-${date.month}-${date.day}';
   }
 
@@ -155,11 +102,4 @@ final class CourseReducer extends _$CourseReducer {
     }
     return Period.fromNumber(number);
   }
-}
-
-final class _LectureOverride {
-  _LectureOverride({required this.lessonName, required this.period});
-
-  final String lessonName;
-  final Period period;
 }
