@@ -147,7 +147,18 @@ final class CourseScreen extends HookConsumerWidget {
           ),
         ),
         AsyncLoading() => const Center(child: CircularProgressIndicator()),
-        AsyncError() => const Center(child: Text('データの取得に失敗しました')),
+        AsyncError() => RefreshIndicator(
+          onRefresh: () => ref.read(courseReducerProvider.notifier).refresh(),
+          child: ListView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            children: [
+              SizedBox(
+                height: MediaQuery.sizeOf(context).height * 0.7,
+                child: const Center(child: Text('データの取得に失敗しました')),
+              ),
+            ],
+          ),
+        ),
       },
     );
   }
