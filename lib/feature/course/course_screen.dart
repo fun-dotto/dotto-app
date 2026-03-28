@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:dotto/controller/config_controller.dart';
+import 'package:dotto/controller/user_controller.dart';
 import 'package:dotto/domain/quick_link.dart';
 import 'package:dotto/feature/course/course_registration_screen.dart';
 import 'package:dotto/feature/course/course_reducer.dart';
@@ -24,6 +25,7 @@ final class CourseScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final config = ref.watch(configProvider);
+    final isAuthenticated = ref.watch(userProvider.notifier).isAuthenticated;
     // final timetablePeriodStyle = ref.watch(timetablePeriodStyleProvider);
     final fileItems = <(String label, String url, IconData icon)>[
       ('学年暦', config.officialCalendarPdfUrl, Icons.event_note),
@@ -79,36 +81,48 @@ final class CourseScreen extends HookConsumerWidget {
             physics: const AlwaysScrollableScrollPhysics(),
             child: Column(
               children: [
-                Padding(
-                  padding: const EdgeInsetsGeometry.symmetric(horizontal: 8),
-                  child: PersonalTimetableCalendarView(
-                    personalTimetableDays: courseState.days,
-                    selectedDate: selectedDate.value,
-                    onDateSelected: (newDate) => selectedDate.value = newDate,
-                    onSubjectSelected: (subject) => Navigator.of(context).push(
-                      MaterialPageRoute<void>(
-                        builder: (context) => SubjectDetailScreen(id: subject.id),
-                        settings: RouteSettings(name: '/course/subjects/${subject.id}'),
-                      ),
-                    ),
-                  ),
-                ),
-                Row(
-                  mainAxisAlignment: .end,
-                  children: [
-                    DottoButton(
-                      onPressed: () => Navigator.of(context).push(
+                if (isAuthenticated)
+                  Padding(
+                    padding: const EdgeInsetsGeometry.symmetric(horizontal: 8),
+                    child: PersonalTimetableCalendarView(
+                      personalTimetableDays: courseState.days,
+                      selectedDate: selectedDate.value,
+                      onDateSelected: (newDate) => selectedDate.value = newDate,
+                      onSubjectSelected: (subject) => Navigator.of(context).push(
                         MaterialPageRoute<void>(
-                          builder: (context) => const CourseRegistrationScreen(),
-                          settings: const RouteSettings(name: '/course/registration'),
+                          builder: (context) => SubjectDetailScreen(id: subject.id),
+                          settings: RouteSettings(name: '/course/subjects/${subject.id}'),
                         ),
                       ),
-                      type: DottoButtonType.text,
-                      child: const Text('1週間の時間割'),
                     ),
-                  ],
+                  )
+                else
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 48),
+                    child: Center(
+                      child: Text('時間割機能を利用するにはログインしてください。', style: Theme.of(context).textTheme.bodyMedium),
+                    ),
+                  ),
+                if (isAuthenticated)
+                  Row(
+                    mainAxisAlignment: .end,
+                    children: [
+                      DottoButton(
+                        onPressed: () => Navigator.of(context).push(
+                          MaterialPageRoute<void>(
+                            builder: (context) => const CourseRegistrationScreen(),
+                            settings: const RouteSettings(name: '/course/registration'),
+                          ),
+                        ),
+                        type: DottoButtonType.text,
+                        child: const Text('1週間の時間割'),
+                      ),
+                    ],
+                  ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: _featureButtons(context, isAuthenticated: isAuthenticated),
                 ),
-                Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child: _featureButtons(context)),
                 Padding(
                   padding: const EdgeInsetsGeometry.all(16),
                   child: ConstrainedBox(
@@ -138,7 +152,33 @@ final class CourseScreen extends HookConsumerWidget {
     );
   }
 
-  Widget _featureButtons(BuildContext context) {
+  Widget _featureButtons(BuildContext context, {required bool isAuthenticated}) {
+    final buttons = <Widget>[
+      _featureButton(
+        context,
+        icon: Icons.search,
+        label: '科目検索',
+        onPressed: () => Navigator.of(context).push(
+          MaterialPageRoute<void>(
+            builder: (context) => const SearchSubjectScreen(),
+            settings: const RouteSettings(name: '/course/subjects'),
+          ),
+        ),
+      ),
+      if (isAuthenticated)
+        _featureButton(
+          context,
+          icon: Icons.calendar_month,
+          label: '休講・補講',
+          onPressed: () => Navigator.of(context).push(
+            MaterialPageRoute<void>(
+              builder: (context) => const CourseCancellationScreen(),
+              settings: const RouteSettings(name: '/course/cancellations'),
+            ),
+          ),
+        ),
+    ];
+
     return Container(
       decoration: BoxDecoration(
         border: Border.all(color: SemanticColor.light.borderPrimary),
@@ -147,34 +187,7 @@ final class CourseScreen extends HookConsumerWidget {
       ),
       child: Padding(
         padding: const EdgeInsets.all(16),
-        child: Row(
-          mainAxisAlignment: .center,
-          spacing: 8,
-          children: [
-            _featureButton(
-              context,
-              icon: Icons.search,
-              label: '科目検索',
-              onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute<void>(
-                  builder: (context) => const SearchSubjectScreen(),
-                  settings: const RouteSettings(name: '/course/subjects'),
-                ),
-              ),
-            ),
-            _featureButton(
-              context,
-              icon: Icons.calendar_month,
-              label: '休講・補講',
-              onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute<void>(
-                  builder: (context) => const CourseCancellationScreen(),
-                  settings: const RouteSettings(name: '/course/cancellations'),
-                ),
-              ),
-            ),
-          ],
-        ),
+        child: Row(mainAxisAlignment: .center, spacing: 8, children: buttons),
       ),
     );
   }
