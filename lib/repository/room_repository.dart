@@ -16,8 +16,7 @@ final class RoomRepositoryImpl implements RoomRepository {
 
   @override
   Future<List<Room>> getRooms() async {
-    final roomResponses = await RoomAPI.getRooms();
-    final roomScheduleResponses = await RoomAPI.getRoomSchedules();
+    final (roomResponses, roomScheduleResponses) = await (RoomAPI.getRooms(), RoomAPI.getRoomSchedules()).wait;
 
     return roomResponses.entries.expand((floorEntry) {
       final floorLabel = floorEntry.key;
