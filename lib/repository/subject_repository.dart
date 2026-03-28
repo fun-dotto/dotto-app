@@ -18,18 +18,10 @@ import 'package:dotto/domain/subject_requirement.dart';
 import 'package:dotto/domain/subject_requirement_type.dart';
 import 'package:dotto/domain/subject_summary.dart';
 import 'package:dotto/domain/syllabus.dart';
+import 'package:dotto/extension/iterable_extension.dart';
 import 'package:dotto/helper/syllabus_database_helper.dart';
 import 'package:flutter/foundation.dart';
 import 'package:openapi/openapi.dart' hide SubjectFaculty, SubjectSummary;
-
-extension IterableToBuiltListOrNullExtension<E> on Iterable<E> {
-  BuiltList<T>? mapToBuiltListOrNull<T>(T Function(E) convert) {
-    if (isEmpty) {
-      return null;
-    }
-    return BuiltList<T>(map(convert));
-  }
-}
 
 abstract class SubjectRepository {
   Future<List<SubjectSummary>> getSubjects(String query, SubjectFilter filter);

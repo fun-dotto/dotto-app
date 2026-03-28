@@ -10,6 +10,7 @@ import 'package:dotto/domain/timetable_item.dart';
 import 'package:dotto/domain/timetable_slot.dart';
 import 'package:dotto/feature/subject/search_subject_reducer.dart';
 import 'package:dotto/repository/course_registration_repository.dart';
+import 'package:dotto/repository/repository_provider.dart';
 import 'package:dotto/repository/subject_repository.dart';
 import 'package:dotto/repository/timetable_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

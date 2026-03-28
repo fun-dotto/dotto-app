@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:dotto/controller/config_controller.dart';
 import 'package:dotto/domain/quick_link.dart';
-import 'package:dotto/feature/course_registration/course_registration_screen.dart';
-import 'package:dotto/feature/course_registration/personal_timetable_calendar_reducer.dart';
-import 'package:dotto/feature/course_registration/personal_timetable_calendar_view.dart';
+import 'package:dotto/feature/course/course_registration_screen.dart';
+import 'package:dotto/feature/course/course_reducer.dart';
+import 'package:dotto/feature/course/personal_timetable_calendar_view.dart';
 import 'package:dotto/feature/home/component/file_grid.dart';
 import 'package:dotto/feature/home/component/file_tile.dart';
 import 'package:dotto/feature/home/component/link_grid.dart';
@@ -46,18 +46,18 @@ final class CourseScreen extends HookConsumerWidget {
         ),
       ),
     ];
-    final state = ref.watch(personalTimetableCalendarReducerProvider);
+    final state = ref.watch(courseReducerProvider);
     final selectedDate = useState<DateTime?>(null);
 
     useEffect(() {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        unawaited(ref.read(personalTimetableCalendarReducerProvider.notifier).refresh());
+        unawaited(ref.read(courseReducerProvider.notifier).refresh());
       });
       return null;
     }, []);
 
     useEffect(() {
-      final days = state.value;
+      final days = state.value?.days;
       if (days == null || days.isEmpty) {
         return null;
       }
@@ -73,8 +73,8 @@ final class CourseScreen extends HookConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('講義'), centerTitle: false),
       body: switch (state) {
-        AsyncData(value: final days) => RefreshIndicator(
-          onRefresh: () => ref.read(personalTimetableCalendarReducerProvider.notifier).refresh(),
+        AsyncData(value: final courseState) => RefreshIndicator(
+          onRefresh: () => ref.read(courseReducerProvider.notifier).refresh(),
           child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
             child: Column(
@@ -82,7 +82,7 @@ final class CourseScreen extends HookConsumerWidget {
                 Padding(
                   padding: const EdgeInsetsGeometry.symmetric(horizontal: 8),
                   child: PersonalTimetableCalendarView(
-                    personalTimetableDays: days,
+                    personalTimetableDays: courseState.days,
                     selectedDate: selectedDate.value,
                     onDateSelected: (newDate) => selectedDate.value = newDate,
                     onSubjectSelected: (subject) => Navigator.of(context).push(
