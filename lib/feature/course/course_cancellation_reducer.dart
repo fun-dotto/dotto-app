@@ -25,9 +25,23 @@ final class CourseCancellationReducer extends _$CourseCancellationReducer {
 
   Future<void> toggleFilter() async {
     final current = state.value;
-    state = await AsyncValue.guard(
-      () => _createState(
-        isFilteredOnlyTakingCourseCancellation: !(current?.isFilteredOnlyTakingCourseCancellation ?? false),
+    if (current == null) {
+      await refresh();
+      return;
+    }
+
+    final nextIsFilteredOnlyTakingCourseCancellation = !current.isFilteredOnlyTakingCourseCancellation;
+    final nextCancellations = nextIsFilteredOnlyTakingCourseCancellation
+        ? _filterByTakingCourse(
+            courseCancellations: current.allCancellations,
+            takingCourseNames: current.takingCourseNames,
+          )
+        : current.allCancellations;
+
+    state = AsyncData(
+      current.copyWith(
+        cancellations: nextCancellations,
+        isFilteredOnlyTakingCourseCancellation: nextIsFilteredOnlyTakingCourseCancellation,
       ),
     );
   }
@@ -40,21 +54,23 @@ final class CourseCancellationReducer extends _$CourseCancellationReducer {
       courseRegistrationRepository.getCourseRegistrations(Semester.values),
     ).wait;
 
+    final takingCourseNames = {for (final registration in courseRegistrations) registration.subject.name};
     final cancellations = isFilteredOnlyTakingCourseCancellation
-        ? _filterByTakingCourse(courseCancellations: courseCancellations, courseRegistrations: courseRegistrations)
+        ? _filterByTakingCourse(courseCancellations: courseCancellations, takingCourseNames: takingCourseNames)
         : courseCancellations;
 
     return CourseCancellationState(
       cancellations: cancellations,
+      allCancellations: courseCancellations,
+      takingCourseNames: takingCourseNames,
       isFilteredOnlyTakingCourseCancellation: isFilteredOnlyTakingCourseCancellation,
     );
   }
 
   List<CourseCancellation> _filterByTakingCourse({
     required List<CourseCancellation> courseCancellations,
-    required List<CourseRegistration> courseRegistrations,
+    required Set<String> takingCourseNames,
   }) {
-    final takingCourseNames = {for (final registration in courseRegistrations) registration.subject.name};
     return courseCancellations.where((cancellation) => takingCourseNames.contains(cancellation.lessonName)).toList();
   }
 }
