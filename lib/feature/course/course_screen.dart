@@ -57,6 +57,9 @@ final class CourseScreen extends HookConsumerWidget {
         return null;
       }
       WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!context.mounted || !isAuthenticated) {
+          return;
+        }
         unawaited(ref.read(courseReducerProvider.notifier).refresh());
       });
       return null;
@@ -80,7 +83,12 @@ final class CourseScreen extends HookConsumerWidget {
       appBar: AppBar(title: const Text('講義'), centerTitle: false),
       body: switch (state) {
         AsyncData(value: final courseState) => RefreshIndicator(
-          onRefresh: () => ref.read(courseReducerProvider.notifier).refresh(),
+          onRefresh: () async {
+            if (!isAuthenticated) {
+              return;
+            }
+            await ref.read(courseReducerProvider.notifier).refresh();
+          },
           child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
             child: Column(
@@ -152,7 +160,12 @@ final class CourseScreen extends HookConsumerWidget {
         ),
         AsyncLoading() => const Center(child: CircularProgressIndicator()),
         AsyncError() => RefreshIndicator(
-          onRefresh: () => ref.read(courseReducerProvider.notifier).refresh(),
+          onRefresh: () async {
+            if (!isAuthenticated) {
+              return;
+            }
+            await ref.read(courseReducerProvider.notifier).refresh();
+          },
           child: ListView(
             physics: const AlwaysScrollableScrollPhysics(),
             children: [

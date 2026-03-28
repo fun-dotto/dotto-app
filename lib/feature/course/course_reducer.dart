@@ -33,12 +33,16 @@ final class CourseReducer extends _$CourseReducer {
   }
 
   Future<void> refresh() async {
-    state = await AsyncValue.guard(_createCourseState);
+    final nextState = await AsyncValue.guard(_createCourseState);
+    if (!ref.mounted) {
+      return;
+    }
+    state = nextState;
   }
 
   Future<CourseState> _createCourseState() async {
     final canFetchProtectedData = await ref.read(courseCanFetchProtectedDataProvider)();
-    if (!canFetchProtectedData) {
+    if (!ref.mounted || !canFetchProtectedData) {
       return const CourseState();
     }
 
@@ -54,6 +58,9 @@ final class CourseReducer extends _$CourseReducer {
       timetableRepository.getTimetableItems(Semester.values),
       roomRepository.getRoomAssignmentIndex(),
     ).wait;
+    if (!ref.mounted) {
+      return const CourseState();
+    }
 
     final registeredSubjectIds = courseRegistrations.map((e) => e.subject.id).toSet();
     final registeredSubjectsByName = <String, SubjectSummary>{
