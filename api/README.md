@@ -118,6 +118,12 @@ Class | Method | HTTP request | Description
 
 
 Authentication schemes defined for the API:
+### FirebaseAppCheckAuth
+
+- **Type**: API key
+- **API key parameter name**: X-Firebase-AppCheck
+- **Location**: HTTP header
+
 ### BearerAuth
 
 - **Type**: HTTP Bearer Token authentication

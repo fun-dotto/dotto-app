@@ -22,6 +22,10 @@ Method | HTTP request | Description
 ### Example
 ```dart
 import 'package:openapi/api.dart';
+// TODO Configure API key authorization: FirebaseAppCheckAuth
+//defaultApiClient.getAuthentication<ApiKeyAuth>('FirebaseAppCheckAuth').apiKey = 'YOUR_API_KEY';
+// uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+//defaultApiClient.getAuthentication<ApiKeyAuth>('FirebaseAppCheckAuth').apiKeyPrefix = 'Bearer';
 
 final api = Openapi().getTimetableItemsApi();
 final BuiltList<DottoFoundationV1CourseSemester> semesters = ; // BuiltList<DottoFoundationV1CourseSemester> | 開講時期
@@ -48,7 +52,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[BearerAuth](../README.md#BearerAuth)
+[FirebaseAppCheckAuth](../README.md#FirebaseAppCheckAuth)
 
 ### HTTP request headers
 
