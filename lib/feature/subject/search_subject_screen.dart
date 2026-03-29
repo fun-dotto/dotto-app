@@ -1,5 +1,6 @@
 import 'package:dotto/domain/subject_faculty.dart';
 import 'package:dotto/domain/subject_filter.dart';
+import 'package:dotto/controller/user_controller.dart';
 import 'package:dotto/feature/subject/search_subject_filter_screen.dart';
 import 'package:dotto/feature/subject/search_subject_reducer.dart';
 import 'package:dotto/feature/subject/subject_detail_screen.dart';
@@ -32,6 +33,7 @@ class SearchSubjectScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final isAuthenticated = ref.watch(isAuthenticatedProvider);
     final textEditingController = useTextEditingController();
     final focusNode = useFocusNode();
     final filter = useState(SubjectFilter());
@@ -137,6 +139,9 @@ class SearchSubjectScreen extends HookConsumerWidget {
                               },
                               trailing: const Icon(Icons.chevron_right),
                               leading: () {
+                                if (!isAuthenticated) {
+                                  return null;
+                                }
                                 final isAddedToTimetable = subject.isAddedToTimetable;
                                 if (isAddedToTimetable == null) return null;
                                 final isProcessing = processingSubjectIds.value.contains(subject.id);

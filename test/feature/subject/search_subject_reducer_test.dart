@@ -8,6 +8,7 @@ import 'package:dotto/domain/subject_filter.dart';
 import 'package:dotto/domain/subject_summary.dart';
 import 'package:dotto/domain/timetable_item.dart';
 import 'package:dotto/domain/timetable_slot.dart';
+import 'package:dotto/controller/user_controller.dart';
 import 'package:dotto/feature/subject/search_subject_reducer.dart';
 import 'package:dotto/repository/course_registration_repository.dart';
 import 'package:dotto/repository/repository_provider.dart';
@@ -95,6 +96,7 @@ void main() {
   }) {
     return ProviderContainer(
       overrides: [
+        isAuthenticatedProvider.overrideWith((ref) => true),
         courseRegistrationRepositoryProvider.overrideWithValue(courseRegistrationRepository),
         subjectRepositoryProvider.overrideWithValue(subjectRepository),
         timetableRepositoryProvider.overrideWithValue(timetableRepository),
