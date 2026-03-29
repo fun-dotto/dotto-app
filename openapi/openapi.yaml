@@ -86,6 +86,9 @@ paths:
           description: Access is unauthorized.
       tags:
         - CourseRegistrations
+      security:
+        - BearerAuth: []
+          FirebaseAppCheckAuth: []
     post:
       operationId: CourseRegistrationsV1_create
       description: 履修情報を作成する
@@ -113,6 +116,9 @@ paths:
             schema:
               $ref: '#/components/schemas/CourseRegistrationRequest'
         description: 作成する履修情報の情報
+      security:
+        - BearerAuth: []
+          FirebaseAppCheckAuth: []
   /v1/courseRegistrations/{id}:
     delete:
       operationId: CourseRegistrationsV1_delete
@@ -133,6 +139,9 @@ paths:
           description: The server cannot find the requested resource.
       tags:
         - CourseRegistrations
+      security:
+        - BearerAuth: []
+          FirebaseAppCheckAuth: []
   /v1/personalCalendarItems:
     get:
       operationId: PersonalCalendarItemsV1_list
@@ -166,6 +175,9 @@ paths:
           description: Access is unauthorized.
       tags:
         - PersonalCalendarItems
+      security:
+        - BearerAuth: []
+          FirebaseAppCheckAuth: []
   /v1/subjects:
     get:
       operationId: SubjectsV1_list
@@ -351,6 +363,9 @@ paths:
           description: The server cannot find the requested resource.
       tags:
         - Users
+      security:
+        - BearerAuth: []
+          FirebaseAppCheckAuth: []
     post:
       operationId: UsersV1_upsert
       description: ユーザーを作成または更新する
@@ -378,8 +393,11 @@ paths:
             schema:
               $ref: '#/components/schemas/UserInfo'
         description: 作成または更新するユーザーの情報
+      security:
+        - BearerAuth: []
+          FirebaseAppCheckAuth: []
 security:
-  - BearerAuth: []
+  - FirebaseAppCheckAuth: []
 components:
   schemas:
     AcademicService.Faculty:
@@ -801,6 +819,11 @@ components:
         class:
           $ref: '#/components/schemas/DottoFoundationV1.Class'
   securitySchemes:
+    FirebaseAppCheckAuth:
+      type: apiKey
+      in: header
+      name: X-Firebase-AppCheck
+      description: 'Set a bearer token in the format: `Bearer <token>`.'
     BearerAuth:
       type: http
       scheme: Bearer

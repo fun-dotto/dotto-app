@@ -24,6 +24,10 @@ Method | HTTP request | Description
 ### Example
 ```dart
 import 'package:openapi/api.dart';
+// TODO Configure API key authorization: FirebaseAppCheckAuth
+//defaultApiClient.getAuthentication<ApiKeyAuth>('FirebaseAppCheckAuth').apiKey = 'YOUR_API_KEY';
+// uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+//defaultApiClient.getAuthentication<ApiKeyAuth>('FirebaseAppCheckAuth').apiKeyPrefix = 'Bearer';
 
 final api = Openapi().getCourseRegistrationsApi();
 final CourseRegistrationRequest courseRegistrationRequest = ; // CourseRegistrationRequest | 作成する履修情報の情報
@@ -48,7 +52,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[BearerAuth](../README.md#BearerAuth)
+[FirebaseAppCheckAuth](../README.md#FirebaseAppCheckAuth), [BearerAuth](../README.md#BearerAuth)
 
 ### HTTP request headers
 
@@ -67,6 +71,10 @@ Name | Type | Description  | Notes
 ### Example
 ```dart
 import 'package:openapi/api.dart';
+// TODO Configure API key authorization: FirebaseAppCheckAuth
+//defaultApiClient.getAuthentication<ApiKeyAuth>('FirebaseAppCheckAuth').apiKey = 'YOUR_API_KEY';
+// uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+//defaultApiClient.getAuthentication<ApiKeyAuth>('FirebaseAppCheckAuth').apiKeyPrefix = 'Bearer';
 
 final api = Openapi().getCourseRegistrationsApi();
 final String id = id_example; // String | 履修情報ID
@@ -90,7 +98,7 @@ void (empty response body)
 
 ### Authorization
 
-[BearerAuth](../README.md#BearerAuth)
+[FirebaseAppCheckAuth](../README.md#FirebaseAppCheckAuth), [BearerAuth](../README.md#BearerAuth)
 
 ### HTTP request headers
 
@@ -109,6 +117,10 @@ void (empty response body)
 ### Example
 ```dart
 import 'package:openapi/api.dart';
+// TODO Configure API key authorization: FirebaseAppCheckAuth
+//defaultApiClient.getAuthentication<ApiKeyAuth>('FirebaseAppCheckAuth').apiKey = 'YOUR_API_KEY';
+// uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+//defaultApiClient.getAuthentication<ApiKeyAuth>('FirebaseAppCheckAuth').apiKeyPrefix = 'Bearer';
 
 final api = Openapi().getCourseRegistrationsApi();
 final BuiltList<DottoFoundationV1CourseSemester> semesters = ; // BuiltList<DottoFoundationV1CourseSemester> | 開講時期
@@ -135,7 +147,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[BearerAuth](../README.md#BearerAuth)
+[FirebaseAppCheckAuth](../README.md#FirebaseAppCheckAuth), [BearerAuth](../README.md#BearerAuth)
 
 ### HTTP request headers
 

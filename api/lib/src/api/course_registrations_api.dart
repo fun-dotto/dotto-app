@@ -55,6 +55,11 @@ class CourseRegistrationsApi {
       extra: <String, dynamic>{
         'secure': <Map<String, String>>[
           {
+            'type': 'apiKey',
+            'name': 'FirebaseAppCheckAuth',
+            'keyName': 'X-Firebase-AppCheck',
+            'where': 'header',
+          },{
             'type': 'http',
             'scheme': 'Bearer',
             'name': 'BearerAuth',
@@ -156,6 +161,11 @@ class CourseRegistrationsApi {
       extra: <String, dynamic>{
         'secure': <Map<String, String>>[
           {
+            'type': 'apiKey',
+            'name': 'FirebaseAppCheckAuth',
+            'keyName': 'X-Firebase-AppCheck',
+            'where': 'header',
+          },{
             'type': 'http',
             'scheme': 'Bearer',
             'name': 'BearerAuth',
@@ -211,6 +221,11 @@ class CourseRegistrationsApi {
       extra: <String, dynamic>{
         'secure': <Map<String, String>>[
           {
+            'type': 'apiKey',
+            'name': 'FirebaseAppCheckAuth',
+            'keyName': 'X-Firebase-AppCheck',
+            'where': 'header',
+          },{
             'type': 'http',
             'scheme': 'Bearer',
             'name': 'BearerAuth',
