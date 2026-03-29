@@ -26,8 +26,16 @@ def ensure_release_signing_config!
   key_properties_path = "../key.properties"
   UI.user_error!("android/key.properties が見つかりません。Google Play 配布には署名設定が必要です。") unless File.exist?(key_properties_path)
 
-  keystore_properties = Properties.new
-  File.open(key_properties_path, "r") { |file| keystore_properties.load(file) }
+  keystore_properties = {}
+  File.foreach(key_properties_path) do |line|
+    stripped = line.strip
+    next if stripped.empty? || stripped.start_with?("#")
+
+    key, value = stripped.split("=", 2)
+    next if key.nil? || value.nil?
+
+    keystore_properties[key.strip] = value.strip
+  end
 
   required_keys = %w[keyAlias keyPassword storeFile storePassword]
   missing_keys = required_keys.select { |key| keystore_properties[key].to_s.strip.empty? }
@@ -35,8 +43,15 @@ def ensure_release_signing_config!
     UI.user_error!("android/key.properties の必須項目が未設定です: #{missing_keys.join(', ')}")
   end
 
-  keystore_path = File.expand_path(keystore_properties["storeFile"], "..")
-  UI.user_error!("キーストアファイルが見つかりません: #{keystore_properties['storeFile']}") unless File.exist?(keystore_path)
+  store_file = keystore_properties["storeFile"]
+  keystore_candidates = []
+  keystore_candidates << store_file if store_file.start_with?("/")
+  keystore_candidates << File.expand_path(store_file, "../app")
+  keystore_candidates << File.expand_path(store_file, "..")
+  keystore_exists = keystore_candidates.any? { |path| File.exist?(path) }
+  unless keystore_exists
+    UI.user_error!("キーストアファイルが見つかりません: #{store_file}")
+  end
 end
 
 platform :android do
