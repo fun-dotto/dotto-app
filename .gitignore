@@ -281,3 +281,5 @@ coverage/
 **.mocks.dart
 
 firebase.json
+
+**/.envrc
