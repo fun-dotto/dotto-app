@@ -5,6 +5,16 @@ vars:
   FASTLANE: mise x -- bundle exec fastlane
 
 tasks:
+  download-google-play-metadata-and-screenshots:
+    desc: Download Google Play metadata and screenshots
+    cmds:
+      - "{{.DOTENVX}} run -f ../.env.keys -- {{.DOTENVX}} run -f ./fastlane/.env -- {{.FASTLANE}} supply init --skip_binary_download true --skip_download_images true"
+
+  upload-google-play-metadata-and-screenshots:
+    desc: Upload Google Play metadata and screenshots
+    cmds:
+      - "{{.DOTENVX}} run -f ../.env.keys -- {{.DOTENVX}} run -f ./fastlane/.env -- {{.FASTLANE}} supply --skip_upload_aab true --skip_upload_apk true --skip_upload_images true"
+
   deploy-firebase-app-distribution:
     desc: Deploy Android to Firebase App Distribution
     cmds:
