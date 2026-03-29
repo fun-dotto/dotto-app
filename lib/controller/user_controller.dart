@@ -15,11 +15,11 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'user_controller.g.dart';
 
-final firebaseAuthStateChangesProvider = StreamProvider.autoDispose<User?>((ref) {
+final StreamProvider<User?> firebaseAuthStateChangesProvider = StreamProvider.autoDispose<User?>((ref) {
   return FirebaseAuth.instance.authStateChanges();
 });
 
-final isAuthenticatedProvider = Provider.autoDispose<bool>((ref) {
+final Provider<bool> isAuthenticatedProvider = Provider.autoDispose<bool>((ref) {
   final authState = ref.watch(firebaseAuthStateChangesProvider);
   return authState.value != null;
 });
