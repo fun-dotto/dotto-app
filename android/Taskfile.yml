@@ -1,0 +1,16 @@
+version: "3"
+
+vars:
+  DOTENVX: mise x -- dotenvx
+  FASTLANE: mise x -- bundle exec fastlane
+
+tasks:
+  deploy-firebase-app-distribution:
+    desc: Deploy Android to Firebase App Distribution
+    cmds:
+      - "{{.DOTENVX}} run -f ../.env.keys -- {{.DOTENVX}} run -f ./fastlane/.env -- {{.FASTLANE}} deploy_firebase_app_distribution"
+
+  deploy-google-play:
+    desc: Deploy Android to Google Play
+    cmds:
+      - "{{.DOTENVX}} run -f ../.env.keys -- {{.DOTENVX}} run -f ./fastlane/.env -- {{.FASTLANE}} deploy_google_play"

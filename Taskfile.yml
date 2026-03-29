@@ -10,6 +10,9 @@ includes:
   ios:
     taskfile: ./ios/Taskfile.yml
     dir: ./ios
+  android:
+    taskfile: ./android/Taskfile.yml
+    dir: ./android
 
 vars:
   DART: mise x -- dart
@@ -161,9 +164,11 @@ tasks:
 
   deploy-android-firebase-app-distribution:
     desc: Deploy Android to Firebase App Distribution
-    dir: ./android
     cmds:
-      - "{{.DOTENVX}} run -f ../.env.keys -- {{.DOTENVX}} run -f ./fastlane/.env -- {{.FASTLANE}} deploy_firebase_app_distribution"
+      - task: android:deploy-firebase-app-distribution
+        vars:
+          DOTENVX: "{{.DOTENVX}}"
+          FASTLANE: "{{.FASTLANE}}"
 
   deploy-ios-testflight:
     desc: Deploy iOS to TestFlight
@@ -175,9 +180,11 @@ tasks:
 
   deploy-android-google-play:
     desc: Deploy Android to Google Play
-    dir: ./android
     cmds:
-      - "{{.DOTENVX}} run -f ../.env.keys -- {{.DOTENVX}} run -f ./fastlane/.env -- {{.FASTLANE}} deploy_google_play"
+      - task: android:deploy-google-play
+        vars:
+          DOTENVX: "{{.DOTENVX}}"
+          FASTLANE: "{{.FASTLANE}}"
 
   match-development:
     desc: Match development certificates (readonly)
