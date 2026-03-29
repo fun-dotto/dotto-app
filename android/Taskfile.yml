@@ -8,7 +8,7 @@ tasks:
   download-google-play-metadata-and-screenshots:
     desc: Download Google Play metadata and screenshots
     cmds:
-      - "{{.DOTENVX}} run -f ../.env.keys -- {{.DOTENVX}} run -f ./fastlane/.env -- {{.FASTLANE}} supply init --skip_binary_download true --skip_download_images true"
+      - "{{.DOTENVX}} run -f ../.env.keys -- {{.DOTENVX}} run -f ./fastlane/.env -- {{.FASTLANE}} supply init --skip_upload_images true"
 
   upload-google-play-metadata-and-screenshots:
     desc: Upload Google Play metadata and screenshots
