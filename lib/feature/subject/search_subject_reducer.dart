@@ -32,6 +32,9 @@ final class SearchSubjectReducer extends _$SearchSubjectReducer {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
       final isAuthenticated = ref.read(isAuthenticatedProvider);
+      if (!isAuthenticated) {
+        return const <SubjectSummary>[];
+      }
       final courseRegistrationRepository = ref.read(courseRegistrationRepositoryProvider);
       final subjectRepository = ref.read(subjectRepositoryProvider);
       final timetableRepository = ref.read(timetableRepositoryProvider);
@@ -72,6 +75,9 @@ final class SearchSubjectReducer extends _$SearchSubjectReducer {
   }
 
   Future<void> registerSubject(String subjectId) async {
+    if (!ref.read(isAuthenticatedProvider)) {
+      return;
+    }
     final courseRegistrationRepository = ref.read(courseRegistrationRepositoryProvider);
     await courseRegistrationRepository.registerCourse(subjectId);
     _updateSubjectRegistrationState(subjectId: subjectId, isAddedToTimetable: true);
