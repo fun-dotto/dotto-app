@@ -2,14 +2,28 @@ import 'package:dotto/domain/semester.dart';
 import 'package:dotto/domain/subject_summary.dart';
 import 'package:dotto/feature/course/course_state.dart';
 import 'package:dotto/repository/repository_provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'course_reducer.g.dart';
 
 typedef Clock = DateTime Function();
+typedef CourseCanFetchProtectedData = Future<bool> Function();
 
 final clockProvider = Provider<Clock>((_) => DateTime.now);
+final courseCanFetchProtectedDataProvider = Provider<CourseCanFetchProtectedData>((_) {
+  return () async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return false;
+    try {
+      final idToken = await user.getIdToken();
+      return idToken != null && idToken.isNotEmpty;
+    } on Exception {
+      return false;
+    }
+  };
+});
 
 @riverpod
 final class CourseReducer extends _$CourseReducer {
@@ -19,10 +33,19 @@ final class CourseReducer extends _$CourseReducer {
   }
 
   Future<void> refresh() async {
-    state = await AsyncValue.guard(_createCourseState);
+    final nextState = await AsyncValue.guard(_createCourseState);
+    if (!ref.mounted) {
+      return;
+    }
+    state = nextState;
   }
 
   Future<CourseState> _createCourseState() async {
+    final canFetchProtectedData = await ref.read(courseCanFetchProtectedDataProvider)();
+    if (!ref.mounted || !canFetchProtectedData) {
+      return const CourseState();
+    }
+
     final courseRegistrationRepository = ref.read(courseRegistrationRepositoryProvider);
     final lectureCancellationRepository = ref.read(lectureCancellationRepositoryProvider);
     final timetableRepository = ref.read(timetableRepositoryProvider);
@@ -35,6 +58,9 @@ final class CourseReducer extends _$CourseReducer {
       timetableRepository.getTimetableItems(Semester.values),
       roomRepository.getRoomAssignmentIndex(),
     ).wait;
+    if (!ref.mounted) {
+      return const CourseState();
+    }
 
     final registeredSubjectIds = courseRegistrations.map((e) => e.subject.id).toSet();
     final registeredSubjectsByName = <String, SubjectSummary>{

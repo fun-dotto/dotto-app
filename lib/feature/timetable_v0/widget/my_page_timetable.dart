@@ -17,7 +17,7 @@ final class MyPageTimetable extends ConsumerWidget {
   const MyPageTimetable({super.key});
 
   Widget timetableLessonButton(BuildContext context, WidgetRef ref, TimetableCourse? timetableCourse) {
-    final isAuthenticated = ref.watch(userProvider.notifier).isAuthenticated;
+    final isAuthenticated = ref.watch(isAuthenticatedProvider);
     var foregroundColor = Colors.black;
     if (timetableCourse != null && isAuthenticated) {
       if (timetableCourse.cancel) {

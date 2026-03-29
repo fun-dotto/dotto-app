@@ -18,7 +18,7 @@ final class SubjectDetailScreen extends HookConsumerWidget {
     final apiClient = ref.read(apiClientProvider);
     final subjectRepository = SubjectRepositoryImpl(apiClient);
     final subjectSnapshot = useFuture(useMemoized(() => subjectRepository.getSubject(id)));
-    final isAuthenticated = ref.watch(userProvider.notifier).isAuthenticated;
+    final isAuthenticated = ref.watch(isAuthenticatedProvider);
 
     return DefaultTabController(
       length: 3,

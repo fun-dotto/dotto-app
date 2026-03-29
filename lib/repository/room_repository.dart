@@ -16,8 +16,7 @@ final class RoomRepositoryImpl implements RoomRepository {
 
   @override
   Future<List<Room>> getRooms() async {
-    final roomResponses = await RoomAPI.getRooms();
-    final roomScheduleResponses = await RoomAPI.getRoomSchedules();
+    final (roomResponses, roomScheduleResponses) = await (RoomAPI.getRooms(), RoomAPI.getRoomSchedules()).wait;
 
     return roomResponses.entries.expand((floorEntry) {
       final floorLabel = floorEntry.key;
@@ -81,8 +80,12 @@ final class RoomRepositoryImpl implements RoomRepository {
     }
 
     return RoomAssignmentIndex(
-      roomNamesBySlotAndTitle: {for (final entry in roomNamesBySlotAndTitle.entries) entry.key: entry.value.join(', ')},
-      roomNamesByTitle: {for (final entry in roomNamesByTitle.entries) entry.key: entry.value.join(', ')},
+      roomNamesBySlotAndTitle: {
+        for (final entry in roomNamesBySlotAndTitle.entries) entry.key: (entry.value.toList()..sort()).join(', '),
+      },
+      roomNamesByTitle: {
+        for (final entry in roomNamesByTitle.entries) entry.key: (entry.value.toList()..sort()).join(', '),
+      },
     );
   }
 

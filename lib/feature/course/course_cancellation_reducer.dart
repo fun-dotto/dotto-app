@@ -1,5 +1,4 @@
 import 'package:dotto/domain/course_cancellation.dart';
-import 'package:dotto/domain/course_registration.dart';
 import 'package:dotto/domain/semester.dart';
 import 'package:dotto/feature/course/course_cancellation_state.dart';
 import 'package:dotto/repository/repository_provider.dart';

@@ -31,7 +31,7 @@ final class CourseCancellationScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isAuthenticated = ref.watch(userProvider.notifier).isAuthenticated;
+    final isAuthenticated = ref.watch(isAuthenticatedProvider);
     if (!isAuthenticated) {
       return Scaffold(
         appBar: AppBar(title: const Text('休講・補講')),
