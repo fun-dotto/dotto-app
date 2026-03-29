@@ -22,6 +22,23 @@ def decrypted_dart_defines
     .reject(&:empty?)
 end
 
+def ensure_release_signing_config!
+  key_properties_path = "../key.properties"
+  UI.user_error!("android/key.properties が見つかりません。Google Play 配布には署名設定が必要です。") unless File.exist?(key_properties_path)
+
+  keystore_properties = Properties.new
+  File.open(key_properties_path, "r") { |file| keystore_properties.load(file) }
+
+  required_keys = %w[keyAlias keyPassword storeFile storePassword]
+  missing_keys = required_keys.select { |key| keystore_properties[key].to_s.strip.empty? }
+  unless missing_keys.empty?
+    UI.user_error!("android/key.properties の必須項目が未設定です: #{missing_keys.join(', ')}")
+  end
+
+  keystore_path = File.expand_path(keystore_properties["storeFile"], "..")
+  UI.user_error!("キーストアファイルが見つかりません: #{keystore_properties['storeFile']}") unless File.exist?(keystore_path)
+end
+
 platform :android do
   ENV["FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT"] = "30"
 
@@ -36,6 +53,8 @@ platform :android do
 
   desc "Deploy a new version to the Google Play"
   lane :deploy_google_play do
+    ensure_release_signing_config!
+
     properties_path = "../local.properties"
     version_name = ""
     if File.exist?(properties_path)
