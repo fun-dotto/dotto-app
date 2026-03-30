@@ -121,7 +121,7 @@ final class PersonalTimetableCalendarView extends HookWidget {
                   onPageChanged(index);
                   onDateSelected(days[index].date);
                 },
-                itemBuilder: (context, index) => _dayTimetable(context, days[index]),
+                itemBuilder: (context, index) => SingleChildScrollView(child: _dayTimetable(context, days[index])),
               ),
             ),
           ),
