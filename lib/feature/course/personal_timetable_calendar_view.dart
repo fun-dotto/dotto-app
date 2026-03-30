@@ -45,7 +45,6 @@ final class PersonalTimetableCalendarView extends HookWidget {
       if (targetPage < 0 || targetPage == currentPage.value || !pageController.hasClients) {
         return null;
       }
-      currentPage.value = targetPage;
       pageController.animateToPage(targetPage, duration: const Duration(milliseconds: 250), curve: Curves.easeOutCubic);
       return null;
     }, [personalTimetableDays, safeSelectedDate, pageController]);
