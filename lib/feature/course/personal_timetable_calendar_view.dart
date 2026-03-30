@@ -7,8 +7,9 @@ import 'package:dotto/domain/subject_summary.dart';
 import 'package:dotto/helper/date_formatter.dart';
 import 'package:dotto_design_system/style/semantic_color.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 
-final class PersonalTimetableCalendarView extends StatelessWidget {
+final class PersonalTimetableCalendarView extends HookWidget {
   const PersonalTimetableCalendarView({
     required this.personalTimetableDays,
     required this.selectedDate,
@@ -24,13 +25,40 @@ final class PersonalTimetableCalendarView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final safeSelectedDate =
+        selectedDate ?? (personalTimetableDays.isNotEmpty ? personalTimetableDays.first.date : DateTime.now());
+    final selectedDayIndex = personalTimetableDays.indexWhere((day) => _isSameDate(day.date, safeSelectedDate));
+    final initialPage = selectedDayIndex >= 0 ? selectedDayIndex : 0;
+    final currentPage = useState(initialPage);
+    final pageController = usePageController(initialPage: initialPage);
+
+    useEffect(() {
+      if (personalTimetableDays.isEmpty) {
+        return null;
+      }
+      final lastPageIndex = personalTimetableDays.length - 1;
+      if (currentPage.value > lastPageIndex && pageController.hasClients) {
+        currentPage.value = lastPageIndex;
+        pageController.jumpToPage(lastPageIndex);
+      }
+      final targetPage = personalTimetableDays.indexWhere((day) => _isSameDate(day.date, safeSelectedDate));
+      if (targetPage < 0 || targetPage == currentPage.value || !pageController.hasClients) {
+        return null;
+      }
+      currentPage.value = targetPage;
+      pageController.animateToPage(targetPage, duration: const Duration(milliseconds: 250), curve: Curves.easeOutCubic);
+      return null;
+    }, [personalTimetableDays, safeSelectedDate, pageController]);
+
     return Padding(
       padding: const EdgeInsets.only(right: 8),
       child: _calendar(
         context,
         days: personalTimetableDays,
-        selectedDate:
-            selectedDate ?? (personalTimetableDays.isNotEmpty ? personalTimetableDays.first.date : DateTime.now()),
+        selectedDate: safeSelectedDate,
+        currentPage: currentPage.value,
+        onPageChanged: (newPage) => currentPage.value = newPage,
+        pageController: pageController,
         onDateSelected: onDateSelected,
       ),
     );
@@ -40,15 +68,16 @@ final class PersonalTimetableCalendarView extends StatelessWidget {
     BuildContext context, {
     required List<PersonalTimetableDay> days,
     required DateTime selectedDate,
+    required int currentPage,
+    required void Function(int) onPageChanged,
+    required PageController pageController,
     required void Function(DateTime) onDateSelected,
   }) {
     final firstWeekDates = days.take(5).map((e) => e.date).toList();
     final secondWeekDates = days.skip(5).take(5).map((e) => e.date).toList();
-    final selectedCandidates = days.where((e) => _isSameDate(e.date, selectedDate));
-    final selectedDay = selectedCandidates.isEmpty ? null : selectedCandidates.first;
-    final selectedDayIndex = days.indexWhere((day) => _isSameDate(day.date, selectedDate));
-    final initialPage = selectedDayIndex >= 0 ? selectedDayIndex : 0;
-    final timetableCarouselHeight = _timetableCarouselHeight(days);
+    final clampedPage = days.isEmpty ? 0 : currentPage.clamp(0, days.length - 1).toInt();
+    final currentDay = days.isEmpty ? null : days[clampedPage];
+    final timetableHeight = currentDay == null ? 0.0 : _dayTimetableHeight(currentDay);
 
     return Column(
       spacing: 8,
@@ -78,16 +107,22 @@ final class PersonalTimetableCalendarView extends StatelessWidget {
           ],
           options: CarouselOptions(height: 48, viewportFraction: 1, enableInfiniteScroll: false),
         ),
-        if (selectedDay != null)
-          CarouselSlider.builder(
-            itemCount: days.length,
-            itemBuilder: (context, index, _) => SingleChildScrollView(child: _dayTimetable(context, days[index])),
-            options: CarouselOptions(
-              height: timetableCarouselHeight,
-              viewportFraction: 1,
-              enableInfiniteScroll: false,
-              initialPage: initialPage,
-              onPageChanged: (index, _) => onDateSelected(days[index].date),
+        if (currentDay != null)
+          AnimatedSize(
+            duration: const Duration(milliseconds: 250),
+            curve: Curves.easeInOutCubic,
+            alignment: Alignment.topCenter,
+            child: SizedBox(
+              height: timetableHeight,
+              child: PageView.builder(
+                controller: pageController,
+                itemCount: days.length,
+                onPageChanged: (index) {
+                  onPageChanged(index);
+                  onDateSelected(days[index].date);
+                },
+                itemBuilder: (context, index) => _dayTimetable(context, days[index]),
+              ),
             ),
           ),
       ],
@@ -149,24 +184,16 @@ final class PersonalTimetableCalendarView extends StatelessWidget {
     );
   }
 
-  double _timetableCarouselHeight(List<PersonalTimetableDay> days) {
-    if (days.isEmpty) {
-      return 0;
-    }
-    final maxHeight = days
-        .map((day) {
-          final totalRowHeight = Period.values
-              .map((period) {
-                final itemCount = day.items.where((item) => item.period == period).length;
-                final visibleItemCount = itemCount == 0 ? 1 : itemCount;
-                return (visibleItemCount * 44) + ((visibleItemCount - 1) * 8);
-              })
-              .fold<double>(0, (sum, rowHeight) => sum + rowHeight);
-          final rowGap = (Period.values.length - 1) * 4;
-          return totalRowHeight + rowGap;
+  double _dayTimetableHeight(PersonalTimetableDay day) {
+    final totalRowHeight = Period.values
+        .map((period) {
+          final itemCount = day.items.where((item) => item.period == period).length;
+          final visibleItemCount = itemCount == 0 ? 1 : itemCount;
+          return (visibleItemCount * 44) + ((visibleItemCount - 1) * 8);
         })
-        .reduce((a, b) => a > b ? a : b);
-    return maxHeight + 16;
+        .fold<double>(0, (sum, rowHeight) => sum + rowHeight);
+    final rowGap = (Period.values.length - 1) * 4;
+    return totalRowHeight + rowGap;
   }
 
   Widget _periodRow(BuildContext context, {required Period period, required List<PersonalTimetableItem> items}) {
