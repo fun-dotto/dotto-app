@@ -173,7 +173,6 @@ final class CourseScreen extends HookConsumerWidget {
           children: [
             _shortcutSection(
               context,
-              title: '科目',
               items: [
                 _ShortcutItem(
                   icon: Icons.search,
@@ -198,9 +197,9 @@ final class CourseScreen extends HookConsumerWidget {
                   ),
               ],
             ),
+            const Divider(height: 1),
             _shortcutSection(
               context,
-              title: '時間割',
               items: fileItems
                   .map(
                     (item) => _ShortcutItem(
@@ -216,9 +215,9 @@ final class CourseScreen extends HookConsumerWidget {
                   )
                   .toList(),
             ),
+            const Divider(height: 1),
             _shortcutSection(
               context,
-              title: 'ポータル',
               items: [
                 if (quickLinksByLabel['HOPE'] case final hope?)
                   _ShortcutItem(
@@ -240,29 +239,22 @@ final class CourseScreen extends HookConsumerWidget {
     );
   }
 
-  Widget _shortcutSection(BuildContext context, {required String title, required List<_ShortcutItem> items}) {
+  Widget _shortcutSection(BuildContext context, {required List<_ShortcutItem> items}) {
     if (items.isEmpty) {
       return const SizedBox.shrink();
     }
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      spacing: 8,
-      children: [
-        Text(title, style: Theme.of(context).textTheme.labelLarge),
-        GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: items.length,
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 4,
-            mainAxisSpacing: 8,
-            crossAxisSpacing: 8,
-            childAspectRatio: 1.05,
-          ),
-          itemBuilder: (context, index) => _shortcutButton(context, item: items[index]),
-        ),
-      ],
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: items.length,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 4,
+        mainAxisSpacing: 8,
+        crossAxisSpacing: 8,
+        childAspectRatio: 1.05,
+      ),
+      itemBuilder: (context, index) => _shortcutButton(context, item: items[index]),
     );
   }
 
