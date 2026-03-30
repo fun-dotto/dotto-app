@@ -4,8 +4,8 @@ import 'package:dotto/controller/config_controller.dart';
 import 'package:dotto/controller/user_controller.dart';
 import 'package:dotto/domain/quick_link.dart';
 import 'package:dotto/feature/course/course_cancellation_screen.dart';
-import 'package:dotto/feature/course/course_registration_screen.dart';
 import 'package:dotto/feature/course/course_reducer.dart';
+import 'package:dotto/feature/course/course_registration_screen.dart';
 import 'package:dotto/feature/course/course_state.dart';
 import 'package:dotto/feature/course/personal_timetable_calendar_view.dart';
 import 'package:dotto/feature/subject/search_subject_screen.dart';
@@ -169,6 +169,7 @@ final class CourseScreen extends HookConsumerWidget {
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          spacing: 8,
           children: [
             _shortcutSection(
               context,
@@ -220,13 +221,13 @@ final class CourseScreen extends HookConsumerWidget {
               items: [
                 if (quickLinksByLabel['HOPE'] case final hope?)
                   _ShortcutItem(
-                    icon: Icons.school,
+                    imageUrl: hope.icon,
                     label: hope.label,
                     onPressed: () => launchUrlString(hope.url, mode: LaunchMode.externalApplication),
                   ),
                 if (quickLinksByLabel['学生ポータル'] case final portal?)
                   _ShortcutItem(
-                    icon: Icons.open_in_new,
+                    imageUrl: portal.icon,
                     label: portal.label,
                     onPressed: () => launchUrlString(portal.url, mode: LaunchMode.externalApplication),
                   ),
@@ -267,7 +268,19 @@ final class CourseScreen extends HookConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           spacing: 4,
           children: [
-            Icon(item.icon, size: 24, color: SemanticColor.light.labelPrimary),
+            if (item.imageUrl != null)
+              ClipRRect(
+                borderRadius: BorderRadius.circular(4),
+                child: Image.network(
+                  item.imageUrl!,
+                  width: 24,
+                  height: 24,
+                  fit: BoxFit.contain,
+                  errorBuilder: (_, _, _) => Icon(item.icon, size: 24, color: SemanticColor.light.labelPrimary),
+                ),
+              )
+            else
+              Icon(item.icon, size: 24, color: SemanticColor.light.labelPrimary),
             Text(item.label, style: Theme.of(context).textTheme.labelSmall, textAlign: TextAlign.center),
           ],
         ),
@@ -281,9 +294,10 @@ final class CourseScreen extends HookConsumerWidget {
 }
 
 final class _ShortcutItem {
-  const _ShortcutItem({required this.icon, required this.label, required this.onPressed});
+  const _ShortcutItem({this.icon = Icons.link, this.imageUrl, required this.label, required this.onPressed});
 
   final IconData icon;
+  final String? imageUrl;
   final String label;
   final VoidCallback onPressed;
 }
