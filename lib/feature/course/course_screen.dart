@@ -289,7 +289,7 @@ final class CourseScreen extends HookConsumerWidget {
 }
 
 final class _ShortcutItem {
-  const _ShortcutItem({required IconData icon, required String label, required VoidCallback onPressed});
+  const _ShortcutItem({required this.icon, required this.label, required this.onPressed});
 
   final IconData icon;
   final String label;
