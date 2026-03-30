@@ -8,12 +8,16 @@ tasks:
   download-google-play-metadata-and-screenshots:
     desc: Download Google Play metadata and screenshots
     cmds:
-      - "{{.DOTENVX}} run -f ../.env.keys -- {{.DOTENVX}} run -f ./fastlane/.env -- {{.FASTLANE}} supply init --skip_upload_images true"
+      - "{{.DOTENVX}} run -f ../.env.keys -- {{.DOTENVX}} run -f ./fastlane/.env -- {{.FASTLANE}} supply init --json-key $GOOGLE_APPLICATION_CREDENTIALS --skip_upload_apk true --skip_upload_aab true --skip_upload_metadata true --skip_upload_changelogs true --skip_upload_images true --skip_upload_screenshots true"
+    env:
+      GOOGLE_APPLICATION_CREDENTIALS: "{{.GOOGLE_APPLICATION_CREDENTIALS}}"
 
   upload-google-play-metadata-and-screenshots:
     desc: Upload Google Play metadata and screenshots
     cmds:
-      - "{{.DOTENVX}} run -f ../.env.keys -- {{.DOTENVX}} run -f ./fastlane/.env -- {{.FASTLANE}} supply --skip_upload_aab true --skip_upload_apk true --skip_upload_images true"
+      - "{{.DOTENVX}} run -f ../.env.keys -- {{.DOTENVX}} run -f ./fastlane/.env -- {{.FASTLANE}} supply --json-key $GOOGLE_APPLICATION_CREDENTIALS --skip_upload_aab true --skip_upload_apk true --skip_upload_images true"
+    env:
+      GOOGLE_APPLICATION_CREDENTIALS: "{{.GOOGLE_APPLICATION_CREDENTIALS}}"
 
   deploy-firebase-app-distribution:
     desc: Deploy Android to Firebase App Distribution
