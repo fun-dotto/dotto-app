@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dotto/domain/lecture_status.dart';
 import 'package:dotto/domain/period.dart';
@@ -48,7 +50,13 @@ final class PersonalTimetableCalendarView extends HookWidget {
       if (targetPage < 0 || targetPage == currentPage.value || !pageController.hasClients) {
         return null;
       }
-      pageController.animateToPage(targetPage, duration: const Duration(milliseconds: 250), curve: Curves.easeOutCubic);
+      unawaited(
+        pageController.animateToPage(
+          targetPage,
+          duration: const Duration(milliseconds: 250),
+          curve: Curves.easeOutCubic,
+        ),
+      );
       return null;
     }, [personalTimetableDays, safeSelectedDate, pageController]);
 
@@ -58,10 +66,12 @@ final class PersonalTimetableCalendarView extends HookWidget {
         return null;
       }
       currentDateCarouselPage.value = targetDateCarouselPage;
-      dateCarouselController.animateToPage(
-        targetDateCarouselPage,
-        duration: const Duration(milliseconds: 250),
-        curve: Curves.easeOutCubic,
+      unawaited(
+        dateCarouselController.animateToPage(
+          targetDateCarouselPage,
+          duration: const Duration(milliseconds: 250),
+          curve: Curves.easeOutCubic,
+        ),
       );
       return null;
     }, [selectedDayIndex, dateCarouselController]);
@@ -96,7 +106,7 @@ final class PersonalTimetableCalendarView extends HookWidget {
     final firstWeekDates = days.take(5).map((e) => e.date).toList();
     final secondWeekDates = days.skip(5).take(5).map((e) => e.date).toList();
     final datePages = [firstWeekDates, if (secondWeekDates.isNotEmpty) secondWeekDates];
-    final clampedPage = days.isEmpty ? 0 : currentPage.clamp(0, days.length - 1).toInt();
+    final clampedPage = days.isEmpty ? 0 : currentPage.clamp(0, days.length - 1);
     final dateCarouselInitialPage = secondWeekDates.isNotEmpty && clampedPage >= 5 ? 1 : 0;
     final currentDay = days.isEmpty ? null : days[clampedPage];
     final timetableHeight = currentDay == null ? 0.0 : _dayTimetableHeight(currentDay);
@@ -132,7 +142,14 @@ final class PersonalTimetableCalendarView extends HookWidget {
             viewportFraction: 1,
             enableInfiniteScroll: false,
             initialPage: dateCarouselInitialPage,
-            onPageChanged: (index, _) => onDateCarouselPageChanged(index),
+            onPageChanged: (index, _) {
+              onDateCarouselPageChanged(index);
+              final pageDates = datePages[index];
+              if (pageDates.isEmpty || pageDates.any((date) => _isSameDate(date, selectedDate))) {
+                return;
+              }
+              onDateSelected(pageDates.first);
+            },
           ),
         ),
         if (currentDay != null)
