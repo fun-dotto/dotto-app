@@ -169,7 +169,6 @@ final class CourseScreen extends HookConsumerWidget {
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          spacing: 16,
           children: [
             _shortcutSection(
               context,
@@ -197,7 +196,10 @@ final class CourseScreen extends HookConsumerWidget {
                   ),
               ],
             ),
-            const Divider(height: 1),
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 4),
+              child: Divider(height: 1),
+            ),
             _shortcutSection(
               context,
               items: fileItems
@@ -215,7 +217,10 @@ final class CourseScreen extends HookConsumerWidget {
                   )
                   .toList(),
             ),
-            const Divider(height: 1),
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 4),
+              child: Divider(height: 1),
+            ),
             _shortcutSection(
               context,
               items: [
