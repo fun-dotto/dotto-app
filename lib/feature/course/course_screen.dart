@@ -82,79 +82,84 @@ final class CourseScreen extends HookConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('講義'), centerTitle: false),
       body: switch (state) {
-        AsyncData(value: final courseState) => RefreshIndicator(
-          onRefresh: () async {
-            if (!isAuthenticated) {
-              return;
-            }
-            await ref.read(courseReducerProvider.notifier).refresh();
-          },
-          child: SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            child: Column(
-              children: [
-                if (isAuthenticated)
-                  Padding(
-                    padding: const EdgeInsetsGeometry.symmetric(horizontal: 8),
-                    child: PersonalTimetableCalendarView(
-                      personalTimetableDays: courseState.days,
-                      selectedDate: selectedDate.value,
-                      onDateSelected: (newDate) => selectedDate.value = newDate,
-                      onSubjectSelected: (subject) => Navigator.of(context).push(
-                        MaterialPageRoute<void>(
-                          builder: (context) => SubjectDetailScreen(id: subject.id),
-                          settings: RouteSettings(name: '/course/subjects/${subject.id}'),
-                        ),
-                      ),
-                    ),
-                  )
-                else
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 48),
-                    child: Center(
-                      child: Text('時間割機能を利用するにはログインしてください。', style: Theme.of(context).textTheme.bodyMedium),
-                    ),
-                  ),
-                if (isAuthenticated)
-                  Row(
-                    mainAxisAlignment: .end,
-                    children: [
-                      DottoButton(
-                        onPressed: () => Navigator.of(context).push(
-                          MaterialPageRoute<void>(
-                            builder: (context) => const CourseRegistrationScreen(),
-                            settings: const RouteSettings(name: '/course/registration'),
+        AsyncData(value: final courseState) => LayoutBuilder(
+          builder: (context, constraints) => RefreshIndicator(
+            onRefresh: () async {
+              if (!isAuthenticated) {
+                return;
+              }
+              await ref.read(courseReducerProvider.notifier).refresh();
+            },
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: Column(
+                  children: [
+                    if (isAuthenticated)
+                      Padding(
+                        padding: const EdgeInsetsGeometry.symmetric(horizontal: 8),
+                        child: PersonalTimetableCalendarView(
+                          personalTimetableDays: courseState.days,
+                          selectedDate: selectedDate.value,
+                          onDateSelected: (newDate) => selectedDate.value = newDate,
+                          onSubjectSelected: (subject) => Navigator.of(context).push(
+                            MaterialPageRoute<void>(
+                              builder: (context) => SubjectDetailScreen(id: subject.id),
+                              settings: RouteSettings(name: '/course/subjects/${subject.id}'),
+                            ),
                           ),
                         ),
-                        type: DottoButtonType.text,
-                        child: const Text('1週間の時間割'),
+                      )
+                    else
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 48),
+                        child: Center(
+                          child: Text('時間割機能を利用するにはログインしてください。', style: Theme.of(context).textTheme.bodyMedium),
+                        ),
                       ),
-                    ],
-                  ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: _featureButtons(context, isAuthenticated: isAuthenticated),
-                ),
-                Padding(
-                  padding: const EdgeInsetsGeometry.all(16),
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 480),
-                    child: Column(
-                      spacing: 16,
-                      children: [
-                        // const BusCardHome(),
-                        Column(
-                          spacing: 8,
+                    if (isAuthenticated)
+                      Row(
+                        mainAxisAlignment: .end,
+                        children: [
+                          DottoButton(
+                            onPressed: () => Navigator.of(context).push(
+                              MaterialPageRoute<void>(
+                                builder: (context) => const CourseRegistrationScreen(),
+                                settings: const RouteSettings(name: '/course/registration'),
+                              ),
+                            ),
+                            type: DottoButtonType.text,
+                            child: const Text('1週間の時間割'),
+                          ),
+                        ],
+                      ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: _featureButtons(context, isAuthenticated: isAuthenticated),
+                    ),
+                    Padding(
+                      padding: const EdgeInsetsGeometry.all(16),
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 480),
+                        child: Column(
+                          spacing: 16,
                           children: [
-                            FileGrid(children: infoTiles),
-                            const LinkGrid(links: QuickLink.links),
+                            // const BusCardHome(),
+                            Column(
+                              spacing: 8,
+                              children: [
+                                FileGrid(children: infoTiles),
+                                const LinkGrid(links: QuickLink.links),
+                              ],
+                            ),
                           ],
                         ),
-                      ],
+                      ),
                     ),
-                  ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
         ),
