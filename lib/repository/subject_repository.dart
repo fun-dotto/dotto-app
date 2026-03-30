@@ -191,7 +191,8 @@ final class SubjectRepositoryImpl implements SubjectRepository {
         where: 'LessonId = ?',
         whereArgs: [subject.syllabus.id],
       );
-      final pastExamId = records.firstOrNull?['過去問']?.toString() ?? subject.syllabus.id;
+      final rawPastExam = records.firstOrNull?['過去問'];
+      final pastExamId = (rawPastExam as int?)?.toString() ?? subject.syllabus.id;
       return Subject(
         id: subject.id,
         name: subject.name,
