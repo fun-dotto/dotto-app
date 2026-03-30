@@ -121,7 +121,7 @@ final class PersonalTimetableCalendarView extends HookWidget {
                   onPageChanged(index);
                   onDateSelected(days[index].date);
                 },
-                itemBuilder: (context, index) => SingleChildScrollView(child: _dayTimetable(context, days[index])),
+                itemBuilder: (context, index) => _dayTimetable(context, days[index]),
               ),
             ),
           ),
@@ -185,14 +185,19 @@ final class PersonalTimetableCalendarView extends HookWidget {
   }
 
   double _dayTimetableHeight(PersonalTimetableDay day) {
+    // TextButton keeps at least 48dp tap target height by default.
+    const itemButtonHeight = kMinInteractiveDimension;
+    const itemSpacing = 8.0;
+    const periodSpacing = 4.0;
+
     final totalRowHeight = Period.values
         .map((period) {
           final itemCount = day.items.where((item) => item.period == period).length;
           final visibleItemCount = itemCount == 0 ? 1 : itemCount;
-          return (visibleItemCount * 44) + ((visibleItemCount - 1) * 8);
+          return (visibleItemCount * itemButtonHeight) + ((visibleItemCount - 1) * itemSpacing);
         })
         .fold<double>(0, (sum, rowHeight) => sum + rowHeight);
-    final rowGap = (Period.values.length - 1) * 4;
+    final rowGap = (Period.values.length - 1) * periodSpacing;
     return totalRowHeight + rowGap;
   }
 
