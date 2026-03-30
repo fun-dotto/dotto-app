@@ -120,8 +120,8 @@ final class CourseScreen extends HookConsumerWidget {
                         quickLinksByLabel: quickLinksByLabel,
                         fileItems: [
                           ('学年暦', config.officialCalendarPdfUrl, Icons.event_note),
-                          ('時間割 前期', config.timetable1PdfUrl, Icons.calendar_month),
-                          ('時間割 後期', config.timetable2PdfUrl, Icons.calendar_month),
+                          ('時間割 前期', config.timetable1PdfUrl, Icons.calendar_view_month),
+                          ('時間割 後期', config.timetable2PdfUrl, Icons.calendar_view_month),
                         ],
                       ),
                     ),
@@ -186,7 +186,7 @@ final class CourseScreen extends HookConsumerWidget {
                 ),
                 if (isAuthenticated)
                   _ShortcutItem(
-                    icon: Icons.calendar_month,
+                    icon: Icons.cached,
                     label: '休講・補講',
                     onPressed: () => Navigator.of(context).push(
                       MaterialPageRoute<void>(
