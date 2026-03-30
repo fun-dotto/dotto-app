@@ -196,10 +196,7 @@ final class CourseScreen extends HookConsumerWidget {
                   ),
               ],
             ),
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 4),
-              child: Divider(height: 1),
-            ),
+            const Padding(padding: EdgeInsets.symmetric(vertical: 4), child: Divider(height: 1)),
             _shortcutSection(
               context,
               items: fileItems
@@ -217,10 +214,7 @@ final class CourseScreen extends HookConsumerWidget {
                   )
                   .toList(),
             ),
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 4),
-              child: Divider(height: 1),
-            ),
+            const Padding(padding: EdgeInsets.symmetric(vertical: 4), child: Divider(height: 1)),
             _shortcutSection(
               context,
               items: [
@@ -257,7 +251,7 @@ final class CourseScreen extends HookConsumerWidget {
         crossAxisCount: 4,
         mainAxisSpacing: 8,
         crossAxisSpacing: 8,
-        childAspectRatio: 1.05,
+        mainAxisExtent: 64,
       ),
       itemBuilder: (context, index) => _shortcutButton(context, item: items[index]),
     );
@@ -268,11 +262,12 @@ final class CourseScreen extends HookConsumerWidget {
       borderRadius: BorderRadius.circular(12),
       onTap: item.onPressed,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           spacing: 4,
           children: [
-            Icon(item.icon, size: 28, color: SemanticColor.light.labelPrimary),
+            Icon(item.icon, size: 24, color: SemanticColor.light.labelPrimary),
             Text(item.label, style: Theme.of(context).textTheme.labelSmall, textAlign: TextAlign.center),
           ],
         ),
