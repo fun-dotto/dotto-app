@@ -8,9 +8,6 @@ import 'package:dotto/feature/course/course_registration_screen.dart';
 import 'package:dotto/feature/course/course_reducer.dart';
 import 'package:dotto/feature/course/course_state.dart';
 import 'package:dotto/feature/course/personal_timetable_calendar_view.dart';
-import 'package:dotto/feature/home/component/file_grid.dart';
-import 'package:dotto/feature/home/component/file_tile.dart';
-import 'package:dotto/feature/home/component/link_grid.dart';
 import 'package:dotto/feature/subject/search_subject_screen.dart';
 import 'package:dotto/feature/subject/subject_detail_screen.dart';
 import 'package:dotto/widget/web_pdf_viewer.dart';
@@ -19,6 +16,7 @@ import 'package:dotto_design_system/style/semantic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 final class CourseScreen extends HookConsumerWidget {
   const CourseScreen({super.key});
@@ -28,27 +26,7 @@ final class CourseScreen extends HookConsumerWidget {
     final config = ref.watch(configProvider);
     final isAuthenticated = ref.watch(isAuthenticatedProvider);
     // final timetablePeriodStyle = ref.watch(timetablePeriodStyleProvider);
-    final fileItems = <(String label, String url, IconData icon)>[
-      ('学年暦', config.officialCalendarPdfUrl, Icons.event_note),
-      ('時間割 前期', config.timetable1PdfUrl, Icons.calendar_month),
-      ('時間割 後期', config.timetable2PdfUrl, Icons.calendar_month),
-    ];
-    final infoTiles = <Widget>[
-      ...fileItems.map(
-        (item) => FileTile(
-          onPressed: () {
-            Navigator.of(context).push(
-              MaterialPageRoute<void>(
-                builder: (_) => WebPdfViewer(url: item.$2, filename: item.$1),
-                settings: RouteSettings(name: '/home/web_pdf_viewer?url=${item.$2}'),
-              ),
-            );
-          },
-          icon: item.$3,
-          title: item.$1,
-        ),
-      ),
-    ];
+    final quickLinksByLabel = {for (final link in QuickLink.links) link.label: link};
     final state = isAuthenticated ? ref.watch(courseReducerProvider) : const AsyncData(CourseState());
     final selectedDate = useState<DateTime?>(null);
 
@@ -135,26 +113,16 @@ final class CourseScreen extends HookConsumerWidget {
                         ],
                       ),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: _featureButtons(context, isAuthenticated: isAuthenticated),
-                    ),
-                    Padding(
                       padding: const EdgeInsetsGeometry.all(16),
-                      child: ConstrainedBox(
-                        constraints: const BoxConstraints(maxWidth: 480),
-                        child: Column(
-                          spacing: 16,
-                          children: [
-                            // const BusCardHome(),
-                            Column(
-                              spacing: 8,
-                              children: [
-                                FileGrid(children: infoTiles),
-                                const LinkGrid(links: QuickLink.links),
-                              ],
-                            ),
-                          ],
-                        ),
+                      child: _shortcutSections(
+                        context,
+                        isAuthenticated: isAuthenticated,
+                        quickLinksByLabel: quickLinksByLabel,
+                        fileItems: [
+                          ('学年暦', config.officialCalendarPdfUrl, Icons.event_note),
+                          ('時間割 前期', config.timetable1PdfUrl, Icons.calendar_month),
+                          ('時間割 後期', config.timetable2PdfUrl, Icons.calendar_month),
+                        ],
                       ),
                     ),
                   ],
@@ -185,33 +153,12 @@ final class CourseScreen extends HookConsumerWidget {
     );
   }
 
-  Widget _featureButtons(BuildContext context, {required bool isAuthenticated}) {
-    final buttons = <Widget>[
-      _featureButton(
-        context,
-        icon: Icons.search,
-        label: '科目検索',
-        onPressed: () => Navigator.of(context).push(
-          MaterialPageRoute<void>(
-            builder: (context) => const SearchSubjectScreen(),
-            settings: const RouteSettings(name: '/course/subjects'),
-          ),
-        ),
-      ),
-      if (isAuthenticated)
-        _featureButton(
-          context,
-          icon: Icons.calendar_month,
-          label: '休講・補講',
-          onPressed: () => Navigator.of(context).push(
-            MaterialPageRoute<void>(
-              builder: (context) => const CourseCancellationScreen(),
-              settings: const RouteSettings(name: '/course/cancellations'),
-            ),
-          ),
-        ),
-    ];
-
+  Widget _shortcutSections(
+    BuildContext context, {
+    required bool isAuthenticated,
+    required Map<String, QuickLink> quickLinksByLabel,
+    required List<(String label, String url, IconData icon)> fileItems,
+  }) {
     return Container(
       decoration: BoxDecoration(
         border: Border.all(color: SemanticColor.light.borderPrimary),
@@ -220,36 +167,118 @@ final class CourseScreen extends HookConsumerWidget {
       ),
       child: Padding(
         padding: const EdgeInsets.all(16),
-        child: Row(mainAxisAlignment: .center, spacing: 8, children: buttons),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          spacing: 16,
+          children: [
+            _shortcutSection(
+              context,
+              title: '科目',
+              items: [
+                _ShortcutItem(
+                  icon: Icons.search,
+                  label: '科目検索',
+                  onPressed: () => Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      builder: (context) => const SearchSubjectScreen(),
+                      settings: const RouteSettings(name: '/course/subjects'),
+                    ),
+                  ),
+                ),
+                if (isAuthenticated)
+                  _ShortcutItem(
+                    icon: Icons.calendar_month,
+                    label: '休講・補講',
+                    onPressed: () => Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (context) => const CourseCancellationScreen(),
+                        settings: const RouteSettings(name: '/course/cancellations'),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+            _shortcutSection(
+              context,
+              title: '時間割',
+              items: fileItems
+                  .map(
+                    (item) => _ShortcutItem(
+                      icon: item.$3,
+                      label: item.$1,
+                      onPressed: () => Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (_) => WebPdfViewer(url: item.$2, filename: item.$1),
+                          settings: RouteSettings(name: '/home/web_pdf_viewer?url=${item.$2}'),
+                        ),
+                      ),
+                    ),
+                  )
+                  .toList(),
+            ),
+            _shortcutSection(
+              context,
+              title: 'ポータル',
+              items: [
+                if (quickLinksByLabel['HOPE'] case final hope?)
+                  _ShortcutItem(
+                    icon: Icons.school,
+                    label: hope.label,
+                    onPressed: () => launchUrlString(hope.url, mode: LaunchMode.externalApplication),
+                  ),
+                if (quickLinksByLabel['学生ポータル'] case final portal?)
+                  _ShortcutItem(
+                    icon: Icons.open_in_new,
+                    label: portal.label,
+                    onPressed: () => launchUrlString(portal.url, mode: LaunchMode.externalApplication),
+                  ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _featureButton(
-    BuildContext context, {
-    required IconData icon,
-    required String label,
-    required VoidCallback? onPressed,
-  }) {
-    return SizedBox(
-      width: 72,
-      child: Column(
-        spacing: 4,
-        children: [
-          IconButton(
-            style: ElevatedButton.styleFrom(
-              foregroundColor: SemanticColor.light.labelPrimary,
-              backgroundColor: SemanticColor.light.backgroundPrimary,
-              shape: CircleBorder(side: BorderSide(color: SemanticColor.light.borderPrimary)),
-              elevation: 0,
-              minimumSize: const Size(48, 48),
-              iconSize: 24,
-            ),
-            onPressed: onPressed,
-            icon: Icon(icon),
+  Widget _shortcutSection(BuildContext context, {required String title, required List<_ShortcutItem> items}) {
+    if (items.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: 8,
+      children: [
+        Text(title, style: Theme.of(context).textTheme.labelLarge),
+        GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: items.length,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 4,
+            mainAxisSpacing: 8,
+            crossAxisSpacing: 8,
+            childAspectRatio: 1.05,
           ),
-          Text(label, style: Theme.of(context).textTheme.labelMedium),
-        ],
+          itemBuilder: (context, index) => _shortcutButton(context, item: items[index]),
+        ),
+      ],
+    );
+  }
+
+  Widget _shortcutButton(BuildContext context, {required _ShortcutItem item}) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(12),
+      onTap: item.onPressed,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+        child: Column(
+          spacing: 4,
+          children: [
+            Icon(item.icon, size: 28, color: SemanticColor.light.labelPrimary),
+            Text(item.label, style: Theme.of(context).textTheme.labelSmall, textAlign: TextAlign.center),
+          ],
+        ),
       ),
     );
   }
@@ -257,4 +286,12 @@ final class CourseScreen extends HookConsumerWidget {
   bool _isSameDate(DateTime a, DateTime b) {
     return a.year == b.year && a.month == b.month && a.day == b.day;
   }
+}
+
+final class _ShortcutItem {
+  const _ShortcutItem({required IconData icon, required String label, required VoidCallback onPressed});
+
+  final IconData icon;
+  final String label;
+  final VoidCallback onPressed;
 }
