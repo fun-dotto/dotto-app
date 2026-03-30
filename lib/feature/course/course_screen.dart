@@ -228,13 +228,13 @@ final class CourseScreen extends HookConsumerWidget {
                   _ShortcutItem(
                     imageUrl: hope.icon,
                     label: hope.label,
-                    onPressed: () => launchUrlString(hope.url, mode: LaunchMode.externalApplication),
+                    onPressed: () => _launchQuickLink(context, hope),
                   ),
                 if (quickLinksByLabel['学生ポータル'] case final portal?)
                   _ShortcutItem(
                     imageUrl: portal.icon,
                     label: portal.label,
-                    onPressed: () => launchUrlString(portal.url, mode: LaunchMode.externalApplication),
+                    onPressed: () => _launchQuickLink(context, portal),
                   ),
               ],
             ),
@@ -296,10 +296,18 @@ final class CourseScreen extends HookConsumerWidget {
   bool _isSameDate(DateTime a, DateTime b) {
     return a.year == b.year && a.month == b.month && a.day == b.day;
   }
+
+  Future<void> _launchQuickLink(BuildContext context, QuickLink link) async {
+    final launched = await launchUrlString(link.url, mode: LaunchMode.externalApplication);
+    if (!context.mounted || launched) {
+      return;
+    }
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${link.label} を開けませんでした')));
+  }
 }
 
 final class _ShortcutItem {
-  const _ShortcutItem({this.icon = Icons.link, this.imageUrl, required this.label, required this.onPressed});
+  const _ShortcutItem({required this.label, required this.onPressed, this.icon = Icons.link, this.imageUrl});
 
   final IconData icon;
   final String? imageUrl;
