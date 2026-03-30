@@ -35,15 +35,9 @@ tasks:
       - "{{.FLUTTER}} config --enable-swift-package-manager"
       - "{{.FLUTTER}} pub get"
 
-  install-pre-commit:
-    desc: Install pre-commit hooks (using mise)
-    cmds:
-      - mise generate git-pre-commit --write --task=pre-commit
-
   install-all:
     desc: Install dependencies for all projects
     deps:
-      - task: install-pre-commit
       - task: install
         vars:
           FLUTTER: "{{.FLUTTER}}"
@@ -53,6 +47,11 @@ tasks:
       - task: api:install
         vars:
           FLUTTER: "{{.FLUTTER}}"
+
+  setup-pre-commit:
+    desc: Setup pre-commit hooks (using mise)
+    cmds:
+      - mise generate git-pre-commit --write --task=pre-commit
 
   generate-openapi:
     desc: Generate OpenAPI code
