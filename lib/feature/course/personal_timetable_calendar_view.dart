@@ -29,8 +29,11 @@ final class PersonalTimetableCalendarView extends HookWidget {
         selectedDate ?? (personalTimetableDays.isNotEmpty ? personalTimetableDays.first.date : DateTime.now());
     final selectedDayIndex = personalTimetableDays.indexWhere((day) => _isSameDate(day.date, safeSelectedDate));
     final initialPage = selectedDayIndex >= 0 ? selectedDayIndex : 0;
+    final initialDateCarouselPage = selectedDayIndex >= 5 ? 1 : 0;
     final currentPage = useState(initialPage);
+    final currentDateCarouselPage = useState(initialDateCarouselPage);
     final pageController = usePageController(initialPage: initialPage);
+    final dateCarouselController = useMemoized(CarouselSliderController.new);
 
     useEffect(() {
       if (personalTimetableDays.isEmpty) {
@@ -49,6 +52,20 @@ final class PersonalTimetableCalendarView extends HookWidget {
       return null;
     }, [personalTimetableDays, safeSelectedDate, pageController]);
 
+    useEffect(() {
+      final targetDateCarouselPage = (selectedDayIndex >= 0 && selectedDayIndex >= 5) ? 1 : 0;
+      if (targetDateCarouselPage == currentDateCarouselPage.value || !dateCarouselController.ready) {
+        return null;
+      }
+      currentDateCarouselPage.value = targetDateCarouselPage;
+      dateCarouselController.animateToPage(
+        targetDateCarouselPage,
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeOutCubic,
+      );
+      return null;
+    }, [selectedDayIndex, dateCarouselController]);
+
     return Padding(
       padding: const EdgeInsets.only(right: 8),
       child: _calendar(
@@ -58,6 +75,8 @@ final class PersonalTimetableCalendarView extends HookWidget {
         currentPage: currentPage.value,
         onPageChanged: (newPage) => currentPage.value = newPage,
         pageController: pageController,
+        dateCarouselController: dateCarouselController,
+        onDateCarouselPageChanged: (page) => currentDateCarouselPage.value = page,
         onDateSelected: onDateSelected,
       ),
     );
@@ -70,11 +89,15 @@ final class PersonalTimetableCalendarView extends HookWidget {
     required int currentPage,
     required void Function(int) onPageChanged,
     required PageController pageController,
+    required CarouselSliderController dateCarouselController,
+    required void Function(int) onDateCarouselPageChanged,
     required void Function(DateTime) onDateSelected,
   }) {
     final firstWeekDates = days.take(5).map((e) => e.date).toList();
     final secondWeekDates = days.skip(5).take(5).map((e) => e.date).toList();
+    final datePages = [firstWeekDates, if (secondWeekDates.isNotEmpty) secondWeekDates];
     final clampedPage = days.isEmpty ? 0 : currentPage.clamp(0, days.length - 1).toInt();
+    final dateCarouselInitialPage = secondWeekDates.isNotEmpty && clampedPage >= 5 ? 1 : 0;
     final currentDay = days.isEmpty ? null : days[clampedPage];
     final timetableHeight = currentDay == null ? 0.0 : _dayTimetableHeight(currentDay);
 
@@ -100,11 +123,17 @@ final class PersonalTimetableCalendarView extends HookWidget {
                 .toList(),
           ),
         CarouselSlider(
-          items: [
-            _dateButtons(dates: firstWeekDates, selectedDate: selectedDate, onDateSelected: onDateSelected),
-            _dateButtons(dates: secondWeekDates, selectedDate: selectedDate, onDateSelected: onDateSelected),
-          ],
-          options: CarouselOptions(height: 48, viewportFraction: 1, enableInfiniteScroll: false),
+          carouselController: dateCarouselController,
+          items: datePages
+              .map((dates) => _dateButtons(dates: dates, selectedDate: selectedDate, onDateSelected: onDateSelected))
+              .toList(),
+          options: CarouselOptions(
+            height: 48,
+            viewportFraction: 1,
+            enableInfiniteScroll: false,
+            initialPage: dateCarouselInitialPage,
+            onPageChanged: (index, _) => onDateCarouselPageChanged(index),
+          ),
         ),
         if (currentDay != null)
           AnimatedSize(
