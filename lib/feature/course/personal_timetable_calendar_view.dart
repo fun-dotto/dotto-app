@@ -46,6 +46,9 @@ final class PersonalTimetableCalendarView extends StatelessWidget {
     final secondWeekDates = days.skip(5).take(5).map((e) => e.date).toList();
     final selectedCandidates = days.where((e) => _isSameDate(e.date, selectedDate));
     final selectedDay = selectedCandidates.isEmpty ? null : selectedCandidates.first;
+    final selectedDayIndex = days.indexWhere((day) => _isSameDate(day.date, selectedDate));
+    final initialPage = selectedDayIndex >= 0 ? selectedDayIndex : 0;
+    final timetableCarouselHeight = _timetableCarouselHeight(days);
 
     return Column(
       spacing: 8,
@@ -75,7 +78,18 @@ final class PersonalTimetableCalendarView extends StatelessWidget {
           ],
           options: CarouselOptions(height: 48, viewportFraction: 1, enableInfiniteScroll: false),
         ),
-        _dayTimetable(context, selectedDay),
+        if (selectedDay != null)
+          CarouselSlider.builder(
+            itemCount: days.length,
+            itemBuilder: (context, index, _) => _dayTimetable(context, days[index]),
+            options: CarouselOptions(
+              height: timetableCarouselHeight,
+              viewportFraction: 1,
+              enableInfiniteScroll: false,
+              initialPage: initialPage,
+              onPageChanged: (index, _) => onDateSelected(days[index].date),
+            ),
+          ),
       ],
     );
   }
@@ -133,6 +147,26 @@ final class PersonalTimetableCalendarView extends StatelessWidget {
           )
           .toList(),
     );
+  }
+
+  double _timetableCarouselHeight(List<PersonalTimetableDay> days) {
+    if (days.isEmpty) {
+      return 0;
+    }
+    final maxHeight = days
+        .map((day) {
+          final totalRowHeight = Period.values
+              .map((period) {
+                final itemCount = day.items.where((item) => item.period == period).length;
+                final visibleItemCount = itemCount == 0 ? 1 : itemCount;
+                return (visibleItemCount * 44) + ((visibleItemCount - 1) * 8);
+              })
+              .fold<double>(0, (sum, rowHeight) => sum + rowHeight);
+          final rowGap = (Period.values.length - 1) * 4;
+          return totalRowHeight + rowGap;
+        })
+        .reduce((a, b) => a > b ? a : b);
+    return maxHeight + 16;
   }
 
   Widget _periodRow(BuildContext context, {required Period period, required List<PersonalTimetableItem> items}) {
