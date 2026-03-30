@@ -8,7 +8,6 @@ import 'package:dotto/feature/course/course_reducer.dart';
 import 'package:dotto/feature/course/course_registration_screen.dart';
 import 'package:dotto/feature/course/course_state.dart';
 import 'package:dotto/feature/course/personal_timetable_calendar_view.dart';
-import 'package:dotto/feature/timetable_v0/repository/timetable_repository.dart';
 import 'package:dotto/feature/subject/search_subject_screen.dart';
 import 'package:dotto/feature/subject/subject_detail_screen.dart';
 import 'package:dotto/widget/web_pdf_viewer.dart';
@@ -97,10 +96,6 @@ final class CourseScreen extends HookConsumerWidget {
                           child: DottoButton(
                             onPressed: () async {
                               await ref.read(userProvider.notifier).signIn();
-                              if (!context.mounted) {
-                                return;
-                              }
-                              await TimetableRepository().loadPersonalTimetableListOnLogin(context, ref);
                             },
                             child: const Text('ログインして時間割機能を使う'),
                           ),
