@@ -81,7 +81,7 @@ final class PersonalTimetableCalendarView extends StatelessWidget {
         if (selectedDay != null)
           CarouselSlider.builder(
             itemCount: days.length,
-            itemBuilder: (context, index, _) => _dayTimetable(context, days[index]),
+            itemBuilder: (context, index, _) => SingleChildScrollView(child: _dayTimetable(context, days[index])),
             options: CarouselOptions(
               height: timetableCarouselHeight,
               viewportFraction: 1,
