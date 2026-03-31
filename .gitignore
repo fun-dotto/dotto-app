@@ -283,3 +283,6 @@ coverage/
 firebase.json
 
 **/.envrc
+
+.claude/worktrees/
+
