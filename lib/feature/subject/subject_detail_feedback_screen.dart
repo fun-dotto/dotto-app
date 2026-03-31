@@ -16,7 +16,7 @@ final class SubjectDetailFeedbackScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isAuthenticated = ref.watch(userProvider.notifier).isAuthenticated;
+    final isAuthenticated = ref.watch(isAuthenticatedProvider);
     final apiClient = ref.read(apiClientProvider);
     final subjectRepository = SubjectRepositoryImpl(apiClient);
     final feedbacksSnapshot = useFuture(useMemoized(() => subjectRepository.getFeedbacks(lessonId)));

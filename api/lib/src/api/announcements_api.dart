@@ -50,9 +50,10 @@ class AnnouncementsApi {
       extra: <String, dynamic>{
         'secure': <Map<String, String>>[
           {
-            'type': 'http',
-            'scheme': 'Bearer',
-            'name': 'BearerAuth',
+            'type': 'apiKey',
+            'name': 'FirebaseAppCheckAuth',
+            'keyName': 'X-Firebase-AppCheck',
+            'where': 'header',
           },
         ],
         ...?extra,
@@ -129,9 +130,10 @@ class AnnouncementsApi {
       extra: <String, dynamic>{
         'secure': <Map<String, String>>[
           {
-            'type': 'http',
-            'scheme': 'Bearer',
-            'name': 'BearerAuth',
+            'type': 'apiKey',
+            'name': 'FirebaseAppCheckAuth',
+            'keyName': 'X-Firebase-AppCheck',
+            'where': 'header',
           },
         ],
         ...?extra,

@@ -15,12 +15,51 @@
 
 default_platform(:android)
 
+def decrypted_dart_defines
+  sh("dotenvx decrypt --stdout | grep -v '^#' | sed '/^$/d; s/^/--dart-define=/'", log: false)
+    .lines
+    .map(&:strip)
+    .reject(&:empty?)
+end
+
+def ensure_release_signing_config!
+  key_properties_path = "../key.properties"
+  UI.user_error!("android/key.properties が見つかりません。Google Play 配布には署名設定が必要です。") unless File.exist?(key_properties_path)
+
+  keystore_properties = {}
+  File.foreach(key_properties_path) do |line|
+    stripped = line.strip
+    next if stripped.empty? || stripped.start_with?("#")
+
+    key, value = stripped.split("=", 2)
+    next if key.nil? || value.nil?
+
+    keystore_properties[key.strip] = value.strip
+  end
+
+  required_keys = %w[keyAlias keyPassword storeFile storePassword]
+  missing_keys = required_keys.select { |key| keystore_properties[key].to_s.strip.empty? }
+  unless missing_keys.empty?
+    UI.user_error!("android/key.properties の必須項目が未設定です: #{missing_keys.join(', ')}")
+  end
+
+  store_file = keystore_properties["storeFile"]
+  keystore_candidates = []
+  keystore_candidates << store_file if store_file.start_with?("/")
+  keystore_candidates << File.expand_path(store_file, "../app")
+  keystore_candidates << File.expand_path(store_file, "..")
+  keystore_exists = keystore_candidates.any? { |path| File.exist?(path) }
+  unless keystore_exists
+    UI.user_error!("キーストアファイルが見つかりません: #{store_file}")
+  end
+end
+
 platform :android do
   ENV["FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT"] = "30"
 
   desc "Deploy to Firebase App Distribution"
   lane :deploy_firebase_app_distribution do
-    sh( "flutter", "build", "appbundle", "--release", "$(dotenvx decrypt --stdout | grep -v '^#' | sed 's/^/--dart-define=/')" )
+    sh("flutter", "build", "appbundle", "--release", *decrypted_dart_defines)
     firebase_app_distribution(
       app: ENV["FIREBASE_APP_ID"],
       groups: ENV["FIREBASE_APP_DISTRIBUTION_GROUPS"],
@@ -29,6 +68,8 @@ platform :android do
 
   desc "Deploy a new version to the Google Play"
   lane :deploy_google_play do
+    ensure_release_signing_config!
+
     properties_path = "../local.properties"
     version_name = ""
     if File.exist?(properties_path)
@@ -48,7 +89,14 @@ platform :android do
     )[0]
     new_version_code = previous_build_number + 1
 
-    sh( "flutter", "build", "appbundle", "--release", "$(dotenvx decrypt --stdout | grep -v '^#' | sed 's/^/--dart-define=/')", "--build-number=#{new_version_code}" )
+    sh(
+      "flutter",
+      "build",
+      "appbundle",
+      "--release",
+      *decrypted_dart_defines,
+      "--build-number=#{new_version_code}",
+    )
 
     upload_to_play_store(
       version_name: "#{new_version_code}(#{version_name})",

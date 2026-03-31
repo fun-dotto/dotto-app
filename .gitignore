@@ -281,3 +281,8 @@ coverage/
 **.mocks.dart
 
 firebase.json
+
+**/.envrc
+
+.claude/worktrees/
+

@@ -22,6 +22,10 @@ Method | HTTP request | Description
 ### Example
 ```dart
 import 'package:openapi/api.dart';
+// TODO Configure API key authorization: FirebaseAppCheckAuth
+//defaultApiClient.getAuthentication<ApiKeyAuth>('FirebaseAppCheckAuth').apiKey = 'YOUR_API_KEY';
+// uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+//defaultApiClient.getAuthentication<ApiKeyAuth>('FirebaseAppCheckAuth').apiKeyPrefix = 'Bearer';
 
 final api = Openapi().getPersonalCalendarItemsApi();
 final BuiltList<DateTime> dates = ; // BuiltList<DateTime> | 日付のリスト; 指定した日付の個人カレンダーアイテムのみを取得する
@@ -46,7 +50,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[BearerAuth](../README.md#BearerAuth)
+[FirebaseAppCheckAuth](../README.md#FirebaseAppCheckAuth), [BearerAuth](../README.md#BearerAuth)
 
 ### HTTP request headers
 
