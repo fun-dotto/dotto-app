@@ -22,7 +22,10 @@ final class DottoUserPreferenceNotifier extends _$DottoUserPreferenceNotifier {
   }
 
   Future<void> setTimetablePeriodStyle(TimetablePeriodStyle timetablePeriodStyle) async {
-    final currentPreference = state.valueOrNull ?? const DottoUserPreference();
+    final currentPreference = switch (state) {
+      AsyncData(value: final preference) => preference,
+      AsyncError() || AsyncLoading() => const DottoUserPreference(),
+    };
     state = AsyncValue.data(currentPreference.copyWith(timetablePeriodStyle: timetablePeriodStyle));
 
     await UserPreferenceRepository.setString(UserPreferenceKeys.timetablePeriodStyle, timetablePeriodStyle.key);
