@@ -143,7 +143,7 @@ class SearchSubjectScreen extends HookConsumerWidget {
     Widget buildLoadingSkeleton() {
       return Column(
         children: [
-          for (var i = 0; i < 5; i++) ...[
+          for (var i = 0; i < 8; i++) ...[
             if (i > 0) const Divider(height: 0),
             ListTile(
               title: Shimmer(
