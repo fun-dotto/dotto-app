@@ -118,28 +118,11 @@ class SearchSubjectFilterSection extends HookWidget {
         const SizedBox(height: 12),
         _buildCollapsibleSection(
           context: context,
-          label: '分類・開講時期・必修/選択・教養区分',
+          label: '開講時期・必修/選択・分類・教養区分',
           isExpanded: isOtherAttributesExpanded.value,
           onExpandedChanged: (value) => isOtherAttributesExpanded.value = value,
           child: Column(
             children: [
-              _buildFilterChipGroup<SubjectClassification>(
-                context: context,
-                label: '分類',
-                values: SubjectClassification.values,
-                selected: filter.classifications,
-                onChanged: (v) {
-                  final hasCultural = v.contains(SubjectClassification.cultural);
-                  onChanged(
-                    filter.copyWith(
-                      classifications: v,
-                      culturalSubjectCategories: hasCultural ? filter.culturalSubjectCategories : [],
-                    ),
-                  );
-                },
-                labelBuilder: (v) => v.label,
-              ),
-              const SizedBox(height: 12),
               _buildFilterChipGroup<Semester>(
                 context: context,
                 label: '開講時期',
@@ -155,6 +138,23 @@ class SearchSubjectFilterSection extends HookWidget {
                 values: SubjectRequirementType.values,
                 selected: filter.requirements,
                 onChanged: (v) => onChanged(filter.copyWith(requirements: v)),
+                labelBuilder: (v) => v.label,
+              ),
+              const SizedBox(height: 12),
+              _buildFilterChipGroup<SubjectClassification>(
+                context: context,
+                label: '分類',
+                values: SubjectClassification.values,
+                selected: filter.classifications,
+                onChanged: (v) {
+                  final hasCultural = v.contains(SubjectClassification.cultural);
+                  onChanged(
+                    filter.copyWith(
+                      classifications: v,
+                      culturalSubjectCategories: hasCultural ? filter.culturalSubjectCategories : [],
+                    ),
+                  );
+                },
                 labelBuilder: (v) => v.label,
               ),
               if (hasCulturalClassification) ...[
