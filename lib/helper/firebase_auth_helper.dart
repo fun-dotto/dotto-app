@@ -1,22 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
-import 'package:dotto/firebase_options.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 final class FirebaseAuthHelper {
-  static const _webClientId = '107577467292-10sqodijnvb7qn0rnjoda8q0tvq4ebrr.apps.googleusercontent.com';
-
   static Future<void> initialize() {
-    return GoogleSignIn.instance.initialize(
-      clientId: switch (defaultTargetPlatform) {
-        TargetPlatform.iOS => DefaultFirebaseOptions.ios.iosClientId,
-        _ => null,
-      },
-      serverClientId: switch (defaultTargetPlatform) {
-        TargetPlatform.android => _webClientId,
-        _ => null,
-      },
-    );
+    return GoogleSignIn.instance.initialize();
   }
 
   static Future<UserCredential> _authenticate() async {
