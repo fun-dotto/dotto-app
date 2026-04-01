@@ -5,6 +5,6 @@ final class CourseCustomizeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: AppBar(title: const Text('講義画面のカスタマイズ')));
+    return Scaffold(appBar: AppBar(title: const Text('カスタム')));
   }
 }
