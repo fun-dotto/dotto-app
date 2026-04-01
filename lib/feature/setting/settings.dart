@@ -100,19 +100,7 @@ final class SettingsScreen extends ConsumerWidget {
                         ),
                       ),
                       loading: () {
-                        final previousUser = user.value ?? _emptyUser;
-                        final isAuthenticated = previousUser.id.isNotEmpty;
-                        return CustomSettingsTile(
-                          child: UserInfoTile(
-                            user: previousUser,
-                            onTap: isAuthenticated
-                                ? () => ref.read(userProvider.notifier).signOut()
-                                : () async {
-                                    await ref.read(userProvider.notifier).signIn();
-                                    await TimetableRepository().loadPersonalTimetableListOnLogin(context, ref);
-                                  },
-                          ),
-                        );
+                        return CustomSettingsTile(child: UserInfoTile(user: user.value ?? _emptyUser, isLoading: true));
                       },
                       error: (err, stack) {
                         final previousUser = user.value ?? _emptyUser;
