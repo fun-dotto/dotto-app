@@ -236,7 +236,12 @@ class SearchSubjectFilterSection extends HookWidget {
                   }
                 },
                 showCheckmark: false,
-                selectedColor: colors.accentPrimary.withValues(alpha: 0.2),
+                color: MaterialStateProperty.resolveWith<Color?>((states) {
+                  if (states.contains(MaterialState.selected)) {
+                    return colors.accentPrimary.withValues(alpha: 0.2);
+                  }
+                  return colors.backgroundSecondary;
+                }),
                 side: BorderSide(color: isSelected ? colors.accentPrimary : colors.borderPrimary),
               );
             }(),
