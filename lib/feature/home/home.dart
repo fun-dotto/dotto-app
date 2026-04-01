@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:dotto/controller/config_controller.dart';
+import 'package:dotto/controller/dotto_user_preference_controller.dart';
 import 'package:dotto/domain/quick_link.dart';
+import 'package:dotto/domain/timetable_period_style.dart';
 import 'package:dotto/feature/bus/controller/bus_data_controller.dart';
 import 'package:dotto/feature/bus/controller/bus_polling_controller.dart';
 import 'package:dotto/feature/bus/controller/bus_stops_controller.dart';
@@ -13,10 +15,8 @@ import 'package:dotto/feature/home/component/file_grid.dart';
 import 'package:dotto/feature/home/component/file_tile.dart';
 import 'package:dotto/feature/home/component/link_grid.dart';
 import 'package:dotto/feature/home/component/timetable_buttons.dart';
-import 'package:dotto/feature/timetable_v0/controller/timetable_period_style_controller.dart';
 import 'package:dotto/feature/timetable_v0/controller/two_week_timetable_controller.dart';
 import 'package:dotto/feature/timetable_v0/course_cancellation_screen.dart';
-import 'package:dotto/feature/timetable_v0/domain/timetable_period_style.dart';
 import 'package:dotto/feature/timetable_v0/edit_timetable_screen.dart';
 import 'package:dotto/feature/timetable_v0/repository/timetable_repository.dart';
 import 'package:dotto/feature/timetable_v0/widget/my_page_timetable.dart';
@@ -56,7 +56,7 @@ final class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final config = ref.watch(configProvider);
-    final timetablePeriodStyle = ref.watch(timetablePeriodStyleProvider);
+    final userPreference = ref.watch(dottoUserPreferenceProvider);
 
     final fileItems = <(String label, String url, IconData icon)>[
       ('学年暦', config.officialCalendarPdfUrl, Icons.event_note),
@@ -85,8 +85,9 @@ final class _HomeScreenState extends ConsumerState<HomeScreen> {
         title: const Text('Dotto'),
         centerTitle: false,
         actions: [
-          timetablePeriodStyle.when(
-            data: (style) {
+          switch (userPreference) {
+            AsyncData(value: final preference) => () {
+              final style = preference.timetablePeriodStyle;
               return Row(
                 spacing: 4,
                 children: [
@@ -95,16 +96,17 @@ final class _HomeScreenState extends ConsumerState<HomeScreen> {
                     value: style == TimetablePeriodStyle.numberAndTime,
                     onChanged: (value) {
                       ref
-                          .read(timetablePeriodStyleProvider.notifier)
-                          .setStyle(value ? TimetablePeriodStyle.numberAndTime : TimetablePeriodStyle.numberOnly);
+                          .read(dottoUserPreferenceProvider.notifier)
+                          .setTimetablePeriodStyle(
+                            value ? TimetablePeriodStyle.numberAndTime : TimetablePeriodStyle.numberOnly,
+                          );
                     },
                   ),
                 ],
               );
-            },
-            error: (_, _) => const SizedBox.shrink(),
-            loading: () => const SizedBox.shrink(),
-          ),
+            }(),
+            AsyncError() || AsyncLoading() => const SizedBox.shrink(),
+          },
         ],
       ),
       body: SingleChildScrollView(
