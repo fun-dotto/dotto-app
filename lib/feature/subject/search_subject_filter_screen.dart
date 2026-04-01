@@ -69,6 +69,12 @@ class SearchSubjectFilterSection extends HookWidget {
     final hasCulturalClassification = filter.classifications.contains(SubjectClassification.cultural);
     final isBasicAttributesExpanded = useState(false);
     final isOtherAttributesExpanded = useState(false);
+    final basicFilterCount = filter.courses.length + filter.grades.length + filter.classes.length;
+    final otherFilterCount =
+        filter.semesters.length +
+        filter.requirements.length +
+        filter.classifications.length +
+        filter.culturalSubjectCategories.length;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -84,6 +90,7 @@ class SearchSubjectFilterSection extends HookWidget {
           label: '開講時期・必修/選択・分類・教養区分',
           isExpanded: isOtherAttributesExpanded.value,
           onExpandedChanged: (value) => isOtherAttributesExpanded.value = value,
+          badgeCount: otherFilterCount,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -141,6 +148,7 @@ class SearchSubjectFilterSection extends HookWidget {
           label: 'コース/領域・学年・クラス',
           isExpanded: isBasicAttributesExpanded.value,
           onExpandedChanged: (value) => isBasicAttributesExpanded.value = value,
+          badgeCount: basicFilterCount,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -183,7 +191,9 @@ class SearchSubjectFilterSection extends HookWidget {
     required bool isExpanded,
     required ValueChanged<bool> onExpandedChanged,
     required Widget child,
+    int badgeCount = 0,
   }) {
+    final colors = Theme.of(context).semanticColors;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -195,6 +205,17 @@ class SearchSubjectFilterSection extends HookWidget {
             child: Row(
               children: [
                 Expanded(child: Text(label, style: Theme.of(context).textTheme.titleMedium)),
+                if (badgeCount > 0) ...[
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                    decoration: BoxDecoration(color: colors.accentPrimary, borderRadius: BorderRadius.circular(999)),
+                    child: Text(
+                      '$badgeCount',
+                      style: Theme.of(context).textTheme.labelMedium?.copyWith(color: colors.textInverse),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                ],
                 Icon(isExpanded ? Icons.expand_less : Icons.expand_more),
               ],
             ),
