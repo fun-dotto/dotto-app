@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:dotto/controller/config_controller.dart';
+import 'package:dotto/domain/config.dart';
 import 'package:dotto/controller/user_controller.dart';
 import 'package:dotto/domain/quick_link.dart';
 import 'package:dotto/feature/course/course_cancellation_screen.dart';
@@ -158,7 +159,7 @@ final class CourseScreen extends HookConsumerWidget {
             ),
           ),
         ),
-        AsyncLoading() => _loadingSkeleton(context, isAuthenticated: isAuthenticated),
+        AsyncLoading() => _loadingSkeleton(context, isAuthenticated: isAuthenticated, config: config),
         AsyncError() => RefreshIndicator(
           onRefresh: () async {
             if (!isAuthenticated) {
@@ -180,30 +181,45 @@ final class CourseScreen extends HookConsumerWidget {
     );
   }
 
-  Widget _loadingSkeleton(BuildContext context, {required bool isAuthenticated}) {
-    return SingleChildScrollView(
-      physics: const AlwaysScrollableScrollPhysics(),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8),
-        child: Column(
-          children: [
-            if (isAuthenticated)
-              Padding(padding: const EdgeInsets.symmetric(horizontal: 8), child: _courseTimetableSkeleton(context))
-            else
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 48),
-                child: _skeletonBox(height: 48, width: 220, radius: 24),
-              ),
-            if (isAuthenticated)
-              Padding(
-                padding: const EdgeInsets.only(right: 16),
-                child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [_skeletonBox(height: 36, width: 120)]),
-              ),
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: _shortcutSkeleton(context, isAuthenticated: isAuthenticated),
+  Widget _loadingSkeleton(BuildContext context, {required bool isAuthenticated, required AsyncValue<Config> config}) {
+    final configValue = config.valueOrNull;
+    return LayoutBuilder(
+      builder: (context, constraints) => RefreshIndicator(
+        onRefresh: () async {},
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: constraints.maxHeight),
+            child: Column(
+              children: [
+                if (isAuthenticated)
+                  Padding(padding: const EdgeInsets.symmetric(horizontal: 8), child: _courseTimetableSkeleton(context))
+                else
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 48),
+                    child: Center(child: DottoButton(onPressed: null, child: const Text('ログインして時間割機能を使う'))),
+                  ),
+                if (isAuthenticated)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [DottoButton(onPressed: null, type: DottoButtonType.text, child: const Text('1週間の時間割'))],
+                  ),
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: _shortcutSections(
+                    context,
+                    isAuthenticated: isAuthenticated,
+                    quickLinksByLabel: {for (final link in QuickLink.links) link.label: link},
+                    fileItems: [
+                      ('学年暦', configValue?.officialCalendarPdfUrl ?? '', Icons.event_note),
+                      ('時間割 前期', configValue?.timetable1PdfUrl ?? '', Icons.calendar_view_month),
+                      ('時間割 後期', configValue?.timetable2PdfUrl ?? '', Icons.calendar_view_month),
+                    ],
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
@@ -234,56 +250,14 @@ final class CourseScreen extends HookConsumerWidget {
             padding: EdgeInsets.only(top: index == 0 ? 0 : 8, right: 8),
             child: Row(
               children: [
-                SizedBox(width: 28, child: Center(child: _skeletonBox(height: 16, width: 16, radius: 4))),
+                SizedBox(width: 28, child: Center(child: Text('${index + 1}'))),
                 const SizedBox(width: 8),
-                Expanded(child: _skeletonBox(height: 52)),
+                Expanded(child: _courseTimetableCellSkeleton()),
               ],
             ),
           ),
         ),
       ],
-    );
-  }
-
-  Widget _shortcutSkeleton(BuildContext context, {required bool isAuthenticated}) {
-    return Container(
-      decoration: BoxDecoration(
-        border: Border.all(color: SemanticColor.light.borderPrimary),
-        borderRadius: BorderRadius.circular(16),
-        color: SemanticColor.light.backgroundSecondary,
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            _shortcutSkeletonRow(itemCount: isAuthenticated ? 2 : 1),
-            const Padding(padding: EdgeInsets.symmetric(vertical: 8), child: Divider(height: 1)),
-            _shortcutSkeletonRow(itemCount: 3),
-            const Padding(padding: EdgeInsets.symmetric(vertical: 8), child: Divider(height: 1)),
-            _shortcutSkeletonRow(itemCount: 2),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _shortcutSkeletonRow({required int itemCount}) {
-    return Row(
-      children: List.generate(
-        itemCount,
-        (index) => Expanded(
-          child: Padding(
-            padding: EdgeInsets.only(left: index == 0 ? 0 : 8),
-            child: Column(
-              children: [
-                _skeletonCircle(40),
-                const SizedBox(height: 8),
-                _skeletonBox(height: 12, width: 72, radius: 4),
-              ],
-            ),
-          ),
-        ),
-      ),
     );
   }
 
@@ -293,6 +267,23 @@ final class CourseScreen extends HookConsumerWidget {
         width: size,
         height: size,
         decoration: BoxDecoration(color: Colors.grey.shade300, shape: BoxShape.circle),
+      ),
+    );
+  }
+
+  Widget _courseTimetableCellSkeleton() {
+    return Container(
+      height: 52,
+      decoration: BoxDecoration(color: Colors.grey.shade200, borderRadius: const BorderRadius.all(Radius.circular(8))),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          _skeletonBox(height: 12, width: 96, radius: 4),
+          const SizedBox(height: 8),
+          _skeletonBox(height: 10, width: 48, radius: 4),
+        ],
       ),
     );
   }
