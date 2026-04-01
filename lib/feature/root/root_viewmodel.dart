@@ -71,6 +71,8 @@ class RootViewModel extends _$RootViewModel {
           selectedTab: activeTabs.contains(currentState.selectedTab) ? currentState.selectedTab : activeTabs.first,
           isValidAppVersion: nextVersionEvaluation.isValidAppVersion,
           isLatestAppVersion: nextVersionEvaluation.isLatestAppVersion,
+          currentAppVersion: currentAppVersion,
+          latestAppVersion: next.latestAppVersion,
           appStorePageUrl: next.appStorePageUrl,
         ),
       );
@@ -82,6 +84,8 @@ class RootViewModel extends _$RootViewModel {
       hasShownUpdateAlert: false,
       isValidAppVersion: versionEvaluation.isValidAppVersion,
       isLatestAppVersion: versionEvaluation.isLatestAppVersion,
+      currentAppVersion: currentAppVersion,
+      latestAppVersion: config.latestAppVersion,
       appStorePageUrl: config.appStorePageUrl,
       navigatorStates: {for (final tabItem in TabItem.values) tabItem: GlobalKey<NavigatorState>()},
     );

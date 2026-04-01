@@ -26,10 +26,15 @@ final class RootScreen extends ConsumerWidget {
     return baseTabs.where((tab) => tab != TabItem.funch).toList();
   }
 
-  Widget _updateAlertDialog({required BuildContext context, required String appStorePageUrl}) {
+  Widget _updateAlertDialog({
+    required BuildContext context,
+    required String appStorePageUrl,
+    required String currentAppVersion,
+    required String latestAppVersion,
+  }) {
     return AlertDialog(
       title: const Text('アップデートが必要です'),
-      content: const Text('最新版のDottoをご利用ください。'),
+      content: Text('現在のバージョン: $currentAppVersion\n最新バージョン: $latestAppVersion'),
       actions: [
         TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('あとで')),
         TextButton(
@@ -112,7 +117,11 @@ final class RootScreen extends ConsumerWidget {
         }
         if (!value.isValidAppVersion) {
           debugPrint('Invalid App Version');
-          return InvalidAppVersionScreen(appStorePageUrl: value.appStorePageUrl);
+          return InvalidAppVersionScreen(
+            appStorePageUrl: value.appStorePageUrl,
+            currentAppVersion: value.currentAppVersion,
+            latestAppVersion: value.latestAppVersion,
+          );
         }
 
         WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -121,7 +130,12 @@ final class RootScreen extends ConsumerWidget {
             ref.read(rootViewModelProvider.notifier).onUpdateAlertShown();
             showDialog<void>(
               context: context,
-              builder: (context) => _updateAlertDialog(context: context, appStorePageUrl: value.appStorePageUrl),
+              builder: (context) => _updateAlertDialog(
+                context: context,
+                appStorePageUrl: value.appStorePageUrl,
+                currentAppVersion: value.currentAppVersion,
+                latestAppVersion: value.latestAppVersion,
+              ),
             );
           }
         });
