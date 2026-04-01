@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:dotto/controller/config_controller.dart';
+import 'package:dotto/domain/config.dart';
 import 'package:dotto/controller/user_controller.dart';
 import 'package:dotto/domain/quick_link.dart';
 import 'package:dotto/feature/course/course_cancellation_screen.dart';
@@ -17,6 +18,7 @@ import 'package:dotto_design_system/style/semantic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:shimmer_animation/shimmer_animation.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 final class CourseScreen extends HookConsumerWidget {
@@ -121,12 +123,18 @@ final class CourseScreen extends HookConsumerWidget {
                         mainAxisAlignment: .end,
                         children: [
                           DottoButton(
-                            onPressed: () => Navigator.of(context).push(
-                              MaterialPageRoute<void>(
-                                builder: (context) => const CourseRegistrationScreen(),
-                                settings: const RouteSettings(name: '/course/registration'),
-                              ),
-                            ),
+                            onPressed: () async {
+                              await Navigator.of(context).push(
+                                MaterialPageRoute<void>(
+                                  builder: (context) => const CourseRegistrationScreen(),
+                                  settings: const RouteSettings(name: '/course/registration'),
+                                ),
+                              );
+                              if (!context.mounted) {
+                                return;
+                              }
+                              await ref.read(courseReducerProvider.notifier).refresh();
+                            },
                             type: DottoButtonType.text,
                             child: const Text('1週間の時間割'),
                           ),
@@ -151,7 +159,7 @@ final class CourseScreen extends HookConsumerWidget {
             ),
           ),
         ),
-        AsyncLoading() => const Center(child: CircularProgressIndicator()),
+        AsyncLoading() => _loadingSkeleton(context, isAuthenticated: isAuthenticated, config: config),
         AsyncError() => RefreshIndicator(
           onRefresh: () async {
             if (!isAuthenticated) {
@@ -170,6 +178,122 @@ final class CourseScreen extends HookConsumerWidget {
           ),
         ),
       },
+    );
+  }
+
+  Widget _loadingSkeleton(BuildContext context, {required bool isAuthenticated, required Config config}) {
+    return LayoutBuilder(
+      builder: (context, constraints) => RefreshIndicator(
+        onRefresh: () async {},
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: constraints.maxHeight),
+            child: Column(
+              children: [
+                if (isAuthenticated)
+                  Padding(padding: const EdgeInsets.symmetric(horizontal: 8), child: _courseTimetableSkeleton(context))
+                else
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 48),
+                    child: Center(child: DottoButton(onPressed: null, child: const Text('ログインして時間割機能を使う'))),
+                  ),
+                if (isAuthenticated)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [DottoButton(onPressed: null, type: DottoButtonType.text, child: const Text('1週間の時間割'))],
+                  ),
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: _shortcutSections(
+                    context,
+                    isAuthenticated: isAuthenticated,
+                    quickLinksByLabel: {for (final link in QuickLink.links) link.label: link},
+                    fileItems: [
+                      ('学年暦', config.officialCalendarPdfUrl, Icons.event_note),
+                      ('時間割 前期', config.timetable1PdfUrl, Icons.calendar_view_month),
+                      ('時間割 後期', config.timetable2PdfUrl, Icons.calendar_view_month),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _courseTimetableSkeleton(BuildContext context) {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(right: 8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(
+              5,
+              (_) => Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Column(
+                  children: [_skeletonBox(height: 14, width: 28), const SizedBox(height: 8), _skeletonCircle(48)],
+                ),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 12),
+        ...List.generate(
+          6,
+          (index) => Padding(
+            padding: EdgeInsets.only(top: index == 0 ? 0 : 8, right: 8),
+            child: Row(
+              children: [
+                SizedBox(width: 28, child: Center(child: Text('${index + 1}'))),
+                const SizedBox(width: 8),
+                Expanded(child: _courseTimetableCellSkeleton()),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _skeletonCircle(double size) {
+    return Shimmer(
+      child: Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(color: Colors.grey.shade300, shape: BoxShape.circle),
+      ),
+    );
+  }
+
+  Widget _courseTimetableCellSkeleton() {
+    return Container(
+      height: 52,
+      decoration: BoxDecoration(color: Colors.grey.shade200, borderRadius: const BorderRadius.all(Radius.circular(8))),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          _skeletonBox(height: 12, width: 96, radius: 4),
+          const SizedBox(height: 8),
+          _skeletonBox(height: 10, width: 48, radius: 4),
+        ],
+      ),
+    );
+  }
+
+  Widget _skeletonBox({required double height, double? width, double radius = 8}) {
+    return Shimmer(
+      child: Container(
+        width: width,
+        height: height,
+        decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(radius)),
+      ),
     );
   }
 

@@ -48,23 +48,23 @@ final class CourseReducer extends _$CourseReducer {
 
     final courseRegistrationRepository = ref.read(courseRegistrationRepositoryProvider);
     final lectureCancellationRepository = ref.read(lectureCancellationRepositoryProvider);
-    final timetableRepository = ref.read(timetableRepositoryProvider);
-    final roomRepository = ref.read(roomRepositoryProvider);
+    final oneWeekScheduleRepository = ref.read(oneWeekScheduleRepositoryProvider);
     final personalCalendarRepository = ref.read(personalCalendarRepositoryProvider);
 
-    final (courseRegistrations, lectureCancellationData, timetableItems, roomAssignmentIndex) = await (
+    final (courseRegistrations, lectureCancellationData, schedules) = await (
       courseRegistrationRepository.getCourseRegistrations(Semester.values),
       lectureCancellationRepository.getLectureCancellationData(),
-      timetableRepository.getTimetableItems(Semester.values),
-      roomRepository.getRoomAssignmentIndex(),
+      oneWeekScheduleRepository.getSchedules(),
     ).wait;
     if (!ref.mounted) {
       return const CourseState();
     }
 
-    final registeredSubjectIds = courseRegistrations.map((e) => e.subject.id).toSet();
     final registeredSubjectsByName = <String, SubjectSummary>{
       for (final registration in courseRegistrations) registration.subject.name: registration.subject,
+    };
+    final registeredSubjectsById = <String, SubjectSummary>{
+      for (final registration in courseRegistrations) registration.subject.id: registration.subject,
     };
     final now = ref.read(clockProvider);
     final today = now();
@@ -77,10 +77,9 @@ final class CourseReducer extends _$CourseReducer {
 
     final days = personalCalendarRepository.getPersonalTimetableDays(
       targetDates: targetDates,
-      timetableItems: timetableItems,
-      registeredSubjectIds: registeredSubjectIds,
+      schedules: schedules,
+      registeredSubjectsById: registeredSubjectsById,
       registeredSubjectsByName: registeredSubjectsByName,
-      roomAssignmentIndex: roomAssignmentIndex,
       cancelledByDate: lectureCancellationData.cancelledByDate,
       madeUpByDate: lectureCancellationData.madeUpByDate,
     );

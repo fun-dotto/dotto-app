@@ -1,6 +1,7 @@
 import 'package:dotto/api/api_client.dart';
 import 'package:dotto/repository/course_registration_repository.dart';
 import 'package:dotto/repository/lecture_cancellation_repository.dart';
+import 'package:dotto/repository/oneweek_schedule_repository.dart';
 import 'package:dotto/repository/personal_calendar_repository.dart';
 import 'package:dotto/repository/room_repository.dart';
 import 'package:dotto/repository/timetable_repository.dart';
@@ -17,6 +18,8 @@ final timetableRepositoryProvider = Provider<TimetableRepository>((ref) {
 });
 
 final roomRepositoryProvider = Provider<RoomRepository>((_) => RoomRepositoryImpl());
+
+final oneWeekScheduleRepositoryProvider = Provider<OneWeekScheduleRepository>((_) => OneWeekScheduleRepositoryImpl());
 
 final personalCalendarRepositoryProvider = Provider<PersonalCalendarRepository>(
   (_) => PersonalCalendarRepositoryImpl(),

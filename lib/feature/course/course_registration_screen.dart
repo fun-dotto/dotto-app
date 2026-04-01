@@ -9,6 +9,7 @@ import 'package:dotto/feature/course/select_course_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:shimmer_animation/shimmer_animation.dart';
 
 class CourseRegistrationScreen extends HookConsumerWidget {
   const CourseRegistrationScreen({super.key});
@@ -45,9 +46,63 @@ class CourseRegistrationScreen extends HookConsumerWidget {
               )
               .toList(),
         ),
-        AsyncLoading() => const Center(child: CircularProgressIndicator()),
+        AsyncLoading() => _courseRegistrationSkeleton(context),
         AsyncError() => const Center(child: Text('データの取得に失敗しました')),
       },
+    );
+  }
+
+  Widget _courseRegistrationSkeleton(BuildContext context) {
+    return SingleChildScrollView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      child: Padding(
+        padding: const EdgeInsets.all(8),
+        child: Table(
+          columnWidths: {for (final e in Period.values) e.number: const FlexColumnWidth()},
+          children: <TableRow>[
+            TableRow(
+              children: DayOfWeek.weekdays
+                  .map(
+                    (e) => TableCell(
+                      child: Center(child: Text(e.label, style: Theme.of(context).textTheme.labelMedium)),
+                    ),
+                  )
+                  .toList(),
+            ),
+            ...Period.values.map(
+              (_) => TableRow(children: DayOfWeek.weekdays.map((_) => _personalWeeklyTimetableCellSkeleton()).toList()),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _skeletonBox({required double height, double? width, double radius = 8}) {
+    return Shimmer(
+      child: Container(
+        width: width,
+        height: height,
+        decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(radius)),
+      ),
+    );
+  }
+
+  Widget _personalWeeklyTimetableCellSkeleton() {
+    return Container(
+      margin: const EdgeInsets.all(2),
+      height: 100,
+      decoration: BoxDecoration(color: Colors.grey.shade200, borderRadius: const BorderRadius.all(Radius.circular(4))),
+      padding: const EdgeInsets.all(8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          _skeletonBox(height: 14, width: 56, radius: 4),
+          const SizedBox(height: 8),
+          _skeletonBox(height: 12, width: 40, radius: 4),
+        ],
+      ),
     );
   }
 

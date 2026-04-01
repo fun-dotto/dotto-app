@@ -241,6 +241,6 @@ void main() {
 
     final value = container.read(searchSubjectReducerProvider).requireValue;
     expect(value.filter, secondFilter);
-    expect(value.subjects, [newSubject]);
+    expect(value.subjects, [newSubject.copyWith(isAddedToTimetable: false)]);
   });
 }
