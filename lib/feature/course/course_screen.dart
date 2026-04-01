@@ -4,6 +4,7 @@ import 'package:dotto/controller/config_controller.dart';
 import 'package:dotto/controller/user_controller.dart';
 import 'package:dotto/domain/quick_link.dart';
 import 'package:dotto/feature/course/course_cancellation_screen.dart';
+import 'package:dotto/feature/course/course_customize_screen.dart';
 import 'package:dotto/feature/course/course_reducer.dart';
 import 'package:dotto/feature/course/course_registration_screen.dart';
 import 'package:dotto/feature/course/course_state.dart';
@@ -58,7 +59,21 @@ final class CourseScreen extends HookConsumerWidget {
     }, [state]);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('講義'), centerTitle: false),
+      appBar: AppBar(
+        title: const Text('講義'),
+        centerTitle: false,
+        actions: [
+          IconButton(
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (context) => const CourseCustomizeScreen(),
+                settings: const RouteSettings(name: '/course/customize'),
+              ),
+            ),
+            icon: const Icon(Icons.tune),
+          ),
+        ],
+      ),
       body: switch (state) {
         AsyncData(value: final courseState) => LayoutBuilder(
           builder: (context, constraints) => RefreshIndicator(
