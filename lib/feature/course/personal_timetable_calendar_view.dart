@@ -247,37 +247,39 @@ final class PersonalTimetableCalendarView extends HookConsumerWidget {
     required bool isTimetableTimeVisible,
   }) {
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
       spacing: 8,
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8),
           child: SizedBox(
             width: isTimetableTimeVisible ? 64 : 24,
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                if (isTimetableTimeVisible)
-                  Align(
-                    alignment: Alignment.topCenter,
-                    child: Text(
-                      _formatTime(period.startTime),
-                      style: TextStyle(fontSize: 8, height: 1.1, color: SemanticColor.light.accentPrimary),
+            child: SizedBox(
+              height: kMinInteractiveDimension,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  if (isTimetableTimeVisible)
+                    Align(
+                      alignment: Alignment.topCenter,
+                      child: Text(
+                        _formatTime(period.startTime),
+                        style: TextStyle(fontSize: 8, height: 1.1, color: SemanticColor.light.accentPrimary),
+                      ),
                     ),
+                  Text(
+                    period.number.toString(),
+                    style: TextStyle(fontSize: 20, color: SemanticColor.light.accentPrimary),
                   ),
-                Text(
-                  period.number.toString(),
-                  style: TextStyle(fontSize: 20, color: SemanticColor.light.accentPrimary),
-                ),
-                if (isTimetableTimeVisible)
-                  Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Text(
-                      _formatTime(period.endTime),
-                      style: TextStyle(fontSize: 8, height: 1.1, color: SemanticColor.light.accentPrimary),
+                  if (isTimetableTimeVisible)
+                    Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Text(
+                        _formatTime(period.endTime),
+                        style: TextStyle(fontSize: 8, height: 1.1, color: SemanticColor.light.accentPrimary),
+                      ),
                     ),
-                  ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
