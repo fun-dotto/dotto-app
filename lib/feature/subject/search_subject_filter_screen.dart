@@ -138,7 +138,9 @@ class SearchSubjectFilterSection extends HookWidget {
             ],
           ),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 8),
+        const Divider(height: 0),
+        const SizedBox(height: 8),
         _buildCollapsibleSection(
           context: context,
           label: 'コース/領域・学年・クラス',
