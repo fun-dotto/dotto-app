@@ -17,6 +17,7 @@ import 'package:dotto_design_system/style/semantic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:shimmer_animation/shimmer_animation.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 final class CourseScreen extends HookConsumerWidget {
@@ -157,7 +158,7 @@ final class CourseScreen extends HookConsumerWidget {
             ),
           ),
         ),
-        AsyncLoading() => const Center(child: CircularProgressIndicator()),
+        AsyncLoading() => _loadingSkeleton(context, isAuthenticated: isAuthenticated),
         AsyncError() => RefreshIndicator(
           onRefresh: () async {
             if (!isAuthenticated) {
@@ -176,6 +177,133 @@ final class CourseScreen extends HookConsumerWidget {
           ),
         ),
       },
+    );
+  }
+
+  Widget _loadingSkeleton(BuildContext context, {required bool isAuthenticated}) {
+    return SingleChildScrollView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        child: Column(
+          children: [
+            if (isAuthenticated)
+              Padding(padding: const EdgeInsets.symmetric(horizontal: 8), child: _courseTimetableSkeleton(context))
+            else
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 48),
+                child: _skeletonBox(height: 48, width: 220, radius: 24),
+              ),
+            if (isAuthenticated)
+              Padding(
+                padding: const EdgeInsets.only(right: 16),
+                child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [_skeletonBox(height: 36, width: 120)]),
+              ),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: _shortcutSkeleton(context, isAuthenticated: isAuthenticated),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _courseTimetableSkeleton(BuildContext context) {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(right: 8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(
+              5,
+              (_) => Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Column(
+                  children: [_skeletonBox(height: 14, width: 28), const SizedBox(height: 8), _skeletonCircle(48)],
+                ),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 12),
+        ...List.generate(
+          6,
+          (index) => Padding(
+            padding: EdgeInsets.only(top: index == 0 ? 0 : 8, right: 8),
+            child: Row(
+              children: [
+                SizedBox(width: 28, child: Center(child: _skeletonBox(height: 16, width: 16, radius: 4))),
+                const SizedBox(width: 8),
+                Expanded(child: _skeletonBox(height: 52)),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _shortcutSkeleton(BuildContext context, {required bool isAuthenticated}) {
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: SemanticColor.light.borderPrimary),
+        borderRadius: BorderRadius.circular(16),
+        color: SemanticColor.light.backgroundSecondary,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            _shortcutSkeletonRow(itemCount: isAuthenticated ? 2 : 1),
+            const Padding(padding: EdgeInsets.symmetric(vertical: 8), child: Divider(height: 1)),
+            _shortcutSkeletonRow(itemCount: 3),
+            const Padding(padding: EdgeInsets.symmetric(vertical: 8), child: Divider(height: 1)),
+            _shortcutSkeletonRow(itemCount: 2),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _shortcutSkeletonRow({required int itemCount}) {
+    return Row(
+      children: List.generate(
+        itemCount,
+        (index) => Expanded(
+          child: Padding(
+            padding: EdgeInsets.only(left: index == 0 ? 0 : 8),
+            child: Column(
+              children: [
+                _skeletonCircle(40),
+                const SizedBox(height: 8),
+                _skeletonBox(height: 12, width: 72, radius: 4),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _skeletonCircle(double size) {
+    return Shimmer(
+      child: Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(color: Colors.grey.shade300, shape: BoxShape.circle),
+      ),
+    );
+  }
+
+  Widget _skeletonBox({required double height, double? width, double radius = 8}) {
+    return Shimmer(
+      child: Container(
+        width: width,
+        height: height,
+        decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(radius)),
+      ),
     );
   }
 

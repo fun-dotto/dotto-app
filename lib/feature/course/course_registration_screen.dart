@@ -9,6 +9,7 @@ import 'package:dotto/feature/course/select_course_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:shimmer_animation/shimmer_animation.dart';
 
 class CourseRegistrationScreen extends HookConsumerWidget {
   const CourseRegistrationScreen({super.key});
@@ -45,9 +46,71 @@ class CourseRegistrationScreen extends HookConsumerWidget {
               )
               .toList(),
         ),
-        AsyncLoading() => const Center(child: CircularProgressIndicator()),
+        AsyncLoading() => _courseRegistrationSkeleton(context),
         AsyncError() => const Center(child: Text('データの取得に失敗しました')),
       },
+    );
+  }
+
+  Widget _courseRegistrationSkeleton(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8),
+      child: Column(
+        children: [
+          Row(
+            children: TimetableSemester.values
+                .map(
+                  (_) => Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+                      child: _skeletonBox(height: 16),
+                    ),
+                  ),
+                )
+                .toList(),
+          ),
+          Expanded(
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Table(
+                columnWidths: {for (final e in Period.values) e.number: const FlexColumnWidth()},
+                children: <TableRow>[
+                  TableRow(
+                    children: DayOfWeek.weekdays
+                        .map(
+                          (_) => Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                            child: Center(child: _skeletonBox(height: 14, width: 24, radius: 4)),
+                          ),
+                        )
+                        .toList(),
+                  ),
+                  ...Period.values.map(
+                    (_) => TableRow(
+                      children: DayOfWeek.weekdays
+                          .map(
+                            (_) =>
+                                Padding(padding: const EdgeInsets.all(2), child: _skeletonBox(height: 100, radius: 4)),
+                          )
+                          .toList(),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _skeletonBox({required double height, double? width, double radius = 8}) {
+    return Shimmer(
+      child: Container(
+        width: width,
+        height: height,
+        decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(radius)),
+      ),
     );
   }
 
