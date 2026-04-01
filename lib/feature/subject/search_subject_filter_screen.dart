@@ -19,6 +19,7 @@ class SearchSubjectFilterScreen extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final currentFilter = useState(filter);
+    final hasCulturalClassification = currentFilter.value.classifications.contains(SubjectClassification.cultural);
 
     return PopScope(
       canPop: false,
@@ -77,7 +78,13 @@ class SearchSubjectFilterScreen extends HookWidget {
               label: '分類',
               values: SubjectClassification.values,
               selected: currentFilter.value.classifications,
-              onChanged: (v) => currentFilter.value = currentFilter.value.copyWith(classifications: v),
+              onChanged: (v) {
+                final hasCultural = v.contains(SubjectClassification.cultural);
+                currentFilter.value = currentFilter.value.copyWith(
+                  classifications: v,
+                  culturalSubjectCategories: hasCultural ? currentFilter.value.culturalSubjectCategories : [],
+                );
+              },
               labelBuilder: (v) => v.label,
             ),
             const SizedBox(height: 12),
@@ -98,15 +105,17 @@ class SearchSubjectFilterScreen extends HookWidget {
               onChanged: (v) => currentFilter.value = currentFilter.value.copyWith(requirements: v),
               labelBuilder: (v) => v.label,
             ),
-            const SizedBox(height: 12),
-            _buildFilterChipGroup<CulturalSubjectCategory>(
-              context: context,
-              label: '教養区分',
-              values: CulturalSubjectCategory.values,
-              selected: currentFilter.value.culturalSubjectCategories,
-              onChanged: (v) => currentFilter.value = currentFilter.value.copyWith(culturalSubjectCategories: v),
-              labelBuilder: (v) => v.label,
-            ),
+            if (hasCulturalClassification) ...[
+              const SizedBox(height: 12),
+              _buildFilterChipGroup<CulturalSubjectCategory>(
+                context: context,
+                label: '教養区分',
+                values: CulturalSubjectCategory.values,
+                selected: currentFilter.value.culturalSubjectCategories,
+                onChanged: (v) => currentFilter.value = currentFilter.value.copyWith(culturalSubjectCategories: v),
+                labelBuilder: (v) => v.label,
+              ),
+            ],
           ],
         ),
       ),
