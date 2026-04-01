@@ -121,12 +121,18 @@ final class CourseScreen extends HookConsumerWidget {
                         mainAxisAlignment: .end,
                         children: [
                           DottoButton(
-                            onPressed: () => Navigator.of(context).push(
-                              MaterialPageRoute<void>(
-                                builder: (context) => const CourseRegistrationScreen(),
-                                settings: const RouteSettings(name: '/course/registration'),
-                              ),
-                            ),
+                            onPressed: () async {
+                              await Navigator.of(context).push(
+                                MaterialPageRoute<void>(
+                                  builder: (context) => const CourseRegistrationScreen(),
+                                  settings: const RouteSettings(name: '/course/registration'),
+                                ),
+                              );
+                              if (!context.mounted) {
+                                return;
+                              }
+                              await ref.read(courseReducerProvider.notifier).refresh();
+                            },
                             type: DottoButtonType.text,
                             child: const Text('1週間の時間割'),
                           ),
