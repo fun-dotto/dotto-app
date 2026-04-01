@@ -56,7 +56,7 @@ class SearchSubjectFilterScreen extends HookWidget {
   }
 }
 
-class SearchSubjectFilterSection extends StatelessWidget {
+class SearchSubjectFilterSection extends HookWidget {
   const SearchSubjectFilterSection({super.key, required this.filter, required this.onChanged, this.onClear});
 
   final SubjectFilter filter;
@@ -67,6 +67,9 @@ class SearchSubjectFilterSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final hasCulturalClassification = filter.classifications.contains(SubjectClassification.cultural);
+    final isGradeExpanded = useState(true);
+    final isCourseExpanded = useState(true);
+    final isClassExpanded = useState(true);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -77,27 +80,33 @@ class SearchSubjectFilterSection extends StatelessWidget {
           ),
           const SizedBox(height: 4),
         ],
-        _buildFilterChipGroup<Grade>(
+        _buildCollapsibleFilterChipGroup<Grade>(
           context: context,
           label: '学年',
+          isExpanded: isGradeExpanded.value,
+          onExpandedChanged: (value) => isGradeExpanded.value = value,
           values: _availableGrades,
           selected: filter.grades,
           onChanged: (v) => onChanged(filter.copyWith(grades: v)),
           labelBuilder: (v) => v.label,
         ),
         const SizedBox(height: 12),
-        _buildFilterChipGroup<AcademicArea>(
+        _buildCollapsibleFilterChipGroup<AcademicArea>(
           context: context,
           label: 'コース・領域',
+          isExpanded: isCourseExpanded.value,
+          onExpandedChanged: (value) => isCourseExpanded.value = value,
           values: AcademicArea.values,
           selected: filter.courses,
           onChanged: (v) => onChanged(filter.copyWith(courses: v)),
           labelBuilder: (v) => v.label,
         ),
         const SizedBox(height: 12),
-        _buildFilterChipGroup<AcademicClass>(
+        _buildCollapsibleFilterChipGroup<AcademicClass>(
           context: context,
           label: 'クラス',
+          isExpanded: isClassExpanded.value,
+          onExpandedChanged: (value) => isClassExpanded.value = value,
           values: AcademicClass.values,
           selected: filter.classes,
           onChanged: (v) => onChanged(filter.copyWith(classes: v)),
@@ -153,6 +162,44 @@ class SearchSubjectFilterSection extends StatelessWidget {
     );
   }
 
+  Widget _buildCollapsibleFilterChipGroup<T>({
+    required BuildContext context,
+    required String label,
+    required bool isExpanded,
+    required ValueChanged<bool> onExpandedChanged,
+    required List<T> values,
+    required List<T> selected,
+    required ValueChanged<List<T>> onChanged,
+    required String Function(T) labelBuilder,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        InkWell(
+          onTap: () => onExpandedChanged(!isExpanded),
+          borderRadius: BorderRadius.circular(8),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4),
+            child: Row(
+              children: [
+                Expanded(child: Text(label, style: Theme.of(context).textTheme.labelLarge)),
+                Icon(isExpanded ? Icons.expand_less : Icons.expand_more),
+              ],
+            ),
+          ),
+        ),
+        if (isExpanded)
+          _buildFilterChipRow<T>(
+            context: context,
+            values: values,
+            selected: selected,
+            onChanged: onChanged,
+            labelBuilder: labelBuilder,
+          ),
+      ],
+    );
+  }
+
   Widget _buildFilterChipGroup<T>({
     required BuildContext context,
     required String label,
@@ -161,41 +208,57 @@ class SearchSubjectFilterSection extends StatelessWidget {
     required ValueChanged<List<T>> onChanged,
     required String Function(T) labelBuilder,
   }) {
-    final colors = Theme.of(context).semanticColors;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(label, style: Theme.of(context).textTheme.labelLarge),
         const SizedBox(height: 4),
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: [
-              for (var i = 0; i < values.length; i++) ...[
-                if (i > 0) const SizedBox(width: 8),
-                () {
-                  final value = values[i];
-                  final isSelected = selected.contains(value);
-                  return FilterChip(
-                    label: Text(labelBuilder(value)),
-                    selected: isSelected,
-                    onSelected: (bool newValue) {
-                      if (newValue) {
-                        onChanged([...selected, value]);
-                      } else {
-                        onChanged(selected.where((v) => v != value).toList());
-                      }
-                    },
-                    showCheckmark: false,
-                    selectedColor: colors.accentPrimary.withValues(alpha: 0.2),
-                    side: BorderSide(color: isSelected ? colors.accentPrimary : colors.borderPrimary),
-                  );
-                }(),
-              ],
-            ],
-          ),
+        _buildFilterChipRow<T>(
+          context: context,
+          values: values,
+          selected: selected,
+          onChanged: onChanged,
+          labelBuilder: labelBuilder,
         ),
       ],
+    );
+  }
+
+  Widget _buildFilterChipRow<T>({
+    required BuildContext context,
+    required List<T> values,
+    required List<T> selected,
+    required ValueChanged<List<T>> onChanged,
+    required String Function(T) labelBuilder,
+  }) {
+    final colors = Theme.of(context).semanticColors;
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: [
+          for (var i = 0; i < values.length; i++) ...[
+            if (i > 0) const SizedBox(width: 8),
+            () {
+              final value = values[i];
+              final isSelected = selected.contains(value);
+              return FilterChip(
+                label: Text(labelBuilder(value)),
+                selected: isSelected,
+                onSelected: (bool newValue) {
+                  if (newValue) {
+                    onChanged([...selected, value]);
+                  } else {
+                    onChanged(selected.where((v) => v != value).toList());
+                  }
+                },
+                showCheckmark: false,
+                selectedColor: colors.accentPrimary.withValues(alpha: 0.2),
+                side: BorderSide(color: isSelected ? colors.accentPrimary : colors.borderPrimary),
+              );
+            }(),
+          ],
+        ],
+      ),
     );
   }
 }
