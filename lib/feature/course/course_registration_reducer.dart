@@ -12,32 +12,34 @@ part 'course_registration_reducer.g.dart';
 final class CourseRegistrationReducer extends _$CourseRegistrationReducer {
   @override
   Future<Map<TimetableSemester, List<TimetableItem>>> build() async {
-    return {for (final semester in TimetableSemester.values) semester: const <TimetableItem>[]};
+    return _fetchTimetableItemsBySemester();
   }
 
   Future<void> refresh() async {
     state = const AsyncLoading();
-    state = await AsyncValue.guard(() async {
-      final apiClient = ref.read(apiClientProvider);
-      final courseRegistrationRepository = CourseRegistrationRepositoryImpl(apiClient);
-      final timetableRepository = TimetableRepositoryImpl(apiClient);
-      final (timetableItemsBySemester, courseRegistrations) = await (
-        Future.wait(
-          TimetableSemester.values.map((semester) async {
-            final timetableItems = await timetableRepository.getTimetableItems(semester.semesters);
-            return (semester, timetableItems);
-          }),
-        ),
-        courseRegistrationRepository.getCourseRegistrations(Semester.values),
-      ).wait;
+    state = await AsyncValue.guard(_fetchTimetableItemsBySemester);
+  }
 
-      final registeredSubjectIds = courseRegistrations.map((e) => e.subject.id).toSet();
-      return {
-        for (final (semester, timetableItems) in timetableItemsBySemester)
-          semester: timetableItems
-              .map((item) => item.copyWith(isAddedToTimetable: registeredSubjectIds.contains(item.subject.id)))
-              .toList(),
-      };
-    });
+  Future<Map<TimetableSemester, List<TimetableItem>>> _fetchTimetableItemsBySemester() async {
+    final apiClient = ref.read(apiClientProvider);
+    final courseRegistrationRepository = CourseRegistrationRepositoryImpl(apiClient);
+    final timetableRepository = TimetableRepositoryImpl(apiClient);
+    final (timetableItemsBySemester, courseRegistrations) = await (
+      Future.wait(
+        TimetableSemester.values.map((semester) async {
+          final timetableItems = await timetableRepository.getTimetableItems(semester.semesters);
+          return (semester, timetableItems);
+        }),
+      ),
+      courseRegistrationRepository.getCourseRegistrations(Semester.values),
+    ).wait;
+
+    final registeredSubjectIds = courseRegistrations.map((e) => e.subject.id).toSet();
+    return {
+      for (final (semester, timetableItems) in timetableItemsBySemester)
+        semester: timetableItems
+            .map((item) => item.copyWith(isAddedToTimetable: registeredSubjectIds.contains(item.subject.id)))
+            .toList(),
+    };
   }
 }
