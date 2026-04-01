@@ -217,13 +217,16 @@ class SearchSubjectFilterSection extends HookWidget {
             ),
           ),
         ),
-        AnimatedSize(
+        TweenAnimationBuilder<double>(
           duration: const Duration(milliseconds: 220),
           curve: Curves.easeInOut,
-          alignment: Alignment.topCenter,
-          child: isExpanded
-              ? Column(crossAxisAlignment: CrossAxisAlignment.start, children: [const SizedBox(height: 12), child])
-              : const SizedBox.shrink(),
+          tween: Tween<double>(begin: 0, end: isExpanded ? 1 : 0),
+          child: Padding(padding: const EdgeInsets.only(top: 12), child: child),
+          builder: (context, value, child) {
+            return ClipRect(
+              child: Align(alignment: Alignment.topCenter, heightFactor: value, child: child),
+            );
+          },
         ),
       ],
     );
