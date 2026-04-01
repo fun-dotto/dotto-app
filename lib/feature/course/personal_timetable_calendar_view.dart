@@ -260,21 +260,26 @@ final class PersonalTimetableCalendarView extends HookConsumerWidget {
                 children: [
                   if (isTimetableTimeVisible)
                     Align(
-                      alignment: Alignment.topCenter,
+                      alignment: Alignment.topRight,
                       child: Text(
                         _formatTime(period.startTime),
+                        textAlign: TextAlign.right,
                         style: TextStyle(fontSize: 8, height: 1.1, color: SemanticColor.light.accentPrimary),
                       ),
                     ),
-                  Text(
-                    period.number.toString(),
-                    style: TextStyle(fontSize: 20, color: SemanticColor.light.accentPrimary),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      period.number.toString(),
+                      style: TextStyle(fontSize: 20, color: SemanticColor.light.accentPrimary),
+                    ),
                   ),
                   if (isTimetableTimeVisible)
                     Align(
-                      alignment: Alignment.bottomCenter,
+                      alignment: Alignment.bottomRight,
                       child: Text(
                         _formatTime(period.endTime),
+                        textAlign: TextAlign.right,
                         style: TextStyle(fontSize: 8, height: 1.1, color: SemanticColor.light.accentPrimary),
                       ),
                     ),
