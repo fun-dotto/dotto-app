@@ -250,7 +250,7 @@ final class PersonalTimetableCalendarView extends HookConsumerWidget {
     final periodRowHeight = (visibleItemCount * kMinInteractiveDimension) + ((visibleItemCount - 1) * 8);
 
     return Row(
-      spacing: 8,
+      spacing: 4,
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -259,7 +259,7 @@ final class PersonalTimetableCalendarView extends HookConsumerWidget {
             child: SizedBox(
               height: periodRowHeight,
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: isTimetableTimeVisible ? MainAxisAlignment.spaceBetween : MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
@@ -267,21 +267,35 @@ final class PersonalTimetableCalendarView extends HookConsumerWidget {
                     style: TextStyle(fontSize: 20, color: SemanticColor.light.accentPrimary),
                   ),
                   if (isTimetableTimeVisible)
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(
-                          _formatTime(period.startTime),
-                          textAlign: TextAlign.right,
-                          style: TextStyle(fontSize: 8, height: 1.1, color: SemanticColor.light.accentPrimary),
-                        ),
-                        Text(
-                          _formatTime(period.endTime),
-                          textAlign: TextAlign.right,
-                          style: TextStyle(fontSize: 8, height: 1.1, color: SemanticColor.light.accentPrimary),
-                        ),
-                      ],
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            _formatTime(period.startTime),
+                            textAlign: TextAlign.right,
+                            style: Theme.of(
+                              context,
+                            ).textTheme.labelSmall!.copyWith(color: SemanticColor.light.accentPrimary),
+                          ),
+                          Text(
+                            '|',
+                            textAlign: TextAlign.center,
+                            style: Theme.of(
+                              context,
+                            ).textTheme.labelSmall!.copyWith(color: SemanticColor.light.accentPrimary, fontSize: 4),
+                          ),
+                          Text(
+                            _formatTime(period.endTime),
+                            textAlign: TextAlign.right,
+                            style: Theme.of(
+                              context,
+                            ).textTheme.labelSmall!.copyWith(color: SemanticColor.light.accentPrimary),
+                          ),
+                        ],
+                      ),
                     ),
                 ],
               ),
