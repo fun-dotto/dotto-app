@@ -67,9 +67,7 @@ class SearchSubjectFilterSection extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final hasCulturalClassification = filter.classifications.contains(SubjectClassification.cultural);
-    final isGradeExpanded = useState(true);
-    final isCourseExpanded = useState(true);
-    final isClassExpanded = useState(true);
+    final isBasicAttributesExpanded = useState(true);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -80,37 +78,41 @@ class SearchSubjectFilterSection extends HookWidget {
           ),
           const SizedBox(height: 4),
         ],
-        _buildCollapsibleFilterChipGroup<Grade>(
+        _buildCollapsibleSection(
           context: context,
-          label: '学年',
-          isExpanded: isGradeExpanded.value,
-          onExpandedChanged: (value) => isGradeExpanded.value = value,
-          values: _availableGrades,
-          selected: filter.grades,
-          onChanged: (v) => onChanged(filter.copyWith(grades: v)),
-          labelBuilder: (v) => v.label,
-        ),
-        const SizedBox(height: 12),
-        _buildCollapsibleFilterChipGroup<AcademicArea>(
-          context: context,
-          label: 'コース・領域',
-          isExpanded: isCourseExpanded.value,
-          onExpandedChanged: (value) => isCourseExpanded.value = value,
-          values: AcademicArea.values,
-          selected: filter.courses,
-          onChanged: (v) => onChanged(filter.copyWith(courses: v)),
-          labelBuilder: (v) => v.label,
-        ),
-        const SizedBox(height: 12),
-        _buildCollapsibleFilterChipGroup<AcademicClass>(
-          context: context,
-          label: 'クラス',
-          isExpanded: isClassExpanded.value,
-          onExpandedChanged: (value) => isClassExpanded.value = value,
-          values: AcademicClass.values,
-          selected: filter.classes,
-          onChanged: (v) => onChanged(filter.copyWith(classes: v)),
-          labelBuilder: (v) => v.label,
+          label: '学年・コース・領域・クラス',
+          isExpanded: isBasicAttributesExpanded.value,
+          onExpandedChanged: (value) => isBasicAttributesExpanded.value = value,
+          child: Column(
+            children: [
+              _buildFilterChipGroup<Grade>(
+                context: context,
+                label: '学年',
+                values: _availableGrades,
+                selected: filter.grades,
+                onChanged: (v) => onChanged(filter.copyWith(grades: v)),
+                labelBuilder: (v) => v.label,
+              ),
+              const SizedBox(height: 12),
+              _buildFilterChipGroup<AcademicArea>(
+                context: context,
+                label: 'コース・領域',
+                values: AcademicArea.values,
+                selected: filter.courses,
+                onChanged: (v) => onChanged(filter.copyWith(courses: v)),
+                labelBuilder: (v) => v.label,
+              ),
+              const SizedBox(height: 12),
+              _buildFilterChipGroup<AcademicClass>(
+                context: context,
+                label: 'クラス',
+                values: AcademicClass.values,
+                selected: filter.classes,
+                onChanged: (v) => onChanged(filter.copyWith(classes: v)),
+                labelBuilder: (v) => v.label,
+              ),
+            ],
+          ),
         ),
         const SizedBox(height: 12),
         _buildFilterChipGroup<SubjectClassification>(
@@ -162,15 +164,12 @@ class SearchSubjectFilterSection extends HookWidget {
     );
   }
 
-  Widget _buildCollapsibleFilterChipGroup<T>({
+  Widget _buildCollapsibleSection({
     required BuildContext context,
     required String label,
     required bool isExpanded,
     required ValueChanged<bool> onExpandedChanged,
-    required List<T> values,
-    required List<T> selected,
-    required ValueChanged<List<T>> onChanged,
-    required String Function(T) labelBuilder,
+    required Widget child,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -188,14 +187,7 @@ class SearchSubjectFilterSection extends HookWidget {
             ),
           ),
         ),
-        if (isExpanded)
-          _buildFilterChipRow<T>(
-            context: context,
-            values: values,
-            selected: selected,
-            onChanged: onChanged,
-            labelBuilder: labelBuilder,
-          ),
+        if (isExpanded) child,
       ],
     );
   }
