@@ -7,6 +7,7 @@ import 'package:dotto/domain/subject_filter.dart';
 import 'package:dotto/domain/subject_summary.dart';
 import 'package:dotto/domain/timetable_item.dart';
 import 'package:dotto/domain/timetable_slot.dart';
+import 'package:dotto/feature/subject/search_subject_state.dart';
 import 'package:dotto/repository/repository_provider.dart';
 import 'package:dotto/repository/subject_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -24,11 +25,12 @@ final class SearchSubjectReducer extends _$SearchSubjectReducer {
   List<TimetableItem>? _cachedTimetableItems;
 
   @override
-  Future<List<SubjectSummary>> build() async {
-    return const [];
+  Future<SearchSubjectState> build() async {
+    return const SearchSubjectState();
   }
 
   Future<void> search({required String query, required SubjectFilter filter}) async {
+    final previousState = state.asData?.value ?? const SearchSubjectState();
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
       final isAuthenticated = ref.read(isAuthenticatedProvider);
@@ -48,7 +50,7 @@ final class SearchSubjectReducer extends _$SearchSubjectReducer {
       }
 
       final courseRegistrations = await courseRegistrationsFuture;
-      final subjects = await subjectsFuture;
+      final fetchedSubjects = await subjectsFuture;
 
       final registeredSubjectIds = courseRegistrations.map((e) => e.subject.id).toSet();
       final timetableSlotsBySubjectId = <String, List<TimetableSlot>>{};
@@ -60,15 +62,21 @@ final class SearchSubjectReducer extends _$SearchSubjectReducer {
         timetableSlotsBySubjectId.putIfAbsent(item.subject.id, () => []).add(slot);
       }
 
-      return BuiltList<SubjectSummary>(
-        subjects.map((subject) {
+      final mergedSubjects = BuiltList<SubjectSummary>(
+        fetchedSubjects.map((subject) {
           return subject.copyWith(
             slots: timetableSlotsBySubjectId[subject.id],
             isAddedToTimetable: registeredSubjectIds.contains(subject.id),
           );
         }),
       ).toList();
+      return previousState.copyWith(subjects: mergedSubjects, filter: filter);
     });
+  }
+
+  void updateFilter(SubjectFilter filter) {
+    final currentState = state.asData?.value ?? const SearchSubjectState();
+    state = AsyncData(currentState.copyWith(filter: filter));
   }
 
   Future<void> registerSubject(String subjectId) async {
@@ -92,21 +100,29 @@ final class SearchSubjectReducer extends _$SearchSubjectReducer {
   }
 
   void clearResults() {
-    state = const AsyncData([]);
+    final currentState = state.asData?.value ?? const SearchSubjectState();
+    state = AsyncData(currentState.copyWith(subjects: const []));
+  }
+
+  void clearFilter() {
+    final currentState = state.asData?.value ?? const SearchSubjectState();
+    state = AsyncData(currentState.copyWith(filter: SubjectFilter()));
   }
 
   void _updateSubjectRegistrationState({required String subjectId, required bool isAddedToTimetable}) {
-    final subjects = state.asData?.value;
-    if (subjects == null) {
+    final currentState = state.asData?.value;
+    if (currentState == null) {
       return;
     }
     state = AsyncData(
-      subjects.map((subject) {
-        if (subject.id != subjectId) {
-          return subject;
-        }
-        return subject.copyWith(isAddedToTimetable: isAddedToTimetable);
-      }).toList(),
+      currentState.copyWith(
+        subjects: currentState.subjects.map((subject) {
+          if (subject.id != subjectId) {
+            return subject;
+          }
+          return subject.copyWith(isAddedToTimetable: isAddedToTimetable);
+        }).toList(),
+      ),
     );
   }
 }
