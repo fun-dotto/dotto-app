@@ -146,19 +146,19 @@ class SearchSubjectScreen extends HookConsumerWidget {
           for (var i = 0; i < 5; i++) ...[
             if (i > 0) const Divider(height: 0),
             ListTile(
-              leading: Shimmer(
-                child: Container(
-                  width: 24,
-                  height: 24,
-                  decoration: BoxDecoration(color: Colors.grey.shade300, shape: BoxShape.circle),
-                ),
-              ),
               title: Shimmer(
                 child: Container(height: 16, width: double.infinity, color: Colors.grey.shade300),
               ),
               subtitle: Padding(
                 padding: const EdgeInsets.only(top: 8),
-                child: Shimmer(child: Container(height: 14, width: 180, color: Colors.grey.shade300)),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Shimmer(child: Container(height: 14, width: 220, color: Colors.grey.shade300)),
+                    const SizedBox(height: 6),
+                    Shimmer(child: Container(height: 14, width: 180, color: Colors.grey.shade300)),
+                  ],
+                ),
               ),
               trailing: Icon(Icons.chevron_right, color: Colors.grey.shade400),
             ),
