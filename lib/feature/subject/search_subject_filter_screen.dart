@@ -67,8 +67,8 @@ class SearchSubjectFilterSection extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final hasCulturalClassification = filter.classifications.contains(SubjectClassification.cultural);
-    final isBasicAttributesExpanded = useState(true);
-    final isOtherAttributesExpanded = useState(true);
+    final isBasicAttributesExpanded = useState(false);
+    final isOtherAttributesExpanded = useState(false);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
