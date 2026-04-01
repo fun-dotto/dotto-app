@@ -221,7 +221,14 @@ class SearchSubjectFilterSection extends HookWidget {
             ),
           ),
         ),
-        if (isExpanded) ...[const SizedBox(height: 12), child],
+        AnimatedSize(
+          duration: const Duration(milliseconds: 220),
+          curve: Curves.easeInOut,
+          alignment: Alignment.topCenter,
+          child: isExpanded
+              ? Column(crossAxisAlignment: CrossAxisAlignment.start, children: [const SizedBox(height: 12), child])
+              : const SizedBox.shrink(),
+        ),
       ],
     );
   }
