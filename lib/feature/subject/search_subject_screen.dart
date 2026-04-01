@@ -163,7 +163,21 @@ class SearchSubjectScreen extends HookConsumerWidget {
     }
 
     return Scaffold(
-      appBar: AppBar(title: const Text('科目検索'), centerTitle: false),
+      appBar: AppBar(
+        title: const Text('科目検索'),
+        centerTitle: false,
+        actions: [
+          TextButton(
+            onPressed: filter.value.hasActiveFilters
+                ? () {
+                    filter.value = SubjectFilter();
+                    unawaited(search());
+                  }
+                : null,
+            child: const Text('条件をクリア'),
+          ),
+        ],
+      ),
       body: SingleChildScrollView(
         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
         child: Padding(
@@ -182,10 +196,6 @@ class SearchSubjectScreen extends HookConsumerWidget {
                 filter: filter.value,
                 onChanged: (value) {
                   filter.value = value;
-                  unawaited(search());
-                },
-                onClear: () {
-                  filter.value = SubjectFilter();
                   unawaited(search());
                 },
               ),

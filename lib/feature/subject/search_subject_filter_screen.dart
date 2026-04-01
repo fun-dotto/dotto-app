@@ -44,11 +44,7 @@ class SearchSubjectFilterScreen extends HookWidget {
         body: ListView(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           children: [
-            SearchSubjectFilterSection(
-              filter: currentFilter.value,
-              onChanged: (value) => currentFilter.value = value,
-              onClear: () => currentFilter.value = SubjectFilter(),
-            ),
+            SearchSubjectFilterSection(filter: currentFilter.value, onChanged: (value) => currentFilter.value = value),
           ],
         ),
       ),
