@@ -7,7 +7,7 @@ import 'package:dotto/domain/period.dart';
 import 'package:dotto/domain/personal_timetable_day.dart';
 import 'package:dotto/domain/personal_timetable_item.dart';
 import 'package:dotto/domain/subject_summary.dart';
-import 'package:dotto/feature/timetable_v0/domain/timetable_period_style.dart';
+import 'package:dotto/domain/timetable_period_style.dart';
 import 'package:dotto/helper/date_formatter.dart';
 import 'package:dotto_design_system/style/semantic_color.dart';
 import 'package:flutter/material.dart';

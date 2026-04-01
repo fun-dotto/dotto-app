@@ -1,5 +1,5 @@
 import 'package:dotto/controller/dotto_user_preference_controller.dart';
-import 'package:dotto/feature/timetable_v0/domain/timetable_period_style.dart';
+import 'package:dotto/domain/timetable_period_style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

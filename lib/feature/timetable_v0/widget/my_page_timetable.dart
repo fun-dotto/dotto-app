@@ -1,12 +1,12 @@
-import 'package:dotto/controller/user_controller.dart';
 import 'package:dotto/controller/dotto_user_preference_controller.dart';
+import 'package:dotto/controller/user_controller.dart';
 import 'package:dotto/domain/day_of_week.dart';
 import 'package:dotto/domain/period.dart';
+import 'package:dotto/domain/timetable_period_style.dart';
 import 'package:dotto/feature/subject_detail_v0/kamoku_detail_screen.dart';
 import 'package:dotto/feature/timetable_v0/controller/focused_timetable_date_controller.dart';
 import 'package:dotto/feature/timetable_v0/controller/two_week_timetable_controller.dart';
 import 'package:dotto/feature/timetable_v0/domain/timetable_course.dart';
-import 'package:dotto/feature/timetable_v0/domain/timetable_period_style.dart';
 import 'package:dotto/feature/timetable_v0/repository/timetable_repository.dart';
 import 'package:dotto/helper/date_formatter.dart';
 import 'package:dotto_design_system/style/semantic_color.dart';
