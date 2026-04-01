@@ -41,7 +41,7 @@ class SearchSubjectFilterSection extends HookWidget {
         ],
         _buildCollapsibleSection(
           context: context,
-          label: '開講時期・必修/選択・分類・教養区分',
+          label: '開講時期・必修/選択・分類',
           isExpanded: isOtherAttributesExpanded.value,
           onExpandedChanged: (value) => isOtherAttributesExpanded.value = value,
           badgeCount: otherFilterCount,
