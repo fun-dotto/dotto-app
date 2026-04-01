@@ -10,48 +10,6 @@ import 'package:dotto_design_system/style/theme_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
-class SearchSubjectFilterScreen extends HookWidget {
-  const SearchSubjectFilterScreen({super.key, required this.filter});
-
-  final SubjectFilter filter;
-
-  @override
-  Widget build(BuildContext context) {
-    final currentFilter = useState(filter);
-
-    return PopScope(
-      canPop: false,
-      onPopInvokedWithResult: (didPop, _) {
-        if (!didPop) {
-          Navigator.of(context).pop(currentFilter.value);
-        }
-      },
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('検索条件'),
-          centerTitle: false,
-          leading: IconButton(
-            onPressed: () => Navigator.of(context).pop(currentFilter.value),
-            icon: const Icon(Icons.close),
-          ),
-          actions: [
-            TextButton(
-              onPressed: currentFilter.value.hasActiveFilters ? () => currentFilter.value = SubjectFilter() : null,
-              child: const Text('条件をクリア'),
-            ),
-          ],
-        ),
-        body: ListView(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          children: [
-            SearchSubjectFilterSection(filter: currentFilter.value, onChanged: (value) => currentFilter.value = value),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 class SearchSubjectFilterSection extends HookWidget {
   const SearchSubjectFilterSection({super.key, required this.filter, required this.onChanged, this.onClear});
 
