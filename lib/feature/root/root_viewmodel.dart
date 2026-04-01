@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:app_links/app_links.dart';
 import 'package:dotto/controller/config_controller.dart';
+import 'package:dotto/domain/app_version_evaluator.dart';
 import 'package:dotto/domain/tab_item.dart';
 import 'package:dotto/domain/user_preference_keys.dart';
 import 'package:dotto/feature/root/root_viewmodel_state.dart';
@@ -10,6 +11,7 @@ import 'package:dotto/helper/notification_helper.dart';
 import 'package:dotto/helper/remote_config_helper.dart';
 import 'package:dotto/helper/user_preference_repository.dart';
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'root_viewmodel.g.dart';
@@ -43,6 +45,12 @@ class RootViewModel extends _$RootViewModel {
         await UserPreferenceRepository.getBool(UserPreferenceKeys.isAppTutorialComplete) ?? false;
 
     final config = ref.read(configProvider);
+    final currentAppVersion = (await PackageInfo.fromPlatform()).version;
+    final versionEvaluation = AppVersionEvaluator.evaluate(
+      currentAppVersion: currentAppVersion,
+      validAppVersion: config.validAppVersion,
+      latestAppVersion: config.latestAppVersion,
+    );
     final tabs = _activeTabs(isV2Enabled: config.isV2Enabled, isFunchEnabled: config.isFunchEnabled);
 
     ref.listen(configProvider, (_, next) {
@@ -53,11 +61,16 @@ class RootViewModel extends _$RootViewModel {
       if (currentState == null) return;
 
       final activeTabs = _activeTabs(isV2Enabled: next.isV2Enabled, isFunchEnabled: next.isFunchEnabled);
+      final nextVersionEvaluation = AppVersionEvaluator.evaluate(
+        currentAppVersion: currentAppVersion,
+        validAppVersion: next.validAppVersion,
+        latestAppVersion: next.latestAppVersion,
+      );
       state = AsyncValue.data(
         currentState.copyWith(
           selectedTab: activeTabs.contains(currentState.selectedTab) ? currentState.selectedTab : activeTabs.first,
-          isValidAppVersion: next.isValidAppVersion,
-          isLatestAppVersion: next.isLatestAppVersion,
+          isValidAppVersion: nextVersionEvaluation.isValidAppVersion,
+          isLatestAppVersion: nextVersionEvaluation.isLatestAppVersion,
           appStorePageUrl: next.appStorePageUrl,
         ),
       );
@@ -67,8 +80,8 @@ class RootViewModel extends _$RootViewModel {
       selectedTab: tabs.first,
       hasShownAppTutorial: hasShownAppTutorial,
       hasShownUpdateAlert: false,
-      isValidAppVersion: config.isValidAppVersion,
-      isLatestAppVersion: config.isLatestAppVersion,
+      isValidAppVersion: versionEvaluation.isValidAppVersion,
+      isLatestAppVersion: versionEvaluation.isLatestAppVersion,
       appStorePageUrl: config.appStorePageUrl,
       navigatorStates: {for (final tabItem in TabItem.values) tabItem: GlobalKey<NavigatorState>()},
     );

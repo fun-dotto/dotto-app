@@ -5,25 +5,21 @@ final class RemoteConfigKeys {
   /// Funch feature flag
   static const String isFunchEnabled = 'is_funch_enabled';
 
-  /// アプリのバージョンが有効かどうか
+  /// サポート対象の最小バージョン
   ///
-  /// 無効の場合: 強制アップデート対象
+  /// 現在のアプリバージョンがこの値より小さい場合: 強制アップデート対象
   ///
   /// アプリストアへの遷移のみ可能な画面が表示されるようにし、アプリの一切の機能を利用できないようにする
   ///
   /// ただし、オフラインの場合は、バイパスする
-  static const String isValidAppVersion = 'is_valid_app_version';
+  static const String validAppVersion = 'valid_app_version';
 
-  /// アプリのバージョンが最新かどうか
+  /// 最新のアプリバージョン
   ///
-  /// 最新でない場合: アップデートのお知らせを表示
-  ///
-  /// 必ずしも最新のバージョンでないとこのフラグが`true`になるわけではない
-  ///
-  /// アップデートのお知らせを出す必要性ベースでFirebase Consoleで値を設定
+  /// 現在のアプリバージョンがこの値より小さい場合: アップデートのお知らせを表示
   ///
   /// オフラインの場合は、バイパスする
-  static const String isLatestAppVersion = 'is_latest_app_version';
+  static const String latestAppVersion = 'latest_app_version';
 
   /// フィードバックフォームURL
   static const String feedbackFormUrl = 'feedback_form_url';
