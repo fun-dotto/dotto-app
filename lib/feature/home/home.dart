@@ -85,8 +85,8 @@ final class _HomeScreenState extends ConsumerState<HomeScreen> {
         title: const Text('Dotto'),
         centerTitle: false,
         actions: [
-          userPreference.when(
-            data: (preference) {
+          switch (userPreference) {
+            AsyncData(value: final preference) => () {
               final style = preference.timetablePeriodStyle;
               return Row(
                 spacing: 4,
@@ -104,10 +104,9 @@ final class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ),
                 ],
               );
-            },
-            error: (_, _) => const SizedBox.shrink(),
-            loading: () => const SizedBox.shrink(),
-          ),
+            }(),
+            AsyncError() || AsyncLoading() => const SizedBox.shrink(),
+          },
         ],
       ),
       body: SingleChildScrollView(

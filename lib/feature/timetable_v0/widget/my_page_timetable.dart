@@ -148,8 +148,8 @@ final class MyPageTimetable extends ConsumerWidget {
     List<TimetableCourse> timetableCourseList,
   ) {
     final userPreference = ref.watch(dottoUserPreferenceProvider);
-    return userPreference.when(
-      data: (preference) {
+    return switch (userPreference) {
+      AsyncData(value: final preference) => () {
         final style = preference.timetablePeriodStyle;
         return Row(
           spacing: 8,
@@ -183,10 +183,9 @@ final class MyPageTimetable extends ConsumerWidget {
             ),
           ],
         );
-      },
-      error: (_, _) => const SizedBox.shrink(),
-      loading: () => const SizedBox.shrink(),
-    );
+      }(),
+      AsyncError() || AsyncLoading() => const SizedBox.shrink(),
+    };
   }
 
   Widget _datePicker(BuildContext context, WidgetRef ref) {
