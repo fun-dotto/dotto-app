@@ -5,6 +5,7 @@ import 'package:dotto/feature/subject/search_subject_filter_screen.dart';
 import 'package:dotto/feature/subject/search_subject_reducer.dart';
 import 'package:dotto/feature/subject/subject_detail_screen.dart';
 import 'package:dotto_design_system/component/text_field.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -69,29 +70,7 @@ class SearchSubjectScreen extends HookConsumerWidget {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('科目検索'),
-        centerTitle: false,
-        actions: [
-          IconButton(
-            onPressed: () async {
-              final result = await showModalBottomSheet<SubjectFilter>(
-                context: context,
-                isScrollControlled: true,
-                useSafeArea: true,
-                builder: (_) => SearchSubjectFilterScreen(filter: filter.value),
-              );
-              if (result != null) {
-                filter.value = result;
-                if (result.hasActiveFilters) {
-                  await search();
-                }
-              }
-            },
-            icon: Badge(isLabelVisible: filter.value.hasActiveFilters, child: const Icon(Icons.tune)),
-          ),
-        ],
-      ),
+      appBar: AppBar(title: const Text('科目検索'), centerTitle: false),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Column(
@@ -102,6 +81,17 @@ class SearchSubjectScreen extends HookConsumerWidget {
               controller: textEditingController,
               focusNode: focusNode,
               onSubmitted: (_) => search(),
+            ),
+            SearchSubjectFilterSection(
+              filter: filter.value,
+              onChanged: (value) {
+                filter.value = value;
+                unawaited(search());
+              },
+              onClear: () {
+                filter.value = SubjectFilter();
+                unawaited(search());
+              },
             ),
             Expanded(
               child: switch (subjects) {
