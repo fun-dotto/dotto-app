@@ -66,6 +66,7 @@ final class CourseScreen extends HookConsumerWidget {
           IconButton(
             onPressed: () => Navigator.of(context).push(
               MaterialPageRoute<void>(
+                fullscreenDialog: true,
                 builder: (context) => const CourseCustomizeScreen(),
                 settings: const RouteSettings(name: '/course/customize'),
               ),
