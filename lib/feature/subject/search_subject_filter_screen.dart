@@ -194,7 +194,7 @@ class SearchSubjectFilterSection extends HookWidget {
             padding: const EdgeInsets.symmetric(vertical: 4),
             child: Row(
               children: [
-                Expanded(child: Text(label, style: Theme.of(context).textTheme.labelLarge)),
+                Expanded(child: Text(label, style: Theme.of(context).textTheme.titleMedium)),
                 Icon(isExpanded ? Icons.expand_less : Icons.expand_more),
               ],
             ),
