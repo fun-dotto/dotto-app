@@ -14,6 +14,7 @@ class SearchSubjectFilterScreen extends HookWidget {
   const SearchSubjectFilterScreen({super.key, required this.filter});
 
   final SubjectFilter filter;
+  static const _availableGrades = [Grade.b1, Grade.b2, Grade.b3, Grade.b4, Grade.m1, Grade.m2];
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +48,7 @@ class SearchSubjectFilterScreen extends HookWidget {
             _buildFilterChipGroup<Grade>(
               context: context,
               label: '学年',
-              values: Grade.values,
+              values: _availableGrades,
               selected: currentFilter.value.grades,
               onChanged: (v) => currentFilter.value = currentFilter.value.copyWith(grades: v),
               labelBuilder: (v) => v.label,
