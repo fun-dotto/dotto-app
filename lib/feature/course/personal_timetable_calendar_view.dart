@@ -246,6 +246,9 @@ final class PersonalTimetableCalendarView extends HookConsumerWidget {
     required List<PersonalTimetableItem> items,
     required bool isTimetableTimeVisible,
   }) {
+    final visibleItemCount = items.isEmpty ? 1 : items.length;
+    final periodRowHeight = (visibleItemCount * kMinInteractiveDimension) + ((visibleItemCount - 1) * 8);
+
     return Row(
       spacing: 8,
       children: [
@@ -254,7 +257,7 @@ final class PersonalTimetableCalendarView extends HookConsumerWidget {
           child: SizedBox(
             width: isTimetableTimeVisible ? 56 : 24,
             child: SizedBox(
-              height: kMinInteractiveDimension,
+              height: periodRowHeight,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
