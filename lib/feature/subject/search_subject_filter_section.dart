@@ -217,35 +217,37 @@ class SearchSubjectFilterSection extends HookWidget {
     required String Function(T) labelBuilder,
   }) {
     final colors = Theme.of(context).semanticColors;
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        spacing: 8,
-        children: [
-          for (final value in values)
-            () {
-              final isSelected = selected.contains(value);
-              return FilterChip(
-                label: Text(labelBuilder(value)),
-                selected: isSelected,
-                onSelected: (bool newValue) {
-                  if (newValue) {
-                    onChanged([...selected, value]);
-                  } else {
-                    onChanged(selected.where((v) => v != value).toList());
-                  }
-                },
-                showCheckmark: false,
-                color: MaterialStateProperty.resolveWith<Color?>((states) {
-                  if (states.contains(MaterialState.selected)) {
-                    return colors.accentPrimary.withValues(alpha: 0.2);
-                  }
-                  return colors.backgroundSecondary;
-                }),
-                side: BorderSide(color: isSelected ? colors.accentPrimary : colors.borderPrimary),
-              );
-            }(),
-        ],
+    final theme = Theme.of(context);
+    return Theme(
+      data: theme.copyWith(
+        splashColor: colors.accentPrimary.withValues(alpha: 0.2),
+        highlightColor: colors.accentPrimary.withValues(alpha: 0.12),
+      ),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          spacing: 8,
+          children: [
+            for (final value in values)
+              () {
+                final isSelected = selected.contains(value);
+                return FilterChip(
+                  label: Text(labelBuilder(value)),
+                  selected: isSelected,
+                  onSelected: (bool newValue) {
+                    if (newValue) {
+                      onChanged([...selected, value]);
+                    } else {
+                      onChanged(selected.where((v) => v != value).toList());
+                    }
+                  },
+                  showCheckmark: false,
+                  selectedColor: colors.accentPrimary.withValues(alpha: 0.2),
+                  side: BorderSide(color: isSelected ? colors.accentPrimary : colors.borderPrimary),
+                );
+              }(),
+          ],
+        ),
       ),
     );
   }
