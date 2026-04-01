@@ -11,6 +11,7 @@ import 'package:dotto_design_system/component/text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:shimmer_animation/shimmer_animation.dart';
 
 class SearchSubjectScreen extends HookConsumerWidget {
   const SearchSubjectScreen({super.key});
@@ -118,11 +119,13 @@ class SearchSubjectScreen extends HookConsumerWidget {
                 );
               },
               child: isProcessing
-                  ? const SizedBox(
-                      key: ValueKey('loading'),
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2),
+                  ? Shimmer(
+                      key: const ValueKey('loading'),
+                      child: Container(
+                        width: 20,
+                        height: 20,
+                        decoration: BoxDecoration(color: Colors.grey.shade300, shape: BoxShape.circle),
+                      ),
                     )
                   : Icon(
                       isAddedToTimetable ? Icons.check : Icons.add,
@@ -132,6 +135,33 @@ class SearchSubjectScreen extends HookConsumerWidget {
             tooltip: isAddedToTimetable ? '履修解除' : '履修登録',
           );
         }(),
+      );
+    }
+
+    Widget buildLoadingSkeleton() {
+      return Column(
+        children: [
+          for (var i = 0; i < 5; i++) ...[
+            if (i > 0) const Divider(height: 0),
+            ListTile(
+              leading: Shimmer(
+                child: Container(
+                  width: 24,
+                  height: 24,
+                  decoration: BoxDecoration(color: Colors.grey.shade300, shape: BoxShape.circle),
+                ),
+              ),
+              title: Shimmer(
+                child: Container(height: 16, width: double.infinity, color: Colors.grey.shade300),
+              ),
+              subtitle: Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: Shimmer(child: Container(height: 14, width: 180, color: Colors.grey.shade300)),
+              ),
+              trailing: Icon(Icons.chevron_right, color: Colors.grey.shade400),
+            ),
+          ],
+        ],
       );
     }
 
@@ -155,10 +185,7 @@ class SearchSubjectScreen extends HookConsumerWidget {
           padding: EdgeInsets.symmetric(vertical: 24),
           child: Center(child: Text('科目の検索に失敗しました。')),
         ),
-        AsyncLoading() => const Padding(
-          padding: EdgeInsets.symmetric(vertical: 24),
-          child: Center(child: CircularProgressIndicator()),
-        ),
+        AsyncLoading() => buildLoadingSkeleton(),
       };
     }
 
