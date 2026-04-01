@@ -102,7 +102,7 @@ class SearchSubjectFilterSection extends HookWidget {
                 onChanged: (v) => onChanged(filter.copyWith(semesters: v)),
                 labelBuilder: (v) => v.label,
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 8),
               _buildFilterChipGroup<SubjectRequirementType>(
                 context: context,
                 label: '必修/選択',
@@ -111,7 +111,7 @@ class SearchSubjectFilterSection extends HookWidget {
                 onChanged: (v) => onChanged(filter.copyWith(requirements: v)),
                 labelBuilder: (v) => v.label,
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 8),
               _buildFilterChipGroup<SubjectClassification>(
                 context: context,
                 label: '分類',
@@ -129,7 +129,7 @@ class SearchSubjectFilterSection extends HookWidget {
                 labelBuilder: (v) => v.label,
               ),
               if (hasCulturalClassification) ...[
-                const SizedBox(height: 12),
+                const SizedBox(height: 8),
                 _buildFilterChipGroup<CulturalSubjectCategory>(
                   context: context,
                   label: '教養区分',
@@ -160,7 +160,7 @@ class SearchSubjectFilterSection extends HookWidget {
                 onChanged: (v) => onChanged(filter.copyWith(courses: v)),
                 labelBuilder: (v) => v.label,
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 8),
               _buildFilterChipGroup<Grade>(
                 context: context,
                 label: '学年',
@@ -169,7 +169,7 @@ class SearchSubjectFilterSection extends HookWidget {
                 onChanged: (v) => onChanged(filter.copyWith(grades: v)),
                 labelBuilder: (v) => v.label,
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 8),
               _buildFilterChipGroup<AcademicClass>(
                 context: context,
                 label: 'クラス',
@@ -211,7 +211,7 @@ class SearchSubjectFilterSection extends HookWidget {
                     decoration: BoxDecoration(color: colors.accentPrimary, borderRadius: BorderRadius.circular(999)),
                     child: Text(
                       '$badgeCount',
-                      style: Theme.of(context).textTheme.labelMedium?.copyWith(color: colors.textInverse),
+                      style: Theme.of(context).textTheme.labelMedium?.copyWith(color: colors.labelTertiary),
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -221,7 +221,7 @@ class SearchSubjectFilterSection extends HookWidget {
             ),
           ),
         ),
-        if (isExpanded) child,
+        if (isExpanded) ...[const SizedBox(height: 12), child],
       ],
     );
   }
