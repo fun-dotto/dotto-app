@@ -50,7 +50,7 @@ final class SearchSubjectReducer extends _$SearchSubjectReducer {
       }
 
       final courseRegistrations = await courseRegistrationsFuture;
-      final subjects = await subjectsFuture;
+      final fetchedSubjects = await subjectsFuture;
 
       final registeredSubjectIds = courseRegistrations.map((e) => e.subject.id).toSet();
       final timetableSlotsBySubjectId = <String, List<TimetableSlot>>{};
@@ -62,15 +62,15 @@ final class SearchSubjectReducer extends _$SearchSubjectReducer {
         timetableSlotsBySubjectId.putIfAbsent(item.subject.id, () => []).add(slot);
       }
 
-      final subjects = BuiltList<SubjectSummary>(
-        subjects.map((subject) {
+      final mergedSubjects = BuiltList<SubjectSummary>(
+        fetchedSubjects.map((subject) {
           return subject.copyWith(
             slots: timetableSlotsBySubjectId[subject.id],
             isAddedToTimetable: registeredSubjectIds.contains(subject.id),
           );
         }),
       ).toList();
-      return previousState.copyWith(subjects: subjects, filter: filter);
+      return previousState.copyWith(subjects: mergedSubjects, filter: filter);
     });
   }
 
