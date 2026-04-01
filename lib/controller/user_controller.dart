@@ -67,7 +67,6 @@ final class UserNotifier extends _$UserNotifier {
   }
 
   Future<void> setGrade(Grade? grade) async {
-    await UserPreferenceRepository.setString(UserPreferenceKeys.grade, grade?.name ?? '');
     final current = state.value;
     if (current != null) {
       state = AsyncValue.data(current.copyWith(grade: grade));
@@ -76,7 +75,6 @@ final class UserNotifier extends _$UserNotifier {
   }
 
   Future<void> setCourse(AcademicArea? course) async {
-    await UserPreferenceRepository.setString(UserPreferenceKeys.course, course?.name ?? '');
     final current = state.value;
     if (current != null) {
       state = AsyncValue.data(current.copyWith(course: course));
@@ -85,7 +83,6 @@ final class UserNotifier extends _$UserNotifier {
   }
 
   Future<void> setClass(AcademicClass? class_) async {
-    await UserPreferenceRepository.setString(UserPreferenceKeys.class_, class_?.name ?? '');
     final current = state.value;
     if (current != null) {
       state = AsyncValue.data(current.copyWith(class_: class_));
@@ -104,50 +101,7 @@ final class UserNotifier extends _$UserNotifier {
   }
 
   Future<DottoUser> _syncUser() async {
-    final grade = switch (await UserPreferenceRepository.getString(UserPreferenceKeys.grade)) {
-      'b1' => Grade.b1,
-      'b2' => Grade.b2,
-      'b3' => Grade.b3,
-      'b4' => Grade.b4,
-      'm1' => Grade.m1,
-      'm2' => Grade.m2,
-      'd1' => Grade.d1,
-      'd2' => Grade.d2,
-      'd3' => Grade.d3,
-      _ => null,
-    };
-    final course = switch (await UserPreferenceRepository.getString(UserPreferenceKeys.course)) {
-      'informationSystemCourse' => AcademicArea.informationSystemCourse,
-      'informationDesignCourse' => AcademicArea.informationDesignCourse,
-      'complexCourse' => AcademicArea.complexCourse,
-      'intelligenceSystemCourse' => AcademicArea.intelligenceSystemCourse,
-      'advancedICTCourse' => AcademicArea.advancedICTCourse,
-      _ => null,
-    };
-    final class_ = switch (await UserPreferenceRepository.getString(UserPreferenceKeys.class_)) {
-      'a' => AcademicClass.a,
-      'b' => AcademicClass.b,
-      'c' => AcademicClass.c,
-      'd' => AcademicClass.d,
-      'e' => AcademicClass.e,
-      'f' => AcademicClass.f,
-      'g' => AcademicClass.g,
-      'h' => AcademicClass.h,
-      'i' => AcademicClass.i,
-      'j' => AcademicClass.j,
-      'k' => AcademicClass.k,
-      'l' => AcademicClass.l,
-      _ => null,
-    };
-    final defaultUser = DottoUser(
-      id: '',
-      name: '',
-      email: '',
-      avatarUrl: '',
-      grade: grade,
-      course: course,
-      class_: class_,
-    );
+    const defaultUser = DottoUser(id: '', name: '', email: '', avatarUrl: '', grade: null, course: null, class_: null);
     final firebaseUser = FirebaseAuth.instance.currentUser;
     if (firebaseUser == null) {
       return defaultUser;
@@ -161,16 +115,11 @@ final class UserNotifier extends _$UserNotifier {
             email: firebaseUser.email ?? '',
             avatarUrl: firebaseUser.photoURL ?? '',
           );
-      final updatedUser = user.copyWith(
-        grade: user.grade ?? grade,
-        course: user.course ?? course,
-        class_: user.class_ ?? class_,
-      );
       try {
-        return ref.read(userRepositoryProvider).upsertUser(firebaseUser: firebaseUser, user: updatedUser);
+        return ref.read(userRepositoryProvider).upsertUser(firebaseUser: firebaseUser, user: user);
       } on Exception catch (e) {
         debugPrint('Error during upserting user: $e');
-        return updatedUser;
+        return user;
       }
     } on Exception catch (e) {
       debugPrint('Error during getting user: $e');
