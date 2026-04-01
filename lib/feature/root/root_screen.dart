@@ -8,8 +8,8 @@ import 'package:dotto/feature/map/map_screen.dart';
 import 'package:dotto/feature/onboarding/onboarding_screen.dart';
 import 'package:dotto/feature/root/root_viewmodel.dart';
 import 'package:dotto/feature/root/root_viewmodel_state.dart';
-import 'package:dotto/feature/search_subject_v0/search_course_screen.dart';
 import 'package:dotto/feature/setting/settings.dart';
+import 'package:dotto/feature/subject/search_subject_screen.dart';
 import 'package:dotto/widget/invalid_app_version_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -23,7 +23,7 @@ final class RootScreen extends ConsumerWidget {
     if (!isV2Enabled || isFunchEnabled) {
       return baseTabs;
     }
-    return baseTabs.where((tab) => tab != TabItem.funch).toList();
+    return baseTabs.map((tab) => tab == TabItem.funch ? TabItem.subject : tab).toList();
   }
 
   Widget _updateAlertDialog({
@@ -68,7 +68,7 @@ final class RootScreen extends ConsumerWidget {
                         TabItem.bus => const BusScreen(),
                         TabItem.setting => const SettingsScreen(),
                         TabItem.home => const HomeScreen(),
-                        TabItem.subject => const SearchCourseScreen(),
+                        TabItem.subject => const SearchSubjectScreen(),
                       },
                     );
                   },

@@ -23,7 +23,7 @@ class RootViewModel extends _$RootViewModel {
     if (!isV2Enabled || isFunchEnabled) {
       return baseTabs;
     }
-    return baseTabs.where((tab) => tab != TabItem.funch).toList();
+    return baseTabs.map((tab) => tab == TabItem.funch ? TabItem.subject : tab).toList();
   }
 
   @override
