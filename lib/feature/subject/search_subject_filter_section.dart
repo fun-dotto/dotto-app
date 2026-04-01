@@ -150,6 +150,15 @@ class SearchSubjectFilterSection extends HookWidget {
         InkWell(
           onTap: () => onExpandedChanged(!isExpanded),
           borderRadius: BorderRadius.circular(8),
+          overlayColor: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.pressed)) {
+              return Colors.black.withValues(alpha: 0.06);
+            }
+            if (states.contains(WidgetState.hovered) || states.contains(WidgetState.focused)) {
+              return Colors.black.withValues(alpha: 0.03);
+            }
+            return null;
+          }),
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 4),
             child: Row(
