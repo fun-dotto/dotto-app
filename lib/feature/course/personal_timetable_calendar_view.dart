@@ -252,7 +252,7 @@ final class PersonalTimetableCalendarView extends HookConsumerWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8),
           child: SizedBox(
-            width: isTimetableTimeVisible ? 56 : 24,
+            width: 24,
             child: SizedBox(
               height: kMinInteractiveDimension,
               child: Stack(
