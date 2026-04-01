@@ -48,13 +48,13 @@ final class CourseReducer extends _$CourseReducer {
 
     final courseRegistrationRepository = ref.read(courseRegistrationRepositoryProvider);
     final lectureCancellationRepository = ref.read(lectureCancellationRepositoryProvider);
-    final roomRepository = ref.read(roomRepositoryProvider);
+    final oneWeekScheduleRepository = ref.read(oneWeekScheduleRepositoryProvider);
     final personalCalendarRepository = ref.read(personalCalendarRepositoryProvider);
 
-    final (courseRegistrations, lectureCancellationData, rooms) = await (
+    final (courseRegistrations, lectureCancellationData, schedules) = await (
       courseRegistrationRepository.getCourseRegistrations(Semester.values),
       lectureCancellationRepository.getLectureCancellationData(),
-      roomRepository.getRooms(),
+      oneWeekScheduleRepository.getSchedules(),
     ).wait;
     if (!ref.mounted) {
       return const CourseState();
@@ -62,6 +62,9 @@ final class CourseReducer extends _$CourseReducer {
 
     final registeredSubjectsByName = <String, SubjectSummary>{
       for (final registration in courseRegistrations) registration.subject.name: registration.subject,
+    };
+    final registeredSubjectsById = <String, SubjectSummary>{
+      for (final registration in courseRegistrations) registration.subject.id: registration.subject,
     };
     final now = ref.read(clockProvider);
     final today = now();
@@ -74,7 +77,8 @@ final class CourseReducer extends _$CourseReducer {
 
     final days = personalCalendarRepository.getPersonalTimetableDays(
       targetDates: targetDates,
-      rooms: rooms,
+      schedules: schedules,
+      registeredSubjectsById: registeredSubjectsById,
       registeredSubjectsByName: registeredSubjectsByName,
       cancelledByDate: lectureCancellationData.cancelledByDate,
       madeUpByDate: lectureCancellationData.madeUpByDate,

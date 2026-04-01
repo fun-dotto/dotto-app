@@ -1,11 +1,9 @@
 import 'package:dotto/domain/day_of_week.dart';
-import 'package:dotto/domain/floor.dart';
 import 'package:dotto/domain/lecture_override.dart';
 import 'package:dotto/domain/lecture_status.dart';
 import 'package:dotto/domain/period.dart';
-import 'package:dotto/domain/room.dart';
-import 'package:dotto/domain/room_schedule.dart';
 import 'package:dotto/domain/subject_summary.dart';
+import 'package:dotto/repository/oneweek_schedule_repository.dart';
 import 'package:dotto/repository/personal_calendar_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -15,51 +13,29 @@ void main() {
     final math = SubjectSummary(id: 'math', name: 'Math', faculties: const []);
     final english = SubjectSummary(id: 'english', name: 'English', faculties: const []);
 
-    Room createRoom({required String shortName, required List<RoomSchedule> schedules}) {
-      return Room(
-        id: shortName,
-        name: shortName,
-        shortName: shortName,
-        description: '',
-        floor: Floor.first,
-        email: '',
-        keywords: const [],
-        schedules: schedules,
-      );
-    }
-
     test('施設予約から日付ベースで時間割を構築できる', () {
-      final rooms = [
-        createRoom(
-          shortName: 'R101',
-          schedules: [
-            RoomSchedule(
-              beginDatetime: DateTime(2026, 4, 7, 9),
-              endDatetime: DateTime(2026, 4, 7, 10, 30),
-              title: 'Math',
-            ),
-            RoomSchedule(
-              beginDatetime: DateTime(2026, 4, 9, 10, 40),
-              endDatetime: DateTime(2026, 4, 9, 12, 10),
-              title: 'English',
-            ),
-          ],
+      final schedules = [
+        OneWeekScheduleEntry(lessonId: 'math', title: 'Math', start: DateTime(2026, 4, 7, 9), period: 1, resourceId: 2),
+        OneWeekScheduleEntry(
+          lessonId: 'math',
+          title: 'Math',
+          start: DateTime(2026, 4, 7, 9),
+          period: 1,
+          resourceId: 99,
         ),
-        createRoom(
-          shortName: 'R102',
-          schedules: [
-            RoomSchedule(
-              beginDatetime: DateTime(2026, 4, 7, 9),
-              endDatetime: DateTime(2026, 4, 7, 10, 30),
-              title: 'Math',
-            ),
-          ],
+        OneWeekScheduleEntry(
+          lessonId: 'english',
+          title: 'English',
+          start: DateTime(2026, 4, 9, 10, 40),
+          period: 2,
+          resourceId: 11,
         ),
       ];
 
       final result = repository.getPersonalTimetableDays(
         targetDates: [DateTime(2026, 4, 7), DateTime(2026, 4, 8), DateTime(2026, 4, 9)],
-        rooms: rooms,
+        schedules: schedules,
+        registeredSubjectsById: {math.id: math, english.id: english},
         registeredSubjectsByName: {math.name: math, english.name: english},
         cancelledByDate: const {},
         madeUpByDate: const {},
@@ -70,30 +46,23 @@ void main() {
       expect(result[0].items, hasLength(1));
       expect(result[0].items.first.subject, math);
       expect(result[0].items.first.period, Period.first);
-      expect(result[0].items.first.roomName, 'R101, R102');
+      expect(result[0].items.first.roomName, 'オンライン, 大講義室');
       expect(result[1].items, isEmpty);
       expect(result[2].items, hasLength(1));
       expect(result[2].items.first.subject, english);
       expect(result[2].items.first.period, Period.second);
+      expect(result[2].items.first.roomName, '583');
     });
 
     test('休講補講は施設予約ベースの結果に上書きされる', () {
-      final rooms = [
-        createRoom(
-          shortName: 'R101',
-          schedules: [
-            RoomSchedule(
-              beginDatetime: DateTime(2026, 4, 7, 9),
-              endDatetime: DateTime(2026, 4, 7, 10, 30),
-              title: 'Math',
-            ),
-          ],
-        ),
+      final schedules = [
+        OneWeekScheduleEntry(lessonId: 'math', title: 'Math', start: DateTime(2026, 4, 7, 9), period: 1, resourceId: 2),
       ];
 
       final result = repository.getPersonalTimetableDays(
         targetDates: [DateTime(2026, 4, 7), DateTime(2026, 4, 8)],
-        rooms: rooms,
+        schedules: schedules,
+        registeredSubjectsById: {math.id: math, english.id: english},
         registeredSubjectsByName: {math.name: math, english.name: english},
         cancelledByDate: {
           '2026-4-7': [LectureOverride(lessonName: 'Math', period: Period.first)],
