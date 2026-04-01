@@ -7,14 +7,12 @@ import 'package:dotto/domain/room.dart';
 import 'package:dotto/domain/room_assignment_index.dart';
 import 'package:dotto/domain/semester.dart';
 import 'package:dotto/domain/subject_summary.dart';
-import 'package:dotto/domain/timetable_item.dart';
 import 'package:dotto/feature/course/course_reducer.dart';
 import 'package:dotto/repository/course_registration_repository.dart';
 import 'package:dotto/repository/lecture_cancellation_repository.dart';
 import 'package:dotto/repository/personal_calendar_repository.dart';
 import 'package:dotto/repository/repository_provider.dart';
 import 'package:dotto/repository/room_repository.dart';
-import 'package:dotto/repository/timetable_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -59,33 +57,20 @@ final class FakeLectureCancellationRepository implements LectureCancellationRepo
   }
 }
 
-final class FakeTimetableRepository implements TimetableRepository {
-  FakeTimetableRepository({required this.result});
-
-  final List<TimetableItem> result;
-  int getTimetableItemsCallCount = 0;
-
-  @override
-  Future<List<TimetableItem>> getTimetableItems(List<Semester> semesters) async {
-    getTimetableItemsCallCount += 1;
-    return result;
-  }
-}
-
 final class FakeRoomRepository implements RoomRepository {
-  FakeRoomRepository({required this.roomAssignmentIndex});
+  FakeRoomRepository({required this.rooms});
 
-  final RoomAssignmentIndex roomAssignmentIndex;
-  int getRoomAssignmentIndexCallCount = 0;
+  final List<Room> rooms;
+  int getRoomsCallCount = 0;
 
   @override
-  Future<RoomAssignmentIndex> getRoomAssignmentIndex() async {
-    getRoomAssignmentIndexCallCount += 1;
-    return roomAssignmentIndex;
+  Future<List<Room>> getRooms() async {
+    getRoomsCallCount += 1;
+    return rooms;
   }
 
   @override
-  Future<List<Room>> getRooms() {
+  Future<RoomAssignmentIndex> getRoomAssignmentIndex() {
     throw UnimplementedError();
   }
 }
@@ -99,10 +84,8 @@ final class FakePersonalCalendarRepository implements PersonalCalendarRepository
   @override
   List<PersonalTimetableDay> getPersonalTimetableDays({
     required List<DateTime> targetDates,
-    required List<TimetableItem> timetableItems,
-    required Set<String> registeredSubjectIds,
+    required List<Room> rooms,
     required Map<String, SubjectSummary> registeredSubjectsByName,
-    required RoomAssignmentIndex roomAssignmentIndex,
     required Map<String, List<LectureOverride>> cancelledByDate,
     required Map<String, List<LectureOverride>> madeUpByDate,
   }) {
@@ -115,7 +98,6 @@ void main() {
   ProviderContainer createContainer({
     required FakeCourseRegistrationRepository courseRegistrationRepository,
     required FakeLectureCancellationRepository lectureCancellationRepository,
-    required FakeTimetableRepository timetableRepository,
     required FakeRoomRepository roomRepository,
     required FakePersonalCalendarRepository personalCalendarRepository,
     bool isAuthenticated = true,
@@ -124,7 +106,6 @@ void main() {
       overrides: [
         courseRegistrationRepositoryProvider.overrideWithValue(courseRegistrationRepository),
         lectureCancellationRepositoryProvider.overrideWithValue(lectureCancellationRepository),
-        timetableRepositoryProvider.overrideWithValue(timetableRepository),
         roomRepositoryProvider.overrideWithValue(roomRepository),
         personalCalendarRepositoryProvider.overrideWithValue(personalCalendarRepository),
         courseCanFetchProtectedDataProvider.overrideWithValue(() async => isAuthenticated),
@@ -141,10 +122,7 @@ void main() {
     final lectureCancellationRepository = FakeLectureCancellationRepository(
       result: LectureCancellationData(cancelledByDate: {}, madeUpByDate: {}),
     );
-    final timetableRepository = FakeTimetableRepository(result: const []);
-    final roomRepository = FakeRoomRepository(
-      roomAssignmentIndex: RoomAssignmentIndex(roomNamesBySlotAndTitle: {}, roomNamesByTitle: {}),
-    );
+    final roomRepository = FakeRoomRepository(rooms: const []);
     final expectedDays = [
       PersonalTimetableDay(date: DateTime(2026, 4, 6), items: const [], timetableDayOfWeek: DayOfWeek.monday),
     ];
@@ -153,7 +131,6 @@ void main() {
     final container = createContainer(
       courseRegistrationRepository: courseRegistrationRepository,
       lectureCancellationRepository: lectureCancellationRepository,
-      timetableRepository: timetableRepository,
       roomRepository: roomRepository,
       personalCalendarRepository: personalCalendarRepository,
     );
@@ -164,8 +141,7 @@ void main() {
     expect(state.days, expectedDays);
     expect(courseRegistrationRepository.getCourseRegistrationsCallCount, 1);
     expect(lectureCancellationRepository.getLectureCancellationDataCallCount, 1);
-    expect(timetableRepository.getTimetableItemsCallCount, 1);
-    expect(roomRepository.getRoomAssignmentIndexCallCount, 1);
+    expect(roomRepository.getRoomsCallCount, 1);
 
     final targetDates = personalCalendarRepository.capturedTargetDates;
     expect(targetDates, isNotNull);
@@ -183,16 +159,12 @@ void main() {
     final lectureCancellationRepository = FakeLectureCancellationRepository(
       result: LectureCancellationData(cancelledByDate: {}, madeUpByDate: {}),
     );
-    final timetableRepository = FakeTimetableRepository(result: const []);
-    final roomRepository = FakeRoomRepository(
-      roomAssignmentIndex: RoomAssignmentIndex(roomNamesBySlotAndTitle: {}, roomNamesByTitle: {}),
-    );
+    final roomRepository = FakeRoomRepository(rooms: const []);
     final personalCalendarRepository = FakePersonalCalendarRepository(result: const []);
 
     final container = createContainer(
       courseRegistrationRepository: courseRegistrationRepository,
       lectureCancellationRepository: lectureCancellationRepository,
-      timetableRepository: timetableRepository,
       roomRepository: roomRepository,
       personalCalendarRepository: personalCalendarRepository,
       isAuthenticated: false,
@@ -204,8 +176,7 @@ void main() {
     expect(state.days, isEmpty);
     expect(courseRegistrationRepository.getCourseRegistrationsCallCount, 0);
     expect(lectureCancellationRepository.getLectureCancellationDataCallCount, 0);
-    expect(timetableRepository.getTimetableItemsCallCount, 0);
-    expect(roomRepository.getRoomAssignmentIndexCallCount, 0);
+    expect(roomRepository.getRoomsCallCount, 0);
     expect(personalCalendarRepository.capturedTargetDates, isNull);
   });
 }

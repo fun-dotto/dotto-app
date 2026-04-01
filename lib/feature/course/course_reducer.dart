@@ -48,21 +48,18 @@ final class CourseReducer extends _$CourseReducer {
 
     final courseRegistrationRepository = ref.read(courseRegistrationRepositoryProvider);
     final lectureCancellationRepository = ref.read(lectureCancellationRepositoryProvider);
-    final timetableRepository = ref.read(timetableRepositoryProvider);
     final roomRepository = ref.read(roomRepositoryProvider);
     final personalCalendarRepository = ref.read(personalCalendarRepositoryProvider);
 
-    final (courseRegistrations, lectureCancellationData, timetableItems, roomAssignmentIndex) = await (
+    final (courseRegistrations, lectureCancellationData, rooms) = await (
       courseRegistrationRepository.getCourseRegistrations(Semester.values),
       lectureCancellationRepository.getLectureCancellationData(),
-      timetableRepository.getTimetableItems(Semester.values),
-      roomRepository.getRoomAssignmentIndex(),
+      roomRepository.getRooms(),
     ).wait;
     if (!ref.mounted) {
       return const CourseState();
     }
 
-    final registeredSubjectIds = courseRegistrations.map((e) => e.subject.id).toSet();
     final registeredSubjectsByName = <String, SubjectSummary>{
       for (final registration in courseRegistrations) registration.subject.name: registration.subject,
     };
@@ -77,10 +74,8 @@ final class CourseReducer extends _$CourseReducer {
 
     final days = personalCalendarRepository.getPersonalTimetableDays(
       targetDates: targetDates,
-      timetableItems: timetableItems,
-      registeredSubjectIds: registeredSubjectIds,
+      rooms: rooms,
       registeredSubjectsByName: registeredSubjectsByName,
-      roomAssignmentIndex: roomAssignmentIndex,
       cancelledByDate: lectureCancellationData.cancelledByDate,
       madeUpByDate: lectureCancellationData.madeUpByDate,
     );
