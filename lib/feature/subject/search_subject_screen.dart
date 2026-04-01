@@ -189,6 +189,7 @@ class SearchSubjectScreen extends HookConsumerWidget {
                   unawaited(search());
                 },
               ),
+              const Divider(height: 0),
               buildResults(),
             ],
           ),
