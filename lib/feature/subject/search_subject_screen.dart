@@ -40,14 +40,12 @@ class SearchSubjectScreen extends HookConsumerWidget {
     final isAuthenticated = ref.watch(isAuthenticatedProvider);
     final textEditingController = useTextEditingController();
     final focusNode = useFocusNode();
-    final filter = useState(SubjectFilter());
     final processingSubjectIds = useState(<String>{});
-    final subjects = ref.watch(searchSubjectReducerProvider);
+    final searchState = ref.watch(searchSubjectReducerProvider);
+    final filter = searchState.asData?.value.filter ?? SubjectFilter();
 
     Future<void> search() async {
-      await ref
-          .read(searchSubjectReducerProvider.notifier)
-          .search(query: textEditingController.text, filter: filter.value);
+      await ref.read(searchSubjectReducerProvider.notifier).search(query: textEditingController.text, filter: filter);
     }
 
     Future<void> toggleCourseRegistration({required String subjectId, required bool isAddedToTimetable}) async {
@@ -168,18 +166,18 @@ class SearchSubjectScreen extends HookConsumerWidget {
     }
 
     Widget buildResults() {
-      return switch (subjects) {
+      return switch (searchState) {
         AsyncData(:final value) =>
-          value.isEmpty && filter.value.hasActiveFilters
+          value.subjects.isEmpty && filter.hasActiveFilters
               ? const Padding(
                   padding: EdgeInsets.symmetric(vertical: 24),
                   child: Center(child: Text('科目が見つかりませんでした')),
                 )
               : Column(
                   children: [
-                    for (var index = 0; index < value.length; index++) ...[
+                    for (var index = 0; index < value.subjects.length; index++) ...[
                       if (index > 0) const Divider(height: 0),
-                      buildSubjectTile(context, index, value),
+                      buildSubjectTile(context, index, value.subjects),
                     ],
                   ],
                 ),
@@ -197,10 +195,11 @@ class SearchSubjectScreen extends HookConsumerWidget {
         centerTitle: false,
         actions: [
           TextButton(
-            onPressed: filter.value.hasActiveFilters
+            onPressed: filter.hasActiveFilters
                 ? () {
-                    filter.value = SubjectFilter();
-                    ref.read(searchSubjectReducerProvider.notifier).clearResults();
+                    final notifier = ref.read(searchSubjectReducerProvider.notifier);
+                    notifier.clearFilter();
+                    notifier.clearResults();
                   }
                 : null,
             child: const Text('条件をクリア'),
@@ -222,10 +221,11 @@ class SearchSubjectScreen extends HookConsumerWidget {
                 onSubmitted: (_) => search(),
               ),
               SearchSubjectFilterSection(
-                filter: filter.value,
+                filter: filter,
                 onChanged: (value) {
-                  filter.value = value;
-                  unawaited(search());
+                  final notifier = ref.read(searchSubjectReducerProvider.notifier);
+                  notifier.updateFilter(value);
+                  unawaited(notifier.search(query: textEditingController.text, filter: value));
                 },
               ),
               const Divider(height: 0),

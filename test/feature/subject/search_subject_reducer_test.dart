@@ -136,14 +136,16 @@ void main() {
     await container.read(searchSubjectReducerProvider.notifier).search(query: 'math', filter: filter);
 
     final value = container.read(searchSubjectReducerProvider).requireValue;
+    final subjects = value.subjects;
 
-    expect(value, hasLength(2));
-    expect(value[0].id, 'subject-1');
-    expect(value[0].slots, [const TimetableSlot(dayOfWeek: DayOfWeek.monday, period: Period.first)]);
-    expect(value[0].isAddedToTimetable, isTrue);
-    expect(value[1].id, 'subject-2');
-    expect(value[1].slots, isNull);
-    expect(value[1].isAddedToTimetable, isFalse);
+    expect(subjects, hasLength(2));
+    expect(value.filter, filter);
+    expect(subjects[0].id, 'subject-1');
+    expect(subjects[0].slots, [const TimetableSlot(dayOfWeek: DayOfWeek.monday, period: Period.first)]);
+    expect(subjects[0].isAddedToTimetable, isTrue);
+    expect(subjects[1].id, 'subject-2');
+    expect(subjects[1].slots, isNull);
+    expect(subjects[1].isAddedToTimetable, isFalse);
   });
 
   test('timetableItems は初回検索のみ取得される', () async {
