@@ -119,12 +119,14 @@ class SearchSubjectScreen extends HookConsumerWidget {
                 );
               },
               child: isProcessing
-                  ? Shimmer(
+                  ? SizedBox(
                       key: const ValueKey('loading'),
-                      child: Container(
-                        width: 20,
-                        height: 20,
-                        decoration: BoxDecoration(color: Colors.grey.shade300, shape: BoxShape.circle),
+                      width: 20,
+                      height: 20,
+                      child: Shimmer(
+                        child: Container(
+                          decoration: BoxDecoration(color: Colors.grey.shade300, shape: BoxShape.circle),
+                        ),
                       ),
                     )
                   : Icon(
