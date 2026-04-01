@@ -26,7 +26,6 @@ final class CourseScreen extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final config = ref.watch(configProvider);
     final isAuthenticated = ref.watch(isAuthenticatedProvider);
-    // final timetablePeriodStyle = ref.watch(timetablePeriodStyleProvider);
     final quickLinksByLabel = {for (final link in QuickLink.links) link.label: link};
     final state = isAuthenticated ? ref.watch(courseReducerProvider) : const AsyncData(CourseState());
     final selectedDate = useState<DateTime?>(null);
