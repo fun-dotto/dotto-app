@@ -136,7 +136,7 @@ class SearchSubjectFilterSection extends HookWidget {
               const SizedBox(height: 12),
               _buildFilterChipGroup<SubjectRequirementType>(
                 context: context,
-                label: '必修・選択',
+                label: '必修/選択',
                 values: SubjectRequirementType.values,
                 selected: filter.requirements,
                 onChanged: (v) => onChanged(filter.copyWith(requirements: v)),
