@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dotto/controller/user_controller.dart';
 import 'package:dotto/domain/subject_faculty.dart';
 import 'package:dotto/domain/subject_filter.dart';
@@ -5,7 +7,6 @@ import 'package:dotto/feature/subject/search_subject_filter_screen.dart';
 import 'package:dotto/feature/subject/search_subject_reducer.dart';
 import 'package:dotto/feature/subject/subject_detail_screen.dart';
 import 'package:dotto_design_system/component/text_field.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -82,16 +83,20 @@ class SearchSubjectScreen extends HookConsumerWidget {
               focusNode: focusNode,
               onSubmitted: (_) => search(),
             ),
-            SearchSubjectFilterSection(
-              filter: filter.value,
-              onChanged: (value) {
-                filter.value = value;
-                unawaited(search());
-              },
-              onClear: () {
-                filter.value = SubjectFilter();
-                unawaited(search());
-              },
+            Flexible(
+              child: SingleChildScrollView(
+                child: SearchSubjectFilterSection(
+                  filter: filter.value,
+                  onChanged: (value) {
+                    filter.value = value;
+                    unawaited(search());
+                  },
+                  onClear: () {
+                    filter.value = SubjectFilter();
+                    unawaited(search());
+                  },
+                ),
+              ),
             ),
             Expanded(
               child: switch (subjects) {
