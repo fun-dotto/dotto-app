@@ -85,6 +85,7 @@ class SearchSubjectFilterSection extends HookWidget {
           isExpanded: isBasicAttributesExpanded.value,
           onExpandedChanged: (value) => isBasicAttributesExpanded.value = value,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildFilterChipGroup<AcademicArea>(
                 context: context,
@@ -122,6 +123,7 @@ class SearchSubjectFilterSection extends HookWidget {
           isExpanded: isOtherAttributesExpanded.value,
           onExpandedChanged: (value) => isOtherAttributesExpanded.value = value,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildFilterChipGroup<Semester>(
                 context: context,
