@@ -1,17 +1,20 @@
 import 'dart:async';
 
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:dotto/controller/dotto_user_preference_controller.dart';
 import 'package:dotto/domain/lecture_status.dart';
 import 'package:dotto/domain/period.dart';
 import 'package:dotto/domain/personal_timetable_day.dart';
 import 'package:dotto/domain/personal_timetable_item.dart';
 import 'package:dotto/domain/subject_summary.dart';
+import 'package:dotto/feature/timetable_v0/domain/timetable_period_style.dart';
 import 'package:dotto/helper/date_formatter.dart';
 import 'package:dotto_design_system/style/semantic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-final class PersonalTimetableCalendarView extends HookWidget {
+final class PersonalTimetableCalendarView extends HookConsumerWidget {
   const PersonalTimetableCalendarView({
     required this.personalTimetableDays,
     required this.selectedDate,
@@ -26,7 +29,12 @@ final class PersonalTimetableCalendarView extends HookWidget {
   final void Function(SubjectSummary) onSubjectSelected;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final userPreference = ref.watch(dottoUserPreferenceProvider);
+    final isTimetableTimeVisible = switch (userPreference) {
+      AsyncData(value: final preference) => preference.timetablePeriodStyle == TimetablePeriodStyle.numberAndTime,
+      AsyncError() || AsyncLoading() => false,
+    };
     final safeSelectedDate =
         selectedDate ?? (personalTimetableDays.isNotEmpty ? personalTimetableDays.first.date : DateTime.now());
     final selectedDayIndex = personalTimetableDays.indexWhere((day) => _isSameDate(day.date, safeSelectedDate));
@@ -67,6 +75,7 @@ final class PersonalTimetableCalendarView extends HookWidget {
         onPageChanged: (newPage) => currentPage.value = newPage,
         pageController: pageController,
         onDateSelected: onDateSelected,
+        isTimetableTimeVisible: isTimetableTimeVisible,
       ),
     );
   }
@@ -79,6 +88,7 @@ final class PersonalTimetableCalendarView extends HookWidget {
     required void Function(int) onPageChanged,
     required PageController pageController,
     required void Function(DateTime) onDateSelected,
+    required bool isTimetableTimeVisible,
   }) {
     final firstWeekDates = days.take(5).map((e) => e.date).toList();
     final secondWeekDates = days.skip(5).take(5).map((e) => e.date).toList();
@@ -143,7 +153,9 @@ final class PersonalTimetableCalendarView extends HookWidget {
                   onPageChanged(index);
                   onDateSelected(days[index].date);
                 },
-                itemBuilder: (context, index) => _dayTimetable(context, days[index]),
+                itemBuilder: (context, index) {
+                  return _dayTimetable(context, days[index], isTimetableTimeVisible: isTimetableTimeVisible);
+                },
               ),
             ),
           ),
@@ -191,7 +203,11 @@ final class PersonalTimetableCalendarView extends HookWidget {
     );
   }
 
-  Widget _dayTimetable(BuildContext context, PersonalTimetableDay? selectedDay) {
+  Widget _dayTimetable(
+    BuildContext context,
+    PersonalTimetableDay? selectedDay, {
+    required bool isTimetableTimeVisible,
+  }) {
     return Column(
       spacing: 4,
       children: Period.values
@@ -200,6 +216,7 @@ final class PersonalTimetableCalendarView extends HookWidget {
               context,
               period: period,
               items: selectedDay?.items.where((item) => item.period == period).toList() ?? const [],
+              isTimetableTimeVisible: isTimetableTimeVisible,
             ),
           )
           .toList(),
@@ -223,19 +240,33 @@ final class PersonalTimetableCalendarView extends HookWidget {
     return totalRowHeight + rowGap;
   }
 
-  Widget _periodRow(BuildContext context, {required Period period, required List<PersonalTimetableItem> items}) {
+  Widget _periodRow(
+    BuildContext context, {
+    required Period period,
+    required List<PersonalTimetableItem> items,
+    required bool isTimetableTimeVisible,
+  }) {
     return Row(
       spacing: 8,
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8),
           child: SizedBox(
-            width: 24,
-            child: Center(
-              child: Text(
-                period.number.toString(),
-                style: TextStyle(fontSize: 20, color: SemanticColor.light.accentPrimary),
-              ),
+            width: isTimetableTimeVisible ? 64 : 24,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  period.number.toString(),
+                  style: TextStyle(fontSize: 20, color: SemanticColor.light.accentPrimary),
+                ),
+                if (isTimetableTimeVisible)
+                  Text(
+                    '${_formatTime(period.startTime)}-\n${_formatTime(period.endTime)}',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 8, height: 1.1, color: SemanticColor.light.accentPrimary),
+                  ),
+              ],
             ),
           ),
         ),
@@ -249,6 +280,12 @@ final class PersonalTimetableCalendarView extends HookWidget {
         ),
       ],
     );
+  }
+
+  String _formatTime(TimeOfDay time) {
+    final hour = time.hour.toString().padLeft(2, '0');
+    final minute = time.minute.toString().padLeft(2, '0');
+    return '$hour:$minute';
   }
 
   Widget _itemButton(BuildContext context, PersonalTimetableItem? item) {
