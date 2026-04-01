@@ -169,6 +169,7 @@ class SearchSubjectScreen extends HookConsumerWidget {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             spacing: 8,
             children: [
               DottoTextField(
