@@ -1,9 +1,9 @@
 import 'package:dotto/controller/user_controller.dart';
+import 'package:dotto/controller/dotto_user_preference_controller.dart';
 import 'package:dotto/domain/day_of_week.dart';
 import 'package:dotto/domain/period.dart';
 import 'package:dotto/feature/subject_detail_v0/kamoku_detail_screen.dart';
 import 'package:dotto/feature/timetable_v0/controller/focused_timetable_date_controller.dart';
-import 'package:dotto/feature/timetable_v0/controller/timetable_period_style_controller.dart';
 import 'package:dotto/feature/timetable_v0/controller/two_week_timetable_controller.dart';
 import 'package:dotto/feature/timetable_v0/domain/timetable_course.dart';
 import 'package:dotto/feature/timetable_v0/domain/timetable_period_style.dart';
@@ -147,9 +147,10 @@ final class MyPageTimetable extends ConsumerWidget {
     Period period,
     List<TimetableCourse> timetableCourseList,
   ) {
-    final timetablePeriodStyle = ref.watch(timetablePeriodStyleProvider);
-    return timetablePeriodStyle.when(
-      data: (style) {
+    final userPreference = ref.watch(dottoUserPreferenceProvider);
+    return userPreference.when(
+      data: (preference) {
+        final style = preference.timetablePeriodStyle;
         return Row(
           spacing: 8,
           children: [
