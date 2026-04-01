@@ -68,6 +68,7 @@ class SearchSubjectFilterSection extends HookWidget {
   Widget build(BuildContext context) {
     final hasCulturalClassification = filter.classifications.contains(SubjectClassification.cultural);
     final isBasicAttributesExpanded = useState(true);
+    final isOtherAttributesExpanded = useState(true);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -115,51 +116,61 @@ class SearchSubjectFilterSection extends HookWidget {
           ),
         ),
         const SizedBox(height: 12),
-        _buildFilterChipGroup<SubjectClassification>(
+        _buildCollapsibleSection(
           context: context,
-          label: '分類',
-          values: SubjectClassification.values,
-          selected: filter.classifications,
-          onChanged: (v) {
-            final hasCultural = v.contains(SubjectClassification.cultural);
-            onChanged(
-              filter.copyWith(
-                classifications: v,
-                culturalSubjectCategories: hasCultural ? filter.culturalSubjectCategories : [],
+          label: '分類・開講時期・必修/選択・教養区分',
+          isExpanded: isOtherAttributesExpanded.value,
+          onExpandedChanged: (value) => isOtherAttributesExpanded.value = value,
+          child: Column(
+            children: [
+              _buildFilterChipGroup<SubjectClassification>(
+                context: context,
+                label: '分類',
+                values: SubjectClassification.values,
+                selected: filter.classifications,
+                onChanged: (v) {
+                  final hasCultural = v.contains(SubjectClassification.cultural);
+                  onChanged(
+                    filter.copyWith(
+                      classifications: v,
+                      culturalSubjectCategories: hasCultural ? filter.culturalSubjectCategories : [],
+                    ),
+                  );
+                },
+                labelBuilder: (v) => v.label,
               ),
-            );
-          },
-          labelBuilder: (v) => v.label,
-        ),
-        const SizedBox(height: 12),
-        _buildFilterChipGroup<Semester>(
-          context: context,
-          label: '開講時期',
-          values: Semester.values,
-          selected: filter.semesters,
-          onChanged: (v) => onChanged(filter.copyWith(semesters: v)),
-          labelBuilder: (v) => v.label,
-        ),
-        const SizedBox(height: 12),
-        _buildFilterChipGroup<SubjectRequirementType>(
-          context: context,
-          label: '必修・選択',
-          values: SubjectRequirementType.values,
-          selected: filter.requirements,
-          onChanged: (v) => onChanged(filter.copyWith(requirements: v)),
-          labelBuilder: (v) => v.label,
-        ),
-        if (hasCulturalClassification) ...[
-          const SizedBox(height: 12),
-          _buildFilterChipGroup<CulturalSubjectCategory>(
-            context: context,
-            label: '教養区分',
-            values: CulturalSubjectCategory.values,
-            selected: filter.culturalSubjectCategories,
-            onChanged: (v) => onChanged(filter.copyWith(culturalSubjectCategories: v)),
-            labelBuilder: (v) => v.label,
+              const SizedBox(height: 12),
+              _buildFilterChipGroup<Semester>(
+                context: context,
+                label: '開講時期',
+                values: Semester.values,
+                selected: filter.semesters,
+                onChanged: (v) => onChanged(filter.copyWith(semesters: v)),
+                labelBuilder: (v) => v.label,
+              ),
+              const SizedBox(height: 12),
+              _buildFilterChipGroup<SubjectRequirementType>(
+                context: context,
+                label: '必修・選択',
+                values: SubjectRequirementType.values,
+                selected: filter.requirements,
+                onChanged: (v) => onChanged(filter.copyWith(requirements: v)),
+                labelBuilder: (v) => v.label,
+              ),
+              if (hasCulturalClassification) ...[
+                const SizedBox(height: 12),
+                _buildFilterChipGroup<CulturalSubjectCategory>(
+                  context: context,
+                  label: '教養区分',
+                  values: CulturalSubjectCategory.values,
+                  selected: filter.culturalSubjectCategories,
+                  onChanged: (v) => onChanged(filter.copyWith(culturalSubjectCategories: v)),
+                  labelBuilder: (v) => v.label,
+                ),
+              ],
+            ],
           ),
-        ],
+        ),
       ],
     );
   }
