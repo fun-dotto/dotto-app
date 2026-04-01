@@ -73,13 +73,13 @@ class SearchSubjectFilterSection extends HookWidget {
         filter.culturalSubjectCategories.length;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: 8,
       children: [
         if (onClear != null) ...[
           Align(
             alignment: Alignment.centerRight,
             child: TextButton(onPressed: filter.hasActiveFilters ? onClear : null, child: const Text('条件をクリア')),
           ),
-          const SizedBox(height: 4),
         ],
         _buildCollapsibleSection(
           context: context,
@@ -89,6 +89,7 @@ class SearchSubjectFilterSection extends HookWidget {
           badgeCount: otherFilterCount,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: 8,
             children: [
               _buildFilterChipGroup<Semester>(
                 context: context,
@@ -98,7 +99,6 @@ class SearchSubjectFilterSection extends HookWidget {
                 onChanged: (v) => onChanged(filter.copyWith(semesters: v)),
                 labelBuilder: (v) => v.label,
               ),
-              const SizedBox(height: 8),
               _buildFilterChipGroup<SubjectRequirementType>(
                 context: context,
                 label: '必修/選択',
@@ -107,7 +107,6 @@ class SearchSubjectFilterSection extends HookWidget {
                 onChanged: (v) => onChanged(filter.copyWith(requirements: v)),
                 labelBuilder: (v) => v.label,
               ),
-              const SizedBox(height: 8),
               _buildFilterChipGroup<SubjectClassification>(
                 context: context,
                 label: '分類',
@@ -124,8 +123,7 @@ class SearchSubjectFilterSection extends HookWidget {
                 },
                 labelBuilder: (v) => v.label,
               ),
-              if (hasCulturalClassification) ...[
-                const SizedBox(height: 8),
+              if (hasCulturalClassification)
                 _buildFilterChipGroup<CulturalSubjectCategory>(
                   context: context,
                   label: '教養区分',
@@ -134,13 +132,10 @@ class SearchSubjectFilterSection extends HookWidget {
                   onChanged: (v) => onChanged(filter.copyWith(culturalSubjectCategories: v)),
                   labelBuilder: (v) => v.label,
                 ),
-              ],
             ],
           ),
         ),
-        const SizedBox(height: 8),
         const Divider(height: 0),
-        const SizedBox(height: 8),
         _buildCollapsibleSection(
           context: context,
           label: 'コース/領域・学年・クラス',
@@ -149,6 +144,7 @@ class SearchSubjectFilterSection extends HookWidget {
           badgeCount: basicFilterCount,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: 8,
             children: [
               _buildFilterChipGroup<AcademicArea>(
                 context: context,
@@ -158,7 +154,6 @@ class SearchSubjectFilterSection extends HookWidget {
                 onChanged: (v) => onChanged(filter.copyWith(courses: v)),
                 labelBuilder: (v) => v.label,
               ),
-              const SizedBox(height: 8),
               _buildFilterChipGroup<Grade>(
                 context: context,
                 label: '学年',
@@ -167,7 +162,6 @@ class SearchSubjectFilterSection extends HookWidget {
                 onChanged: (v) => onChanged(filter.copyWith(grades: v)),
                 labelBuilder: (v) => v.label,
               ),
-              const SizedBox(height: 8),
               _buildFilterChipGroup<AcademicClass>(
                 context: context,
                 label: 'クラス',
@@ -201,9 +195,10 @@ class SearchSubjectFilterSection extends HookWidget {
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 4),
             child: Row(
+              spacing: 8,
               children: [
                 Expanded(child: Text(label, style: Theme.of(context).textTheme.titleMedium)),
-                if (badgeCount > 0) ...[
+                if (badgeCount > 0)
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                     decoration: BoxDecoration(color: colors.accentPrimary, borderRadius: BorderRadius.circular(999)),
@@ -212,8 +207,6 @@ class SearchSubjectFilterSection extends HookWidget {
                       style: Theme.of(context).textTheme.labelMedium?.copyWith(color: colors.labelTertiary),
                     ),
                   ),
-                  const SizedBox(width: 8),
-                ],
                 Icon(isExpanded ? Icons.expand_less : Icons.expand_more),
               ],
             ),
@@ -244,9 +237,9 @@ class SearchSubjectFilterSection extends HookWidget {
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: 4,
       children: [
         Text(label, style: Theme.of(context).textTheme.labelLarge),
-        const SizedBox(height: 4),
         _buildFilterChipRow<T>(
           context: context,
           values: values,
@@ -269,11 +262,10 @@ class SearchSubjectFilterSection extends HookWidget {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
+        spacing: 8,
         children: [
-          for (var i = 0; i < values.length; i++) ...[
-            if (i > 0) const SizedBox(width: 8),
+          for (final value in values)
             () {
-              final value = values[i];
               final isSelected = selected.contains(value);
               return FilterChip(
                 label: Text(labelBuilder(value)),
@@ -290,7 +282,6 @@ class SearchSubjectFilterSection extends HookWidget {
                 side: BorderSide(color: isSelected ? colors.accentPrimary : colors.borderPrimary),
               );
             }(),
-          ],
         ],
       ),
     );
