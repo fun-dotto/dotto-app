@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:dotto/api/api_environment.dart';
 import 'package:dotto/app.dart';
 import 'package:dotto/firebase_options.dart';
+import 'package:dotto/helper/firebase_auth_helper.dart';
 import 'package:dotto/helper/firebase_storage_repository.dart';
 import 'package:dotto/helper/location_repository.dart';
 import 'package:dotto/helper/logger.dart';
@@ -23,6 +24,7 @@ Future<void> main() async {
 
   // Firebaseの初期化
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await FirebaseAuthHelper.initialize();
 
   // Firebase Crashlyticsの初期化
   FlutterError.onError = (errorDetails) async {
