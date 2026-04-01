@@ -1,11 +1,11 @@
 import 'package:dotto/domain/day_of_week.dart';
 import 'package:dotto/domain/lecture_override.dart';
 import 'package:dotto/domain/lecture_status.dart';
+import 'package:dotto/domain/period.dart';
 import 'package:dotto/domain/personal_timetable_day.dart';
 import 'package:dotto/domain/personal_timetable_item.dart';
 import 'package:dotto/domain/subject_summary.dart';
-import 'package:dotto/domain/period.dart';
-import 'package:dotto/repository/oneweek_schedule_repository.dart';
+import 'package:dotto/repository/model/one_week_schedule_entry.dart';
 
 abstract class PersonalCalendarRepository {
   List<PersonalTimetableDay> getPersonalTimetableDays({

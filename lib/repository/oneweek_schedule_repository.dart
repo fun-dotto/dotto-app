@@ -1,6 +1,8 @@
 import 'package:dotto/helper/file_helper.dart';
 import 'package:dotto/repository/model/one_week_schedule_entry.dart';
 
+export 'package:dotto/repository/model/one_week_schedule_entry.dart';
+
 abstract class OneWeekScheduleRepository {
   Future<List<OneWeekScheduleEntry>> getSchedules();
 }
