@@ -167,26 +167,33 @@ class SearchSubjectFilterSection extends StatelessWidget {
       children: [
         Text(label, style: Theme.of(context).textTheme.labelLarge),
         const SizedBox(height: 4),
-        Wrap(
-          spacing: 8,
-          runSpacing: 4,
-          children: values.map((value) {
-            final isSelected = selected.contains(value);
-            return FilterChip(
-              label: Text(labelBuilder(value)),
-              selected: isSelected,
-              onSelected: (bool newValue) {
-                if (newValue) {
-                  onChanged([...selected, value]);
-                } else {
-                  onChanged(selected.where((v) => v != value).toList());
-                }
-              },
-              showCheckmark: false,
-              selectedColor: colors.accentPrimary.withValues(alpha: 0.2),
-              side: BorderSide(color: isSelected ? colors.accentPrimary : colors.borderPrimary),
-            );
-          }).toList(),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: [
+              for (var i = 0; i < values.length; i++) ...[
+                if (i > 0) const SizedBox(width: 8),
+                () {
+                  final value = values[i];
+                  final isSelected = selected.contains(value);
+                  return FilterChip(
+                    label: Text(labelBuilder(value)),
+                    selected: isSelected,
+                    onSelected: (bool newValue) {
+                      if (newValue) {
+                        onChanged([...selected, value]);
+                      } else {
+                        onChanged(selected.where((v) => v != value).toList());
+                      }
+                    },
+                    showCheckmark: false,
+                    selectedColor: colors.accentPrimary.withValues(alpha: 0.2),
+                    side: BorderSide(color: isSelected ? colors.accentPrimary : colors.borderPrimary),
+                  );
+                }(),
+              ],
+            ],
+          ),
         ),
       ],
     );
