@@ -200,7 +200,7 @@ class SearchSubjectScreen extends HookConsumerWidget {
             onPressed: filter.value.hasActiveFilters
                 ? () {
                     filter.value = SubjectFilter();
-                    unawaited(search());
+                    ref.read(searchSubjectReducerProvider.notifier).clearResults();
                   }
                 : null,
             child: const Text('条件をクリア'),
