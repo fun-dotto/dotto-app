@@ -23,6 +23,7 @@ final subjectRepositoryProvider = Provider<SubjectRepository>((ref) {
 @riverpod
 final class SearchSubjectReducer extends _$SearchSubjectReducer {
   List<TimetableItem>? _cachedTimetableItems;
+  int _latestSearchRequestId = 0;
 
   @override
   Future<SearchSubjectState> build() async {
@@ -30,9 +31,12 @@ final class SearchSubjectReducer extends _$SearchSubjectReducer {
   }
 
   Future<void> search({required String query, required SubjectFilter filter}) async {
-    final previousState = state.asData?.value ?? const SearchSubjectState();
-    state = const AsyncLoading();
-    state = await AsyncValue.guard(() async {
+    final requestId = ++_latestSearchRequestId;
+    final previousAsyncState = state;
+    final previousState = state.hasValue ? state.requireValue : const SearchSubjectState();
+    state = const AsyncLoading<SearchSubjectState>().copyWithPrevious(previousAsyncState, isRefresh: false);
+
+    try {
       final isAuthenticated = ref.read(isAuthenticatedProvider);
       final courseRegistrationRepository = ref.read(courseRegistrationRepositoryProvider);
       final subjectRepository = ref.read(subjectRepositoryProvider);
@@ -70,8 +74,19 @@ final class SearchSubjectReducer extends _$SearchSubjectReducer {
           );
         }),
       ).toList();
-      return previousState.copyWith(subjects: mergedSubjects, filter: filter);
-    });
+
+      if (!ref.mounted || requestId != _latestSearchRequestId) {
+        return;
+      }
+
+      state = AsyncData(previousState.copyWith(subjects: mergedSubjects, filter: filter));
+    } catch (error, stackTrace) {
+      if (!ref.mounted || requestId != _latestSearchRequestId) {
+        return;
+      }
+
+      state = AsyncError<SearchSubjectState>(error, stackTrace).copyWithPrevious(previousAsyncState);
+    }
   }
 
   void updateFilter(SubjectFilter filter) {

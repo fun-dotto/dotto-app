@@ -42,7 +42,7 @@ class SearchSubjectScreen extends HookConsumerWidget {
     final focusNode = useFocusNode();
     final processingSubjectIds = useState(<String>{});
     final searchState = ref.watch(searchSubjectReducerProvider);
-    final filter = searchState.asData?.value.filter ?? SubjectFilter();
+    final filter = searchState.hasValue ? searchState.requireValue.filter : SubjectFilter();
 
     Future<void> search() async {
       await ref.read(searchSubjectReducerProvider.notifier).search(query: textEditingController.text, filter: filter);

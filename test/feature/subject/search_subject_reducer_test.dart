@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dotto/controller/user_controller.dart';
 import 'package:dotto/domain/course_registration.dart';
 import 'package:dotto/domain/day_of_week.dart';
@@ -41,14 +43,19 @@ final class FakeCourseRegistrationRepository implements CourseRegistrationReposi
 }
 
 final class FakeSubjectRepository implements SubjectRepository {
-  FakeSubjectRepository({required this.resultsByQuery});
+  FakeSubjectRepository({required this.resultsByQuery, this.futuresByQuery = const {}});
 
   final Map<String, List<SubjectSummary>> resultsByQuery;
+  final Map<String, Future<List<SubjectSummary>>> futuresByQuery;
   int getSubjectsCallCount = 0;
 
   @override
   Future<List<SubjectSummary>> getSubjects(String query, SubjectFilter filter) async {
     getSubjectsCallCount += 1;
+    final future = futuresByQuery[query];
+    if (future != null) {
+      return future;
+    }
     return resultsByQuery[query] ?? const [];
   }
 
@@ -174,5 +181,66 @@ void main() {
     expect(timetableRepository.getTimetableItemsCallCount, 1);
     expect(courseRegistrationRepository.getCourseRegistrationsCallCount, 2);
     expect(subjectRepository.getSubjectsCallCount, 2);
+  });
+
+  test('search 中も直前の filter を保持する', () async {
+    final delayedSubjects = Completer<List<SubjectSummary>>();
+    final activeFilter = SubjectFilter(grades: const []);
+    final subjectRepository = FakeSubjectRepository(
+      resultsByQuery: const {},
+      futuresByQuery: {'math': delayedSubjects.future},
+    );
+    final container = createContainer(
+      courseRegistrationRepository: FakeCourseRegistrationRepository(result: const []),
+      subjectRepository: subjectRepository,
+      timetableRepository: FakeTimetableRepository(result: const []),
+    );
+    addTearDown(container.dispose);
+
+    final notifier = container.read(searchSubjectReducerProvider.notifier);
+    notifier.updateFilter(activeFilter);
+    final searchFuture = notifier.search(query: 'math', filter: activeFilter);
+
+    final loadingState = container.read(searchSubjectReducerProvider);
+    expect(loadingState.isLoading, isTrue);
+    expect(loadingState.hasValue, isTrue);
+    expect(loadingState.requireValue.filter, activeFilter);
+
+    delayedSubjects.complete(const []);
+    await searchFuture;
+  });
+
+  test('古い検索結果では filter と subjects を巻き戻さない', () async {
+    final firstSubjects = Completer<List<SubjectSummary>>();
+    final secondSubjects = Completer<List<SubjectSummary>>();
+    final firstFilter = SubjectFilter(grades: const []);
+    final secondFilter = SubjectFilter(semesters: const [Semester.h1]);
+    final oldSubject = SubjectSummary(id: 'subject-old', name: 'Old', faculties: const []);
+    final newSubject = SubjectSummary(id: 'subject-new', name: 'New', faculties: const []);
+
+    final subjectRepository = FakeSubjectRepository(
+      resultsByQuery: const {},
+      futuresByQuery: {'first': firstSubjects.future, 'second': secondSubjects.future},
+    );
+    final container = createContainer(
+      courseRegistrationRepository: FakeCourseRegistrationRepository(result: const []),
+      subjectRepository: subjectRepository,
+      timetableRepository: FakeTimetableRepository(result: const []),
+    );
+    addTearDown(container.dispose);
+
+    final notifier = container.read(searchSubjectReducerProvider.notifier);
+    final firstSearch = notifier.search(query: 'first', filter: firstFilter);
+    final secondSearch = notifier.search(query: 'second', filter: secondFilter);
+
+    secondSubjects.complete([newSubject]);
+    await secondSearch;
+
+    firstSubjects.complete([oldSubject]);
+    await firstSearch;
+
+    final value = container.read(searchSubjectReducerProvider).requireValue;
+    expect(value.filter, secondFilter);
+    expect(value.subjects, [newSubject]);
   });
 }
