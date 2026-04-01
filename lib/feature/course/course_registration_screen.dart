@@ -53,53 +53,27 @@ class CourseRegistrationScreen extends HookConsumerWidget {
   }
 
   Widget _courseRegistrationSkeleton(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8),
-      child: Column(
-        children: [
-          Row(
-            children: TimetableSemester.values
-                .map(
-                  (_) => Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-                      child: _skeletonBox(height: 16),
+    return SingleChildScrollView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      child: Padding(
+        padding: const EdgeInsets.all(8),
+        child: Table(
+          columnWidths: {for (final e in Period.values) e.number: const FlexColumnWidth()},
+          children: <TableRow>[
+            TableRow(
+              children: DayOfWeek.weekdays
+                  .map(
+                    (e) => TableCell(
+                      child: Center(child: Text(e.label, style: Theme.of(context).textTheme.labelMedium)),
                     ),
-                  ),
-                )
-                .toList(),
-          ),
-          Expanded(
-            child: SingleChildScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              child: Table(
-                columnWidths: {for (final e in Period.values) e.number: const FlexColumnWidth()},
-                children: <TableRow>[
-                  TableRow(
-                    children: DayOfWeek.weekdays
-                        .map(
-                          (_) => Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 8),
-                            child: Center(child: _skeletonBox(height: 14, width: 24, radius: 4)),
-                          ),
-                        )
-                        .toList(),
-                  ),
-                  ...Period.values.map(
-                    (_) => TableRow(
-                      children: DayOfWeek.weekdays
-                          .map(
-                            (_) =>
-                                Padding(padding: const EdgeInsets.all(2), child: _skeletonBox(height: 100, radius: 4)),
-                          )
-                          .toList(),
-                    ),
-                  ),
-                ],
-              ),
+                  )
+                  .toList(),
             ),
-          ),
-        ],
+            ...Period.values.map(
+              (_) => TableRow(children: DayOfWeek.weekdays.map((_) => _personalWeeklyTimetableCellSkeleton()).toList()),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -110,6 +84,24 @@ class CourseRegistrationScreen extends HookConsumerWidget {
         width: width,
         height: height,
         decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(radius)),
+      ),
+    );
+  }
+
+  Widget _personalWeeklyTimetableCellSkeleton() {
+    return Container(
+      margin: const EdgeInsets.all(2),
+      height: 100,
+      decoration: BoxDecoration(color: Colors.grey.shade200, borderRadius: const BorderRadius.all(Radius.circular(4))),
+      padding: const EdgeInsets.all(8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          _skeletonBox(height: 14, width: 56, radius: 4),
+          const SizedBox(height: 8),
+          _skeletonBox(height: 12, width: 40, radius: 4),
+        ],
       ),
     );
   }
