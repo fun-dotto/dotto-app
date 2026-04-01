@@ -252,36 +252,33 @@ final class PersonalTimetableCalendarView extends HookConsumerWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8),
           child: SizedBox(
-            width: 24,
+            width: isTimetableTimeVisible ? 56 : 24,
             child: SizedBox(
               height: kMinInteractiveDimension,
-              child: Stack(
-                alignment: Alignment.center,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  if (isTimetableTimeVisible)
-                    Align(
-                      alignment: Alignment.topRight,
-                      child: Text(
-                        _formatTime(period.startTime),
-                        textAlign: TextAlign.right,
-                        style: TextStyle(fontSize: 8, height: 1.1, color: SemanticColor.light.accentPrimary),
-                      ),
-                    ),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      period.number.toString(),
-                      style: TextStyle(fontSize: 20, color: SemanticColor.light.accentPrimary),
-                    ),
+                  Text(
+                    period.number.toString(),
+                    style: TextStyle(fontSize: 20, color: SemanticColor.light.accentPrimary),
                   ),
                   if (isTimetableTimeVisible)
-                    Align(
-                      alignment: Alignment.bottomRight,
-                      child: Text(
-                        _formatTime(period.endTime),
-                        textAlign: TextAlign.right,
-                        style: TextStyle(fontSize: 8, height: 1.1, color: SemanticColor.light.accentPrimary),
-                      ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          _formatTime(period.startTime),
+                          textAlign: TextAlign.right,
+                          style: TextStyle(fontSize: 8, height: 1.1, color: SemanticColor.light.accentPrimary),
+                        ),
+                        Text(
+                          _formatTime(period.endTime),
+                          textAlign: TextAlign.right,
+                          style: TextStyle(fontSize: 8, height: 1.1, color: SemanticColor.light.accentPrimary),
+                        ),
+                      ],
                     ),
                 ],
               ),
