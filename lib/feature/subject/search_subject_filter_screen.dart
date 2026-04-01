@@ -80,26 +80,26 @@ class SearchSubjectFilterSection extends HookWidget {
         ],
         _buildCollapsibleSection(
           context: context,
-          label: '学年・コース/領域・クラス',
+          label: 'コース/領域・学年・クラス',
           isExpanded: isBasicAttributesExpanded.value,
           onExpandedChanged: (value) => isBasicAttributesExpanded.value = value,
           child: Column(
             children: [
-              _buildFilterChipGroup<Grade>(
-                context: context,
-                label: '学年',
-                values: _availableGrades,
-                selected: filter.grades,
-                onChanged: (v) => onChanged(filter.copyWith(grades: v)),
-                labelBuilder: (v) => v.label,
-              ),
-              const SizedBox(height: 12),
               _buildFilterChipGroup<AcademicArea>(
                 context: context,
                 label: 'コース/領域',
                 values: AcademicArea.values,
                 selected: filter.courses,
                 onChanged: (v) => onChanged(filter.copyWith(courses: v)),
+                labelBuilder: (v) => v.label,
+              ),
+              const SizedBox(height: 12),
+              _buildFilterChipGroup<Grade>(
+                context: context,
+                label: '学年',
+                values: _availableGrades,
+                selected: filter.grades,
+                onChanged: (v) => onChanged(filter.copyWith(grades: v)),
                 labelBuilder: (v) => v.label,
               ),
               const SizedBox(height: 12),
