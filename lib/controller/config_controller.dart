@@ -30,8 +30,8 @@ final class ConfigNotifier extends _$ConfigNotifier {
     final remoteConfigIsFunchEnabled = remoteConfigRepository.getBool(RemoteConfigKeys.isFunchEnabled);
     final isV2Enabled = _isV2EnabledOverride ?? remoteConfigIsV2Enabled;
     final isFunchEnabled = _isFunchEnabledOverride ?? remoteConfigIsFunchEnabled;
-    final isValidAppVersion = remoteConfigRepository.getBool(RemoteConfigKeys.isValidAppVersion);
-    final isLatestAppVersion = remoteConfigRepository.getBool(RemoteConfigKeys.isLatestAppVersion);
+    final validAppVersion = remoteConfigRepository.getString(RemoteConfigKeys.validAppVersion);
+    final latestAppVersion = remoteConfigRepository.getString(RemoteConfigKeys.latestAppVersion);
     final feedbackFormUrl = remoteConfigRepository.getString(RemoteConfigKeys.feedbackFormUrl);
     final termsOfServiceUrl = remoteConfigRepository.getString(RemoteConfigKeys.termsOfServiceUrl);
     final privacyPolicyUrl = remoteConfigRepository.getString(RemoteConfigKeys.privacyPolicyUrl);
@@ -43,8 +43,8 @@ final class ConfigNotifier extends _$ConfigNotifier {
     return Config(
       isV2Enabled: isV2Enabled,
       isFunchEnabled: isFunchEnabled,
-      isValidAppVersion: isValidAppVersion,
-      isLatestAppVersion: isLatestAppVersion,
+      validAppVersion: validAppVersion,
+      latestAppVersion: latestAppVersion,
       feedbackFormUrl: feedbackFormUrl,
       termsOfServiceUrl: termsOfServiceUrl,
       privacyPolicyUrl: privacyPolicyUrl,

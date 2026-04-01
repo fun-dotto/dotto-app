@@ -13,6 +13,8 @@ abstract class RootViewModelState with _$RootViewModelState {
     required bool hasShownUpdateAlert,
     required bool isValidAppVersion,
     required bool isLatestAppVersion,
+    required String currentAppVersion,
+    required String latestAppVersion,
     required String appStorePageUrl,
   }) = _RootViewModelState;
 }

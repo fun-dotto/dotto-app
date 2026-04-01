@@ -30,8 +30,8 @@ final class _RemoteConfigHelperImpl implements RemoteConfigHelper {
       await FirebaseRemoteConfig.instance.setDefaults(const {
         RemoteConfigKeys.isV2Enabled: false,
         RemoteConfigKeys.isFunchEnabled: true,
-        RemoteConfigKeys.isValidAppVersion: true,
-        RemoteConfigKeys.isLatestAppVersion: false,
+        RemoteConfigKeys.validAppVersion: '0.0.0',
+        RemoteConfigKeys.latestAppVersion: '999.0.0',
         RemoteConfigKeys.feedbackFormUrl: 'https://forms.gle/ruo8iBxLMmvScNMFA',
         RemoteConfigKeys.appStorePageUrl: 'https://fun-dotto.github.io',
         RemoteConfigKeys.officialCalendarPdfUrl: 'https://fun-dotto.github.io/files/official_calendar_2026.pdf',
@@ -42,8 +42,8 @@ final class _RemoteConfigHelperImpl implements RemoteConfigHelper {
       await FirebaseRemoteConfig.instance.setDefaults(const {
         RemoteConfigKeys.isV2Enabled: false,
         RemoteConfigKeys.isFunchEnabled: false,
-        RemoteConfigKeys.isValidAppVersion: true,
-        RemoteConfigKeys.isLatestAppVersion: true,
+        RemoteConfigKeys.validAppVersion: '0.0.0',
+        RemoteConfigKeys.latestAppVersion: '0.0.0',
         RemoteConfigKeys.feedbackFormUrl: 'https://forms.gle/ruo8iBxLMmvScNMFA',
         RemoteConfigKeys.appStorePageUrl: 'https://fun-dotto.github.io',
         RemoteConfigKeys.officialCalendarPdfUrl: 'https://fun-dotto.github.io/files/official_calendar_2026.pdf',
