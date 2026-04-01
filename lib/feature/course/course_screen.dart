@@ -181,8 +181,7 @@ final class CourseScreen extends HookConsumerWidget {
     );
   }
 
-  Widget _loadingSkeleton(BuildContext context, {required bool isAuthenticated, required AsyncValue<Config> config}) {
-    final configValue = config.valueOrNull;
+  Widget _loadingSkeleton(BuildContext context, {required bool isAuthenticated, required Config config}) {
     return LayoutBuilder(
       builder: (context, constraints) => RefreshIndicator(
         onRefresh: () async {},
@@ -211,9 +210,9 @@ final class CourseScreen extends HookConsumerWidget {
                     isAuthenticated: isAuthenticated,
                     quickLinksByLabel: {for (final link in QuickLink.links) link.label: link},
                     fileItems: [
-                      ('学年暦', configValue?.officialCalendarPdfUrl ?? '', Icons.event_note),
-                      ('時間割 前期', configValue?.timetable1PdfUrl ?? '', Icons.calendar_view_month),
-                      ('時間割 後期', configValue?.timetable2PdfUrl ?? '', Icons.calendar_view_month),
+                      ('学年暦', config.officialCalendarPdfUrl, Icons.event_note),
+                      ('時間割 前期', config.timetable1PdfUrl, Icons.calendar_view_month),
+                      ('時間割 後期', config.timetable2PdfUrl, Icons.calendar_view_month),
                     ],
                   ),
                 ),
