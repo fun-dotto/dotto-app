@@ -1,13 +1,17 @@
+import 'dart:async';
+
 import 'package:dotto/controller/user_controller.dart';
 import 'package:dotto/domain/subject_faculty.dart';
 import 'package:dotto/domain/subject_filter.dart';
-import 'package:dotto/feature/subject/search_subject_filter_screen.dart';
+import 'package:dotto/domain/subject_summary.dart';
+import 'package:dotto/feature/subject/search_subject_filter_section.dart';
 import 'package:dotto/feature/subject/search_subject_reducer.dart';
 import 'package:dotto/feature/subject/subject_detail_screen.dart';
 import 'package:dotto_design_system/component/text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:shimmer_animation/shimmer_animation.dart';
 
 class SearchSubjectScreen extends HookConsumerWidget {
   const SearchSubjectScreen({super.key});
@@ -68,124 +72,166 @@ class SearchSubjectScreen extends HookConsumerWidget {
       }
     }
 
+    Widget buildSubjectTile(BuildContext context, int index, List<SubjectSummary> value) {
+      final subject = value[index];
+      return ListTile(
+        title: Text(subject.name),
+        subtitle: () {
+          final lines = <String>[];
+          final slots = subject.slots;
+          if (slots != null && slots.isNotEmpty) {
+            lines.add(slots.map((slot) => '${slot.dayOfWeek.label}${slot.period.number}').join(' / '));
+          }
+          final facultyLabel = _buildFacultyLabel(subject.faculties);
+          if (facultyLabel != null) {
+            lines.add(facultyLabel);
+          }
+          if (lines.isEmpty) {
+            return null;
+          }
+          return Text(lines.join('\n'));
+        }(),
+        onTap: () async {
+          await Navigator.of(
+            context,
+          ).push(MaterialPageRoute<void>(builder: (context) => SubjectDetailScreen(id: subject.id)));
+        },
+        trailing: const Icon(Icons.chevron_right),
+        leading: () {
+          if (!isAuthenticated) {
+            return null;
+          }
+          final isAddedToTimetable = subject.isAddedToTimetable;
+          if (isAddedToTimetable == null) return null;
+          final isProcessing = processingSubjectIds.value.contains(subject.id);
+          return IconButton(
+            onPressed: isProcessing
+                ? null
+                : () => toggleCourseRegistration(subjectId: subject.id, isAddedToTimetable: isAddedToTimetable),
+            icon: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 220),
+              switchInCurve: Curves.easeOutBack,
+              switchOutCurve: Curves.easeIn,
+              transitionBuilder: (child, animation) {
+                return FadeTransition(
+                  opacity: animation,
+                  child: ScaleTransition(scale: animation, child: child),
+                );
+              },
+              child: isProcessing
+                  ? SizedBox(
+                      key: const ValueKey('loading'),
+                      width: 20,
+                      height: 20,
+                      child: Shimmer(
+                        child: Container(
+                          decoration: BoxDecoration(color: Colors.grey.shade300, shape: BoxShape.circle),
+                        ),
+                      ),
+                    )
+                  : Icon(
+                      isAddedToTimetable ? Icons.check : Icons.add,
+                      key: ValueKey(isAddedToTimetable ? 'registered' : 'unregistered'),
+                    ),
+            ),
+            tooltip: isAddedToTimetable ? '履修解除' : '履修登録',
+          );
+        }(),
+      );
+    }
+
+    Widget buildLoadingSkeleton() {
+      return Column(
+        children: [
+          for (var i = 0; i < 8; i++) ...[
+            if (i > 0) const Divider(height: 0),
+            ListTile(
+              title: Shimmer(
+                child: Container(height: 16, width: double.infinity, color: Colors.grey.shade300),
+              ),
+              subtitle: Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Shimmer(child: Container(height: 14, width: 220, color: Colors.grey.shade300)),
+                    const SizedBox(height: 6),
+                    Shimmer(child: Container(height: 14, width: 180, color: Colors.grey.shade300)),
+                  ],
+                ),
+              ),
+              trailing: Icon(Icons.chevron_right, color: Colors.grey.shade400),
+            ),
+          ],
+        ],
+      );
+    }
+
+    Widget buildResults() {
+      return switch (subjects) {
+        AsyncData(:final value) =>
+          value.isEmpty && filter.value.hasActiveFilters
+              ? const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 24),
+                  child: Center(child: Text('科目が見つかりませんでした')),
+                )
+              : Column(
+                  children: [
+                    for (var index = 0; index < value.length; index++) ...[
+                      if (index > 0) const Divider(height: 0),
+                      buildSubjectTile(context, index, value),
+                    ],
+                  ],
+                ),
+        AsyncError() => const Padding(
+          padding: EdgeInsets.symmetric(vertical: 24),
+          child: Center(child: Text('科目の検索に失敗しました。')),
+        ),
+        AsyncLoading() => buildLoadingSkeleton(),
+      };
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('科目検索'),
         centerTitle: false,
         actions: [
-          IconButton(
-            onPressed: () async {
-              final result = await showModalBottomSheet<SubjectFilter>(
-                context: context,
-                isScrollControlled: true,
-                useSafeArea: true,
-                builder: (_) => SearchSubjectFilterScreen(filter: filter.value),
-              );
-              if (result != null) {
-                filter.value = result;
-                if (result.hasActiveFilters) {
-                  await search();
-                }
-              }
-            },
-            icon: Badge(isLabelVisible: filter.value.hasActiveFilters, child: const Icon(Icons.tune)),
+          TextButton(
+            onPressed: filter.value.hasActiveFilters
+                ? () {
+                    filter.value = SubjectFilter();
+                    ref.read(searchSubjectReducerProvider.notifier).clearResults();
+                  }
+                : null,
+            child: const Text('条件をクリア'),
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Column(
-          spacing: 8,
-          children: [
-            DottoTextField(
-              placeholder: '科目名で検索',
-              controller: textEditingController,
-              focusNode: focusNode,
-              onSubmitted: (_) => search(),
-            ),
-            Expanded(
-              child: switch (subjects) {
-                AsyncData(:final value) =>
-                  value.isEmpty && filter.value.hasActiveFilters
-                      ? const Center(child: Text('科目が見つかりませんでした'))
-                      : ListView.separated(
-                          separatorBuilder: (_, _) => const Divider(height: 0),
-                          itemCount: value.length,
-                          itemBuilder: (context, index) {
-                            final subject = value[index];
-                            return ListTile(
-                              title: Text(subject.name),
-                              subtitle: () {
-                                final lines = <String>[];
-                                final slots = subject.slots;
-                                if (slots != null && slots.isNotEmpty) {
-                                  lines.add(
-                                    slots.map((slot) => '${slot.dayOfWeek.label}${slot.period.number}').join(' / '),
-                                  );
-                                }
-                                final facultyLabel = _buildFacultyLabel(subject.faculties);
-                                if (facultyLabel != null) {
-                                  lines.add(facultyLabel);
-                                }
-                                if (lines.isEmpty) {
-                                  return null;
-                                }
-                                return Text(lines.join('\n'));
-                              }(),
-                              onTap: () async {
-                                await Navigator.of(context).push(
-                                  MaterialPageRoute<void>(builder: (context) => SubjectDetailScreen(id: subject.id)),
-                                );
-                              },
-                              trailing: const Icon(Icons.chevron_right),
-                              leading: () {
-                                if (!isAuthenticated) {
-                                  return null;
-                                }
-                                final isAddedToTimetable = subject.isAddedToTimetable;
-                                if (isAddedToTimetable == null) return null;
-                                final isProcessing = processingSubjectIds.value.contains(subject.id);
-                                return IconButton(
-                                  onPressed: isProcessing
-                                      ? null
-                                      : () => toggleCourseRegistration(
-                                          subjectId: subject.id,
-                                          isAddedToTimetable: isAddedToTimetable,
-                                        ),
-                                  icon: AnimatedSwitcher(
-                                    duration: const Duration(milliseconds: 220),
-                                    switchInCurve: Curves.easeOutBack,
-                                    switchOutCurve: Curves.easeIn,
-                                    transitionBuilder: (child, animation) {
-                                      return FadeTransition(
-                                        opacity: animation,
-                                        child: ScaleTransition(scale: animation, child: child),
-                                      );
-                                    },
-                                    child: isProcessing
-                                        ? const SizedBox(
-                                            key: ValueKey('loading'),
-                                            width: 20,
-                                            height: 20,
-                                            child: CircularProgressIndicator(strokeWidth: 2),
-                                          )
-                                        : Icon(
-                                            isAddedToTimetable ? Icons.check : Icons.add,
-                                            key: ValueKey(isAddedToTimetable ? 'registered' : 'unregistered'),
-                                          ),
-                                  ),
-                                  tooltip: isAddedToTimetable ? '履修解除' : '履修登録',
-                                );
-                              }(),
-                            );
-                          },
-                          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-                        ),
-                AsyncError() => const Center(child: Text('科目の検索に失敗しました。')),
-                AsyncLoading() => const Center(child: CircularProgressIndicator()),
-              },
-            ),
-          ],
+      body: SingleChildScrollView(
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            spacing: 8,
+            children: [
+              DottoTextField(
+                placeholder: '科目名で検索',
+                controller: textEditingController,
+                focusNode: focusNode,
+                onSubmitted: (_) => search(),
+              ),
+              SearchSubjectFilterSection(
+                filter: filter.value,
+                onChanged: (value) {
+                  filter.value = value;
+                  unawaited(search());
+                },
+              ),
+              const Divider(height: 0),
+              buildResults(),
+            ],
+          ),
         ),
       ),
     );

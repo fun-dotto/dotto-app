@@ -6,6 +6,8 @@ final class DottoTheme {
   static ThemeData get v2 {
     return ThemeData(
       primarySwatch: SemanticColor.accentMaterialColor,
+      splashColor: SemanticColor.light.accentPrimary.withValues(alpha: 0.2),
+      highlightColor: SemanticColor.light.accentPrimary.withValues(alpha: 0.12),
       colorScheme: ColorScheme.light(
         primary: SemanticColor.light.accentPrimary,
         surface: SemanticColor.light.backgroundPrimary,

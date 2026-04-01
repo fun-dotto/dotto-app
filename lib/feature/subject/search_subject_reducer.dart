@@ -91,6 +91,10 @@ final class SearchSubjectReducer extends _$SearchSubjectReducer {
     _updateSubjectRegistrationState(subjectId: subjectId, isAddedToTimetable: false);
   }
 
+  void clearResults() {
+    state = const AsyncData([]);
+  }
+
   void _updateSubjectRegistrationState({required String subjectId, required bool isAddedToTimetable}) {
     final subjects = state.asData?.value;
     if (subjects == null) {
