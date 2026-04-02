@@ -25,6 +25,20 @@ final class RootScreen extends ConsumerWidget {
     return baseTabs.map((tab) => tab == TabItem.funch ? TabItem.subject : tab).toList();
   }
 
+  Widget _tabRoot({required TabItem tab, required WidgetRef ref}) {
+    return switch (tab) {
+      TabItem.course => const CourseScreen(),
+      TabItem.funch => const FunchScreen(),
+      TabItem.map => MapScreen(
+        onGoToSettingButtonTapped: () => ref.read(rootViewModelProvider.notifier).onGoToSettingButtonTapped(),
+      ),
+      TabItem.bus => const BusScreen(),
+      TabItem.setting => const SettingsScreen(),
+      TabItem.home => const HomeScreen(),
+      TabItem.subject => const SearchSubjectScreen(),
+    };
+  }
+
   Widget _updateAlertDialog({
     required BuildContext context,
     required String appStorePageUrl,
@@ -83,24 +97,18 @@ final class RootScreen extends ConsumerWidget {
 
         return Scaffold(
           resizeToAvoidBottomInset: false,
-          body: Navigator(
-            key: value.navigatorKeys[value.selectedTab],
-            onGenerateRoute: (settings) {
-              return MaterialPageRoute(
-                builder: (context) => switch (value.selectedTab) {
-                  TabItem.course => const CourseScreen(),
-                  TabItem.funch => const FunchScreen(),
-                  TabItem.map => MapScreen(
-                    onGoToSettingButtonTapped: () =>
-                        ref.read(rootViewModelProvider.notifier).onGoToSettingButtonTapped(),
-                  ),
-                  TabItem.bus => const BusScreen(),
-                  TabItem.setting => const SettingsScreen(),
-                  TabItem.home => const HomeScreen(),
-                  TabItem.subject => const SearchSubjectScreen(),
+          body: IndexedStack(
+            index: activeTabs.indexOf(value.selectedTab),
+            children: activeTabs.map((tab) {
+              return Navigator(
+                key: value.navigatorKeys[tab],
+                onGenerateRoute: (settings) {
+                  return MaterialPageRoute(
+                    builder: (context) => _tabRoot(tab: tab, ref: ref),
+                  );
                 },
               );
-            },
+            }).toList(),
           ),
           bottomNavigationBar: NavigationBar(
             onDestinationSelected: ref.read(rootViewModelProvider.notifier).onTabItemTapped,
