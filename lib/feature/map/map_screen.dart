@@ -11,6 +11,7 @@ import 'package:dotto/feature/map/widget/map_floor_button.dart';
 import 'package:dotto/feature/map/widget/map_legend.dart';
 import 'package:dotto/feature/map/widget/map_search_bar.dart';
 import 'package:dotto/feature/map/widget/map_search_result_list.dart';
+import 'package:dotto_design_system/style/semantic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -84,7 +85,13 @@ final class MapScreen extends ConsumerWidget {
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: AppBar(title: const Text('マップ'), centerTitle: false),
+      appBar: AppBar(
+        title: Text(
+          'マップ',
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(color: SemanticColor.light.accentPrimary),
+        ),
+        centerTitle: false,
+      ),
       body: asyncViewModel.when(
         data: (viewModel) => Column(
           spacing: 8,

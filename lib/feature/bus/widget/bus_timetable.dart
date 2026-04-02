@@ -9,7 +9,7 @@ final class BusTimetableScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('${busTrip.route} 時刻表')),
+      appBar: AppBar(title: Text(busTrip.route)),
       body: ListView(
         children: busTrip.stops.map((busTripStop) {
           final terminal = busTripStop.terminal;

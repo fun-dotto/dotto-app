@@ -164,14 +164,17 @@ final class BusScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("バス一覧 ${busIsWeekday ? "平日" : "土日"}"),
+        title: Text(
+          'バス',
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(color: SemanticColor.light.accentPrimary),
+        ),
+        centerTitle: false,
         actions: [
-          DottoButton(
+          TextButton(
             onPressed: () {
               ref.read(busIsWeekdayProvider.notifier).toggle();
               ref.read(busIsScrolledProvider.notifier).value = false;
             },
-            type: DottoButtonType.text,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [const Icon(Icons.swap_horiz_outlined), Text("${busIsWeekday ? "土日" : "平日"}へ ")],

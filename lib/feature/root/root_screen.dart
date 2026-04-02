@@ -7,12 +7,11 @@ import 'package:dotto/feature/home/home.dart';
 import 'package:dotto/feature/map/map_screen.dart';
 import 'package:dotto/feature/onboarding/onboarding_screen.dart';
 import 'package:dotto/feature/root/root_viewmodel.dart';
-import 'package:dotto/feature/root/root_viewmodel_state.dart';
 import 'package:dotto/feature/setting/settings.dart';
 import 'package:dotto/feature/subject/search_subject_screen.dart';
 import 'package:dotto/widget/invalid_app_version_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 final class RootScreen extends ConsumerWidget {
@@ -42,64 +41,6 @@ final class RootScreen extends ConsumerWidget {
           child: const Text('今すぐアップデート'),
         ),
       ],
-    );
-  }
-
-  Widget _body({
-    required BuildContext context,
-    required RootViewModelState viewModel,
-    required List<TabItem> tabs,
-    required void Function() onGoToSettingButtonTapped,
-  }) {
-    return SafeArea(
-      child: Stack(
-        children: tabs
-            .map(
-              (item) => Offstage(
-                offstage: viewModel.selectedTab != item,
-                child: Navigator(
-                  key: viewModel.navigatorStates[item],
-                  onGenerateRoute: (settings) {
-                    return MaterialPageRoute(
-                      builder: (context) => switch (item) {
-                        TabItem.course => const CourseScreen(),
-                        TabItem.funch => const FunchScreen(),
-                        TabItem.map => MapScreen(onGoToSettingButtonTapped: onGoToSettingButtonTapped),
-                        TabItem.bus => const BusScreen(),
-                        TabItem.setting => const SettingsScreen(),
-                        TabItem.home => const HomeScreen(),
-                        TabItem.subject => const SearchSubjectScreen(),
-                      },
-                    );
-                  },
-                ),
-              ),
-            )
-            .toList(),
-      ),
-    );
-  }
-
-  Widget _bottomNavigationBar({
-    required BuildContext context,
-    required RootViewModelState viewModel,
-    required List<TabItem> tabs,
-    required void Function(int) onTabItemTapped,
-  }) {
-    final currentIndex = tabs.indexOf(viewModel.selectedTab);
-    return BottomNavigationBar(
-      type: BottomNavigationBarType.fixed,
-      currentIndex: currentIndex >= 0 ? currentIndex : 0,
-      items: tabs
-          .map(
-            (tabItem) => BottomNavigationBarItem(
-              icon: Icon(tabItem.icon),
-              activeIcon: Icon(tabItem.activeIcon),
-              label: tabItem.title,
-            ),
-          )
-          .toList(),
-      onTap: onTabItemTapped,
     );
   }
 
@@ -142,17 +83,36 @@ final class RootScreen extends ConsumerWidget {
 
         return Scaffold(
           resizeToAvoidBottomInset: false,
-          body: _body(
-            context: context,
-            viewModel: value,
-            tabs: activeTabs,
-            onGoToSettingButtonTapped: () => ref.read(rootViewModelProvider.notifier).onGoToSettingButtonTapped(),
-          ),
-          bottomNavigationBar: _bottomNavigationBar(
-            context: context,
-            viewModel: value,
-            tabs: activeTabs,
-            onTabItemTapped: (index) => ref.read(rootViewModelProvider.notifier).onTabItemTapped(index),
+          body: () {
+            return switch (value.selectedTab) {
+              TabItem.course => const CourseScreen(),
+              TabItem.funch => const FunchScreen(),
+              TabItem.map => MapScreen(
+                onGoToSettingButtonTapped: () => ref.read(rootViewModelProvider.notifier).onGoToSettingButtonTapped(),
+              ),
+              TabItem.bus => const BusScreen(),
+              TabItem.setting => const SettingsScreen(),
+              TabItem.home => const HomeScreen(),
+              TabItem.subject => const SearchSubjectScreen(),
+            };
+          }(),
+          bottomNavigationBar: NavigationBar(
+            onDestinationSelected: (int index) {
+              final selected = activeTabs[index];
+              if (value.selectedTab == selected) {
+                value.navigatorStates[selected]?.currentState?.popUntil((route) => route.isFirst);
+              } else {
+                ref.read(rootViewModelProvider.notifier).onTabItemTapped(index);
+              }
+            },
+            selectedIndex: activeTabs.indexOf(value.selectedTab),
+            destinations: activeTabs.map((tab) {
+              return NavigationDestination(
+                selectedIcon: Icon(tab.selectedIcon),
+                icon: Icon(tab.icon),
+                label: tab.label,
+              );
+            }).toList(),
           ),
         );
 

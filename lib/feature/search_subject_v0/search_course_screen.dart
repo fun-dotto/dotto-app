@@ -8,6 +8,7 @@ import 'package:dotto/feature/search_subject_v0/widget/search_course_box.dart';
 import 'package:dotto/feature/search_subject_v0/widget/search_course_filter_section.dart';
 import 'package:dotto/feature/search_subject_v0/widget/search_course_result_section.dart';
 import 'package:dotto/feature/subject_detail_v0/kamoku_detail_screen.dart';
+import 'package:dotto_design_system/style/semantic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -57,7 +58,13 @@ final class SearchCourseScreen extends ConsumerWidget {
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: AppBar(title: const Text('科目'), centerTitle: false),
+      appBar: AppBar(
+        title: Text(
+          '科目',
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(color: SemanticColor.light.accentPrimary),
+        ),
+        centerTitle: false,
+      ),
       body: _body(
         viewModelAsync: viewModelAsync,
         onChanged: (filterOption, choice, isSelected) => ref

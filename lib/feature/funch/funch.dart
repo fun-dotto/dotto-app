@@ -38,18 +38,24 @@ final class FunchScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
-        title: TextButton(
-          child: Text(
-            getDateString(date),
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(color: SemanticColor.light.accentPrimary),
-          ),
-          onPressed: () async {
-            if (context.mounted) {
-              await _showModalBottomSheet(context, ref);
-            }
-          },
+        title: Text(
+          '学食',
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(color: SemanticColor.light.accentPrimary),
         ),
+        centerTitle: false,
+        actions: [
+          TextButton(
+            child: Text(
+              getDateString(date),
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(color: SemanticColor.light.accentPrimary),
+            ),
+            onPressed: () async {
+              if (context.mounted) {
+                await _showModalBottomSheet(context, ref);
+              }
+            },
+          ),
+        ],
       ),
       body: Column(
         spacing: 16,
@@ -129,8 +135,7 @@ final class FunchScreen extends ConsumerWidget {
   }
 
   String getDateString(DateTime date) {
-    return '${DateFormat.yMd('ja').format(date)} '
-        '(${DateFormat.E('ja').format(date)})';
+    return DateFormat.yMd('ja').add_E().format(date);
   }
 
   Future<void> _showModalBottomSheet(BuildContext context, WidgetRef ref) async {
@@ -172,7 +177,7 @@ final class FunchScreen extends ConsumerWidget {
     if (context.mounted) {
       await showModalBottomSheet<void>(
         context: context,
-        builder: (BuildContext context) {
+        builder: (context) {
           return SizedBox(
             height: MediaQuery.of(context).size.height * 0.3,
             child: Column(mainAxisAlignment: MainAxisAlignment.center, children: content),

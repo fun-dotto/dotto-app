@@ -21,6 +21,7 @@ import 'package:dotto/feature/timetable_v0/edit_timetable_screen.dart';
 import 'package:dotto/feature/timetable_v0/repository/timetable_repository.dart';
 import 'package:dotto/feature/timetable_v0/widget/my_page_timetable.dart';
 import 'package:dotto/widget/web_pdf_viewer.dart';
+import 'package:dotto_design_system/style/semantic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -82,7 +83,10 @@ final class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Dotto'),
+        title: Text(
+          'Dotto',
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(color: SemanticColor.light.accentPrimary),
+        ),
         centerTitle: false,
         actions: [
           switch (userPreference) {

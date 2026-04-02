@@ -6,7 +6,6 @@ final class DottoTheme {
   static ThemeData get v2 {
     return ThemeData(
       useMaterial3: true,
-      colorSchemeSeed: SemanticColor.accentMaterialColor,
       splashColor: SemanticColor.light.accentPrimary.withValues(alpha: 0.2),
       highlightColor: SemanticColor.light.accentPrimary.withValues(alpha: 0.12),
       colorScheme: ColorScheme.light(
@@ -18,6 +17,14 @@ final class DottoTheme {
         surfaceTintColor: Colors.transparent,
         titleTextStyle: DottoTextStyle.titleMedium.copyWith(
           color: SemanticColor.light.accentPrimary,
+        ),
+      ),
+      navigationBarTheme: NavigationBarThemeData(
+        backgroundColor: SemanticColor.light.accentPrimary.withValues(
+          alpha: 0.08,
+        ),
+        indicatorColor: SemanticColor.light.accentPrimary.withValues(
+          alpha: 0.12,
         ),
       ),
       dividerTheme: DividerThemeData(color: Colors.grey.shade300),
