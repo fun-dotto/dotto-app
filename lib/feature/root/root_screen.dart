@@ -83,28 +83,27 @@ final class RootScreen extends ConsumerWidget {
 
         return Scaffold(
           resizeToAvoidBottomInset: false,
-          body: () {
-            return switch (value.selectedTab) {
-              TabItem.course => const CourseScreen(),
-              TabItem.funch => const FunchScreen(),
-              TabItem.map => MapScreen(
-                onGoToSettingButtonTapped: () => ref.read(rootViewModelProvider.notifier).onGoToSettingButtonTapped(),
-              ),
-              TabItem.bus => const BusScreen(),
-              TabItem.setting => const SettingsScreen(),
-              TabItem.home => const HomeScreen(),
-              TabItem.subject => const SearchSubjectScreen(),
-            };
-          }(),
-          bottomNavigationBar: NavigationBar(
-            onDestinationSelected: (int index) {
-              final selected = activeTabs[index];
-              if (value.selectedTab == selected) {
-                value.navigatorStates[selected]?.currentState?.popUntil((route) => route.isFirst);
-              } else {
-                ref.read(rootViewModelProvider.notifier).onTabItemTapped(index);
-              }
+          body: Navigator(
+            key: value.navigatorKeys[value.selectedTab],
+            onGenerateRoute: (settings) {
+              return MaterialPageRoute(
+                builder: (context) => switch (value.selectedTab) {
+                  TabItem.course => const CourseScreen(),
+                  TabItem.funch => const FunchScreen(),
+                  TabItem.map => MapScreen(
+                    onGoToSettingButtonTapped: () =>
+                        ref.read(rootViewModelProvider.notifier).onGoToSettingButtonTapped(),
+                  ),
+                  TabItem.bus => const BusScreen(),
+                  TabItem.setting => const SettingsScreen(),
+                  TabItem.home => const HomeScreen(),
+                  TabItem.subject => const SearchSubjectScreen(),
+                },
+              );
             },
+          ),
+          bottomNavigationBar: NavigationBar(
+            onDestinationSelected: ref.read(rootViewModelProvider.notifier).onTabItemTapped,
             selectedIndex: activeTabs.indexOf(value.selectedTab),
             destinations: activeTabs.map((tab) {
               return NavigationDestination(
