@@ -122,7 +122,7 @@ class RootViewModel extends _$RootViewModel {
 
   void onAppTutorialDismissed() {
     state = AsyncValue.data(state.value!.copyWith(hasShownAppTutorial: true));
-    UserPreferenceRepository.setBool(UserPreferenceKeys.isAppTutorialComplete, value: true);
+    unawaited(UserPreferenceRepository.setBool(UserPreferenceKeys.isAppTutorialComplete, value: true));
   }
 
   void onUpdateAlertShown() {
