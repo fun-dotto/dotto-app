@@ -61,7 +61,10 @@ final class CourseScreen extends HookConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('講義'),
+        title: Text(
+          '講義',
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(color: SemanticColor.light.accentPrimary),
+        ),
         centerTitle: false,
         actions: [
           IconButton(

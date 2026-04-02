@@ -87,7 +87,7 @@ class RootViewModel extends _$RootViewModel {
       currentAppVersion: currentAppVersion,
       latestAppVersion: config.latestAppVersion,
       appStorePageUrl: config.appStorePageUrl,
-      navigatorStates: {for (final tabItem in TabItem.values) tabItem: GlobalKey<NavigatorState>()},
+      navigatorKeys: {for (final tabItem in TabItem.values) tabItem: GlobalKey<NavigatorState>()},
     );
   }
 
@@ -103,7 +103,7 @@ class RootViewModel extends _$RootViewModel {
       return;
     }
     // 同じタブを押すとルートまでPop
-    final navigatorKey = state.value?.navigatorStates[selectedTab];
+    final navigatorKey = state.value?.navigatorKeys[selectedTab];
     if (navigatorKey == null) {
       return;
     }
@@ -111,9 +111,9 @@ class RootViewModel extends _$RootViewModel {
     if (currentState == null) {
       return;
     }
-    currentState.popUntil((Route<dynamic> route) => route.isFirst);
+    currentState.popUntil((route) => route.isFirst);
 
-    ref.read(loggerProvider).logChangedTab(tabItem: selectedTab);
+    unawaited(ref.read(loggerProvider).logChangedTab(tabItem: selectedTab));
   }
 
   void onGoToSettingButtonTapped() {
@@ -122,7 +122,7 @@ class RootViewModel extends _$RootViewModel {
 
   void onAppTutorialDismissed() {
     state = AsyncValue.data(state.value!.copyWith(hasShownAppTutorial: true));
-    UserPreferenceRepository.setBool(UserPreferenceKeys.isAppTutorialComplete, value: true);
+    unawaited(UserPreferenceRepository.setBool(UserPreferenceKeys.isAppTutorialComplete, value: true));
   }
 
   void onUpdateAlertShown() {

@@ -38,16 +38,16 @@ final class UserInfoTile extends StatelessWidget {
     final avatar = isLoading
         ? _buildSkeleton(width: 44, height: 44, shape: BoxShape.circle)
         : Container(
-            width: 44,
-            height: 44,
+            width: 48,
+            height: 48,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               border: Border.all(color: SemanticColor.light.borderPrimary),
             ),
             child: ClipOval(
               child: SizedBox(
-                width: 44,
-                height: 44,
+                width: 48,
+                height: 48,
                 child: (photoUrl.trim().isNotEmpty)
                     ? Image.network(photoUrl, fit: BoxFit.cover, errorBuilder: (_, _, _) => Icon(Icons.person))
                     : const Icon(Icons.person),
@@ -69,7 +69,16 @@ final class UserInfoTile extends StatelessWidget {
                       const SizedBox(height: 8),
                       _buildSkeleton(width: 220, height: 14),
                     ]
-                  : [Text(name), const SizedBox(height: 2), Text(email)],
+                  : [
+                      Text(name, style: Theme.of(context).textTheme.titleMedium),
+                      const SizedBox(height: 2),
+                      Text(
+                        email,
+                        style: Theme.of(
+                          context,
+                        ).textTheme.bodyMedium?.copyWith(color: SemanticColor.light.labelSecondary),
+                      ),
+                    ],
             ),
           ),
           Icon(Icons.chevron_right, color: SemanticColor.light.labelSecondary),

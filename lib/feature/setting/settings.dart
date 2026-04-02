@@ -11,6 +11,7 @@ import 'package:dotto/feature/onboarding/onboarding_screen.dart';
 import 'package:dotto/feature/setting/widget/license.dart';
 import 'package:dotto/feature/setting/widget/user_info_tile.dart';
 import 'package:dotto/feature/timetable_v0/repository/timetable_repository.dart';
+import 'package:dotto_design_system/style/semantic_color.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -80,7 +81,13 @@ final class SettingsScreen extends ConsumerWidget {
     });
 
     return Scaffold(
-      appBar: AppBar(title: const Text('設定'), centerTitle: false),
+      appBar: AppBar(
+        title: Text(
+          '設定',
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(color: SemanticColor.light.accentPrimary),
+        ),
+        centerTitle: false,
+      ),
       body: Column(
         children: [
           Expanded(

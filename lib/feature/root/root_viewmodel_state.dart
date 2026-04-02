@@ -8,7 +8,7 @@ part 'root_viewmodel_state.freezed.dart';
 abstract class RootViewModelState with _$RootViewModelState {
   const factory RootViewModelState({
     required TabItem selectedTab,
-    required Map<TabItem, GlobalKey<NavigatorState>> navigatorStates,
+    required Map<TabItem, GlobalKey<NavigatorState>> navigatorKeys,
     required bool hasShownAppTutorial,
     required bool hasShownUpdateAlert,
     required bool isValidAppVersion,

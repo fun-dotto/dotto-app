@@ -9,7 +9,6 @@ import 'package:dotto/feature/bus/controller/my_bus_stop_controller.dart';
 import 'package:dotto/feature/bus/widget/bus_card.dart';
 import 'package:dotto/feature/bus/widget/bus_stop_select.dart';
 import 'package:dotto/feature/bus/widget/bus_timetable.dart';
-import 'package:dotto_design_system/component/button.dart';
 import 'package:dotto_design_system/style/semantic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -164,14 +163,17 @@ final class BusScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("バス一覧 ${busIsWeekday ? "平日" : "土日"}"),
+        title: Text(
+          'バス',
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(color: SemanticColor.light.accentPrimary),
+        ),
+        centerTitle: false,
         actions: [
-          DottoButton(
+          TextButton(
             onPressed: () {
               ref.read(busIsWeekdayProvider.notifier).toggle();
               ref.read(busIsScrolledProvider.notifier).value = false;
             },
-            type: DottoButtonType.text,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [const Icon(Icons.swap_horiz_outlined), Text("${busIsWeekday ? "土日" : "平日"}へ ")],

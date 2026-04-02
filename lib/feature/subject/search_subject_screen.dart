@@ -8,6 +8,7 @@ import 'package:dotto/feature/subject/search_subject_filter_section.dart';
 import 'package:dotto/feature/subject/search_subject_reducer.dart';
 import 'package:dotto/feature/subject/subject_detail_screen.dart';
 import 'package:dotto_design_system/component/text_field.dart';
+import 'package:dotto_design_system/style/semantic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -191,7 +192,10 @@ class SearchSubjectScreen extends HookConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('科目検索'),
+        title: Text(
+          '科目検索',
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(color: SemanticColor.light.accentPrimary),
+        ),
         centerTitle: false,
         actions: [
           TextButton(

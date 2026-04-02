@@ -25,9 +25,7 @@ final class SubjectDetailScreen extends HookConsumerWidget {
       length: 3,
       child: Scaffold(
         appBar: AppBar(
-          title: subjectSnapshot.connectionState == ConnectionState.waiting
-              ? Align(alignment: Alignment.centerLeft, child: _skeletonBox(height: 20, width: 144, radius: 6))
-              : Text(subjectSnapshot.data?.name ?? ''),
+          title: Text(subjectSnapshot.data?.name ?? ''),
           bottom: const TabBar(
             dividerColor: Colors.transparent,
             tabs: <Widget>[

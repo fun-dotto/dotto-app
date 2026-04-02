@@ -29,7 +29,6 @@ class CourseRegistrationScreen extends HookConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('科目登録'),
-        centerTitle: false,
         bottom: TabBar(
           dividerColor: Colors.transparent,
           controller: tabController,
