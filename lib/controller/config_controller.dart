@@ -45,9 +45,9 @@ final class ConfigNotifier extends _$ConfigNotifier {
     final macSupportDeskUrl = remoteConfigRepository.getString(RemoteConfigKeys.macSupportDeskUrl);
 
     final breakingAnnouncementJson = remoteConfigRepository.getJSON(RemoteConfigKeys.breakingAnnouncement);
-    final breakingAnnouncementTitle = breakingAnnouncementJson['title'] as String?;
-    final breakingAnnouncementUrl = breakingAnnouncementJson['url'] as String?;
-    final breakingAnnouncementIsExternal = breakingAnnouncementJson['is_external'] as bool?;
+    final breakingAnnouncementTitle = _asStringOrNull(breakingAnnouncementJson['title']);
+    final breakingAnnouncementUrl = _asStringOrNull(breakingAnnouncementJson['url']);
+    final breakingAnnouncementIsExternal = _asBoolOrNull(breakingAnnouncementJson['is_external']);
     BreakingAnnouncement? breakingAnnouncement;
     if (breakingAnnouncementTitle != null &&
         breakingAnnouncementUrl != null &&
@@ -130,5 +130,13 @@ final class ConfigNotifier extends _$ConfigNotifier {
     if (refreshAfterLoad) {
       refresh();
     }
+  }
+
+  String? _asStringOrNull(Object? value) {
+    return value is String ? value : null;
+  }
+
+  bool? _asBoolOrNull(Object? value) {
+    return value is bool ? value : null;
   }
 }
