@@ -150,7 +150,7 @@ final class CourseScreen extends HookConsumerWidget {
             return null;
           }
           return PreferredSize(
-            preferredSize: const Size.fromHeight(24),
+            preferredSize: const Size.fromHeight(32),
             child: Material(
               color: SemanticColor.light.accentPrimary.withValues(alpha: 0.75),
               child: InkWell(
