@@ -151,16 +151,21 @@ final class CourseScreen extends HookConsumerWidget {
           }
           return PreferredSize(
             preferredSize: const Size.fromHeight(24),
-            child: Container(
-              width: double.infinity,
+            child: Material(
               color: SemanticColor.light.accentPrimary,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: Text(
-                announcement.title,
-                style: Theme.of(context).textTheme.labelMedium?.copyWith(color: SemanticColor.light.labelTertiary),
-                textAlign: .center,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+              child: InkWell(
+                onTap: () => _launchQuickLink(context, url: announcement.url, label: announcement.title),
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  child: Text(
+                    announcement.title,
+                    style: Theme.of(context).textTheme.labelMedium?.copyWith(color: SemanticColor.light.labelTertiary),
+                    textAlign: .center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
               ),
             ),
           );
