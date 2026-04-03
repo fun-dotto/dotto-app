@@ -91,6 +91,15 @@ final class _RemoteConfigHelperImpl implements RemoteConfigHelper {
     final value = FirebaseRemoteConfig.instance.getString(key);
     if (value.isEmpty) return <String, Object?>{};
 
-    return jsonDecode(value) as Map<String, Object?>;
+    try {
+      final decoded = jsonDecode(value);
+      if (decoded is Map) {
+        return Map<String, Object?>.from(decoded);
+      }
+    } on FormatException {
+      // Fall through to return an empty map.
+    }
+
+    return <String, Object?>{};
   }
 }
