@@ -18,7 +18,7 @@ abstract class Config with _$Config {
     required String officialCalendarPdfUrl,
     required String timetable1PdfUrl,
     required String timetable2PdfUrl,
-    required BreakingAnnouncement breakingAnnouncement,
+    required BreakingAnnouncement? breakingAnnouncement,
     required String dottoWebUrl,
     required String macSupportDeskUrl,
   }) = _Config;

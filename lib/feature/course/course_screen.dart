@@ -51,15 +51,15 @@ final class CourseScreen extends HookConsumerWidget {
       //
       // QuickButton(
       //   label: 'Dotto Web',
-      //   iconUrl: 'https://dotto.furari.co/icon.png',
+      //   iconUrl: '${config.dottoWebUrl}/favicon.ico',
       //   fallbackIcon: Icons.language,
-      //   onPressed: () => _launchQuickLink(context, url: 'https://dotto.furari.co/mac', label: 'Macサポート'),
+      //   onPressed: () => _launchQuickLink(context, url: config.dottoWebUrl, label: 'Dotto Web'),
       // ),
       QuickButton(
         label: 'Macサポート',
         iconUrl: null,
         fallbackIcon: Icons.laptop_mac,
-        onPressed: () => _launchQuickLink(context, url: 'https://dotto.furari.co/mac', label: 'Macサポート'),
+        onPressed: () => _launchQuickLink(context, url: config.macSupportDeskUrl, label: 'Macサポート'),
       ),
     ];
     final quickFiles = [
@@ -144,6 +144,27 @@ final class CourseScreen extends HookConsumerWidget {
             icon: const Icon(Icons.tune),
           ),
         ],
+        bottom: () {
+          final announcement = config.breakingAnnouncement;
+          if (announcement == null) {
+            return null;
+          }
+          return PreferredSize(
+            preferredSize: const Size.fromHeight(24),
+            child: Container(
+              width: double.infinity,
+              color: SemanticColor.light.accentPrimary,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Text(
+                announcement.title,
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(color: SemanticColor.light.labelTertiary),
+                textAlign: .center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          );
+        }(),
       ),
       body: switch (state) {
         AsyncData(value: final courseState) => LayoutBuilder(
@@ -158,67 +179,74 @@ final class CourseScreen extends HookConsumerWidget {
               physics: const AlwaysScrollableScrollPhysics(),
               child: ConstrainedBox(
                 constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                child: Column(
-                  children: [
-                    if (isAuthenticated)
-                      Padding(
-                        padding: const EdgeInsetsGeometry.symmetric(horizontal: 8),
-                        child: PersonalTimetableCalendarView(
-                          personalTimetableDays: courseState.days,
-                          selectedDate: selectedDate.value,
-                          onDateSelected: (newDate) => selectedDate.value = newDate,
-                          onSubjectSelected: (subject) => Navigator.of(context).push(
-                            MaterialPageRoute<void>(
-                              builder: (context) => SubjectDetailScreen(id: subject.id),
-                              settings: RouteSettings(name: '/course/subjects/${subject.id}'),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  child: Column(
+                    spacing: 16,
+                    children: [
+                      if (isAuthenticated)
+                        Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsetsGeometry.symmetric(horizontal: 8),
+                              child: PersonalTimetableCalendarView(
+                                personalTimetableDays: courseState.days,
+                                selectedDate: selectedDate.value,
+                                onDateSelected: (newDate) => selectedDate.value = newDate,
+                                onSubjectSelected: (subject) => Navigator.of(context).push(
+                                  MaterialPageRoute<void>(
+                                    builder: (context) => SubjectDetailScreen(id: subject.id),
+                                    settings: RouteSettings(name: '/course/subjects/${subject.id}'),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Row(
+                              mainAxisAlignment: .end,
+                              children: [
+                                DottoButton(
+                                  onPressed: () async {
+                                    await Navigator.of(context).push(
+                                      MaterialPageRoute<void>(
+                                        builder: (context) => const CourseRegistrationScreen(),
+                                        settings: const RouteSettings(name: '/course/registration'),
+                                      ),
+                                    );
+                                    if (!context.mounted) {
+                                      return;
+                                    }
+                                    await ref.read(courseReducerProvider.notifier).refresh();
+                                  },
+                                  type: DottoButtonType.text,
+                                  child: const Text('1週間の時間割'),
+                                ),
+                              ],
+                            ),
+                          ],
+                        )
+                      else
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 48),
+                          child: Center(
+                            child: DottoButton(
+                              onPressed: () async {
+                                await ref.read(userProvider.notifier).signIn();
+                              },
+                              child: const Text('ログインして時間割機能を使う'),
                             ),
                           ),
                         ),
-                      )
-                    else
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 48),
-                        child: Center(
-                          child: DottoButton(
-                            onPressed: () async {
-                              await ref.read(userProvider.notifier).signIn();
-                            },
-                            child: const Text('ログインして時間割機能を使う'),
-                          ),
+                        padding: const EdgeInsetsGeometry.symmetric(horizontal: 16),
+                        child: _shortcutSections(
+                          context,
+                          isAuthenticated: isAuthenticated,
+                          quickFiles: quickFiles,
+                          quickLinks: quickLinks,
                         ),
                       ),
-                    if (isAuthenticated)
-                      Row(
-                        mainAxisAlignment: .end,
-                        children: [
-                          DottoButton(
-                            onPressed: () async {
-                              await Navigator.of(context).push(
-                                MaterialPageRoute<void>(
-                                  builder: (context) => const CourseRegistrationScreen(),
-                                  settings: const RouteSettings(name: '/course/registration'),
-                                ),
-                              );
-                              if (!context.mounted) {
-                                return;
-                              }
-                              await ref.read(courseReducerProvider.notifier).refresh();
-                            },
-                            type: DottoButtonType.text,
-                            child: const Text('1週間の時間割'),
-                          ),
-                        ],
-                      ),
-                    Padding(
-                      padding: const EdgeInsetsGeometry.all(16),
-                      child: _shortcutSections(
-                        context,
-                        isAuthenticated: isAuthenticated,
-                        quickFiles: quickFiles,
-                        quickLinks: quickLinks,
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),

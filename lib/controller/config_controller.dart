@@ -41,10 +41,23 @@ final class ConfigNotifier extends _$ConfigNotifier {
     final officialCalendarPdfUrl = remoteConfigRepository.getString(RemoteConfigKeys.officialCalendarPdfUrl);
     final timetable1PdfUrl = remoteConfigRepository.getString(RemoteConfigKeys.timetable1PdfUrl);
     final timetable2PdfUrl = remoteConfigRepository.getString(RemoteConfigKeys.timetable2PdfUrl);
-    final breakingAnnouncementJson = remoteConfigRepository.getJSON(RemoteConfigKeys.breakingAnnouncement);
-    final breakingAnnouncement = BreakingAnnouncement.fromJson(breakingAnnouncementJson);
     final dottoWebUrl = remoteConfigRepository.getString(RemoteConfigKeys.dottoWebUrl);
     final macSupportDeskUrl = remoteConfigRepository.getString(RemoteConfigKeys.macSupportDeskUrl);
+
+    final breakingAnnouncementJson = remoteConfigRepository.getJSON(RemoteConfigKeys.breakingAnnouncement);
+    final breakingAnnouncementTitle = breakingAnnouncementJson['title'] as String?;
+    final breakingAnnouncementUrl = breakingAnnouncementJson['url'] as String?;
+    final breakingAnnouncementIsExternal = breakingAnnouncementJson['is_external'] as bool?;
+    BreakingAnnouncement? breakingAnnouncement;
+    if (breakingAnnouncementTitle != null &&
+        breakingAnnouncementUrl != null &&
+        breakingAnnouncementIsExternal != null) {
+      breakingAnnouncement = BreakingAnnouncement(
+        title: breakingAnnouncementTitle,
+        url: breakingAnnouncementUrl,
+        isExternal: breakingAnnouncementIsExternal,
+      );
+    }
 
     return Config(
       isV2Enabled: isV2Enabled,
