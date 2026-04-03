@@ -8,8 +8,7 @@ abstract class BreakingAnnouncement with _$BreakingAnnouncement {
   //
   // ignore: invalid_annotation_target
   @JsonSerializable(fieldRename: FieldRename.snake)
-  const factory BreakingAnnouncement({required String title, required String url, required bool isExternal}) =
-      _BreakingAnnouncement;
+  const factory BreakingAnnouncement({String? title, String? url, bool? isExternal}) = _BreakingAnnouncement;
 
   factory BreakingAnnouncement.fromJson(Map<String, Object?> json) => _$BreakingAnnouncementFromJson(json);
 }

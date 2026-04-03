@@ -41,7 +41,7 @@ final class _RemoteConfigHelperImpl implements RemoteConfigHelper {
         RemoteConfigKeys.officialCalendarPdfUrl: 'https://fun-dotto.github.io/files/official_calendar_2026.pdf',
         RemoteConfigKeys.timetable1PdfUrl: 'https://fun-dotto.github.io/files/timetable_2026_1.pdf',
         RemoteConfigKeys.timetable2PdfUrl: 'https://fun-dotto.github.io/files/timetable_2026_2.pdf',
-        RemoteConfigKeys.breakingAnnouncement: {},
+        RemoteConfigKeys.breakingAnnouncement: '',
         RemoteConfigKeys.dottoWebUrl: 'https://dotto.web.app',
         RemoteConfigKeys.macSupportDeskUrl: 'https://dotto.web.app/mac',
       });
@@ -57,7 +57,7 @@ final class _RemoteConfigHelperImpl implements RemoteConfigHelper {
         RemoteConfigKeys.officialCalendarPdfUrl: 'https://fun-dotto.github.io/files/official_calendar_2026.pdf',
         RemoteConfigKeys.timetable1PdfUrl: 'https://fun-dotto.github.io/files/timetable_2026_1.pdf',
         RemoteConfigKeys.timetable2PdfUrl: 'https://fun-dotto.github.io/files/timetable_2026_2.pdf',
-        RemoteConfigKeys.breakingAnnouncement: {},
+        RemoteConfigKeys.breakingAnnouncement: '',
         RemoteConfigKeys.dottoWebUrl: 'https://dotto.web.app',
         RemoteConfigKeys.macSupportDeskUrl: 'https://dotto.web.app/mac',
       });
