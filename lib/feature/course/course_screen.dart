@@ -30,38 +30,33 @@ final class CourseScreen extends HookConsumerWidget {
     final state = isAuthenticated ? ref.watch(courseReducerProvider) : const AsyncData(CourseState());
     final selectedDate = useState<DateTime?>(null);
 
-    final quickLinks = [
-      QuickButton(
-        label: 'HOPE',
-        iconUrl: 'https://hope.fun.ac.jp/pluginfile.php/1/core_admin/favicon/64x64/1756948564/favicon.ico',
-        fallbackIcon: Icons.language,
-        onPressed: () => _launchQuickLink(
-          context,
-          url: 'https://hope.fun.ac.jp/auth/saml2/login.php?idp=1bec319bca7458548c77d545a2a1b3de',
-          label: 'HOPE',
+    final quickFeatures = [
+      if (config.isFunchEnabled)
+        QuickButton(
+          label: '科目検索',
+          iconUrl: null,
+          fallbackIcon: Icons.search,
+          onPressed: () => Navigator.of(context).push(
+            MaterialPageRoute<void>(
+              builder: (context) => const SearchSubjectScreen(),
+              settings: const RouteSettings(name: '/course/subjects'),
+            ),
+          ),
         ),
-      ),
-      QuickButton(
-        label: '学生ポータル',
-        iconUrl: 'https://students.fun.ac.jp/favicon.ico',
-        fallbackIcon: Icons.language,
-        onPressed: () => _launchQuickLink(context, url: 'https://students.fun.ac.jp/Portal', label: '学生ポータル'),
-      ),
-      // 未公開
-      //
-      // QuickButton(
-      //   label: 'Dotto Web',
-      //   iconUrl: '${config.dottoWebUrl}/favicon.ico',
-      //   fallbackIcon: Icons.language,
-      //   onPressed: () => _launchQuickLink(context, url: config.dottoWebUrl, label: 'Dotto Web'),
-      // ),
-      QuickButton(
-        label: 'Macサポート',
-        iconUrl: null,
-        fallbackIcon: Icons.laptop_mac,
-        onPressed: () => _launchQuickLink(context, url: config.macSupportDeskUrl, label: 'Macサポート'),
-      ),
+      if (isAuthenticated)
+        QuickButton(
+          label: '休講・補講',
+          iconUrl: null,
+          fallbackIcon: Icons.cached,
+          onPressed: () => Navigator.of(context).push(
+            MaterialPageRoute<void>(
+              builder: (context) => const CourseCancellationScreen(),
+              settings: const RouteSettings(name: '/course/cancellations'),
+            ),
+          ),
+        ),
     ];
+
     final quickFiles = [
       QuickButton(
         label: '学年歴',
@@ -96,6 +91,39 @@ final class CourseScreen extends HookConsumerWidget {
           ),
         ),
       ),
+    ];
+
+    final quickLinks = [
+      QuickButton(
+        label: 'HOPE',
+        iconUrl: 'https://hope.fun.ac.jp/pluginfile.php/1/core_admin/favicon/64x64/1756948564/favicon.ico',
+        fallbackIcon: Icons.language,
+        onPressed: () => _launchQuickLink(
+          context,
+          url: 'https://hope.fun.ac.jp/auth/saml2/login.php?idp=1bec319bca7458548c77d545a2a1b3de',
+          label: 'HOPE',
+        ),
+      ),
+      QuickButton(
+        label: '学生ポータル',
+        iconUrl: 'https://students.fun.ac.jp/favicon.ico',
+        fallbackIcon: Icons.language,
+        onPressed: () => _launchQuickLink(context, url: 'https://students.fun.ac.jp/Portal', label: '学生ポータル'),
+      ),
+      // if (isAuthenticated)
+      //   QuickButton(
+      //     label: 'Dotto Web',
+      //     iconUrl: '${config.dottoWebUrl}/favicon.ico',
+      //     fallbackIcon: Icons.language,
+      //     onPressed: () => _launchQuickLink(context, url: config.dottoWebUrl, label: 'Dotto Web'),
+      //   ),
+      if (isAuthenticated)
+        QuickButton(
+          label: 'Macサポート',
+          iconUrl: null,
+          fallbackIcon: Icons.laptop_mac,
+          onPressed: () => _launchQuickLink(context, url: config.macSupportDeskUrl, label: 'Macサポート'),
+        ),
     ];
 
     useEffect(() {
@@ -246,6 +274,7 @@ final class CourseScreen extends HookConsumerWidget {
                         child: _shortcutSections(
                           context,
                           isAuthenticated: isAuthenticated,
+                          quickFeatures: quickFeatures,
                           quickFiles: quickFiles,
                           quickLinks: quickLinks,
                         ),
@@ -260,6 +289,7 @@ final class CourseScreen extends HookConsumerWidget {
         AsyncLoading() => _loadingSkeleton(
           context,
           isAuthenticated: isAuthenticated,
+          quickFeatures: quickFeatures,
           quickFiles: quickFiles,
           quickLinks: quickLinks,
         ),
@@ -287,6 +317,7 @@ final class CourseScreen extends HookConsumerWidget {
   Widget _loadingSkeleton(
     BuildContext context, {
     required bool isAuthenticated,
+    required List<QuickButton> quickFeatures,
     required List<QuickButton> quickFiles,
     required List<QuickButton> quickLinks,
   }) {
@@ -316,6 +347,7 @@ final class CourseScreen extends HookConsumerWidget {
                   child: _shortcutSections(
                     context,
                     isAuthenticated: isAuthenticated,
+                    quickFeatures: quickFeatures,
                     quickFiles: quickFiles,
                     quickLinks: quickLinks,
                   ),
@@ -404,6 +436,7 @@ final class CourseScreen extends HookConsumerWidget {
   Widget _shortcutSections(
     BuildContext context, {
     required bool isAuthenticated,
+    required List<QuickButton> quickFeatures,
     required List<QuickButton> quickFiles,
     required List<QuickButton> quickLinks,
   }) {
@@ -419,34 +452,7 @@ final class CourseScreen extends HookConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           spacing: 12,
           children: [
-            _shortcutSection(
-              context,
-              quickButtons: [
-                QuickButton(
-                  label: '科目検索',
-                  iconUrl: null,
-                  fallbackIcon: Icons.search,
-                  onPressed: () => Navigator.of(context).push(
-                    MaterialPageRoute<void>(
-                      builder: (context) => const SearchSubjectScreen(),
-                      settings: const RouteSettings(name: '/course/subjects'),
-                    ),
-                  ),
-                ),
-                if (isAuthenticated)
-                  QuickButton(
-                    label: '休講・補講',
-                    iconUrl: null,
-                    fallbackIcon: Icons.cached,
-                    onPressed: () => Navigator.of(context).push(
-                      MaterialPageRoute<void>(
-                        builder: (context) => const CourseCancellationScreen(),
-                        settings: const RouteSettings(name: '/course/cancellations'),
-                      ),
-                    ),
-                  ),
-              ],
-            ),
+            _shortcutSection(context, quickButtons: quickFeatures),
             const Divider(height: 0),
             _shortcutSection(context, quickButtons: quickFiles),
             const Divider(height: 0),
