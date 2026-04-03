@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:dotto/domain/breaking_announcement.dart';
 import 'package:dotto/domain/config.dart';
 import 'package:dotto/domain/remote_config_keys.dart';
 import 'package:dotto/domain/user_preference_keys.dart';
@@ -32,6 +33,7 @@ final class ConfigNotifier extends _$ConfigNotifier {
     final isFunchEnabled = _isFunchEnabledOverride ?? remoteConfigIsFunchEnabled;
     final validAppVersion = remoteConfigRepository.getString(RemoteConfigKeys.validAppVersion);
     final latestAppVersion = remoteConfigRepository.getString(RemoteConfigKeys.latestAppVersion);
+    final isUnderMaintenance = remoteConfigRepository.getBool(RemoteConfigKeys.isUnderMaintenance);
     final feedbackFormUrl = remoteConfigRepository.getString(RemoteConfigKeys.feedbackFormUrl);
     final termsOfServiceUrl = remoteConfigRepository.getString(RemoteConfigKeys.termsOfServiceUrl);
     final privacyPolicyUrl = remoteConfigRepository.getString(RemoteConfigKeys.privacyPolicyUrl);
@@ -39,12 +41,17 @@ final class ConfigNotifier extends _$ConfigNotifier {
     final officialCalendarPdfUrl = remoteConfigRepository.getString(RemoteConfigKeys.officialCalendarPdfUrl);
     final timetable1PdfUrl = remoteConfigRepository.getString(RemoteConfigKeys.timetable1PdfUrl);
     final timetable2PdfUrl = remoteConfigRepository.getString(RemoteConfigKeys.timetable2PdfUrl);
+    final breakingAnnouncementJson = remoteConfigRepository.getJSON(RemoteConfigKeys.breakingAnnouncement);
+    final breakingAnnouncement = BreakingAnnouncement.fromJson(breakingAnnouncementJson);
+    final dottoWebUrl = remoteConfigRepository.getString(RemoteConfigKeys.dottoWebUrl);
+    final macSupportDeskUrl = remoteConfigRepository.getString(RemoteConfigKeys.macSupportDeskUrl);
 
     return Config(
       isV2Enabled: isV2Enabled,
       isFunchEnabled: isFunchEnabled,
       validAppVersion: validAppVersion,
       latestAppVersion: latestAppVersion,
+      isUnderMaintenance: isUnderMaintenance,
       feedbackFormUrl: feedbackFormUrl,
       termsOfServiceUrl: termsOfServiceUrl,
       privacyPolicyUrl: privacyPolicyUrl,
@@ -52,6 +59,9 @@ final class ConfigNotifier extends _$ConfigNotifier {
       officialCalendarPdfUrl: officialCalendarPdfUrl,
       timetable1PdfUrl: timetable1PdfUrl,
       timetable2PdfUrl: timetable2PdfUrl,
+      breakingAnnouncement: breakingAnnouncement,
+      dottoWebUrl: dottoWebUrl,
+      macSupportDeskUrl: macSupportDeskUrl,
     );
   }
 

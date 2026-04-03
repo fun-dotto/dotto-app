@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dotto/domain/remote_config_keys.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/foundation.dart';
@@ -11,6 +13,7 @@ abstract class RemoteConfigHelper {
   double getDouble(String key);
   int getInt(String key);
   String getString(String key);
+  Map<String, Object?> getJSON(String key);
 }
 
 final class _RemoteConfigHelperImpl implements RemoteConfigHelper {
@@ -28,27 +31,35 @@ final class _RemoteConfigHelperImpl implements RemoteConfigHelper {
 
     if (kDebugMode) {
       await FirebaseRemoteConfig.instance.setDefaults(const {
-        RemoteConfigKeys.isV2Enabled: false,
-        RemoteConfigKeys.isFunchEnabled: true,
-        RemoteConfigKeys.validAppVersion: '0.0.0',
-        RemoteConfigKeys.latestAppVersion: '999.0.0',
-        RemoteConfigKeys.feedbackFormUrl: 'https://forms.gle/ruo8iBxLMmvScNMFA',
-        RemoteConfigKeys.appStorePageUrl: 'https://fun-dotto.github.io',
-        RemoteConfigKeys.officialCalendarPdfUrl: 'https://fun-dotto.github.io/files/official_calendar_2026.pdf',
-        RemoteConfigKeys.timetable1PdfUrl: 'https://fun-dotto.github.io/files/timetable_2026_1.pdf',
-        RemoteConfigKeys.timetable2PdfUrl: 'https://fun-dotto.github.io/files/timetable_2026_2.pdf',
-      });
-    } else {
-      await FirebaseRemoteConfig.instance.setDefaults(const {
-        RemoteConfigKeys.isV2Enabled: false,
+        RemoteConfigKeys.isV2Enabled: true,
         RemoteConfigKeys.isFunchEnabled: false,
         RemoteConfigKeys.validAppVersion: '0.0.0',
         RemoteConfigKeys.latestAppVersion: '0.0.0',
+        RemoteConfigKeys.isUnderMaintenance: false,
         RemoteConfigKeys.feedbackFormUrl: 'https://forms.gle/ruo8iBxLMmvScNMFA',
         RemoteConfigKeys.appStorePageUrl: 'https://fun-dotto.github.io',
         RemoteConfigKeys.officialCalendarPdfUrl: 'https://fun-dotto.github.io/files/official_calendar_2026.pdf',
         RemoteConfigKeys.timetable1PdfUrl: 'https://fun-dotto.github.io/files/timetable_2026_1.pdf',
         RemoteConfigKeys.timetable2PdfUrl: 'https://fun-dotto.github.io/files/timetable_2026_2.pdf',
+        RemoteConfigKeys.breakingAnnouncement: {},
+        RemoteConfigKeys.dottoWebUrl: 'https://dotto.web.app',
+        RemoteConfigKeys.macSupportDeskUrl: 'https://dotto.web.app/mac',
+      });
+    } else {
+      await FirebaseRemoteConfig.instance.setDefaults(const {
+        RemoteConfigKeys.isV2Enabled: true,
+        RemoteConfigKeys.isFunchEnabled: false,
+        RemoteConfigKeys.validAppVersion: '0.0.0',
+        RemoteConfigKeys.latestAppVersion: '0.0.0',
+        RemoteConfigKeys.isUnderMaintenance: false,
+        RemoteConfigKeys.feedbackFormUrl: 'https://forms.gle/ruo8iBxLMmvScNMFA',
+        RemoteConfigKeys.appStorePageUrl: 'https://fun-dotto.github.io',
+        RemoteConfigKeys.officialCalendarPdfUrl: 'https://fun-dotto.github.io/files/official_calendar_2026.pdf',
+        RemoteConfigKeys.timetable1PdfUrl: 'https://fun-dotto.github.io/files/timetable_2026_1.pdf',
+        RemoteConfigKeys.timetable2PdfUrl: 'https://fun-dotto.github.io/files/timetable_2026_2.pdf',
+        RemoteConfigKeys.breakingAnnouncement: {},
+        RemoteConfigKeys.dottoWebUrl: 'https://dotto.web.app',
+        RemoteConfigKeys.macSupportDeskUrl: 'https://dotto.web.app/mac',
       });
     }
 
@@ -73,5 +84,13 @@ final class _RemoteConfigHelperImpl implements RemoteConfigHelper {
   @override
   String getString(String key) {
     return FirebaseRemoteConfig.instance.getString(key);
+  }
+
+  @override
+  Map<String, Object?> getJSON(String key) {
+    final value = FirebaseRemoteConfig.instance.getString(key);
+    if (value.isEmpty) return <String, Object?>{};
+
+    return jsonDecode(value) as Map<String, Object?>;
   }
 }

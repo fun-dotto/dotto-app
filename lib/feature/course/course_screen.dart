@@ -47,6 +47,20 @@ final class CourseScreen extends HookConsumerWidget {
         fallbackIcon: Icons.language,
         onPressed: () => _launchQuickLink(context, url: 'https://students.fun.ac.jp/Portal', label: '学生ポータル'),
       ),
+      // 未公開
+      //
+      // QuickButton(
+      //   label: 'Dotto Web',
+      //   iconUrl: 'https://dotto.furari.co/icon.png',
+      //   fallbackIcon: Icons.language,
+      //   onPressed: () => _launchQuickLink(context, url: 'https://dotto.furari.co/mac', label: 'Macサポート'),
+      // ),
+      QuickButton(
+        label: 'Macサポート',
+        iconUrl: null,
+        fallbackIcon: Icons.laptop_mac,
+        onPressed: () => _launchQuickLink(context, url: 'https://dotto.furari.co/mac', label: 'Macサポート'),
+      ),
     ];
     final quickFiles = [
       QuickButton(

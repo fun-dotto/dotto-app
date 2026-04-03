@@ -1,3 +1,4 @@
+import 'package:dotto/domain/breaking_announcement.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'config.freezed.dart';
@@ -9,6 +10,7 @@ abstract class Config with _$Config {
     required bool isFunchEnabled,
     required String validAppVersion,
     required String latestAppVersion,
+    required bool isUnderMaintenance,
     required String feedbackFormUrl,
     required String termsOfServiceUrl,
     required String privacyPolicyUrl,
@@ -16,6 +18,9 @@ abstract class Config with _$Config {
     required String officialCalendarPdfUrl,
     required String timetable1PdfUrl,
     required String timetable2PdfUrl,
+    required BreakingAnnouncement breakingAnnouncement,
+    required String dottoWebUrl,
+    required String macSupportDeskUrl,
   }) = _Config;
 
   static const String cloudflareR2Endpoint = String.fromEnvironment('CLOUDFLARE_R2_ENDPOINT');
