@@ -21,6 +21,9 @@ final class RemoteConfigKeys {
   /// オフラインの場合は、バイパスする
   static const String latestAppVersion = 'latest_app_version';
 
+  /// メンテナンスモード
+  static const String isUnderMaintenance = 'is_under_maintenance';
+
   /// フィードバックフォームURL
   static const String feedbackFormUrl = 'feedback_form_url';
 
@@ -41,4 +44,13 @@ final class RemoteConfigKeys {
 
   /// 時間割 (後期) PDF URL
   static const String timetable2PdfUrl = 'timetable_2_pdf_url';
+
+  /// お知らせ
+  static const String breakingAnnouncement = 'breaking_announcement';
+
+  /// Dotto Web URL
+  static const String dottoWebUrl = 'dotto_web_url';
+
+  /// MacサポートデスクURL
+  static const String macSupportDeskUrl = 'mac_support_desk_url';
 }

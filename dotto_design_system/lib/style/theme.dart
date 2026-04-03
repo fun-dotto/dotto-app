@@ -14,6 +14,7 @@ final class DottoTheme {
         onSurface: SemanticColor.light.labelPrimary,
       ),
       appBarTheme: AppBarTheme(
+        surfaceTintColor: Colors.transparent,
         titleTextStyle: DottoTextStyle.titleMedium.copyWith(
           color: SemanticColor.light.accentPrimary,
         ),
