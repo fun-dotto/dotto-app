@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:dotto/controller/config_controller.dart';
 import 'package:dotto/controller/dotto_user_preference_controller.dart';
-import 'package:dotto/domain/quick_link.dart';
 import 'package:dotto/domain/timetable_period_style.dart';
 import 'package:dotto/feature/bus/controller/bus_data_controller.dart';
 import 'package:dotto/feature/bus/controller/bus_polling_controller.dart';
@@ -13,7 +12,6 @@ import 'package:dotto/feature/bus/widget/bus_card_home.dart';
 import 'package:dotto/feature/funch/widget/funch_mypage_card.dart';
 import 'package:dotto/feature/home/component/file_grid.dart';
 import 'package:dotto/feature/home/component/file_tile.dart';
-import 'package:dotto/feature/home/component/link_grid.dart';
 import 'package:dotto/feature/home/component/timetable_buttons.dart';
 import 'package:dotto/feature/timetable_v0/controller/two_week_timetable_controller.dart';
 import 'package:dotto/feature/timetable_v0/course_cancellation_screen.dart';
@@ -151,13 +149,7 @@ final class _HomeScreenState extends ConsumerState<HomeScreen> {
                   children: [
                     const BusCardHome(),
                     if (config.isFunchEnabled) ...[const FunchMyPageCard()],
-                    Column(
-                      spacing: 8,
-                      children: [
-                        FileGrid(children: infoTiles),
-                        const LinkGrid(links: QuickLink.links),
-                      ],
-                    ),
+                    Column(spacing: 8, children: [FileGrid(children: infoTiles)]),
                   ],
                 ),
               ),
