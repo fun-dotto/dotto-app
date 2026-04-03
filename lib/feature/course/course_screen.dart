@@ -152,7 +152,7 @@ final class CourseScreen extends HookConsumerWidget {
           return PreferredSize(
             preferredSize: const Size.fromHeight(24),
             child: Material(
-              color: SemanticColor.light.accentPrimary,
+              color: SemanticColor.light.accentPrimary.withValues(alpha: 0.75),
               child: InkWell(
                 onTap: () => _launchQuickLink(context, url: announcement.url, label: announcement.title),
                 child: Container(
