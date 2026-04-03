@@ -16,6 +16,11 @@ tasks:
     cmds:
       - "{{.DOTENVX}} run -f ../.env.keys -- {{.DOTENVX}} run -f ./fastlane/.env -- {{.FASTLANE}} deliver --skip_binary_upload --force"
 
+  upload-appstore-metadata:
+    desc: Upload App Store metadata and screenshots
+    cmds:
+      - "{{.DOTENVX}} run -f ../.env.keys -- {{.DOTENVX}} run -f ./fastlane/.env -- {{.FASTLANE}} deliver --skip_binary_upload --skip_screenshots --force"
+
   deploy-firebase-app-distribution:
     desc: Deploy iOS to Firebase App Distribution
     cmds:
