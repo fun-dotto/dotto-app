@@ -15,19 +15,21 @@
 
 default_platform(:ios)
 
-def flutter_build_release_with_dotenvx_defines
+def decrypted_dart_defines
   project_root = File.expand_path("../..", __dir__)
   env_file = File.join(project_root, ".env")
   env_keys_file = File.join(project_root, ".env.keys")
 
   decrypted = sh("dotenvx", "decrypt", "-f", env_file, "-fk", env_keys_file, "--stdout", log: false)
-  dart_defines = decrypted
+  decrypted
     .lines
     .map(&:strip)
     .reject { |line| line.empty? || line.start_with?("#") }
     .map { |line| "--dart-define=#{line}" }
+end
 
-  sh("flutter", "build", "ios", "--release", *dart_defines)
+def flutter_build_release_with_dotenvx_defines
+  sh("flutter", "build", "ios", "--release", *decrypted_dart_defines)
 end
 
 platform :ios do

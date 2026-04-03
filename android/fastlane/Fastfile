@@ -20,7 +20,8 @@ def decrypted_dart_defines
   env_file = File.join(project_root, ".env")
   env_keys_file = File.join(project_root, ".env.keys")
 
-  sh("dotenvx", "decrypt", "-f", env_file, "-fk", env_keys_file, "--stdout", log: false)
+  decrypted = sh("dotenvx", "decrypt", "-f", env_file, "-fk", env_keys_file, "--stdout", log: false)
+  decrypted
     .lines
     .map(&:strip)
     .reject { |line| line.empty? || line.start_with?("#") }
