@@ -3,74 +3,75 @@
 //
 
 // ignore_for_file: unused_element
-import 'package:openapi/src/model/dotto_foundation_v1_floor.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 
-part 'room.g.dart';
+part 'fcm_token.g.dart';
 
-/// Room
+/// FCMToken
 ///
 /// Properties:
-/// * [id] 
-/// * [name] 
-/// * [floor] 
+/// * [token] - FCMトークン
+/// * [createdAt] - 作成日時
+/// * [updatedAt] - 更新日時
 @BuiltValue()
-abstract class Room implements Built<Room, RoomBuilder> {
-  @BuiltValueField(wireName: r'id')
-  String get id;
+abstract class FCMToken implements Built<FCMToken, FCMTokenBuilder> {
+  /// FCMトークン
+  @BuiltValueField(wireName: r'token')
+  String get token;
 
-  @BuiltValueField(wireName: r'name')
-  String get name;
+  /// 作成日時
+  @BuiltValueField(wireName: r'createdAt')
+  DateTime get createdAt;
 
-  @BuiltValueField(wireName: r'floor')
-  DottoFoundationV1Floor get floor;
-  // enum floorEnum {  Floor1,  Floor2,  Floor3,  Floor4,  Floor5,  Floor6,  Floor7,  Virtual,  };
+  /// 更新日時
+  @BuiltValueField(wireName: r'updatedAt')
+  DateTime get updatedAt;
 
-  Room._();
+  FCMToken._();
 
-  factory Room([void updates(RoomBuilder b)]) = _$Room;
+  factory FCMToken([void updates(FCMTokenBuilder b)]) = _$FCMToken;
 
   @BuiltValueHook(initializeBuilder: true)
-  static void _defaults(RoomBuilder b) => b;
+  static void _defaults(FCMTokenBuilder b) => b;
 
   @BuiltValueSerializer(custom: true)
-  static Serializer<Room> get serializer => _$RoomSerializer();
+  static Serializer<FCMToken> get serializer => _$FCMTokenSerializer();
 }
 
-class _$RoomSerializer implements PrimitiveSerializer<Room> {
+class _$FCMTokenSerializer implements PrimitiveSerializer<FCMToken> {
   @override
-  final Iterable<Type> types = const [Room, _$Room];
+  final Iterable<Type> types = const [FCMToken, _$FCMToken];
 
   @override
-  final String wireName = r'Room';
+  final String wireName = r'FCMToken';
 
   Iterable<Object?> _serializeProperties(
     Serializers serializers,
-    Room object, {
+    FCMToken object, {
     FullType specifiedType = FullType.unspecified,
   }) sync* {
-    yield r'id';
+    yield r'token';
     yield serializers.serialize(
-      object.id,
+      object.token,
       specifiedType: const FullType(String),
     );
-    yield r'name';
+    yield r'createdAt';
     yield serializers.serialize(
-      object.name,
-      specifiedType: const FullType(String),
+      object.createdAt,
+      specifiedType: const FullType(DateTime),
     );
-    yield r'floor';
+    yield r'updatedAt';
     yield serializers.serialize(
-      object.floor,
-      specifiedType: const FullType(DottoFoundationV1Floor),
+      object.updatedAt,
+      specifiedType: const FullType(DateTime),
     );
   }
 
   @override
   Object serialize(
     Serializers serializers,
-    Room object, {
+    FCMToken object, {
     FullType specifiedType = FullType.unspecified,
   }) {
     return _serializeProperties(serializers, object, specifiedType: specifiedType).toList();
@@ -81,33 +82,33 @@ class _$RoomSerializer implements PrimitiveSerializer<Room> {
     Object serialized, {
     FullType specifiedType = FullType.unspecified,
     required List<Object?> serializedList,
-    required RoomBuilder result,
+    required FCMTokenBuilder result,
     required List<Object?> unhandled,
   }) {
     for (var i = 0; i < serializedList.length; i += 2) {
       final key = serializedList[i] as String;
       final value = serializedList[i + 1];
       switch (key) {
-        case r'id':
+        case r'token':
           final valueDes = serializers.deserialize(
             value,
             specifiedType: const FullType(String),
           ) as String;
-          result.id = valueDes;
+          result.token = valueDes;
           break;
-        case r'name':
+        case r'createdAt':
           final valueDes = serializers.deserialize(
             value,
-            specifiedType: const FullType(String),
-          ) as String;
-          result.name = valueDes;
+            specifiedType: const FullType(DateTime),
+          ) as DateTime;
+          result.createdAt = valueDes;
           break;
-        case r'floor':
+        case r'updatedAt':
           final valueDes = serializers.deserialize(
             value,
-            specifiedType: const FullType(DottoFoundationV1Floor),
-          ) as DottoFoundationV1Floor;
-          result.floor = valueDes;
+            specifiedType: const FullType(DateTime),
+          ) as DateTime;
+          result.updatedAt = valueDes;
           break;
         default:
           unhandled.add(key);
@@ -118,12 +119,12 @@ class _$RoomSerializer implements PrimitiveSerializer<Room> {
   }
 
   @override
-  Room deserialize(
+  FCMToken deserialize(
     Serializers serializers,
     Object serialized, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final result = RoomBuilder();
+    final result = FCMTokenBuilder();
     final serializedList = (serialized as Iterable<Object?>).toList();
     final unhandled = <Object?>[];
     _deserializeProperties(

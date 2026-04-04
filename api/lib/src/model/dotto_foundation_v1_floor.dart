@@ -25,6 +25,8 @@ class DottoFoundationV1Floor extends EnumClass {
   static const DottoFoundationV1Floor floor6 = _$floor6;
   @BuiltValueEnumConst(wireName: r'Floor7')
   static const DottoFoundationV1Floor floor7 = _$floor7;
+  @BuiltValueEnumConst(wireName: r'Virtual')
+  static const DottoFoundationV1Floor virtual = _$virtual;
 
   static Serializer<DottoFoundationV1Floor> get serializer => _$dottoFoundationV1FloorSerializer;
 

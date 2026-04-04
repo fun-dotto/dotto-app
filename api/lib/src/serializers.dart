@@ -32,9 +32,13 @@ import 'package:openapi/src/model/dotto_foundation_v1_day_of_week.dart';
 import 'package:openapi/src/model/dotto_foundation_v1_floor.dart';
 import 'package:openapi/src/model/dotto_foundation_v1_grade.dart';
 import 'package:openapi/src/model/dotto_foundation_v1_period.dart';
+import 'package:openapi/src/model/dotto_foundation_v1_personal_calendar_item_status.dart';
 import 'package:openapi/src/model/dotto_foundation_v1_subject_classification.dart';
 import 'package:openapi/src/model/dotto_foundation_v1_subject_requirement_type.dart';
 import 'package:openapi/src/model/dotto_foundation_v1_timetable_slot.dart';
+import 'package:openapi/src/model/fcm_token.dart';
+import 'package:openapi/src/model/fcm_token_request.dart';
+import 'package:openapi/src/model/fcm_token_v1_upsert200_response.dart';
 import 'package:openapi/src/model/personal_calendar_item.dart';
 import 'package:openapi/src/model/personal_calendar_items_v1_list200_response.dart';
 import 'package:openapi/src/model/room.dart';
@@ -69,9 +73,13 @@ part 'serializers.g.dart';
   DottoFoundationV1Floor,
   DottoFoundationV1Grade,
   DottoFoundationV1Period,
+  DottoFoundationV1PersonalCalendarItemStatus,
   DottoFoundationV1SubjectClassification,
   DottoFoundationV1SubjectRequirementType,
   DottoFoundationV1TimetableSlot,
+  FCMToken,
+  FCMTokenRequest,
+  FCMTokenV1Upsert200Response,
   PersonalCalendarItem,
   PersonalCalendarItemsV1List200Response,
   Room,
@@ -86,10 +94,6 @@ part 'serializers.g.dart';
   UsersV1Detail200Response,
 ])
 Serializers serializers = (_$serializers.toBuilder()
-      ..addBuilderFactory(
-        const FullType(BuiltList, [FullType(Announcement)]),
-        () => ListBuilder<Announcement>(),
-      )
       ..addBuilderFactory(
         const FullType(BuiltList, [FullType(DottoFoundationV1SubjectRequirementType)]),
         () => ListBuilder<DottoFoundationV1SubjectRequirementType>(),

@@ -50,10 +50,10 @@ import 'package:openapi/openapi.dart';
 final api = Openapi().getAnnouncementsApi();
 
 try {
-    final response = await api.announcementsV0List();
+    final response = await api.announcementsV1List();
     print(response);
 } on DioException catch (e) {
-    print("Exception when calling AnnouncementsApi->announcementsV0List: $e\n");
+    print("Exception when calling AnnouncementsApi->announcementsV1List: $e\n");
 }
 
 ```
@@ -64,11 +64,11 @@ All URIs are relative to *http://localhost:8080*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
-[*AnnouncementsApi*](doc/AnnouncementsApi.md) | [**announcementsV0List**](doc/AnnouncementsApi.md#announcementsv0list) | **GET** /announcements | 
 [*AnnouncementsApi*](doc/AnnouncementsApi.md) | [**announcementsV1List**](doc/AnnouncementsApi.md#announcementsv1list) | **GET** /v1/announcements | 
 [*CourseRegistrationsApi*](doc/CourseRegistrationsApi.md) | [**courseRegistrationsV1Create**](doc/CourseRegistrationsApi.md#courseregistrationsv1create) | **POST** /v1/courseRegistrations | 
 [*CourseRegistrationsApi*](doc/CourseRegistrationsApi.md) | [**courseRegistrationsV1Delete**](doc/CourseRegistrationsApi.md#courseregistrationsv1delete) | **DELETE** /v1/courseRegistrations/{id} | 
 [*CourseRegistrationsApi*](doc/CourseRegistrationsApi.md) | [**courseRegistrationsV1List**](doc/CourseRegistrationsApi.md#courseregistrationsv1list) | **GET** /v1/courseRegistrations | 
+[*FCMTokensApi*](doc/FCMTokensApi.md) | [**fCMTokenV1Upsert**](doc/FCMTokensApi.md#fcmtokenv1upsert) | **POST** /v1/fcmTokens | 
 [*PersonalCalendarItemsApi*](doc/PersonalCalendarItemsApi.md) | [**personalCalendarItemsV1List**](doc/PersonalCalendarItemsApi.md#personalcalendaritemsv1list) | **GET** /v1/personalCalendarItems | 
 [*SubjectsApi*](doc/SubjectsApi.md) | [**subjectsV1Detail**](doc/SubjectsApi.md#subjectsv1detail) | **GET** /v1/subjects/{id} | 
 [*SubjectsApi*](doc/SubjectsApi.md) | [**subjectsV1List**](doc/SubjectsApi.md#subjectsv1list) | **GET** /v1/subjects | 
@@ -97,9 +97,13 @@ Class | Method | HTTP request | Description
  - [DottoFoundationV1Floor](doc/DottoFoundationV1Floor.md)
  - [DottoFoundationV1Grade](doc/DottoFoundationV1Grade.md)
  - [DottoFoundationV1Period](doc/DottoFoundationV1Period.md)
+ - [DottoFoundationV1PersonalCalendarItemStatus](doc/DottoFoundationV1PersonalCalendarItemStatus.md)
  - [DottoFoundationV1SubjectClassification](doc/DottoFoundationV1SubjectClassification.md)
  - [DottoFoundationV1SubjectRequirementType](doc/DottoFoundationV1SubjectRequirementType.md)
  - [DottoFoundationV1TimetableSlot](doc/DottoFoundationV1TimetableSlot.md)
+ - [FCMToken](doc/FCMToken.md)
+ - [FCMTokenRequest](doc/FCMTokenRequest.md)
+ - [FCMTokenV1Upsert200Response](doc/FCMTokenV1Upsert200Response.md)
  - [PersonalCalendarItem](doc/PersonalCalendarItem.md)
  - [PersonalCalendarItemsV1List200Response](doc/PersonalCalendarItemsV1List200Response.md)
  - [Room](doc/Room.md)

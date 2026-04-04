@@ -3,74 +3,54 @@
 //
 
 // ignore_for_file: unused_element
-import 'package:openapi/src/model/dotto_foundation_v1_floor.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 
-part 'room.g.dart';
+part 'fcm_token_request.g.dart';
 
-/// Room
+/// FCMTokenRequest
 ///
 /// Properties:
-/// * [id] 
-/// * [name] 
-/// * [floor] 
+/// * [token] 
 @BuiltValue()
-abstract class Room implements Built<Room, RoomBuilder> {
-  @BuiltValueField(wireName: r'id')
-  String get id;
+abstract class FCMTokenRequest implements Built<FCMTokenRequest, FCMTokenRequestBuilder> {
+  @BuiltValueField(wireName: r'token')
+  String get token;
 
-  @BuiltValueField(wireName: r'name')
-  String get name;
+  FCMTokenRequest._();
 
-  @BuiltValueField(wireName: r'floor')
-  DottoFoundationV1Floor get floor;
-  // enum floorEnum {  Floor1,  Floor2,  Floor3,  Floor4,  Floor5,  Floor6,  Floor7,  Virtual,  };
-
-  Room._();
-
-  factory Room([void updates(RoomBuilder b)]) = _$Room;
+  factory FCMTokenRequest([void updates(FCMTokenRequestBuilder b)]) = _$FCMTokenRequest;
 
   @BuiltValueHook(initializeBuilder: true)
-  static void _defaults(RoomBuilder b) => b;
+  static void _defaults(FCMTokenRequestBuilder b) => b;
 
   @BuiltValueSerializer(custom: true)
-  static Serializer<Room> get serializer => _$RoomSerializer();
+  static Serializer<FCMTokenRequest> get serializer => _$FCMTokenRequestSerializer();
 }
 
-class _$RoomSerializer implements PrimitiveSerializer<Room> {
+class _$FCMTokenRequestSerializer implements PrimitiveSerializer<FCMTokenRequest> {
   @override
-  final Iterable<Type> types = const [Room, _$Room];
+  final Iterable<Type> types = const [FCMTokenRequest, _$FCMTokenRequest];
 
   @override
-  final String wireName = r'Room';
+  final String wireName = r'FCMTokenRequest';
 
   Iterable<Object?> _serializeProperties(
     Serializers serializers,
-    Room object, {
+    FCMTokenRequest object, {
     FullType specifiedType = FullType.unspecified,
   }) sync* {
-    yield r'id';
+    yield r'token';
     yield serializers.serialize(
-      object.id,
+      object.token,
       specifiedType: const FullType(String),
-    );
-    yield r'name';
-    yield serializers.serialize(
-      object.name,
-      specifiedType: const FullType(String),
-    );
-    yield r'floor';
-    yield serializers.serialize(
-      object.floor,
-      specifiedType: const FullType(DottoFoundationV1Floor),
     );
   }
 
   @override
   Object serialize(
     Serializers serializers,
-    Room object, {
+    FCMTokenRequest object, {
     FullType specifiedType = FullType.unspecified,
   }) {
     return _serializeProperties(serializers, object, specifiedType: specifiedType).toList();
@@ -81,33 +61,19 @@ class _$RoomSerializer implements PrimitiveSerializer<Room> {
     Object serialized, {
     FullType specifiedType = FullType.unspecified,
     required List<Object?> serializedList,
-    required RoomBuilder result,
+    required FCMTokenRequestBuilder result,
     required List<Object?> unhandled,
   }) {
     for (var i = 0; i < serializedList.length; i += 2) {
       final key = serializedList[i] as String;
       final value = serializedList[i + 1];
       switch (key) {
-        case r'id':
+        case r'token':
           final valueDes = serializers.deserialize(
             value,
             specifiedType: const FullType(String),
           ) as String;
-          result.id = valueDes;
-          break;
-        case r'name':
-          final valueDes = serializers.deserialize(
-            value,
-            specifiedType: const FullType(String),
-          ) as String;
-          result.name = valueDes;
-          break;
-        case r'floor':
-          final valueDes = serializers.deserialize(
-            value,
-            specifiedType: const FullType(DottoFoundationV1Floor),
-          ) as DottoFoundationV1Floor;
-          result.floor = valueDes;
+          result.token = valueDes;
           break;
         default:
           unhandled.add(key);
@@ -118,12 +84,12 @@ class _$RoomSerializer implements PrimitiveSerializer<Room> {
   }
 
   @override
-  Room deserialize(
+  FCMTokenRequest deserialize(
     Serializers serializers,
     Object serialized, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final result = RoomBuilder();
+    final result = FCMTokenRequestBuilder();
     final serializedList = (serialized as Iterable<Object?>).toList();
     final unhandled = <Object?>[];
     _deserializeProperties(
