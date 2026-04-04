@@ -27,6 +27,8 @@ Future<void> main() async {
   await FirebaseAuthHelper.initialize();
 
   // Firebase Crashlyticsの初期化
+  // Debugモードではクラッシュレポートを送信しない
+  await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(!kDebugMode);
   FlutterError.onError = (errorDetails) async {
     await FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
   };
