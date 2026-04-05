@@ -4,6 +4,7 @@
 
 // ignore_for_file: unused_element
 import 'package:built_collection/built_collection.dart';
+import 'package:openapi/src/model/dotto_foundation_v1_course_semester.dart';
 import 'package:openapi/src/model/subject_faculty.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
@@ -16,6 +17,9 @@ part 'subject_summary.g.dart';
 /// * [id] 
 /// * [name] 
 /// * [faculties] 
+/// * [year] - 開講年度
+/// * [semester] - 開講時期
+/// * [credit] - 単位数
 @BuiltValue()
 abstract class SubjectSummary implements Built<SubjectSummary, SubjectSummaryBuilder> {
   @BuiltValueField(wireName: r'id')
@@ -26,6 +30,19 @@ abstract class SubjectSummary implements Built<SubjectSummary, SubjectSummaryBui
 
   @BuiltValueField(wireName: r'faculties')
   BuiltList<SubjectFaculty> get faculties;
+
+  /// 開講年度
+  @BuiltValueField(wireName: r'year')
+  int get year;
+
+  /// 開講時期
+  @BuiltValueField(wireName: r'semester')
+  DottoFoundationV1CourseSemester get semester;
+  // enum semesterEnum {  AllYear,  H1,  H2,  Q1,  Q2,  Q3,  Q4,  SummerIntensive,  WinterIntensive,  };
+
+  /// 単位数
+  @BuiltValueField(wireName: r'credit')
+  int get credit;
 
   SubjectSummary._();
 
@@ -64,6 +81,21 @@ class _$SubjectSummarySerializer implements PrimitiveSerializer<SubjectSummary> 
     yield serializers.serialize(
       object.faculties,
       specifiedType: const FullType(BuiltList, [FullType(SubjectFaculty)]),
+    );
+    yield r'year';
+    yield serializers.serialize(
+      object.year,
+      specifiedType: const FullType(int),
+    );
+    yield r'semester';
+    yield serializers.serialize(
+      object.semester,
+      specifiedType: const FullType(DottoFoundationV1CourseSemester),
+    );
+    yield r'credit';
+    yield serializers.serialize(
+      object.credit,
+      specifiedType: const FullType(int),
     );
   }
 
@@ -108,6 +140,27 @@ class _$SubjectSummarySerializer implements PrimitiveSerializer<SubjectSummary> 
             specifiedType: const FullType(BuiltList, [FullType(SubjectFaculty)]),
           ) as BuiltList<SubjectFaculty>;
           result.faculties.replace(valueDes);
+          break;
+        case r'year':
+          final valueDes = serializers.deserialize(
+            value,
+            specifiedType: const FullType(int),
+          ) as int;
+          result.year = valueDes;
+          break;
+        case r'semester':
+          final valueDes = serializers.deserialize(
+            value,
+            specifiedType: const FullType(DottoFoundationV1CourseSemester),
+          ) as DottoFoundationV1CourseSemester;
+          result.semester = valueDes;
+          break;
+        case r'credit':
+          final valueDes = serializers.deserialize(
+            value,
+            specifiedType: const FullType(int),
+          ) as int;
+          result.credit = valueDes;
           break;
         default:
           unhandled.add(key);

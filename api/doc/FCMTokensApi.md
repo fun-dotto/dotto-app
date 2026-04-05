@@ -1,4 +1,4 @@
-# openapi.api.PersonalCalendarItemsApi
+# openapi.api.FCMTokensApi
 
 ## Load the API package
 ```dart
@@ -9,15 +9,15 @@ All URIs are relative to *http://localhost:8080*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**personalCalendarItemsV1List**](PersonalCalendarItemsApi.md#personalcalendaritemsv1list) | **GET** /v1/personalCalendarItems | 
+[**fCMTokenV1Upsert**](FCMTokensApi.md#fcmtokenv1upsert) | **POST** /v1/fcmTokens | 
 
 
-# **personalCalendarItemsV1List**
-> PersonalCalendarItemsV1List200Response personalCalendarItemsV1List(dates)
+# **fCMTokenV1Upsert**
+> FCMTokenV1Upsert200Response fCMTokenV1Upsert(fCMTokenRequest)
 
 
 
-個人カレンダーアイテム一覧を取得する
+FCMトークンを作成または更新する 存在しない場合は作成し、存在する場合は更新日時を更新する
 
 ### Example
 ```dart
@@ -27,14 +27,14 @@ import 'package:openapi/api.dart';
 // uncomment below to setup prefix (e.g. Bearer) for API key, if needed
 //defaultApiClient.getAuthentication<ApiKeyAuth>('FirebaseAppCheckAuth').apiKeyPrefix = 'Bearer';
 
-final api = Openapi().getPersonalCalendarItemsApi();
-final BuiltList<Date> dates = ; // BuiltList<Date> | 日付のリスト; 指定した日付の個人カレンダーアイテムのみを取得する
+final api = Openapi().getFCMTokensApi();
+final FCMTokenRequest fCMTokenRequest = ; // FCMTokenRequest | 作成または更新するFCMトークンの情報
 
 try {
-    final response = api.personalCalendarItemsV1List(dates);
+    final response = api.fCMTokenV1Upsert(fCMTokenRequest);
     print(response);
 } on DioException catch (e) {
-    print('Exception when calling PersonalCalendarItemsApi->personalCalendarItemsV1List: $e\n');
+    print('Exception when calling FCMTokensApi->fCMTokenV1Upsert: $e\n');
 }
 ```
 
@@ -42,11 +42,11 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **dates** | [**BuiltList&lt;Date&gt;**](Date.md)| 日付のリスト; 指定した日付の個人カレンダーアイテムのみを取得する | 
+ **fCMTokenRequest** | [**FCMTokenRequest**](FCMTokenRequest.md)| 作成または更新するFCMトークンの情報 | 
 
 ### Return type
 
-[**PersonalCalendarItemsV1List200Response**](PersonalCalendarItemsV1List200Response.md)
+[**FCMTokenV1Upsert200Response**](FCMTokenV1Upsert200Response.md)
 
 ### Authorization
 
@@ -54,7 +54,7 @@ Name | Type | Description  | Notes
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/json
  - **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)

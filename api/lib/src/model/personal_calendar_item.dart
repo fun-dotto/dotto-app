@@ -3,8 +3,12 @@
 //
 
 // ignore_for_file: unused_element
-import 'package:openapi/src/model/timetable_item.dart';
-import 'package:openapi/src/model/dotto_foundation_v1_timetable_slot.dart';
+import 'package:openapi/src/model/dotto_foundation_v1_period.dart';
+import 'package:openapi/src/model/room.dart';
+import 'package:built_collection/built_collection.dart';
+import 'package:openapi/src/model/dotto_foundation_v1_personal_calendar_item_status.dart';
+import 'package:openapi/src/model/subject_summary.dart';
+import 'package:openapi/src/model/date.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 
@@ -14,18 +18,28 @@ part 'personal_calendar_item.g.dart';
 ///
 /// Properties:
 /// * [date] 
-/// * [slot] 
-/// * [timetableItem] 
+/// * [period] 
+/// * [subject] 
+/// * [rooms] 
+/// * [status] 
 @BuiltValue()
 abstract class PersonalCalendarItem implements Built<PersonalCalendarItem, PersonalCalendarItemBuilder> {
   @BuiltValueField(wireName: r'date')
-  DateTime get date;
+  Date get date;
 
-  @BuiltValueField(wireName: r'slot')
-  DottoFoundationV1TimetableSlot get slot;
+  @BuiltValueField(wireName: r'period')
+  DottoFoundationV1Period get period;
+  // enum periodEnum {  Period1,  Period2,  Period3,  Period4,  Period5,  Period6,  };
 
-  @BuiltValueField(wireName: r'timetableItem')
-  TimetableItem get timetableItem;
+  @BuiltValueField(wireName: r'subject')
+  SubjectSummary get subject;
+
+  @BuiltValueField(wireName: r'rooms')
+  BuiltList<Room> get rooms;
+
+  @BuiltValueField(wireName: r'status')
+  DottoFoundationV1PersonalCalendarItemStatus get status;
+  // enum statusEnum {  Normal,  Cancelled,  Makeup,  RoomChanged,  };
 
   PersonalCalendarItem._();
 
@@ -53,17 +67,27 @@ class _$PersonalCalendarItemSerializer implements PrimitiveSerializer<PersonalCa
     yield r'date';
     yield serializers.serialize(
       object.date,
-      specifiedType: const FullType(DateTime),
+      specifiedType: const FullType(Date),
     );
-    yield r'slot';
+    yield r'period';
     yield serializers.serialize(
-      object.slot,
-      specifiedType: const FullType(DottoFoundationV1TimetableSlot),
+      object.period,
+      specifiedType: const FullType(DottoFoundationV1Period),
     );
-    yield r'timetableItem';
+    yield r'subject';
     yield serializers.serialize(
-      object.timetableItem,
-      specifiedType: const FullType(TimetableItem),
+      object.subject,
+      specifiedType: const FullType(SubjectSummary),
+    );
+    yield r'rooms';
+    yield serializers.serialize(
+      object.rooms,
+      specifiedType: const FullType(BuiltList, [FullType(Room)]),
+    );
+    yield r'status';
+    yield serializers.serialize(
+      object.status,
+      specifiedType: const FullType(DottoFoundationV1PersonalCalendarItemStatus),
     );
   }
 
@@ -91,23 +115,37 @@ class _$PersonalCalendarItemSerializer implements PrimitiveSerializer<PersonalCa
         case r'date':
           final valueDes = serializers.deserialize(
             value,
-            specifiedType: const FullType(DateTime),
-          ) as DateTime;
+            specifiedType: const FullType(Date),
+          ) as Date;
           result.date = valueDes;
           break;
-        case r'slot':
+        case r'period':
           final valueDes = serializers.deserialize(
             value,
-            specifiedType: const FullType(DottoFoundationV1TimetableSlot),
-          ) as DottoFoundationV1TimetableSlot;
-          result.slot.replace(valueDes);
+            specifiedType: const FullType(DottoFoundationV1Period),
+          ) as DottoFoundationV1Period;
+          result.period = valueDes;
           break;
-        case r'timetableItem':
+        case r'subject':
           final valueDes = serializers.deserialize(
             value,
-            specifiedType: const FullType(TimetableItem),
-          ) as TimetableItem;
-          result.timetableItem.replace(valueDes);
+            specifiedType: const FullType(SubjectSummary),
+          ) as SubjectSummary;
+          result.subject.replace(valueDes);
+          break;
+        case r'rooms':
+          final valueDes = serializers.deserialize(
+            value,
+            specifiedType: const FullType(BuiltList, [FullType(Room)]),
+          ) as BuiltList<Room>;
+          result.rooms.replace(valueDes);
+          break;
+        case r'status':
+          final valueDes = serializers.deserialize(
+            value,
+            specifiedType: const FullType(DottoFoundationV1PersonalCalendarItemStatus),
+          ) as DottoFoundationV1PersonalCalendarItemStatus;
+          result.status = valueDes;
           break;
         default:
           unhandled.add(key);

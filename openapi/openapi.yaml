@@ -9,22 +9,8 @@ tags:
   - name: Subjects
   - name: TimetableItems
   - name: Users
+  - name: FCM Tokens
 paths:
-  /announcements:
-    get:
-      operationId: AnnouncementsV0_list
-      parameters: []
-      responses:
-        '200':
-          description: おしらせのリスト
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Announcement'
-      tags:
-        - Announcements
   /v1/announcements:
     get:
       operationId: AnnouncementsV1_list
@@ -142,6 +128,39 @@ paths:
       security:
         - BearerAuth: []
           FirebaseAppCheckAuth: []
+  /v1/fcmTokens:
+    post:
+      operationId: FCMTokenV1_upsert
+      description: |-
+        FCMトークンを作成または更新する
+        存在しない場合は作成し、存在する場合は更新日時を更新する
+      parameters: []
+      responses:
+        '200':
+          description: 作成または更新されたFCMトークン
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  fcmToken:
+                    $ref: '#/components/schemas/FCMToken'
+                required:
+                  - fcmToken
+        '401':
+          description: Access is unauthorized.
+      tags:
+        - FCM Tokens
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FCMTokenRequest'
+        description: 作成または更新するFCMトークンの情報
+      security:
+        - BearerAuth: []
+          FirebaseAppCheckAuth: []
   /v1/personalCalendarItems:
     get:
       operationId: PersonalCalendarItemsV1_list
@@ -155,7 +174,7 @@ paths:
             type: array
             items:
               type: string
-              format: date-time
+              format: date
           explode: false
       responses:
         '200':
@@ -562,6 +581,7 @@ components:
         date:
           type: string
           format: date-time
+          description: 日時
         url:
           type: string
           format: uri
@@ -649,6 +669,7 @@ components:
         - Floor5
         - Floor6
         - Floor7
+        - Virtual
     DottoFoundationV1.Grade:
       type: string
       enum:
@@ -671,6 +692,14 @@ components:
         - Period4
         - Period5
         - Period6
+    DottoFoundationV1.PersonalCalendarItemStatus:
+      type: string
+      enum:
+        - Normal
+        - Cancelled
+        - Makeup
+        - RoomChanged
+      description: 教室変更よりも休講・補講が優先される
     DottoFoundationV1.SubjectClassification:
       type: string
       enum:
@@ -695,20 +724,53 @@ components:
           $ref: '#/components/schemas/DottoFoundationV1.DayOfWeek'
         period:
           $ref: '#/components/schemas/DottoFoundationV1.Period'
+    FCMToken:
+      type: object
+      required:
+        - token
+        - createdAt
+        - updatedAt
+      properties:
+        token:
+          type: string
+          description: FCMトークン
+        createdAt:
+          type: string
+          format: date-time
+          description: 作成日時
+        updatedAt:
+          type: string
+          format: date-time
+          description: 更新日時
+    FCMTokenRequest:
+      type: object
+      required:
+        - token
+      properties:
+        token:
+          type: string
     PersonalCalendarItem:
       type: object
       required:
         - date
-        - slot
-        - timetableItem
+        - period
+        - subject
+        - rooms
+        - status
       properties:
         date:
           type: string
-          format: date-time
-        slot:
-          $ref: '#/components/schemas/DottoFoundationV1.TimetableSlot'
-        timetableItem:
-          $ref: '#/components/schemas/TimetableItem'
+          format: date
+        period:
+          $ref: '#/components/schemas/DottoFoundationV1.Period'
+        subject:
+          $ref: '#/components/schemas/SubjectSummary'
+        rooms:
+          type: array
+          items:
+            $ref: '#/components/schemas/Room'
+        status:
+          $ref: '#/components/schemas/DottoFoundationV1.PersonalCalendarItemStatus'
     Room:
       type: object
       required:
@@ -781,6 +843,9 @@ components:
         - id
         - name
         - faculties
+        - year
+        - semester
+        - credit
       properties:
         id:
           type: string
@@ -790,6 +855,16 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/SubjectFaculty'
+        year:
+          type: integer
+          description: 開講年度
+        semester:
+          allOf:
+            - $ref: '#/components/schemas/DottoFoundationV1.CourseSemester'
+          description: 開講時期
+        credit:
+          type: integer
+          description: 単位数
     TimetableItem:
       type: object
       required:

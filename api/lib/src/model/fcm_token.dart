@@ -6,79 +6,72 @@
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 
-part 'announcement.g.dart';
+part 'fcm_token.g.dart';
 
-/// Announcement
+/// FCMToken
 ///
 /// Properties:
-/// * [id] 
-/// * [title] 
-/// * [date] - 日時
-/// * [url] 
+/// * [token] - FCMトークン
+/// * [createdAt] - 作成日時
+/// * [updatedAt] - 更新日時
 @BuiltValue()
-abstract class Announcement implements Built<Announcement, AnnouncementBuilder> {
-  @BuiltValueField(wireName: r'id')
-  String get id;
+abstract class FCMToken implements Built<FCMToken, FCMTokenBuilder> {
+  /// FCMトークン
+  @BuiltValueField(wireName: r'token')
+  String get token;
 
-  @BuiltValueField(wireName: r'title')
-  String get title;
+  /// 作成日時
+  @BuiltValueField(wireName: r'createdAt')
+  DateTime get createdAt;
 
-  /// 日時
-  @BuiltValueField(wireName: r'date')
-  DateTime get date;
+  /// 更新日時
+  @BuiltValueField(wireName: r'updatedAt')
+  DateTime get updatedAt;
 
-  @BuiltValueField(wireName: r'url')
-  String get url;
+  FCMToken._();
 
-  Announcement._();
-
-  factory Announcement([void updates(AnnouncementBuilder b)]) = _$Announcement;
+  factory FCMToken([void updates(FCMTokenBuilder b)]) = _$FCMToken;
 
   @BuiltValueHook(initializeBuilder: true)
-  static void _defaults(AnnouncementBuilder b) => b;
+  static void _defaults(FCMTokenBuilder b) => b;
 
   @BuiltValueSerializer(custom: true)
-  static Serializer<Announcement> get serializer => _$AnnouncementSerializer();
+  static Serializer<FCMToken> get serializer => _$FCMTokenSerializer();
 }
 
-class _$AnnouncementSerializer implements PrimitiveSerializer<Announcement> {
+class _$FCMTokenSerializer implements PrimitiveSerializer<FCMToken> {
   @override
-  final Iterable<Type> types = const [Announcement, _$Announcement];
+  final Iterable<Type> types = const [FCMToken, _$FCMToken];
 
   @override
-  final String wireName = r'Announcement';
+  final String wireName = r'FCMToken';
 
   Iterable<Object?> _serializeProperties(
     Serializers serializers,
-    Announcement object, {
+    FCMToken object, {
     FullType specifiedType = FullType.unspecified,
   }) sync* {
-    yield r'id';
+    yield r'token';
     yield serializers.serialize(
-      object.id,
+      object.token,
       specifiedType: const FullType(String),
     );
-    yield r'title';
+    yield r'createdAt';
     yield serializers.serialize(
-      object.title,
-      specifiedType: const FullType(String),
-    );
-    yield r'date';
-    yield serializers.serialize(
-      object.date,
+      object.createdAt,
       specifiedType: const FullType(DateTime),
     );
-    yield r'url';
+    yield r'updatedAt';
     yield serializers.serialize(
-      object.url,
-      specifiedType: const FullType(String),
+      object.updatedAt,
+      specifiedType: const FullType(DateTime),
     );
   }
 
   @override
   Object serialize(
     Serializers serializers,
-    Announcement object, {
+    FCMToken object, {
     FullType specifiedType = FullType.unspecified,
   }) {
     return _serializeProperties(serializers, object, specifiedType: specifiedType).toList();
@@ -89,40 +82,33 @@ class _$AnnouncementSerializer implements PrimitiveSerializer<Announcement> {
     Object serialized, {
     FullType specifiedType = FullType.unspecified,
     required List<Object?> serializedList,
-    required AnnouncementBuilder result,
+    required FCMTokenBuilder result,
     required List<Object?> unhandled,
   }) {
     for (var i = 0; i < serializedList.length; i += 2) {
       final key = serializedList[i] as String;
       final value = serializedList[i + 1];
       switch (key) {
-        case r'id':
+        case r'token':
           final valueDes = serializers.deserialize(
             value,
             specifiedType: const FullType(String),
           ) as String;
-          result.id = valueDes;
+          result.token = valueDes;
           break;
-        case r'title':
-          final valueDes = serializers.deserialize(
-            value,
-            specifiedType: const FullType(String),
-          ) as String;
-          result.title = valueDes;
-          break;
-        case r'date':
+        case r'createdAt':
           final valueDes = serializers.deserialize(
             value,
             specifiedType: const FullType(DateTime),
           ) as DateTime;
-          result.date = valueDes;
+          result.createdAt = valueDes;
           break;
-        case r'url':
+        case r'updatedAt':
           final valueDes = serializers.deserialize(
             value,
-            specifiedType: const FullType(String),
-          ) as String;
-          result.url = valueDes;
+            specifiedType: const FullType(DateTime),
+          ) as DateTime;
+          result.updatedAt = valueDes;
           break;
         default:
           unhandled.add(key);
@@ -133,12 +119,12 @@ class _$AnnouncementSerializer implements PrimitiveSerializer<Announcement> {
   }
 
   @override
-  Announcement deserialize(
+  FCMToken deserialize(
     Serializers serializers,
     Object serialized, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final result = AnnouncementBuilder();
+    final result = FCMTokenBuilder();
     final serializedList = (serialized as Iterable<Object?>).toList();
     final unhandled = <Object?>[];
     _deserializeProperties(
