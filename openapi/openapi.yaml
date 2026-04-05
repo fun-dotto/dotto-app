@@ -174,7 +174,7 @@ paths:
             type: array
             items:
               type: string
-              format: date-time
+              format: date
           explode: false
       responses:
         '200':
@@ -581,6 +581,7 @@ components:
         date:
           type: string
           format: date-time
+          description: 日時
         url:
           type: string
           format: uri
@@ -759,7 +760,7 @@ components:
       properties:
         date:
           type: string
-          format: date-time
+          format: date
         period:
           $ref: '#/components/schemas/DottoFoundationV1.Period'
         subject:
