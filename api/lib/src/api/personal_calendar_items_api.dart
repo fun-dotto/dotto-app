@@ -10,6 +10,7 @@ import 'package:dio/dio.dart';
 
 import 'package:built_collection/built_collection.dart';
 import 'package:openapi/src/api_util.dart';
+import 'package:openapi/src/model/date.dart';
 import 'package:openapi/src/model/personal_calendar_items_v1_list200_response.dart';
 
 class PersonalCalendarItemsApi {
@@ -35,7 +36,7 @@ class PersonalCalendarItemsApi {
   /// Returns a [Future] containing a [Response] with a [PersonalCalendarItemsV1List200Response] as data
   /// Throws [DioException] if API call or serialization fails
   Future<Response<PersonalCalendarItemsV1List200Response>> personalCalendarItemsV1List({ 
-    required BuiltList<DateTime> dates,
+    required BuiltList<Date> dates,
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
     Map<String, dynamic>? extra,
@@ -68,7 +69,7 @@ class PersonalCalendarItemsApi {
     );
 
     final _queryParameters = <String, dynamic>{
-      r'dates': encodeCollectionQueryParameter<DateTime>(_serializers, dates, const FullType(BuiltList, [FullType(DateTime)]), format: ListFormat.csv,),
+      r'dates': encodeCollectionQueryParameter<Date>(_serializers, dates, const FullType(BuiltList, [FullType(Date)]), format: ListFormat.csv,),
     };
 
     final _response = await _dio.request<Object>(

@@ -28,7 +28,7 @@ import 'package:openapi/api.dart';
 //defaultApiClient.getAuthentication<ApiKeyAuth>('FirebaseAppCheckAuth').apiKeyPrefix = 'Bearer';
 
 final api = Openapi().getPersonalCalendarItemsApi();
-final BuiltList<DateTime> dates = ; // BuiltList<DateTime> | 日付のリスト; 指定した日付の個人カレンダーアイテムのみを取得する
+final BuiltList<Date> dates = ; // BuiltList<Date> | 日付のリスト; 指定した日付の個人カレンダーアイテムのみを取得する
 
 try {
     final response = api.personalCalendarItemsV1List(dates);
@@ -42,7 +42,7 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **dates** | [**BuiltList&lt;DateTime&gt;**](DateTime.md)| 日付のリスト; 指定した日付の個人カレンダーアイテムのみを取得する | 
+ **dates** | [**BuiltList&lt;Date&gt;**](Date.md)| 日付のリスト; 指定した日付の個人カレンダーアイテムのみを取得する | 
 
 ### Return type
 

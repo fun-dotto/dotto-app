@@ -8,7 +8,7 @@ import 'package:openapi/api.dart';
 ## Properties
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**date** | [**DateTime**](DateTime.md) |  | 
+**date** | [**Date**](Date.md) |  | 
 **period** | [**DottoFoundationV1Period**](DottoFoundationV1Period.md) |  | 
 **subject** | [**SubjectSummary**](SubjectSummary.md) |  | 
 **rooms** | [**BuiltList&lt;Room&gt;**](Room.md) |  | 

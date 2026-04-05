@@ -8,6 +8,7 @@ import 'package:openapi/src/model/room.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:openapi/src/model/dotto_foundation_v1_personal_calendar_item_status.dart';
 import 'package:openapi/src/model/subject_summary.dart';
+import 'package:openapi/src/model/date.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 
@@ -24,7 +25,7 @@ part 'personal_calendar_item.g.dart';
 @BuiltValue()
 abstract class PersonalCalendarItem implements Built<PersonalCalendarItem, PersonalCalendarItemBuilder> {
   @BuiltValueField(wireName: r'date')
-  DateTime get date;
+  Date get date;
 
   @BuiltValueField(wireName: r'period')
   DottoFoundationV1Period get period;
@@ -66,7 +67,7 @@ class _$PersonalCalendarItemSerializer implements PrimitiveSerializer<PersonalCa
     yield r'date';
     yield serializers.serialize(
       object.date,
-      specifiedType: const FullType(DateTime),
+      specifiedType: const FullType(Date),
     );
     yield r'period';
     yield serializers.serialize(
@@ -114,8 +115,8 @@ class _$PersonalCalendarItemSerializer implements PrimitiveSerializer<PersonalCa
         case r'date':
           final valueDes = serializers.deserialize(
             value,
-            specifiedType: const FullType(DateTime),
-          ) as DateTime;
+            specifiedType: const FullType(Date),
+          ) as Date;
           result.date = valueDes;
           break;
         case r'period':

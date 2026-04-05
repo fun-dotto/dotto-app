@@ -103,12 +103,12 @@ Serializers serializers = (_$serializers.toBuilder()
         () => ListBuilder<DottoFoundationV1CourseSemester>(),
       )
       ..addBuilderFactory(
-        const FullType(BuiltList, [FullType(DateTime)]),
-        () => ListBuilder<DateTime>(),
-      )
-      ..addBuilderFactory(
         const FullType(BuiltList, [FullType(DottoFoundationV1Class)]),
         () => ListBuilder<DottoFoundationV1Class>(),
+      )
+      ..addBuilderFactory(
+        const FullType(BuiltList, [FullType(Date)]),
+        () => ListBuilder<Date>(),
       )
       ..addBuilderFactory(
         const FullType(BuiltList, [FullType(DottoFoundationV1Grade)]),

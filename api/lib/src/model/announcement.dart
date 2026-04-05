@@ -13,7 +13,7 @@ part 'announcement.g.dart';
 /// Properties:
 /// * [id] 
 /// * [title] 
-/// * [date] 
+/// * [date] - 日時
 /// * [url] 
 @BuiltValue()
 abstract class Announcement implements Built<Announcement, AnnouncementBuilder> {
@@ -23,6 +23,7 @@ abstract class Announcement implements Built<Announcement, AnnouncementBuilder> 
   @BuiltValueField(wireName: r'title')
   String get title;
 
+  /// 日時
   @BuiltValueField(wireName: r'date')
   DateTime get date;
 
