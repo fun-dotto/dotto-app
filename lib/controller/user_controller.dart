@@ -30,6 +30,7 @@ final class UserNotifier extends _$UserNotifier {
   Future<DottoUser> build() async {
     ref.watch(firebaseAuthStateChangesProvider);
     final firebaseUser = FirebaseAuth.instance.currentUser;
+    debugPrint('FCM Token: ${await FirebaseMessaging.instance.getToken()}');
     final didSaveFCMToken = await UserPreferenceRepository.getBool(UserPreferenceKeys.didSaveFCMToken);
     if (firebaseUser != null && didSaveFCMToken == false) {
       await _saveFCMToken(firebaseUser);
