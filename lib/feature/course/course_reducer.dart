@@ -1,5 +1,3 @@
-import 'package:dotto/domain/semester.dart';
-import 'package:dotto/domain/subject_summary.dart';
 import 'package:dotto/feature/course/course_state.dart';
 import 'package:dotto/repository/repository_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -46,26 +44,8 @@ final class CourseReducer extends _$CourseReducer {
       return const CourseState();
     }
 
-    final courseRegistrationRepository = ref.read(courseRegistrationRepositoryProvider);
-    final lectureCancellationRepository = ref.read(lectureCancellationRepositoryProvider);
-    final oneWeekScheduleRepository = ref.read(oneWeekScheduleRepositoryProvider);
     final personalCalendarRepository = ref.read(personalCalendarRepositoryProvider);
 
-    final (courseRegistrations, lectureCancellationData, schedules) = await (
-      courseRegistrationRepository.getCourseRegistrations(Semester.values),
-      lectureCancellationRepository.getLectureCancellationData(),
-      oneWeekScheduleRepository.getSchedules(),
-    ).wait;
-    if (!ref.mounted) {
-      return const CourseState();
-    }
-
-    final registeredSubjectsByName = <String, SubjectSummary>{
-      for (final registration in courseRegistrations) registration.subject.name: registration.subject,
-    };
-    final registeredSubjectsById = <String, SubjectSummary>{
-      for (final registration in courseRegistrations) registration.subject.id: registration.subject,
-    };
     final now = ref.read(clockProvider);
     final today = now();
     final todayDate = DateTime(today.year, today.month, today.day);
@@ -75,14 +55,10 @@ final class CourseReducer extends _$CourseReducer {
       (index) => thisWeekMonday.add(Duration(days: index)),
     ).where((date) => date.weekday <= DateTime.friday).toList();
 
-    final days = personalCalendarRepository.getPersonalTimetableDays(
-      targetDates: targetDates,
-      schedules: schedules,
-      registeredSubjectsById: registeredSubjectsById,
-      registeredSubjectsByName: registeredSubjectsByName,
-      cancelledByDate: lectureCancellationData.cancelledByDate,
-      madeUpByDate: lectureCancellationData.madeUpByDate,
-    );
+    final days = await personalCalendarRepository.getPersonalTimetableDays(targetDates: targetDates);
+    if (!ref.mounted) {
+      return const CourseState();
+    }
     return CourseState(days: days);
   }
 }
