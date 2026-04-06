@@ -19,7 +19,7 @@ final class MakeupClassRepositoryImpl implements MakeupClassRepository {
   Future<BuiltList<MakeupClass>> getMakeupClasses() async {
     try {
       final api = ref.read(apiClientProvider).getMakeupClassesApi();
-      final response = await api.makeupClassesV1List();
+      final response = await api.makeupClassesV1List(from: Date.now());
       if (response.statusCode != 200) {
         throw Exception('Failed to get makeup classes');
       }

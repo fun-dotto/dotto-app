@@ -19,7 +19,7 @@ final class RoomChangeRepositoryImpl implements RoomChangeRepository {
   Future<BuiltList<RoomChange>> getRoomChanges() async {
     try {
       final api = ref.read(apiClientProvider).getRoomChangesApi();
-      final response = await api.roomChangesV1List();
+      final response = await api.roomChangesV1List(from: Date.now());
       if (response.statusCode != 200) {
         throw Exception('Failed to get room changes');
       }
