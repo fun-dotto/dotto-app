@@ -138,7 +138,9 @@ final class PersonalTimetableCalendarView extends HookConsumerWidget {
               if (pageDates.isEmpty || pageDates.any((date) => _isSameDate(date, selectedDate))) {
                 return;
               }
-              onDateSelected(pageDates.first);
+              // 前の週へ戻った場合は金曜日、進んだ場合は月曜日を選択
+              final prevWeekIndex = dateCarouselInitialPage;
+              onDateSelected(index < prevWeekIndex ? pageDates.last : pageDates.first);
             },
           ),
         ),
