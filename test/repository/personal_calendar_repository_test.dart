@@ -53,10 +53,10 @@ void main() {
       );
     });
 
-    test('roomChanged を LectureStatus.normal にマッピングする', () {
+    test('roomChanged を LectureStatus.roomChanged にマッピングする', () {
       expect(
         PersonalCalendarRepositoryImpl.toLectureStatus(DottoFoundationV1PersonalCalendarItemStatus.roomChanged),
-        LectureStatus.normal,
+        LectureStatus.roomChanged,
       );
     });
   });
