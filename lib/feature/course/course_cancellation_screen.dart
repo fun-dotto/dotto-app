@@ -5,6 +5,7 @@ import 'package:dotto/feature/course/course_cancellation_reducer.dart';
 import 'package:dotto_design_system/component/button.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:openapi/openapi.dart';
 import 'package:shimmer_animation/shimmer_animation.dart';
 
@@ -253,9 +254,8 @@ class _RoomChangeList extends StatelessWidget {
 }
 
 String _formatDate(Date value) {
-  final month = value.month.toString().padLeft(2, '0');
-  final day = value.day.toString().padLeft(2, '0');
-  return '${value.year}/$month/$day';
+  final dateTime = value.toDateTime();
+  return DateFormat.yMd('ja').add_E().format(dateTime);
 }
 
 String _formatPeriod(DottoFoundationV1Period period) {
