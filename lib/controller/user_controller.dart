@@ -26,13 +26,13 @@ final Provider<bool> isAuthenticatedProvider = Provider.autoDispose<bool>((ref) 
 final class UserNotifier extends _$UserNotifier {
   @override
   Future<DottoUser> build() async {
-    ref.watch(firebaseAuthStateChangesProvider);
-    final firebaseUser = FirebaseAuth.instance.currentUser;
-    debugPrint('FCM Token: ${await FirebaseMessaging.instance.getToken()}');
+    final authState = ref.watch(firebaseAuthStateChangesProvider);
+    final firebaseUser = authState.value;
     if (firebaseUser != null) {
+      debugPrint('FCM Token: ${await FirebaseMessaging.instance.getToken()}');
       await _saveFCMToken(firebaseUser);
     }
-    return _syncUser();
+    return _syncUser(firebaseUser);
   }
 
   Future<void> refresh() async {
@@ -42,7 +42,7 @@ final class UserNotifier extends _$UserNotifier {
       if (firebaseUser != null) {
         await _saveFCMToken(firebaseUser);
       }
-      return _syncUser();
+      return _syncUser(firebaseUser);
     });
   }
 
@@ -51,7 +51,7 @@ final class UserNotifier extends _$UserNotifier {
     state = await AsyncValue.guard(() async {
       final firebaseUser = await FirebaseAuthHelper.signIn();
       await _saveFCMToken(firebaseUser);
-      return _syncUser();
+      return _syncUser(firebaseUser);
     });
   }
 
@@ -59,7 +59,7 @@ final class UserNotifier extends _$UserNotifier {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
       await FirebaseAuthHelper.signOut();
-      return _syncUser();
+      return _syncUser(null);
     });
   }
 
@@ -97,9 +97,8 @@ final class UserNotifier extends _$UserNotifier {
     }
   }
 
-  Future<DottoUser> _syncUser() async {
+  Future<DottoUser> _syncUser(User? firebaseUser) async {
     const defaultUser = DottoUser(id: '', name: '', email: '', avatarUrl: '', grade: null, course: null, class_: null);
-    final firebaseUser = FirebaseAuth.instance.currentUser;
     if (firebaseUser == null) {
       return defaultUser;
     }
