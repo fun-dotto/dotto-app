@@ -14,6 +14,8 @@ abstract class SubjectSummary with _$SubjectSummary {
     // 科目検索画面で使用
     Semester? semester,
     // 科目検索画面で使用
+    int? credit,
+    // 科目検索画面で使用
     List<TimetableSlot>? slots,
     // 科目検索画面で使用
     bool? isAddedToTimetable,
