@@ -10,7 +10,6 @@ import 'package:dotto/feature/github_contributor/github_contributor_screen.dart'
 import 'package:dotto/feature/onboarding/onboarding_screen.dart';
 import 'package:dotto/feature/setting/widget/license.dart';
 import 'package:dotto/feature/setting/widget/user_info_tile.dart';
-import 'package:dotto/feature/timetable_v0/repository/timetable_repository.dart';
 import 'package:dotto_design_system/style/semantic_color.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
@@ -103,7 +102,6 @@ final class SettingsScreen extends ConsumerWidget {
                               ? () => ref.read(userProvider.notifier).signOut()
                               : () async {
                                   await ref.read(userProvider.notifier).signIn();
-                                  await TimetableRepository().loadPersonalTimetableListOnLogin(context, ref);
                                 },
                         ),
                       ),
@@ -120,7 +118,6 @@ final class SettingsScreen extends ConsumerWidget {
                                 ? () => ref.read(userProvider.notifier).signOut()
                                 : () async {
                                     await ref.read(userProvider.notifier).signIn();
-                                    await TimetableRepository().loadPersonalTimetableListOnLogin(context, ref);
                                   },
                           ),
                         );

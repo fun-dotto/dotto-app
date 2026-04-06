@@ -3,7 +3,6 @@ import 'package:dotto/domain/tab_item.dart';
 import 'package:dotto/feature/bus/bus.dart';
 import 'package:dotto/feature/course/course_screen.dart';
 import 'package:dotto/feature/funch/funch.dart';
-import 'package:dotto/feature/home/home.dart';
 import 'package:dotto/feature/map/map_screen.dart';
 import 'package:dotto/feature/onboarding/onboarding_screen.dart';
 import 'package:dotto/feature/root/root_viewmodel.dart';
@@ -18,7 +17,7 @@ final class RootScreen extends ConsumerWidget {
   const RootScreen({super.key});
 
   List<TabItem> _activeTabs({required bool isV2Enabled, required bool isFunchEnabled}) {
-    final baseTabs = isV2Enabled ? TabItem.v2 : TabItem.v1;
+    final baseTabs = TabItem.v2;
     if (!isV2Enabled || isFunchEnabled) {
       return baseTabs;
     }
@@ -34,7 +33,6 @@ final class RootScreen extends ConsumerWidget {
       ),
       TabItem.bus => const BusScreen(),
       TabItem.setting => const SettingsScreen(),
-      TabItem.home => const HomeScreen(),
       TabItem.subject => const SearchSubjectScreen(),
     };
   }

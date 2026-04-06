@@ -19,7 +19,7 @@ part 'root_viewmodel.g.dart';
 @riverpod
 class RootViewModel extends _$RootViewModel {
   List<TabItem> _activeTabs({required bool isV2Enabled, required bool isFunchEnabled}) {
-    final baseTabs = isV2Enabled ? TabItem.v2 : TabItem.v1;
+    final baseTabs = TabItem.v2;
     if (!isV2Enabled || isFunchEnabled) {
       return baseTabs;
     }

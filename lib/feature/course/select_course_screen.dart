@@ -3,7 +3,6 @@ import 'package:dotto/domain/day_of_week.dart';
 import 'package:dotto/domain/period.dart';
 import 'package:dotto/domain/timetable_item.dart';
 import 'package:dotto/domain/timetable_semester.dart';
-import 'package:dotto/feature/timetable_v0/widget/timetable_is_over_selected_snack_bar.dart';
 import 'package:dotto/repository/course_registration_repository.dart';
 import 'package:dotto_design_system/component/button.dart';
 import 'package:flutter/material.dart';
@@ -66,7 +65,10 @@ final class SelectCourseScreen extends HookConsumerWidget {
                   : DottoButton(
                       onPressed: () async {
                         if (selectedCount >= 3 && context.mounted) {
-                          timetableIsOverSelectedSnackBar(context);
+                          ScaffoldMessenger.of(context).removeCurrentSnackBar();
+                          ScaffoldMessenger.of(
+                            context,
+                          ).showSnackBar(const SnackBar(content: Text('1つのコマに3科目以上を設定できません')));
                           return;
                         }
                         await courseRegistrationRepository.registerCourse(item.subject.id);

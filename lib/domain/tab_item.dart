@@ -6,8 +6,6 @@ enum TabItem {
   map(key: 'map', label: 'マップ', icon: Icons.map_outlined, selectedIcon: Icons.map),
   bus(key: 'bus', label: 'バス', icon: Icons.directions_bus_outlined, selectedIcon: Icons.directions_bus),
   setting(key: 'setting', label: '設定', icon: Icons.settings_outlined, selectedIcon: Icons.settings),
-  // v1 only
-  home(key: 'home', label: 'ホーム', icon: Icons.home_outlined, selectedIcon: Icons.home),
   subject(key: 'subject', label: '科目検索', icon: Icons.search_outlined, selectedIcon: Icons.search);
 
   const TabItem({required this.key, required this.label, required this.icon, required this.selectedIcon});
@@ -18,5 +16,4 @@ enum TabItem {
   final String label;
 
   static final List<TabItem> v2 = [.course, .funch, .map, .bus, .setting];
-  static final List<TabItem> v1 = [.home, .map, .subject, .setting];
 }
