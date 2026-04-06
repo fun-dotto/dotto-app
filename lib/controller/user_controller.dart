@@ -2,9 +2,7 @@ import 'package:dotto/domain/academic_area.dart';
 import 'package:dotto/domain/academic_class.dart';
 import 'package:dotto/domain/dotto_user.dart';
 import 'package:dotto/domain/grade.dart';
-import 'package:dotto/domain/user_preference_keys.dart';
 import 'package:dotto/helper/firebase_auth_helper.dart';
-import 'package:dotto/helper/user_preference_repository.dart';
 import 'package:dotto/repository/repository_provider.dart';
 import 'package:dotto/repository/user_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -31,8 +29,7 @@ final class UserNotifier extends _$UserNotifier {
     ref.watch(firebaseAuthStateChangesProvider);
     final firebaseUser = FirebaseAuth.instance.currentUser;
     debugPrint('FCM Token: ${await FirebaseMessaging.instance.getToken()}');
-    final didSaveFCMToken = await UserPreferenceRepository.getBool(UserPreferenceKeys.didSaveFCMToken);
-    if (firebaseUser != null && didSaveFCMToken == false) {
+    if (firebaseUser != null) {
       await _saveFCMToken(firebaseUser);
     }
     return _syncUser();
@@ -42,8 +39,7 @@ final class UserNotifier extends _$UserNotifier {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
       final firebaseUser = FirebaseAuth.instance.currentUser;
-      final didSaveFCMToken = await UserPreferenceRepository.getBool(UserPreferenceKeys.didSaveFCMToken);
-      if (firebaseUser != null && didSaveFCMToken == false) {
+      if (firebaseUser != null) {
         await _saveFCMToken(firebaseUser);
       }
       return _syncUser();
@@ -134,6 +130,5 @@ final class UserNotifier extends _$UserNotifier {
       return;
     }
     await ref.read(fcmTokenRepositoryProvider).upsertToken(token: fcmToken);
-    await UserPreferenceRepository.setBool(UserPreferenceKeys.didSaveFCMToken, value: true);
   }
 }
