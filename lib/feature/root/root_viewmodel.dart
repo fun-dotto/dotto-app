@@ -18,9 +18,9 @@ part 'root_viewmodel.g.dart';
 
 @riverpod
 class RootViewModel extends _$RootViewModel {
-  List<TabItem> _activeTabs({required bool isV2Enabled, required bool isFunchEnabled}) {
+  List<TabItem> _activeTabs({required bool isFunchEnabled}) {
     final baseTabs = TabItem.v2;
-    if (!isV2Enabled || isFunchEnabled) {
+    if (isFunchEnabled) {
       return baseTabs;
     }
     return baseTabs.map((tab) => tab == TabItem.funch ? TabItem.subject : tab).toList();
@@ -51,7 +51,7 @@ class RootViewModel extends _$RootViewModel {
       validAppVersion: config.validAppVersion,
       latestAppVersion: config.latestAppVersion,
     );
-    final tabs = _activeTabs(isV2Enabled: config.isV2Enabled, isFunchEnabled: config.isFunchEnabled);
+    final tabs = _activeTabs(isFunchEnabled: config.isFunchEnabled);
 
     ref.listen(configProvider, (_, next) {
       final currentState = switch (state) {
@@ -60,7 +60,7 @@ class RootViewModel extends _$RootViewModel {
       };
       if (currentState == null) return;
 
-      final activeTabs = _activeTabs(isV2Enabled: next.isV2Enabled, isFunchEnabled: next.isFunchEnabled);
+      final activeTabs = _activeTabs(isFunchEnabled: next.isFunchEnabled);
       final nextVersionEvaluation = AppVersionEvaluator.evaluate(
         currentAppVersion: currentAppVersion,
         validAppVersion: next.validAppVersion,
@@ -93,7 +93,7 @@ class RootViewModel extends _$RootViewModel {
 
   void onTabItemTapped(int index) {
     final config = ref.read(configProvider);
-    final activeTabs = _activeTabs(isV2Enabled: config.isV2Enabled, isFunchEnabled: config.isFunchEnabled);
+    final activeTabs = _activeTabs(isFunchEnabled: config.isFunchEnabled);
     final selectedTab = activeTabs.elementAtOrNull(index);
     if (selectedTab == null) {
       return;

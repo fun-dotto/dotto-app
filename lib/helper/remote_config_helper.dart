@@ -31,7 +31,6 @@ final class _RemoteConfigHelperImpl implements RemoteConfigHelper {
 
     if (kDebugMode) {
       await FirebaseRemoteConfig.instance.setDefaults(const {
-        RemoteConfigKeys.isV2Enabled: true,
         RemoteConfigKeys.isFunchEnabled: false,
         RemoteConfigKeys.validAppVersion: '0.0.0',
         RemoteConfigKeys.latestAppVersion: '0.0.0',
@@ -47,7 +46,6 @@ final class _RemoteConfigHelperImpl implements RemoteConfigHelper {
       });
     } else {
       await FirebaseRemoteConfig.instance.setDefaults(const {
-        RemoteConfigKeys.isV2Enabled: true,
         RemoteConfigKeys.isFunchEnabled: false,
         RemoteConfigKeys.validAppVersion: '0.0.0',
         RemoteConfigKeys.latestAppVersion: '0.0.0',

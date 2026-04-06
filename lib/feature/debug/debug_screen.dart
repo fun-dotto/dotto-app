@@ -21,9 +21,7 @@ final class DebugScreen extends HookConsumerWidget {
     final environmentOverride = apiEnvironmentNotifier.environmentOverride;
     final config = ref.watch(configProvider);
     final configNotifier = ref.read(configProvider.notifier);
-    final isV2EnabledOverride = configNotifier.isV2EnabledOverride;
     final isFunchEnabledOverride = configNotifier.isFunchEnabledOverride;
-    final remoteConfigIsV2Enabled = ref.read(remoteConfigHelperProvider).getBool(RemoteConfigKeys.isV2Enabled);
     final remoteConfigIsFunchEnabled = ref.read(remoteConfigHelperProvider).getBool(RemoteConfigKeys.isFunchEnabled);
 
     Future<void> showEnvironmentPicker() async {
@@ -57,51 +55,6 @@ final class DebugScreen extends HookConsumerWidget {
                 ),
               );
             }),
-          ],
-        ),
-      );
-    }
-
-    Future<void> showIsV2EnabledOverridePicker() async {
-      await showDialog<void>(
-        context: context,
-        builder: (dialogContext) => SimpleDialog(
-          title: const Text('isV2Enabled Override'),
-          children: [
-            SimpleDialogOption(
-              onPressed: () async {
-                Navigator.of(dialogContext).pop();
-                await configNotifier.setIsV2EnabledOverride(value: null);
-              },
-              child: ListTile(
-                contentPadding: EdgeInsets.zero,
-                title: const Text('Use Remote Config'),
-                subtitle: Text('Remote Config: $remoteConfigIsV2Enabled'),
-                trailing: isV2EnabledOverride == null ? const Icon(Icons.check) : null,
-              ),
-            ),
-            SimpleDialogOption(
-              onPressed: () async {
-                Navigator.of(dialogContext).pop();
-                await configNotifier.setIsV2EnabledOverride(value: true);
-              },
-              child: ListTile(
-                contentPadding: EdgeInsets.zero,
-                title: const Text('Force true'),
-                trailing: isV2EnabledOverride == true ? const Icon(Icons.check) : null,
-              ),
-            ),
-            SimpleDialogOption(
-              onPressed: () async {
-                Navigator.of(dialogContext).pop();
-                await configNotifier.setIsV2EnabledOverride(value: false);
-              },
-              child: ListTile(
-                contentPadding: EdgeInsets.zero,
-                title: const Text('Force false'),
-                trailing: isV2EnabledOverride == false ? const Icon(Icons.check) : null,
-              ),
-            ),
           ],
         ),
       );
@@ -206,16 +159,6 @@ final class DebugScreen extends HookConsumerWidget {
             }),
             trailing: Text('Effective: ${environment.label}'),
             onTap: showEnvironmentPicker,
-          ),
-          ListTile(
-            title: const Text('isV2Enabled Override'),
-            subtitle: Text(switch (isV2EnabledOverride) {
-              true => 'Forced: true',
-              false => 'Forced: false',
-              null => 'Use Remote Config ($remoteConfigIsV2Enabled)',
-            }),
-            trailing: Text('Effective: ${config.isV2Enabled}'),
-            onTap: showIsV2EnabledOverridePicker,
           ),
           ListTile(
             title: const Text('isFunchEnabled Override'),

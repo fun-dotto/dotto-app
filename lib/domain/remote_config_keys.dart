@@ -1,7 +1,4 @@
 final class RemoteConfigKeys {
-  /// v2 feature flag
-  static const String isV2Enabled = 'is_v2_enabled';
-
   /// Funch feature flag
   static const String isFunchEnabled = 'is_funch_enabled';
 

@@ -12,11 +12,9 @@ part 'config_controller.g.dart';
 
 @Riverpod(keepAlive: true)
 final class ConfigNotifier extends _$ConfigNotifier {
-  bool? _isV2EnabledOverride;
   bool? _isFunchEnabledOverride;
   bool _didStartLoadingOverride = false;
 
-  bool? get isV2EnabledOverride => _isV2EnabledOverride;
   bool? get isFunchEnabledOverride => _isFunchEnabledOverride;
 
   @override
@@ -27,9 +25,7 @@ final class ConfigNotifier extends _$ConfigNotifier {
     }
 
     final remoteConfigRepository = ref.read(remoteConfigHelperProvider);
-    final remoteConfigIsV2Enabled = remoteConfigRepository.getBool(RemoteConfigKeys.isV2Enabled);
     final remoteConfigIsFunchEnabled = remoteConfigRepository.getBool(RemoteConfigKeys.isFunchEnabled);
-    final isV2Enabled = _isV2EnabledOverride ?? remoteConfigIsV2Enabled;
     final isFunchEnabled = _isFunchEnabledOverride ?? remoteConfigIsFunchEnabled;
     final validAppVersion = remoteConfigRepository.getString(RemoteConfigKeys.validAppVersion);
     final latestAppVersion = remoteConfigRepository.getString(RemoteConfigKeys.latestAppVersion);
@@ -60,7 +56,6 @@ final class ConfigNotifier extends _$ConfigNotifier {
     }
 
     return Config(
-      isV2Enabled: isV2Enabled,
       isFunchEnabled: isFunchEnabled,
       validAppVersion: validAppVersion,
       latestAppVersion: latestAppVersion,
@@ -83,24 +78,7 @@ final class ConfigNotifier extends _$ConfigNotifier {
   }
 
   Future<void> loadOverrides() async {
-    await Future.wait([
-      _loadIsV2EnabledOverride(refreshAfterLoad: false),
-      _loadIsFunchEnabledOverride(refreshAfterLoad: false),
-    ]);
-    refresh();
-  }
-
-  Future<void> loadIsV2EnabledOverride() async {
-    await _loadIsV2EnabledOverride(refreshAfterLoad: true);
-  }
-
-  Future<void> setIsV2EnabledOverride({required bool? value}) async {
-    _isV2EnabledOverride = value;
-    if (value == null) {
-      await UserPreferenceRepository.remove(UserPreferenceKeys.isV2EnabledOverride);
-    } else {
-      await UserPreferenceRepository.setBool(UserPreferenceKeys.isV2EnabledOverride, value: value);
-    }
+    await _loadIsFunchEnabledOverride(refreshAfterLoad: false);
     refresh();
   }
 
@@ -116,13 +94,6 @@ final class ConfigNotifier extends _$ConfigNotifier {
       await UserPreferenceRepository.setBool(UserPreferenceKeys.isFunchEnabledOverride, value: value);
     }
     refresh();
-  }
-
-  Future<void> _loadIsV2EnabledOverride({required bool refreshAfterLoad}) async {
-    _isV2EnabledOverride = await UserPreferenceRepository.getBool(UserPreferenceKeys.isV2EnabledOverride);
-    if (refreshAfterLoad) {
-      refresh();
-    }
   }
 
   Future<void> _loadIsFunchEnabledOverride({required bool refreshAfterLoad}) async {

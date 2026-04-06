@@ -16,9 +16,9 @@ import 'package:url_launcher/url_launcher_string.dart';
 final class RootScreen extends ConsumerWidget {
   const RootScreen({super.key});
 
-  List<TabItem> _activeTabs({required bool isV2Enabled, required bool isFunchEnabled}) {
+  List<TabItem> _activeTabs({required bool isFunchEnabled}) {
     final baseTabs = TabItem.v2;
-    if (!isV2Enabled || isFunchEnabled) {
+    if (isFunchEnabled) {
       return baseTabs;
     }
     return baseTabs.map((tab) => tab == TabItem.funch ? TabItem.subject : tab).toList();
@@ -59,8 +59,8 @@ final class RootScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final viewModelAsync = ref.watch(rootViewModelProvider);
-    final configFlags = ref.watch(configProvider.select((config) => (config.isV2Enabled, config.isFunchEnabled)));
-    final activeTabs = _activeTabs(isV2Enabled: configFlags.$1, isFunchEnabled: configFlags.$2);
+    final isFunchEnabled = ref.watch(configProvider.select((config) => config.isFunchEnabled));
+    final activeTabs = _activeTabs(isFunchEnabled: isFunchEnabled);
 
     switch (viewModelAsync) {
       case AsyncData(:final value):
