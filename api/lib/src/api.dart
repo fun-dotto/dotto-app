@@ -10,9 +10,12 @@ import 'package:openapi/src/auth/basic_auth.dart';
 import 'package:openapi/src/auth/bearer_auth.dart';
 import 'package:openapi/src/auth/oauth.dart';
 import 'package:openapi/src/api/announcements_api.dart';
+import 'package:openapi/src/api/cancelled_classes_api.dart';
 import 'package:openapi/src/api/course_registrations_api.dart';
 import 'package:openapi/src/api/fcm_tokens_api.dart';
+import 'package:openapi/src/api/makeup_classes_api.dart';
 import 'package:openapi/src/api/personal_calendar_items_api.dart';
+import 'package:openapi/src/api/room_changes_api.dart';
 import 'package:openapi/src/api/subjects_api.dart';
 import 'package:openapi/src/api/timetable_items_api.dart';
 import 'package:openapi/src/api/users_api.dart';
@@ -77,6 +80,12 @@ class Openapi {
     return AnnouncementsApi(dio, serializers);
   }
 
+  /// Get CancelledClassesApi instance, base route and serializer can be overridden by a given but be careful,
+  /// by doing that all interceptors will not be executed
+  CancelledClassesApi getCancelledClassesApi() {
+    return CancelledClassesApi(dio, serializers);
+  }
+
   /// Get CourseRegistrationsApi instance, base route and serializer can be overridden by a given but be careful,
   /// by doing that all interceptors will not be executed
   CourseRegistrationsApi getCourseRegistrationsApi() {
@@ -89,10 +98,22 @@ class Openapi {
     return FCMTokensApi(dio, serializers);
   }
 
+  /// Get MakeupClassesApi instance, base route and serializer can be overridden by a given but be careful,
+  /// by doing that all interceptors will not be executed
+  MakeupClassesApi getMakeupClassesApi() {
+    return MakeupClassesApi(dio, serializers);
+  }
+
   /// Get PersonalCalendarItemsApi instance, base route and serializer can be overridden by a given but be careful,
   /// by doing that all interceptors will not be executed
   PersonalCalendarItemsApi getPersonalCalendarItemsApi() {
     return PersonalCalendarItemsApi(dio, serializers);
+  }
+
+  /// Get RoomChangesApi instance, base route and serializer can be overridden by a given but be careful,
+  /// by doing that all interceptors will not be executed
+  RoomChangesApi getRoomChangesApi() {
+    return RoomChangesApi(dio, serializers);
   }
 
   /// Get SubjectsApi instance, base route and serializer can be overridden by a given but be careful,
