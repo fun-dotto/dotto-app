@@ -1,3 +1,4 @@
+import 'package:dotto/api/api_environment.dart';
 import 'package:dotto/controller/config_controller.dart';
 import 'package:dotto/domain/tab_item.dart';
 import 'package:dotto/feature/bus/bus.dart';
@@ -59,6 +60,7 @@ final class RootScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final viewModelAsync = ref.watch(rootViewModelProvider);
+    final environment = ref.watch(apiEnvironmentProvider);
     final isFunchEnabled = ref.watch(configProvider.select((config) => config.isFunchEnabled));
     final activeTabs = _activeTabs(isFunchEnabled: isFunchEnabled);
 
@@ -109,6 +111,12 @@ final class RootScreen extends ConsumerWidget {
             }).toList(),
           ),
           bottomNavigationBar: NavigationBar(
+            backgroundColor: switch (environment) {
+              Environment.production => null,
+              Environment.staging => Colors.orange.withValues(alpha: 0.15),
+              Environment.development => Colors.blue.withValues(alpha: 0.15),
+              Environment.qa => Colors.purple.withValues(alpha: 0.15),
+            },
             onDestinationSelected: ref.read(rootViewModelProvider.notifier).onTabItemTapped,
             selectedIndex: activeTabs.indexOf(value.selectedTab),
             destinations: activeTabs.map((tab) {
