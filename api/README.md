@@ -65,11 +65,14 @@ All URIs are relative to *http://localhost:8080*
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
 [*AnnouncementsApi*](doc/AnnouncementsApi.md) | [**announcementsV1List**](doc/AnnouncementsApi.md#announcementsv1list) | **GET** /v1/announcements | 
+[*CancelledClassesApi*](doc/CancelledClassesApi.md) | [**cancelledClassesV1List**](doc/CancelledClassesApi.md#cancelledclassesv1list) | **GET** /v1/cancelledClasses | 
 [*CourseRegistrationsApi*](doc/CourseRegistrationsApi.md) | [**courseRegistrationsV1Create**](doc/CourseRegistrationsApi.md#courseregistrationsv1create) | **POST** /v1/courseRegistrations | 
 [*CourseRegistrationsApi*](doc/CourseRegistrationsApi.md) | [**courseRegistrationsV1Delete**](doc/CourseRegistrationsApi.md#courseregistrationsv1delete) | **DELETE** /v1/courseRegistrations/{id} | 
 [*CourseRegistrationsApi*](doc/CourseRegistrationsApi.md) | [**courseRegistrationsV1List**](doc/CourseRegistrationsApi.md#courseregistrationsv1list) | **GET** /v1/courseRegistrations | 
 [*FCMTokensApi*](doc/FCMTokensApi.md) | [**fCMTokenV1Upsert**](doc/FCMTokensApi.md#fcmtokenv1upsert) | **POST** /v1/fcmTokens | 
+[*MakeupClassesApi*](doc/MakeupClassesApi.md) | [**makeupClassesV1List**](doc/MakeupClassesApi.md#makeupclassesv1list) | **GET** /v1/makeupClasses | 
 [*PersonalCalendarItemsApi*](doc/PersonalCalendarItemsApi.md) | [**personalCalendarItemsV1List**](doc/PersonalCalendarItemsApi.md#personalcalendaritemsv1list) | **GET** /v1/personalCalendarItems | 
+[*RoomChangesApi*](doc/RoomChangesApi.md) | [**roomChangesV1List**](doc/RoomChangesApi.md#roomchangesv1list) | **GET** /v1/roomChanges | 
 [*SubjectsApi*](doc/SubjectsApi.md) | [**subjectsV1Detail**](doc/SubjectsApi.md#subjectsv1detail) | **GET** /v1/subjects/{id} | 
 [*SubjectsApi*](doc/SubjectsApi.md) | [**subjectsV1List**](doc/SubjectsApi.md#subjectsv1list) | **GET** /v1/subjects | 
 [*TimetableItemsApi*](doc/TimetableItemsApi.md) | [**timetableItemsV1List**](doc/TimetableItemsApi.md#timetableitemsv1list) | **GET** /v1/timetableItems | 
@@ -85,6 +88,8 @@ Class | Method | HTTP request | Description
  - [AcademicServiceSyllabus](doc/AcademicServiceSyllabus.md)
  - [Announcement](doc/Announcement.md)
  - [AnnouncementsV1List200Response](doc/AnnouncementsV1List200Response.md)
+ - [CancelledClass](doc/CancelledClass.md)
+ - [CancelledClassesV1List200Response](doc/CancelledClassesV1List200Response.md)
  - [CourseRegistration](doc/CourseRegistration.md)
  - [CourseRegistrationRequest](doc/CourseRegistrationRequest.md)
  - [CourseRegistrationsV1Create201Response](doc/CourseRegistrationsV1Create201Response.md)
@@ -104,9 +109,13 @@ Class | Method | HTTP request | Description
  - [FCMToken](doc/FCMToken.md)
  - [FCMTokenRequest](doc/FCMTokenRequest.md)
  - [FCMTokenV1Upsert200Response](doc/FCMTokenV1Upsert200Response.md)
+ - [MakeupClass](doc/MakeupClass.md)
+ - [MakeupClassesV1List200Response](doc/MakeupClassesV1List200Response.md)
  - [PersonalCalendarItem](doc/PersonalCalendarItem.md)
  - [PersonalCalendarItemsV1List200Response](doc/PersonalCalendarItemsV1List200Response.md)
  - [Room](doc/Room.md)
+ - [RoomChange](doc/RoomChange.md)
+ - [RoomChangesV1List200Response](doc/RoomChangesV1List200Response.md)
  - [SubjectDetail](doc/SubjectDetail.md)
  - [SubjectFaculty](doc/SubjectFaculty.md)
  - [SubjectSummary](doc/SubjectSummary.md)

@@ -20,6 +20,8 @@ import 'package:openapi/src/model/academic_service_subject_target_class.dart';
 import 'package:openapi/src/model/academic_service_syllabus.dart';
 import 'package:openapi/src/model/announcement.dart';
 import 'package:openapi/src/model/announcements_v1_list200_response.dart';
+import 'package:openapi/src/model/cancelled_class.dart';
+import 'package:openapi/src/model/cancelled_classes_v1_list200_response.dart';
 import 'package:openapi/src/model/course_registration.dart';
 import 'package:openapi/src/model/course_registration_request.dart';
 import 'package:openapi/src/model/course_registrations_v1_create201_response.dart';
@@ -39,9 +41,13 @@ import 'package:openapi/src/model/dotto_foundation_v1_timetable_slot.dart';
 import 'package:openapi/src/model/fcm_token.dart';
 import 'package:openapi/src/model/fcm_token_request.dart';
 import 'package:openapi/src/model/fcm_token_v1_upsert200_response.dart';
+import 'package:openapi/src/model/makeup_class.dart';
+import 'package:openapi/src/model/makeup_classes_v1_list200_response.dart';
 import 'package:openapi/src/model/personal_calendar_item.dart';
 import 'package:openapi/src/model/personal_calendar_items_v1_list200_response.dart';
 import 'package:openapi/src/model/room.dart';
+import 'package:openapi/src/model/room_change.dart';
+import 'package:openapi/src/model/room_changes_v1_list200_response.dart';
 import 'package:openapi/src/model/subject_detail.dart';
 import 'package:openapi/src/model/subject_faculty.dart';
 import 'package:openapi/src/model/subject_summary.dart';
@@ -61,6 +67,8 @@ part 'serializers.g.dart';
   AcademicServiceSyllabus,
   Announcement,
   AnnouncementsV1List200Response,
+  CancelledClass,
+  CancelledClassesV1List200Response,
   CourseRegistration,
   CourseRegistrationRequest,
   CourseRegistrationsV1Create201Response,
@@ -80,9 +88,13 @@ part 'serializers.g.dart';
   FCMToken,
   FCMTokenRequest,
   FCMTokenV1Upsert200Response,
+  MakeupClass,
+  MakeupClassesV1List200Response,
   PersonalCalendarItem,
   PersonalCalendarItemsV1List200Response,
   Room,
+  RoomChange,
+  RoomChangesV1List200Response,
   SubjectDetail,
   SubjectFaculty,
   SubjectSummary,
@@ -113,6 +125,10 @@ Serializers serializers = (_$serializers.toBuilder()
       ..addBuilderFactory(
         const FullType(BuiltList, [FullType(DottoFoundationV1Grade)]),
         () => ListBuilder<DottoFoundationV1Grade>(),
+      )
+      ..addBuilderFactory(
+        const FullType(BuiltList, [FullType(String)]),
+        () => ListBuilder<String>(),
       )
       ..addBuilderFactory(
         const FullType(BuiltList, [FullType(DottoFoundationV1SubjectClassification)]),

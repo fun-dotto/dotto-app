@@ -6,6 +6,9 @@ tags:
   - name: Announcements
   - name: CourseRegistrations
   - name: PersonalCalendarItems
+  - name: CancelledClasses
+  - name: MakeupClasses
+  - name: RoomChanges
   - name: Subjects
   - name: TimetableItems
   - name: Users
@@ -33,6 +36,52 @@ paths:
           description: Access is unauthorized.
       tags:
         - Announcements
+  /v1/cancelledClasses:
+    get:
+      operationId: CancelledClassesV1_list
+      description: 休講一覧を取得する
+      parameters:
+        - name: subjectIds
+          in: query
+          required: false
+          description: 科目IDのリスト; 指定した科目の休講のみを取得する; 指定しない場合は全科目を検索対象とする
+          schema:
+            type: array
+            items:
+              type: string
+          explode: false
+        - name: from
+          in: query
+          required: false
+          description: 検索対象開始日付
+          schema:
+            type: string
+            format: date
+        - name: until
+          in: query
+          required: false
+          description: 検索対象終了日付
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: 休講のリスト
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  cancelledClasses:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CancelledClass'
+                required:
+                  - cancelledClasses
+        '401':
+          description: Access is unauthorized.
+      tags:
+        - CancelledClasses
   /v1/courseRegistrations:
     get:
       operationId: CourseRegistrationsV1_list
@@ -161,6 +210,52 @@ paths:
       security:
         - BearerAuth: []
           FirebaseAppCheckAuth: []
+  /v1/makeupClasses:
+    get:
+      operationId: MakeupClassesV1_list
+      description: 補講一覧を取得する
+      parameters:
+        - name: subjectIds
+          in: query
+          required: false
+          description: 科目IDのリスト; 指定した科目の補講のみを取得する; 指定しない場合は全科目を検索対象とする
+          schema:
+            type: array
+            items:
+              type: string
+          explode: false
+        - name: from
+          in: query
+          required: false
+          description: 検索対象開始日付
+          schema:
+            type: string
+            format: date
+        - name: until
+          in: query
+          required: false
+          description: 検索対象終了日付
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: 補講のリスト
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  makeupClasses:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/MakeupClass'
+                required:
+                  - makeupClasses
+        '401':
+          description: Access is unauthorized.
+      tags:
+        - MakeupClasses
   /v1/personalCalendarItems:
     get:
       operationId: PersonalCalendarItemsV1_list
@@ -197,6 +292,52 @@ paths:
       security:
         - BearerAuth: []
           FirebaseAppCheckAuth: []
+  /v1/roomChanges:
+    get:
+      operationId: RoomChangesV1_list
+      description: 教室変更一覧を取得する
+      parameters:
+        - name: subjectIds
+          in: query
+          required: false
+          description: 科目IDのリスト; 指定した科目の教室変更のみを取得する; 指定しない場合は全科目を検索対象とする
+          schema:
+            type: array
+            items:
+              type: string
+          explode: false
+        - name: from
+          in: query
+          required: false
+          description: 検索対象開始日付
+          schema:
+            type: string
+            format: date
+        - name: until
+          in: query
+          required: false
+          description: 検索対象終了日付
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: 教室変更のリスト
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  roomChanges:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/RoomChange'
+                required:
+                  - roomChanges
+        '401':
+          description: Access is unauthorized.
+      tags:
+        - RoomChanges
   /v1/subjects:
     get:
       operationId: SubjectsV1_list
@@ -585,6 +726,27 @@ components:
         url:
           type: string
           format: uri
+    CancelledClass:
+      type: object
+      required:
+        - id
+        - subject
+        - date
+        - period
+        - comment
+      properties:
+        id:
+          type: string
+        subject:
+          $ref: '#/components/schemas/SubjectSummary'
+        date:
+          type: string
+          format: date
+        period:
+          $ref: '#/components/schemas/DottoFoundationV1.Period'
+        comment:
+          type: string
+      description: 休講
     CourseRegistration:
       type: object
       required:
@@ -749,6 +911,27 @@ components:
       properties:
         token:
           type: string
+    MakeupClass:
+      type: object
+      required:
+        - id
+        - subject
+        - date
+        - period
+        - comment
+      properties:
+        id:
+          type: string
+        subject:
+          $ref: '#/components/schemas/SubjectSummary'
+        date:
+          type: string
+          format: date
+        period:
+          $ref: '#/components/schemas/DottoFoundationV1.Period'
+        comment:
+          type: string
+      description: 補講
     PersonalCalendarItem:
       type: object
       required:
@@ -784,6 +967,30 @@ components:
           type: string
         floor:
           $ref: '#/components/schemas/DottoFoundationV1.Floor'
+    RoomChange:
+      type: object
+      required:
+        - id
+        - subject
+        - date
+        - period
+        - originalRoom
+        - newRoom
+      properties:
+        id:
+          type: string
+        subject:
+          $ref: '#/components/schemas/SubjectSummary'
+        date:
+          type: string
+          format: date
+        period:
+          $ref: '#/components/schemas/DottoFoundationV1.Period'
+        originalRoom:
+          $ref: '#/components/schemas/Room'
+        newRoom:
+          $ref: '#/components/schemas/Room'
+      description: 教室変更
     SubjectDetail:
       type: object
       required:
