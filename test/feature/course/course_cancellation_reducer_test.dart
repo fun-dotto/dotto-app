@@ -128,28 +128,39 @@ void main() {
     );
   }
 
-  test('初期状態では全件が返り、フィルタは無効', () async {
+  test('初期状態では履修中フィルタが有効', () async {
     final container = createContainer(
       cancelledClassRepository: FakeCancelledClassRepository(
-        result: BuiltList<CancelledClass>([_createCancelledClass(id: '1', subjectId: 's1', subjectName: 'Math')]),
+        result: BuiltList<CancelledClass>([
+          _createCancelledClass(id: '1', subjectId: 's1', subjectName: 'Math'),
+          _createCancelledClass(id: '2', subjectId: 's2', subjectName: 'English'),
+        ]),
       ),
       makeupClassRepository: FakeMakeupClassRepository(
-        result: BuiltList<MakeupClass>([_createMakeupClass(id: '2', subjectId: 's2', subjectName: 'English')]),
+        result: BuiltList<MakeupClass>([_createMakeupClass(id: '3', subjectId: 's1', subjectName: 'Math')]),
       ),
       roomChangeRepository: FakeRoomChangeRepository(result: BuiltList<RoomChange>()),
-      courseRegistrationRepository: FakeCourseRegistrationRepository(result: const []),
+      courseRegistrationRepository: FakeCourseRegistrationRepository(
+        result: [
+          CourseRegistration(
+            id: 'registration-1',
+            subject: domain.SubjectSummary(id: 's1', name: 'Math', faculties: const []),
+          ),
+        ],
+      ),
     );
     addTearDown(container.dispose);
 
     final state = await container.read(courseCancellationReducerProvider.future);
 
-    expect(state.isFiltered, isFalse);
+    expect(state.isFiltered, isTrue);
     expect(state.cancelledClasses, hasLength(1));
+    expect(state.cancelledClasses.first.subject.name, 'Math');
     expect(state.makeupClasses, hasLength(1));
     expect(state.roomChanges, hasLength(0));
   });
 
-  test('フィルタ切替で履修中科目のみ表示される', () async {
+  test('フィルタ切替で全件表示される', () async {
     final container = createContainer(
       cancelledClassRepository: FakeCancelledClassRepository(
         result: BuiltList<CancelledClass>([
@@ -177,9 +188,8 @@ void main() {
     await notifier.toggleFilter();
 
     final state = container.read(courseCancellationReducerProvider).requireValue;
-    expect(state.isFiltered, isTrue);
-    expect(state.cancelledClasses, hasLength(1));
-    expect(state.cancelledClasses.first.subject.name, 'Math');
+    expect(state.isFiltered, isFalse);
+    expect(state.cancelledClasses, hasLength(2));
     expect(state.makeupClasses, hasLength(1));
   });
 }

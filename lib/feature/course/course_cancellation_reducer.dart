@@ -13,7 +13,7 @@ part 'course_cancellation_reducer.g.dart';
 final class CourseCancellationReducer extends _$CourseCancellationReducer {
   @override
   Future<CourseCancellationState> build() async {
-    return _createState(isFiltered: false);
+    return _createState(isFiltered: true);
   }
 
   Future<void> refresh() async {
