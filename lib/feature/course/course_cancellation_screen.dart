@@ -49,6 +49,7 @@ final class CourseCancellationScreen extends HookConsumerWidget {
             ),
           ],
           bottom: const TabBar(
+            dividerHeight: 0,
             tabs: [
               Tab(text: '休講'),
               Tab(text: '補講'),
