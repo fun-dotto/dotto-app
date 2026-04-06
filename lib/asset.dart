@@ -45,11 +45,8 @@ final class Asset {
   /// 画像なし用のプレースホルダー画像
   static const String noImage = 'assets/no_image.png';
 
-  /// 1024pxのアプリアイコン
-  static const String icon1024 = 'assets/icon1024.png';
-
-  /// 768pxのアプリアイコン
-  static const String icon768 = 'assets/icon768.png';
+  /// アプリアイコン
+  static const String icon = 'assets/icon.png';
 
   /// シラバスデータベースファイル
   static const String syllabus = 'assets/syllabus.db';

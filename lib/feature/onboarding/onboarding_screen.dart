@@ -19,10 +19,7 @@ final class OnboardingScreen extends HookWidget {
           padding: const EdgeInsets.fromLTRB(40, 24, 40, 24),
           child: Row(
             children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(16),
-                child: Image.asset(Asset.icon1024, width: 52, height: 52),
-              ),
+              ClipRRect(borderRadius: BorderRadius.circular(16), child: Image.asset(Asset.icon, width: 52, height: 52)),
               const Spacer(),
               DottoButton(
                 onPressed: onDismissed,
@@ -57,7 +54,7 @@ final class OnboardingScreen extends HookWidget {
                 const SizedBox(height: 20),
                 ClipRRect(
                   borderRadius: BorderRadius.circular(28),
-                  child: Image.asset(Asset.icon1024, width: 140, height: 140),
+                  child: Image.asset(Asset.icon, width: 140, height: 140),
                 ),
                 const SizedBox(height: 110),
                 Text(

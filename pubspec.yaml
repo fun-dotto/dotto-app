@@ -85,14 +85,3 @@ flutter:
     enable-swift-package-manager: true
   generate: true
   uses-material-design: true
-
-flutter_launcher_icons:
-  android: true
-  ios: true
-  web: false
-  image_path: "assets/icon1024x1024.png"
-  remove_alpha_ios: true
-
-flutter_native_splash:
-  color: "#ffffff"
-  image: "assets/icon768x768.png"
