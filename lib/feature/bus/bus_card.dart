@@ -1,17 +1,17 @@
-import 'package:dotto/feature/bus/controller/bus_is_to_controller.dart';
-import 'package:dotto/feature/bus/controller/my_bus_stop_controller.dart';
-import 'package:dotto/feature/bus/domain/bus_type.dart';
-import 'package:dotto/feature/bus/repository/bus_repository.dart';
+import 'package:dotto/domain/bus_type.dart';
+import 'package:dotto/feature/bus/bus_reducer.dart';
 import 'package:dotto_design_system/style/semantic_color.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 final class BusCard extends ConsumerWidget {
-  const BusCard(
-    this.route,
-    this.beginTime,
-    this.endTime,
-    this.arriveAt, {
+  const BusCard({
+    required this.route,
+    required this.beginTime,
+    required this.endTime,
+    required this.arriveAt,
+    required this.isTo,
+    required this.myBusStopName,
     super.key,
     this.isKameda = false,
     this.home = false,
@@ -20,6 +20,8 @@ final class BusCard extends ConsumerWidget {
   final Duration beginTime;
   final Duration endTime;
   final Duration arriveAt;
+  final bool isTo;
+  final String myBusStopName;
   final bool isKameda;
   final bool home;
 
@@ -38,10 +40,8 @@ final class BusCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final busIsTo = ref.watch(busIsToProvider);
-    final myBusStop = ref.watch(myBusStopProvider);
     final tripType = getType();
-    final headerText = tripType != BusType.other ? tripType.where + (busIsTo ? 'から' : '行き') : '';
+    final headerText = tripType != BusType.other ? tripType.where + (isTo ? 'から' : '行き') : '';
     return Card(
       color: Colors.white,
       shadowColor: Colors.black,
@@ -56,7 +56,7 @@ final class BusCard extends ConsumerWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      busIsTo ? '${myBusStop.name} → 未来大' : '未来大 → ${myBusStop.name}',
+                      isTo ? '$myBusStopName → 未来大' : '未来大 → $myBusStopName',
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
@@ -65,7 +65,7 @@ final class BusCard extends ConsumerWidget {
                     child: IconButton(
                       color: SemanticColor.light.accentInfo,
                       onPressed: () {
-                        ref.read(busIsToProvider.notifier).toggle();
+                        ref.read(busReducerProvider.notifier).toggleDirection();
                       },
                       icon: const Icon(Icons.swap_horiz_outlined),
                       padding: EdgeInsets.zero,
@@ -82,17 +82,14 @@ final class BusCard extends ConsumerWidget {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Text(BusRepository().formatDuration(beginTime), style: Theme.of(context).textTheme.displayMedium),
-                      Transform.translate(
-                        offset: const Offset(0, -5),
-                        child: Text(isKameda && busIsTo ? '亀田支所発' : '発'),
-                      ),
+                      Text(formatDuration(beginTime), style: Theme.of(context).textTheme.displayMedium),
+                      Transform.translate(offset: const Offset(0, -5), child: Text(isKameda && isTo ? '亀田支所発' : '発')),
                       const Spacer(),
                       Transform.translate(
                         offset: const Offset(0, -5),
                         child: Text(
-                          '${BusRepository().formatDuration(endTime)}'
-                          '${isKameda && !busIsTo ? '亀田支所着' : '着'}',
+                          '${formatDuration(endTime)}'
+                          '${isKameda && !isTo ? '亀田支所着' : '着'}',
                         ),
                       ),
                     ],

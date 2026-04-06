@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:dotto/api/api_environment.dart';
 import 'package:dotto/controller/config_controller.dart';
 import 'package:dotto/domain/tab_item.dart';
-import 'package:dotto/feature/bus/bus.dart';
+import 'package:dotto/feature/bus/bus_screen.dart';
 import 'package:dotto/feature/course/course_screen.dart';
 import 'package:dotto/feature/funch/funch.dart';
 import 'package:dotto/feature/map/map_screen.dart';
