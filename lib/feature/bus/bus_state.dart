@@ -11,9 +11,9 @@ abstract class BusState with _$BusState {
     required Map<String, Map<String, List<BusTrip>>> trips,
     required List<BusStop> allStops,
     required BusStop myBusStop,
-    @Default(true) bool isTo,
     required bool isWeekday,
-    @Default(false) bool isScrolled,
     required DateTime currentTime,
+    @Default(true) bool isTo,
+    @Default(false) bool isScrolled,
   }) = _BusState;
 }
