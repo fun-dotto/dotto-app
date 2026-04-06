@@ -8,6 +8,7 @@ import 'package:dotto/domain/personal_timetable_item.dart';
 import 'package:dotto/domain/subject_faculty.dart';
 import 'package:dotto/domain/subject_summary.dart';
 import 'package:flutter/foundation.dart';
+import 'package:meta/meta.dart';
 import 'package:openapi/openapi.dart' hide SubjectFaculty, SubjectSummary;
 
 abstract class PersonalCalendarRepository {
@@ -37,7 +38,7 @@ final class PersonalCalendarRepositoryImpl implements PersonalCalendarRepository
       for (final item in data.personalCalendarItems) {
         final dateKey = '${item.date.year}-${item.date.month}-${item.date.day}';
         final timetableItem = PersonalTimetableItem(
-          period: _toPeriod(item.period),
+          period: toPeriod(item.period),
           subject: SubjectSummary(
             id: item.subject.id,
             name: item.subject.name,
@@ -50,7 +51,7 @@ final class PersonalCalendarRepositoryImpl implements PersonalCalendarRepository
                 )
                 .toList(),
           ),
-          lectureStatus: _toLectureStatus(item.status),
+          lectureStatus: toLectureStatus(item.status),
           roomName: item.rooms.map((r) => r.name).join(', '),
         );
         itemsByDate.putIfAbsent(dateKey, () => <PersonalTimetableItem>[]).add(timetableItem);
@@ -68,7 +69,8 @@ final class PersonalCalendarRepositoryImpl implements PersonalCalendarRepository
     }
   }
 
-  Period _toPeriod(DottoFoundationV1Period period) {
+  @visibleForTesting
+  static Period toPeriod(DottoFoundationV1Period period) {
     return switch (period) {
       DottoFoundationV1Period.period1 => Period.first,
       DottoFoundationV1Period.period2 => Period.second,
@@ -80,7 +82,8 @@ final class PersonalCalendarRepositoryImpl implements PersonalCalendarRepository
     };
   }
 
-  LectureStatus _toLectureStatus(DottoFoundationV1PersonalCalendarItemStatus status) {
+  @visibleForTesting
+  static LectureStatus toLectureStatus(DottoFoundationV1PersonalCalendarItemStatus status) {
     return switch (status) {
       DottoFoundationV1PersonalCalendarItemStatus.cancelled => LectureStatus.cancelled,
       DottoFoundationV1PersonalCalendarItemStatus.makeup => LectureStatus.madeUp,
