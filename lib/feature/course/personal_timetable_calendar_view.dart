@@ -90,13 +90,16 @@ final class PersonalTimetableCalendarView extends HookConsumerWidget {
     required void Function(DateTime) onDateSelected,
     required bool isTimetableTimeVisible,
   }) {
-    final firstWeekDates = days.take(5).map((e) => e.date).toList();
-    final secondWeekDates = days.skip(5).take(5).map((e) => e.date).toList();
-    final datePages = [firstWeekDates, if (secondWeekDates.isNotEmpty) secondWeekDates];
+    // 5日ずつ週に分割
+    final datePages = <List<DateTime>>[];
+    for (var i = 0; i < days.length; i += 5) {
+      final end = (i + 5).clamp(0, days.length);
+      datePages.add(days.sublist(i, end).map((e) => e.date).toList());
+    }
     final clampedPage = days.isEmpty ? 0 : currentPage.clamp(0, days.length - 1);
-    final dateCarouselInitialPage = secondWeekDates.isNotEmpty && clampedPage >= 5 ? 1 : 0;
+    final dateCarouselInitialPage = datePages.isEmpty ? 0 : (clampedPage ~/ 5).clamp(0, datePages.length - 1);
     final currentDay = days.isEmpty ? null : days[clampedPage];
-    final displayWeekDates = datePages[dateCarouselInitialPage];
+    final displayWeekDates = datePages.isEmpty ? <DateTime>[] : datePages[dateCarouselInitialPage];
     final timetableHeight = currentDay == null ? 0.0 : _dayTimetableHeight(currentDay);
 
     return Column(
