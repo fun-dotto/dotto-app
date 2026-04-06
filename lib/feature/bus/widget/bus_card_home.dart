@@ -1,53 +1,42 @@
 import 'package:collection/collection.dart';
 import 'package:dotto/feature/bus/bus.dart';
-import 'package:dotto/feature/bus/controller/bus_data_controller.dart';
-import 'package:dotto/feature/bus/controller/bus_is_scrolled_controller.dart';
-import 'package:dotto/feature/bus/controller/bus_is_to_controller.dart';
-import 'package:dotto/feature/bus/controller/bus_is_weekday_controller.dart';
-import 'package:dotto/feature/bus/controller/bus_polling_controller.dart';
-import 'package:dotto/feature/bus/controller/my_bus_stop_controller.dart';
+import 'package:dotto/feature/bus/bus_reducer.dart';
 import 'package:dotto/feature/bus/widget/bus_card.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 final class BusCardHome extends ConsumerWidget {
   const BusCardHome({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final busData = ref.watch(busDataProvider);
-    final myBusStop = ref.watch(myBusStopProvider);
-    final busIsTo = ref.watch(busIsToProvider);
-    final busPolling = ref.watch(busPollingProvider);
-    final busIsWeekday = ref.watch(busIsWeekdayProvider);
+    final busState = ref.watch(busReducerProvider);
 
-    final fromToString = busIsTo ? 'to_fun' : 'from_fun';
-
-    return busData.when(
-      data: (data) {
-        final dataOfDay = data[fromToString]![busIsWeekday ? 'weekday' : 'holiday']!;
+    return busState.when(
+      data: (state) {
+        final fromToString = state.isTo ? 'to_fun' : 'from_fun';
+        final dataOfDay = state.trips[fromToString]![state.isWeekday ? 'weekday' : 'holiday']!;
         for (final busTrip in dataOfDay) {
           final funBusTripStop = busTrip.stops.firstWhereOrNull((element) => element.stop.id == 14023);
           if (funBusTripStop == null) {
             continue;
           }
-          var targetBusTripStop = busTrip.stops.firstWhereOrNull((element) => element.stop.id == myBusStop.id);
+          var targetBusTripStop = busTrip.stops.firstWhereOrNull((element) => element.stop.id == state.myBusStop.id);
           var kameda = false;
           if (targetBusTripStop == null) {
             targetBusTripStop = busTrip.stops.firstWhere((element) => element.stop.id == 14013);
             kameda = true;
           }
-          final fromBusTripStop = busIsTo ? targetBusTripStop : funBusTripStop;
-          final toBusTripStop = busIsTo ? funBusTripStop : targetBusTripStop;
-          final now = busPolling;
-          final nowDuration = Duration(hours: now.hour, minutes: now.minute);
+          final fromBusTripStop = state.isTo ? targetBusTripStop : funBusTripStop;
+          final toBusTripStop = state.isTo ? funBusTripStop : targetBusTripStop;
+          final nowDuration = Duration(hours: state.currentTime.hour, minutes: state.currentTime.minute);
           final arriveAt = fromBusTripStop.time - nowDuration;
           if (arriveAt.isNegative) {
             continue;
           }
           return InkWell(
             onTap: () {
-              ref.read(busIsScrolledProvider.notifier).value = false;
+              ref.read(busReducerProvider.notifier).setScrolled(value: false);
               Navigator.of(context).push(
                 MaterialPageRoute<void>(
                   builder: (_) => const BusScreen(),
@@ -56,10 +45,12 @@ final class BusCardHome extends ConsumerWidget {
               );
             },
             child: BusCard(
-              busTrip.route,
-              fromBusTripStop.time,
-              toBusTripStop.time,
-              arriveAt,
+              route: busTrip.route,
+              beginTime: fromBusTripStop.time,
+              endTime: toBusTripStop.time,
+              arriveAt: arriveAt,
+              isTo: state.isTo,
+              myBusStopName: state.myBusStop.name,
               isKameda: kameda,
               home: true,
             ),
@@ -74,7 +65,15 @@ final class BusCardHome extends ConsumerWidget {
               ),
             );
           },
-          child: const BusCard('0', Duration.zero, Duration.zero, Duration.zero, home: true),
+          child: const BusCard(
+            route: '0',
+            beginTime: Duration.zero,
+            endTime: Duration.zero,
+            arriveAt: Duration.zero,
+            isTo: true,
+            myBusStopName: '',
+            home: true,
+          ),
         );
       },
       error: (error, stackTrace) => const SizedBox.shrink(),

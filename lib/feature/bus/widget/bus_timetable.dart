@@ -1,5 +1,5 @@
+import 'package:dotto/feature/bus/bus_reducer.dart';
 import 'package:dotto/feature/bus/domain/bus_trip.dart';
-import 'package:dotto/feature/bus/repository/bus_repository.dart';
 import 'package:flutter/material.dart';
 
 final class BusTimetableScreen extends StatelessWidget {
@@ -15,10 +15,7 @@ final class BusTimetableScreen extends StatelessWidget {
           final terminal = busTripStop.terminal;
           return ListTile(
             title: Text(busTripStop.stop.name),
-            trailing: Text(
-              BusRepository().formatDuration(busTripStop.time),
-              style: Theme.of(context).textTheme.labelMedium,
-            ),
+            trailing: Text(formatDuration(busTripStop.time), style: Theme.of(context).textTheme.labelMedium),
             subtitle: terminal != null ? Text('$terminal番乗り場') : null,
           );
         }).toList(),
