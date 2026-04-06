@@ -66,12 +66,7 @@ Future<void> main() async {
   try {
     await Future(() {
       // Firebaseからファイルをダウンロード
-      <String>[
-        'funch/menu.json',
-        'home/cancel_lecture.json',
-        'home/sup_lecture.json',
-        'map/oneweek_schedule.json',
-      ].forEach(FirebaseStorageRepository().download);
+      <String>['funch/menu.json'].forEach(FirebaseStorageRepository().download);
     });
   } on Exception catch (e) {
     debugPrint(e.toString());
