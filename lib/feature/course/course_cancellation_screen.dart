@@ -6,6 +6,7 @@ import 'package:dotto_design_system/component/button.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:openapi/openapi.dart';
+import 'package:shimmer_animation/shimmer_animation.dart';
 
 final class CourseCancellationScreen extends ConsumerWidget {
   const CourseCancellationScreen({super.key});
@@ -66,12 +67,55 @@ final class CourseCancellationScreen extends ConsumerWidget {
               ),
             ],
           ),
-          AsyncLoading() => const Center(child: CircularProgressIndicator()),
+          AsyncLoading() => const _LoadingSkeleton(),
           AsyncError() => const Center(child: Text('データの取得に失敗しました。')),
         },
       ),
     );
   }
+}
+
+class _LoadingSkeleton extends StatelessWidget {
+  const _LoadingSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.separated(
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: 8,
+      separatorBuilder: (_, _) => const Divider(height: 0),
+      itemBuilder: (_, _) => const _ListTileSkeleton(),
+    );
+  }
+}
+
+class _ListTileSkeleton extends StatelessWidget {
+  const _ListTileSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _skeletonBox(height: 12, width: 120),
+          const SizedBox(height: 8),
+          _skeletonBox(height: 14, width: 200),
+        ],
+      ),
+    );
+  }
+}
+
+Widget _skeletonBox({required double height, required double width}) {
+  return Shimmer(
+    child: Container(
+      width: width,
+      height: height,
+      decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(4)),
+    ),
+  );
 }
 
 class _CancelledClassList extends StatelessWidget {
@@ -197,7 +241,10 @@ class _RoomChangeList extends StatelessWidget {
               '${_formatDate(item.date)} ${_formatPeriod(item.period)}',
               style: Theme.of(context).textTheme.labelMedium,
             ),
-            subtitle: Text('${item.subject.name}\n${item.originalRoom.name} → ${item.newRoom.name}'),
+            subtitle: Text(
+              '${item.subject.name}\n'
+              '${item.originalRoom.name} → ${item.newRoom.name}',
+            ),
           );
         },
       ),
