@@ -1,11 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dotto/domain/academic_area.dart';
 import 'package:dotto/domain/academic_class.dart';
 import 'package:dotto/domain/dotto_user.dart';
 import 'package:dotto/domain/grade.dart';
-import 'package:dotto/domain/user_preference_keys.dart';
 import 'package:dotto/helper/firebase_auth_helper.dart';
-import 'package:dotto/helper/user_preference_repository.dart';
+import 'package:dotto/repository/repository_provider.dart';
 import 'package:dotto/repository/user_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -28,25 +26,23 @@ final Provider<bool> isAuthenticatedProvider = Provider.autoDispose<bool>((ref) 
 final class UserNotifier extends _$UserNotifier {
   @override
   Future<DottoUser> build() async {
-    ref.watch(firebaseAuthStateChangesProvider);
-    final firebaseUser = FirebaseAuth.instance.currentUser;
-    debugPrint('FCM Token: ${await FirebaseMessaging.instance.getToken()}');
-    final didSaveFCMToken = await UserPreferenceRepository.getBool(UserPreferenceKeys.didSaveFCMToken);
-    if (firebaseUser != null && didSaveFCMToken == false) {
+    final authState = ref.watch(firebaseAuthStateChangesProvider);
+    final firebaseUser = authState.value;
+    if (firebaseUser != null) {
+      debugPrint('FCM Token: ${await FirebaseMessaging.instance.getToken()}');
       await _saveFCMToken(firebaseUser);
     }
-    return _syncUser();
+    return _syncUser(firebaseUser);
   }
 
   Future<void> refresh() async {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
       final firebaseUser = FirebaseAuth.instance.currentUser;
-      final didSaveFCMToken = await UserPreferenceRepository.getBool(UserPreferenceKeys.didSaveFCMToken);
-      if (firebaseUser != null && didSaveFCMToken == false) {
+      if (firebaseUser != null) {
         await _saveFCMToken(firebaseUser);
       }
-      return _syncUser();
+      return _syncUser(firebaseUser);
     });
   }
 
@@ -55,7 +51,7 @@ final class UserNotifier extends _$UserNotifier {
     state = await AsyncValue.guard(() async {
       final firebaseUser = await FirebaseAuthHelper.signIn();
       await _saveFCMToken(firebaseUser);
-      return _syncUser();
+      return _syncUser(firebaseUser);
     });
   }
 
@@ -63,7 +59,7 @@ final class UserNotifier extends _$UserNotifier {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
       await FirebaseAuthHelper.signOut();
-      return _syncUser();
+      return _syncUser(null);
     });
   }
 
@@ -101,9 +97,8 @@ final class UserNotifier extends _$UserNotifier {
     }
   }
 
-  Future<DottoUser> _syncUser() async {
+  Future<DottoUser> _syncUser(User? firebaseUser) async {
     const defaultUser = DottoUser(id: '', name: '', email: '', avatarUrl: '', grade: null, course: null, class_: null);
-    final firebaseUser = FirebaseAuth.instance.currentUser;
     if (firebaseUser == null) {
       return defaultUser;
     }
@@ -133,14 +128,6 @@ final class UserNotifier extends _$UserNotifier {
     if (fcmToken == null) {
       return;
     }
-    final db = FirebaseFirestore.instance;
-    final tokenRef = db.collection('fcm_token');
-    final tokenQuery = tokenRef.where('uid', isEqualTo: firebaseUser.uid).where('token', isEqualTo: fcmToken);
-    final tokenQuerySnapshot = await tokenQuery.get();
-    final tokenDocs = tokenQuerySnapshot.docs;
-    if (tokenDocs.isEmpty) {
-      await tokenRef.add({'uid': firebaseUser.uid, 'token': fcmToken, 'last_updated': Timestamp.now()});
-    }
-    await UserPreferenceRepository.setBool(UserPreferenceKeys.didSaveFCMToken, value: true);
+    await ref.read(fcmTokenRepositoryProvider).upsertToken(token: fcmToken);
   }
 }

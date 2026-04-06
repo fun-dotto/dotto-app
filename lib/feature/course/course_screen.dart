@@ -126,18 +126,8 @@ final class CourseScreen extends HookConsumerWidget {
         ),
     ];
 
-    useEffect(() {
-      if (!isAuthenticated) {
-        return null;
-      }
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!context.mounted || !isAuthenticated) {
-          return;
-        }
-        unawaited(ref.read(courseReducerProvider.notifier).refresh());
-      });
-      return null;
-    }, [isAuthenticated]);
+    // courseReducerProvider.build() already fetches data when first watched.
+    // No need to call refresh() here as it would duplicate the initial API call.
 
     useEffect(() {
       final days = state.value?.days;

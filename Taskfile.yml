@@ -137,9 +137,7 @@ tasks:
   analyze:
     desc: Analyze Dart code
     cmds:
-      - task install
-      - task build
-      - "{{.FLUTTER}} analyze ./lib/ ./test/"
+      - "{{.DART}} analyze ./lib/ ./test/"
 
   build-ios:
     desc: Build iOS release

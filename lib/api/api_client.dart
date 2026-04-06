@@ -12,7 +12,7 @@ final apiClientProvider = Provider<Openapi>(
     interceptors: [
       InterceptorsWrapper(
         onRequest: (options, handler) async {
-          debugPrint('onRequest: ${options.uri}');
+          debugPrint('Request: ${options.method} ${options.uri}');
           final appCheckToken = await FirebaseAppCheck.instance.getToken();
           if (appCheckToken != null) {
             options.headers['X-Firebase-AppCheck'] = 'Bearer $appCheckToken';
@@ -22,6 +22,18 @@ final apiClientProvider = Provider<Openapi>(
             options.headers['Authorization'] = 'Bearer $idToken';
           }
           return handler.next(options);
+        },
+        onResponse: (response, handler) {
+          debugPrint(
+            'Response: ${response.statusCode} ${response.requestOptions.method} ${response.requestOptions.uri}',
+          );
+          return handler.next(response);
+        },
+        onError: (error, handler) {
+          debugPrint(
+            'Response: ${error.response?.statusCode} ${error.requestOptions.method} ${error.requestOptions.uri}',
+          );
+          return handler.next(error);
         },
       ),
     ],
