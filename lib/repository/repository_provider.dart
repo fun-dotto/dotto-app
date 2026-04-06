@@ -24,9 +24,10 @@ final roomRepositoryProvider = Provider<RoomRepository>((_) => RoomRepositoryImp
 
 final oneWeekScheduleRepositoryProvider = Provider<OneWeekScheduleRepository>((_) => OneWeekScheduleRepositoryImpl());
 
-final personalCalendarRepositoryProvider = Provider<PersonalCalendarRepository>(
-  (_) => PersonalCalendarRepositoryImpl(),
-);
+final personalCalendarRepositoryProvider = Provider<PersonalCalendarRepository>((ref) {
+  final apiClient = ref.watch(apiClientProvider);
+  return PersonalCalendarRepositoryImpl(apiClient);
+});
 
 final lectureCancellationRepositoryProvider = Provider<LectureCancellationRepository>(
   (_) => LectureCancellationRepositoryImpl(),
