@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dotto/api/api_environment.dart';
 import 'package:dotto/controller/config_controller.dart';
 import 'package:dotto/domain/tab_item.dart';
@@ -95,37 +97,44 @@ final class RootScreen extends ConsumerWidget {
           }
         });
 
-        return Scaffold(
-          resizeToAvoidBottomInset: false,
-          body: IndexedStack(
-            index: activeTabs.indexOf(value.selectedTab),
-            children: activeTabs.map((tab) {
-              return Navigator(
-                key: value.navigatorKeys[tab],
-                onGenerateRoute: (settings) {
-                  return MaterialPageRoute(
-                    builder: (context) => _tabRoot(tab: tab, ref: ref),
-                  );
-                },
-              );
-            }).toList(),
-          ),
-          bottomNavigationBar: NavigationBar(
-            backgroundColor: switch (environment) {
-              Environment.production => null,
-              Environment.staging => Colors.orange.withValues(alpha: 0.15),
-              Environment.development => Colors.blue.withValues(alpha: 0.15),
-              Environment.qa => Colors.purple.withValues(alpha: 0.15),
-            },
-            onDestinationSelected: ref.read(rootViewModelProvider.notifier).onTabItemTapped,
-            selectedIndex: activeTabs.indexOf(value.selectedTab),
-            destinations: activeTabs.map((tab) {
-              return NavigationDestination(
-                selectedIcon: Icon(tab.selectedIcon),
-                icon: Icon(tab.icon),
-                label: tab.label,
-              );
-            }).toList(),
+        return PopScope(
+          canPop: Platform.isIOS,
+          onPopInvokedWithResult: (didPop, result) async {
+            if (didPop) return;
+            await value.navigatorKeys[value.selectedTab]?.currentState?.maybePop();
+          },
+          child: Scaffold(
+            resizeToAvoidBottomInset: false,
+            body: IndexedStack(
+              index: activeTabs.indexOf(value.selectedTab),
+              children: activeTabs.map((tab) {
+                return Navigator(
+                  key: value.navigatorKeys[tab],
+                  onGenerateRoute: (settings) {
+                    return MaterialPageRoute(
+                      builder: (context) => _tabRoot(tab: tab, ref: ref),
+                    );
+                  },
+                );
+              }).toList(),
+            ),
+            bottomNavigationBar: NavigationBar(
+              backgroundColor: switch (environment) {
+                Environment.production => null,
+                Environment.staging => Colors.orange.withValues(alpha: 0.15),
+                Environment.development => Colors.blue.withValues(alpha: 0.15),
+                Environment.qa => Colors.purple.withValues(alpha: 0.15),
+              },
+              onDestinationSelected: ref.read(rootViewModelProvider.notifier).onTabItemTapped,
+              selectedIndex: activeTabs.indexOf(value.selectedTab),
+              destinations: activeTabs.map((tab) {
+                return NavigationDestination(
+                  selectedIcon: Icon(tab.selectedIcon),
+                  icon: Icon(tab.icon),
+                  label: tab.label,
+                );
+              }).toList(),
+            ),
           ),
         );
 
