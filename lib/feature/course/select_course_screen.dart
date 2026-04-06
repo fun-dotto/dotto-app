@@ -64,11 +64,11 @@ final class SelectCourseScreen extends HookConsumerWidget {
                     )
                   : DottoButton(
                       onPressed: () async {
-                        if (selectedCount >= 3 && context.mounted) {
+                        if (selectedCount >= 2 && context.mounted) {
                           ScaffoldMessenger.of(context).removeCurrentSnackBar();
                           ScaffoldMessenger.of(
                             context,
-                          ).showSnackBar(const SnackBar(content: Text('1つのコマに3科目以上を設定できません')));
+                          ).showSnackBar(const SnackBar(content: Text('1つのコマに2科目以上を設定できません')));
                           return;
                         }
                         await courseRegistrationRepository.registerCourse(item.subject.id);
