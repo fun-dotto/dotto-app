@@ -45,7 +45,7 @@ final class CourseScreen extends HookConsumerWidget {
         ),
       if (isAuthenticated)
         QuickButton(
-          label: '休講・補講',
+          label: '休講・補講・教室変更',
           iconUrl: null,
           fallbackIcon: Icons.cached,
           onPressed: () => Navigator.of(context).push(
