@@ -1,5 +1,3 @@
-import 'package:dotto/domain/semester.dart';
-import 'package:dotto/domain/subject_summary.dart';
 import 'package:dotto/feature/course/course_state.dart';
 import 'package:dotto/repository/repository_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -46,43 +44,36 @@ final class CourseReducer extends _$CourseReducer {
       return const CourseState();
     }
 
-    final courseRegistrationRepository = ref.read(courseRegistrationRepositoryProvider);
-    final lectureCancellationRepository = ref.read(lectureCancellationRepositoryProvider);
-    final oneWeekScheduleRepository = ref.read(oneWeekScheduleRepositoryProvider);
     final personalCalendarRepository = ref.read(personalCalendarRepositoryProvider);
 
-    final (courseRegistrations, lectureCancellationData, schedules) = await (
-      courseRegistrationRepository.getCourseRegistrations(Semester.values),
-      lectureCancellationRepository.getLectureCancellationData(),
-      oneWeekScheduleRepository.getSchedules(),
-    ).wait;
+    final now = ref.read(clockProvider);
+    final today = now();
+    final todayDate = DateTime(today.year, today.month, today.day);
+
+    // 初期表示週の月曜日を決定
+    // 平日 → 今週の月曜日、土日 → 翌週の月曜日
+    final DateTime anchorMonday;
+    if (todayDate.weekday <= DateTime.friday) {
+      anchorMonday = todayDate.subtract(Duration(days: todayDate.weekday - 1));
+    } else {
+      anchorMonday = todayDate.add(Duration(days: DateTime.monday + 7 - todayDate.weekday));
+    }
+
+    // 4週間分の週を生成（初期表示週の1週前〜2週後）
+    final weeks = List.generate(4, (i) {
+      final weekMonday = anchorMonday.add(Duration(days: (i - 1) * 7));
+      return List.generate(5, (j) => weekMonday.add(Duration(days: j)));
+    });
+
+    // 週ごとにAPIを呼び出し
+    final weekResults = await Future.wait(
+      weeks.map((weekDates) => personalCalendarRepository.getPersonalTimetableDays(targetDates: weekDates)),
+    );
     if (!ref.mounted) {
       return const CourseState();
     }
 
-    final registeredSubjectsByName = <String, SubjectSummary>{
-      for (final registration in courseRegistrations) registration.subject.name: registration.subject,
-    };
-    final registeredSubjectsById = <String, SubjectSummary>{
-      for (final registration in courseRegistrations) registration.subject.id: registration.subject,
-    };
-    final now = ref.read(clockProvider);
-    final today = now();
-    final todayDate = DateTime(today.year, today.month, today.day);
-    final thisWeekMonday = todayDate.subtract(Duration(days: todayDate.weekday - 1));
-    final targetDates = List.generate(
-      14,
-      (index) => thisWeekMonday.add(Duration(days: index)),
-    ).where((date) => date.weekday <= DateTime.friday).toList();
-
-    final days = personalCalendarRepository.getPersonalTimetableDays(
-      targetDates: targetDates,
-      schedules: schedules,
-      registeredSubjectsById: registeredSubjectsById,
-      registeredSubjectsByName: registeredSubjectsByName,
-      cancelledByDate: lectureCancellationData.cancelledByDate,
-      madeUpByDate: lectureCancellationData.madeUpByDate,
-    );
+    final days = weekResults.expand((week) => week).toList();
     return CourseState(days: days);
   }
 }

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dotto/controller/dotto_user_preference_controller.dart';
@@ -90,13 +91,18 @@ final class PersonalTimetableCalendarView extends HookConsumerWidget {
     required void Function(DateTime) onDateSelected,
     required bool isTimetableTimeVisible,
   }) {
-    final firstWeekDates = days.take(5).map((e) => e.date).toList();
-    final secondWeekDates = days.skip(5).take(5).map((e) => e.date).toList();
-    final datePages = [firstWeekDates, if (secondWeekDates.isNotEmpty) secondWeekDates];
-    final clampedPage = days.isEmpty ? 0 : currentPage.clamp(0, days.length - 1);
-    final dateCarouselInitialPage = secondWeekDates.isNotEmpty && clampedPage >= 5 ? 1 : 0;
+    // 5日ずつ週に分割
+    final datePages = <List<DateTime>>[];
+    for (var i = 0; i < days.length; i += 5) {
+      final end = math.min(i + 5, days.length);
+      datePages.add(days.sublist(i, end).map((e) => e.date).toList());
+    }
+    final clampedPage = days.isEmpty ? 0 : math.max(0, math.min(currentPage, days.length - 1));
+    final dateCarouselInitialPage = datePages.isEmpty
+        ? 0
+        : math.max(0, math.min(clampedPage ~/ 5, datePages.length - 1));
     final currentDay = days.isEmpty ? null : days[clampedPage];
-    final displayWeekDates = datePages[dateCarouselInitialPage];
+    final displayWeekDates = datePages.isEmpty ? <DateTime>[] : datePages[dateCarouselInitialPage];
     final timetableHeight = currentDay == null ? 0.0 : _dayTimetableHeight(currentDay);
 
     return Column(
@@ -135,7 +141,9 @@ final class PersonalTimetableCalendarView extends HookConsumerWidget {
               if (pageDates.isEmpty || pageDates.any((date) => _isSameDate(date, selectedDate))) {
                 return;
               }
-              onDateSelected(pageDates.first);
+              // 前の週へ戻った場合は金曜日、進んだ場合は月曜日を選択
+              final prevWeekIndex = dateCarouselInitialPage;
+              onDateSelected(index < prevWeekIndex ? pageDates.last : pageDates.first);
             },
           ),
         ),
@@ -335,6 +343,7 @@ final class PersonalTimetableCalendarView extends HookConsumerWidget {
         onPressed: item == null ? null : () => onSubjectSelected(item.subject),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          spacing: 8,
           children: [
             Expanded(
               child: Row(
@@ -345,14 +354,18 @@ final class PersonalTimetableCalendarView extends HookConsumerWidget {
                       item?.subject.name ?? '',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(fontSize: 16, color: SemanticColor.light.labelPrimary),
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: SemanticColor.light.labelPrimary),
                     ),
                   ),
                   if (item != null) _lectureStatusLabel(item.lectureStatus),
                 ],
               ),
             ),
-            Text(item?.roomName ?? '', style: TextStyle(fontSize: 12, color: SemanticColor.light.labelSecondary)),
+            if (item != null && item.roomName.trim().isNotEmpty)
+              Text(
+                item.roomName,
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(color: SemanticColor.light.labelSecondary),
+              ),
           ],
         ),
       ),

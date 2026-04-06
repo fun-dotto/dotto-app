@@ -137,8 +137,15 @@ final class CourseScreen extends HookConsumerWidget {
       if (selectedDate.value == null || !days.any((e) => _isSameDate(e.date, selectedDate.value!))) {
         final now = DateTime.now();
         final today = DateTime(now.year, now.month, now.day);
-        final todayEntry = days.where((e) => _isSameDate(e.date, today));
-        selectedDate.value = todayEntry.isNotEmpty ? todayEntry.first.date : days.first.date;
+        // 平日 → 今日、土日 → 次の月曜日
+        final DateTime initialDate;
+        if (today.weekday <= DateTime.friday) {
+          initialDate = today;
+        } else {
+          initialDate = today.add(Duration(days: DateTime.monday + 7 - today.weekday));
+        }
+        final matchingEntry = days.where((e) => _isSameDate(e.date, initialDate));
+        selectedDate.value = matchingEntry.isNotEmpty ? matchingEntry.first.date : days.first.date;
       }
       return null;
     }, [state]);
