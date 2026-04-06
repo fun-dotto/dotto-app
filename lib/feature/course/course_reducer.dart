@@ -49,16 +49,31 @@ final class CourseReducer extends _$CourseReducer {
     final now = ref.read(clockProvider);
     final today = now();
     final todayDate = DateTime(today.year, today.month, today.day);
-    final thisWeekMonday = todayDate.subtract(Duration(days: todayDate.weekday - 1));
-    final targetDates = List.generate(
-      14,
-      (index) => thisWeekMonday.add(Duration(days: index)),
-    ).where((date) => date.weekday <= DateTime.friday).toList();
 
-    final days = await personalCalendarRepository.getPersonalTimetableDays(targetDates: targetDates);
+    // 初期表示週の月曜日を決定
+    // 平日 → 今週の月曜日、土日 → 翌週の月曜日
+    final DateTime anchorMonday;
+    if (todayDate.weekday <= DateTime.friday) {
+      anchorMonday = todayDate.subtract(Duration(days: todayDate.weekday - 1));
+    } else {
+      anchorMonday = todayDate.add(Duration(days: DateTime.monday + 7 - todayDate.weekday));
+    }
+
+    // 4週間分の週を生成（初期表示週の1週前〜2週後）
+    final weeks = List.generate(4, (i) {
+      final weekMonday = anchorMonday.add(Duration(days: (i - 1) * 7));
+      return List.generate(5, (j) => weekMonday.add(Duration(days: j)));
+    });
+
+    // 週ごとにAPIを呼び出し
+    final weekResults = await Future.wait(
+      weeks.map((weekDates) => personalCalendarRepository.getPersonalTimetableDays(targetDates: weekDates)),
+    );
     if (!ref.mounted) {
       return const CourseState();
     }
+
+    final days = weekResults.expand((week) => week).toList();
     return CourseState(days: days);
   }
 }
