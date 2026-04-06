@@ -7,7 +7,7 @@ import 'package:openapi/openapi.dart';
 final roomChangeRepositoryProvider = Provider<RoomChangeRepository>(RoomChangeRepositoryImpl.new);
 
 abstract class RoomChangeRepository {
-  Future<BuiltList<RoomChange>> getRoomChanges();
+  Future<BuiltList<RoomChange>> getRoomChanges({BuiltList<String>? subjectIds});
 }
 
 final class RoomChangeRepositoryImpl implements RoomChangeRepository {
@@ -16,10 +16,10 @@ final class RoomChangeRepositoryImpl implements RoomChangeRepository {
   final Ref ref;
 
   @override
-  Future<BuiltList<RoomChange>> getRoomChanges() async {
+  Future<BuiltList<RoomChange>> getRoomChanges({BuiltList<String>? subjectIds}) async {
     try {
       final api = ref.read(apiClientProvider).getRoomChangesApi();
-      final response = await api.roomChangesV1List(from: Date.now());
+      final response = await api.roomChangesV1List(from: Date.now(), subjectIds: subjectIds);
       if (response.statusCode != 200) {
         throw Exception('Failed to get room changes');
       }

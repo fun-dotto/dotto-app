@@ -1,10 +1,10 @@
+import 'package:built_collection/built_collection.dart';
 import 'package:dotto/domain/semester.dart';
 import 'package:dotto/feature/course/course_cancellation_state.dart';
 import 'package:dotto/repository/cancelled_class_repository.dart';
 import 'package:dotto/repository/makeup_class_repository.dart';
 import 'package:dotto/repository/repository_provider.dart';
 import 'package:dotto/repository/room_change_repository.dart';
-import 'package:openapi/openapi.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'course_cancellation_reducer.g.dart';
@@ -18,73 +18,40 @@ final class CourseCancellationReducer extends _$CourseCancellationReducer {
 
   Future<void> refresh() async {
     final current = state.value;
+    state = const AsyncLoading();
     state = await AsyncValue.guard(() => _createState(isFiltered: current?.isFiltered ?? false));
   }
 
   Future<void> toggleFilter() async {
     final current = state.value;
-    if (current == null) {
-      await refresh();
-      return;
-    }
-
-    final nextIsFiltered = !current.isFiltered;
-    state = AsyncData(
-      current.copyWith(
-        cancelledClasses: nextIsFiltered
-            ? _filterCancelledClasses(current.allCancelledClasses, current.takingSubjectIds)
-            : current.allCancelledClasses,
-        makeupClasses: nextIsFiltered
-            ? _filterMakeupClasses(current.allMakeupClasses, current.takingSubjectIds)
-            : current.allMakeupClasses,
-        roomChanges: nextIsFiltered
-            ? _filterRoomChanges(current.allRoomChanges, current.takingSubjectIds)
-            : current.allRoomChanges,
-        isFiltered: nextIsFiltered,
-      ),
-    );
+    final nextIsFiltered = !(current?.isFiltered ?? false);
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() => _createState(isFiltered: nextIsFiltered));
   }
 
   Future<CourseCancellationState> _createState({required bool isFiltered}) async {
     final cancelledClassRepository = ref.read(cancelledClassRepositoryProvider);
     final makeupClassRepository = ref.read(makeupClassRepositoryProvider);
     final roomChangeRepository = ref.read(roomChangeRepositoryProvider);
-    final courseRegistrationRepository = ref.read(courseRegistrationRepositoryProvider);
 
-    final (allCancelledClasses, allMakeupClasses, allRoomChanges, courseRegistrations) = await (
-      cancelledClassRepository.getCancelledClasses(),
-      makeupClassRepository.getMakeupClasses(),
-      roomChangeRepository.getRoomChanges(),
-      courseRegistrationRepository.getCourseRegistrations(Semester.values),
+    BuiltList<String>? subjectIds;
+    if (isFiltered) {
+      final courseRegistrationRepository = ref.read(courseRegistrationRepositoryProvider);
+      final courseRegistrations = await courseRegistrationRepository.getCourseRegistrations(Semester.values);
+      subjectIds = BuiltList<String>(courseRegistrations.map((r) => r.subject.id));
+    }
+
+    final (cancelledClasses, makeupClasses, roomChanges) = await (
+      cancelledClassRepository.getCancelledClasses(subjectIds: subjectIds),
+      makeupClassRepository.getMakeupClasses(subjectIds: subjectIds),
+      roomChangeRepository.getRoomChanges(subjectIds: subjectIds),
     ).wait;
 
-    final takingSubjectIds = {for (final registration in courseRegistrations) registration.subject.id};
-
     return CourseCancellationState(
-      cancelledClasses: isFiltered
-          ? _filterCancelledClasses(allCancelledClasses.toList(), takingSubjectIds)
-          : allCancelledClasses.toList(),
-      allCancelledClasses: allCancelledClasses.toList(),
-      makeupClasses: isFiltered
-          ? _filterMakeupClasses(allMakeupClasses.toList(), takingSubjectIds)
-          : allMakeupClasses.toList(),
-      allMakeupClasses: allMakeupClasses.toList(),
-      roomChanges: isFiltered ? _filterRoomChanges(allRoomChanges.toList(), takingSubjectIds) : allRoomChanges.toList(),
-      allRoomChanges: allRoomChanges.toList(),
-      takingSubjectIds: takingSubjectIds,
+      cancelledClasses: cancelledClasses.toList(),
+      makeupClasses: makeupClasses.toList(),
+      roomChanges: roomChanges.toList(),
       isFiltered: isFiltered,
     );
-  }
-
-  List<CancelledClass> _filterCancelledClasses(List<CancelledClass> classes, Set<String> subjectIds) {
-    return classes.where((c) => subjectIds.contains(c.subject.id)).toList();
-  }
-
-  List<MakeupClass> _filterMakeupClasses(List<MakeupClass> classes, Set<String> subjectIds) {
-    return classes.where((c) => subjectIds.contains(c.subject.id)).toList();
-  }
-
-  List<RoomChange> _filterRoomChanges(List<RoomChange> changes, Set<String> subjectIds) {
-    return changes.where((c) => subjectIds.contains(c.subject.id)).toList();
   }
 }

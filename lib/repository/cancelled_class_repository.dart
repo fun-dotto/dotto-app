@@ -7,7 +7,7 @@ import 'package:openapi/openapi.dart';
 final cancelledClassRepositoryProvider = Provider<CancelledClassRepository>(CancelledClassRepositoryImpl.new);
 
 abstract class CancelledClassRepository {
-  Future<BuiltList<CancelledClass>> getCancelledClasses();
+  Future<BuiltList<CancelledClass>> getCancelledClasses({BuiltList<String>? subjectIds});
 }
 
 final class CancelledClassRepositoryImpl implements CancelledClassRepository {
@@ -16,10 +16,10 @@ final class CancelledClassRepositoryImpl implements CancelledClassRepository {
   final Ref ref;
 
   @override
-  Future<BuiltList<CancelledClass>> getCancelledClasses() async {
+  Future<BuiltList<CancelledClass>> getCancelledClasses({BuiltList<String>? subjectIds}) async {
     try {
       final api = ref.read(apiClientProvider).getCancelledClassesApi();
-      final response = await api.cancelledClassesV1List(from: Date.now());
+      final response = await api.cancelledClassesV1List(from: Date.now(), subjectIds: subjectIds);
       if (response.statusCode != 200) {
         throw Exception('Failed to get cancelled classes');
       }

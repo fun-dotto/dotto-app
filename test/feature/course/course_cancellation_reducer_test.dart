@@ -39,8 +39,9 @@ final class FakeCancelledClassRepository implements CancelledClassRepository {
   final BuiltList<CancelledClass> result;
 
   @override
-  Future<BuiltList<CancelledClass>> getCancelledClasses() async {
-    return result;
+  Future<BuiltList<CancelledClass>> getCancelledClasses({BuiltList<String>? subjectIds}) async {
+    if (subjectIds == null) return result;
+    return BuiltList(result.where((c) => subjectIds.contains(c.subject.id)));
   }
 }
 
@@ -50,8 +51,9 @@ final class FakeMakeupClassRepository implements MakeupClassRepository {
   final BuiltList<MakeupClass> result;
 
   @override
-  Future<BuiltList<MakeupClass>> getMakeupClasses() async {
-    return result;
+  Future<BuiltList<MakeupClass>> getMakeupClasses({BuiltList<String>? subjectIds}) async {
+    if (subjectIds == null) return result;
+    return BuiltList(result.where((c) => subjectIds.contains(c.subject.id)));
   }
 }
 
@@ -61,8 +63,9 @@ final class FakeRoomChangeRepository implements RoomChangeRepository {
   final BuiltList<RoomChange> result;
 
   @override
-  Future<BuiltList<RoomChange>> getRoomChanges() async {
-    return result;
+  Future<BuiltList<RoomChange>> getRoomChanges({BuiltList<String>? subjectIds}) async {
+    if (subjectIds == null) return result;
+    return BuiltList(result.where((c) => subjectIds.contains(c.subject.id)));
   }
 }
 
