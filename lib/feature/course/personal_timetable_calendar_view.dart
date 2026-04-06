@@ -340,6 +340,7 @@ final class PersonalTimetableCalendarView extends HookConsumerWidget {
         onPressed: item == null ? null : () => onSubjectSelected(item.subject),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          spacing: 8,
           children: [
             Expanded(
               child: Row(
@@ -350,14 +351,18 @@ final class PersonalTimetableCalendarView extends HookConsumerWidget {
                       item?.subject.name ?? '',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(fontSize: 16, color: SemanticColor.light.labelPrimary),
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: SemanticColor.light.labelPrimary),
                     ),
                   ),
                   if (item != null) _lectureStatusLabel(item.lectureStatus),
                 ],
               ),
             ),
-            Text(item?.roomName ?? '', style: TextStyle(fontSize: 12, color: SemanticColor.light.labelSecondary)),
+            if (item != null)
+              Text(
+                item.roomName,
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(color: SemanticColor.light.labelSecondary),
+              ),
           ],
         ),
       ),
