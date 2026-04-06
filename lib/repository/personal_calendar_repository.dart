@@ -26,7 +26,7 @@ final class PersonalCalendarRepositoryImpl implements PersonalCalendarRepository
       final dates = BuiltList<Date>(targetDates.map((d) => Date(d.year, d.month, d.day)));
       final response = await api.personalCalendarItemsV1List(dates: dates);
       if (response.statusCode != 200) {
-        throw Exception('Failed to get personal calendar items');
+        throw Exception('Failed to get personal calendar items: status ${response.statusCode}');
       }
       final data = response.data;
       if (data == null) {
@@ -76,7 +76,7 @@ final class PersonalCalendarRepositoryImpl implements PersonalCalendarRepository
       DottoFoundationV1Period.period4 => Period.fourth,
       DottoFoundationV1Period.period5 => Period.fifth,
       DottoFoundationV1Period.period6 => Period.sixth,
-      _ => Period.first,
+      _ => throw UnsupportedError('Unsupported DottoFoundationV1Period: $period'),
     };
   }
 
