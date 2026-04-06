@@ -1,11 +1,14 @@
 import 'package:dotto/api/api_client.dart';
 import 'package:dotto/repository/course_registration_repository.dart';
+import 'package:dotto/repository/fcm_token_repository.dart';
 import 'package:dotto/repository/lecture_cancellation_repository.dart';
 import 'package:dotto/repository/oneweek_schedule_repository.dart';
 import 'package:dotto/repository/personal_calendar_repository.dart';
 import 'package:dotto/repository/room_repository.dart';
 import 'package:dotto/repository/timetable_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+final fcmTokenRepositoryProvider = Provider<FCMTokenRepository>(FCMTokenRepositoryImpl.new);
 
 final courseRegistrationRepositoryProvider = Provider<CourseRegistrationRepository>((ref) {
   final apiClient = ref.watch(apiClientProvider);
