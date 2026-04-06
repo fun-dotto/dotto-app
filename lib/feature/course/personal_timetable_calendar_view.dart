@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dotto/controller/dotto_user_preference_controller.dart';
@@ -93,11 +94,13 @@ final class PersonalTimetableCalendarView extends HookConsumerWidget {
     // 5日ずつ週に分割
     final datePages = <List<DateTime>>[];
     for (var i = 0; i < days.length; i += 5) {
-      final end = (i + 5).clamp(0, days.length);
+      final end = math.min(i + 5, days.length);
       datePages.add(days.sublist(i, end).map((e) => e.date).toList());
     }
-    final clampedPage = days.isEmpty ? 0 : currentPage.clamp(0, days.length - 1);
-    final dateCarouselInitialPage = datePages.isEmpty ? 0 : (clampedPage ~/ 5).clamp(0, datePages.length - 1);
+    final clampedPage = days.isEmpty ? 0 : math.max(0, math.min(currentPage, days.length - 1));
+    final dateCarouselInitialPage = datePages.isEmpty
+        ? 0
+        : math.max(0, math.min(clampedPage ~/ 5, datePages.length - 1));
     final currentDay = days.isEmpty ? null : days[clampedPage];
     final displayWeekDates = datePages.isEmpty ? <DateTime>[] : datePages[dateCarouselInitialPage];
     final timetableHeight = currentDay == null ? 0.0 : _dayTimetableHeight(currentDay);
@@ -358,7 +361,7 @@ final class PersonalTimetableCalendarView extends HookConsumerWidget {
                 ],
               ),
             ),
-            if (item != null)
+            if (item != null && item.roomName.trim().isNotEmpty)
               Text(
                 item.roomName,
                 style: Theme.of(context).textTheme.labelMedium?.copyWith(color: SemanticColor.light.labelSecondary),
