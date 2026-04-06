@@ -162,6 +162,18 @@ final class SubjectRepositoryImpl implements SubjectRepository {
                     ),
                   )
                   .toList(),
+              semester: switch (e.semester) {
+                DottoFoundationV1CourseSemester.h1 => Semester.h1,
+                DottoFoundationV1CourseSemester.h2 => Semester.h2,
+                DottoFoundationV1CourseSemester.allYear => Semester.allYear,
+                DottoFoundationV1CourseSemester.q1 => Semester.q1,
+                DottoFoundationV1CourseSemester.q2 => Semester.q2,
+                DottoFoundationV1CourseSemester.q3 => Semester.q3,
+                DottoFoundationV1CourseSemester.q4 => Semester.q4,
+                DottoFoundationV1CourseSemester.summerIntensive => Semester.summerIntensive,
+                DottoFoundationV1CourseSemester.winterIntensive => Semester.winterIntensive,
+                _ => null,
+              },
             ),
           )
           .toList();

@@ -77,9 +77,14 @@ class SearchSubjectScreen extends HookConsumerWidget {
         title: Text(subject.name),
         subtitle: () {
           final lines = <String>[];
+          final semesterLabel = subject.semester?.label;
           final slots = subject.slots;
-          if (slots != null && slots.isNotEmpty) {
-            lines.add(slots.map((slot) => '${slot.dayOfWeek.label}${slot.period.number}').join(' / '));
+          final slotLabel = slots != null && slots.isNotEmpty
+              ? slots.map((slot) => '${slot.dayOfWeek.label}${slot.period.number}').join(' / ')
+              : null;
+          final timeLine = [if (semesterLabel != null) semesterLabel, if (slotLabel != null) slotLabel].join(' ');
+          if (timeLine.isNotEmpty) {
+            lines.add(timeLine);
           }
           final facultyLabel = _buildFacultyLabel(subject.faculties);
           if (facultyLabel != null) {
