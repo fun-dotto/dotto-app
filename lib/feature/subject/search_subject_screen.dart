@@ -80,7 +80,7 @@ class SearchSubjectScreen extends HookConsumerWidget {
           final semesterLabel = subject.semester?.label;
           final slots = subject.slots;
           final slotLabel = slots != null && slots.isNotEmpty
-              ? slots.map((slot) => '${slot.dayOfWeek.label}${slot.period.number}').join(' / ')
+              ? slots.map((slot) => '${slot.dayOfWeek.label}${slot.period.number}').join(',')
               : null;
           final creditLabel = subject.credit != null ? '${subject.credit}単位' : null;
           final timeLine = [
