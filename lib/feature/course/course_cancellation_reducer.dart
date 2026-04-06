@@ -1,7 +1,10 @@
-import 'package:dotto/domain/course_cancellation.dart';
+import 'package:built_collection/built_collection.dart';
 import 'package:dotto/domain/semester.dart';
 import 'package:dotto/feature/course/course_cancellation_state.dart';
+import 'package:dotto/repository/cancelled_class_repository.dart';
+import 'package:dotto/repository/makeup_class_repository.dart';
 import 'package:dotto/repository/repository_provider.dart';
+import 'package:dotto/repository/room_change_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'course_cancellation_reducer.g.dart';
@@ -10,66 +13,45 @@ part 'course_cancellation_reducer.g.dart';
 final class CourseCancellationReducer extends _$CourseCancellationReducer {
   @override
   Future<CourseCancellationState> build() async {
-    return _createState(isFilteredOnlyTakingCourseCancellation: false);
+    return _createState(isFiltered: true);
   }
 
   Future<void> refresh() async {
     final current = state.value;
-    state = await AsyncValue.guard(
-      () => _createState(
-        isFilteredOnlyTakingCourseCancellation: current?.isFilteredOnlyTakingCourseCancellation ?? false,
-      ),
-    );
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() => _createState(isFiltered: current?.isFiltered ?? false));
   }
 
   Future<void> toggleFilter() async {
     final current = state.value;
-    if (current == null) {
-      await refresh();
-      return;
+    final nextIsFiltered = !(current?.isFiltered ?? false);
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() => _createState(isFiltered: nextIsFiltered));
+  }
+
+  Future<CourseCancellationState> _createState({required bool isFiltered}) async {
+    final cancelledClassRepository = ref.read(cancelledClassRepositoryProvider);
+    final makeupClassRepository = ref.read(makeupClassRepositoryProvider);
+    final roomChangeRepository = ref.read(roomChangeRepositoryProvider);
+
+    BuiltList<String>? subjectIds;
+    if (isFiltered) {
+      final courseRegistrationRepository = ref.read(courseRegistrationRepositoryProvider);
+      final courseRegistrations = await courseRegistrationRepository.getCourseRegistrations(Semester.values);
+      subjectIds = BuiltList<String>(courseRegistrations.map((r) => r.subject.id));
     }
 
-    final nextIsFilteredOnlyTakingCourseCancellation = !current.isFilteredOnlyTakingCourseCancellation;
-    final nextCancellations = nextIsFilteredOnlyTakingCourseCancellation
-        ? _filterByTakingCourse(
-            courseCancellations: current.allCancellations,
-            takingCourseNames: current.takingCourseNames,
-          )
-        : current.allCancellations;
-
-    state = AsyncData(
-      current.copyWith(
-        cancellations: nextCancellations,
-        isFilteredOnlyTakingCourseCancellation: nextIsFilteredOnlyTakingCourseCancellation,
-      ),
-    );
-  }
-
-  Future<CourseCancellationState> _createState({required bool isFilteredOnlyTakingCourseCancellation}) async {
-    final lectureCancellationRepository = ref.read(lectureCancellationRepositoryProvider);
-    final courseRegistrationRepository = ref.read(courseRegistrationRepositoryProvider);
-    final (courseCancellations, courseRegistrations) = await (
-      lectureCancellationRepository.getCourseCancellations(),
-      courseRegistrationRepository.getCourseRegistrations(Semester.values),
+    final (cancelledClasses, makeupClasses, roomChanges) = await (
+      cancelledClassRepository.getCancelledClasses(subjectIds: subjectIds),
+      makeupClassRepository.getMakeupClasses(subjectIds: subjectIds),
+      roomChangeRepository.getRoomChanges(subjectIds: subjectIds),
     ).wait;
 
-    final takingCourseNames = {for (final registration in courseRegistrations) registration.subject.name};
-    final cancellations = isFilteredOnlyTakingCourseCancellation
-        ? _filterByTakingCourse(courseCancellations: courseCancellations, takingCourseNames: takingCourseNames)
-        : courseCancellations;
-
     return CourseCancellationState(
-      cancellations: cancellations,
-      allCancellations: courseCancellations,
-      takingCourseNames: takingCourseNames,
-      isFilteredOnlyTakingCourseCancellation: isFilteredOnlyTakingCourseCancellation,
+      cancelledClasses: cancelledClasses.toList(),
+      makeupClasses: makeupClasses.toList(),
+      roomChanges: roomChanges.toList(),
+      isFiltered: isFiltered,
     );
-  }
-
-  List<CourseCancellation> _filterByTakingCourse({
-    required List<CourseCancellation> courseCancellations,
-    required Set<String> takingCourseNames,
-  }) {
-    return courseCancellations.where((cancellation) => takingCourseNames.contains(cancellation.lessonName)).toList();
   }
 }
