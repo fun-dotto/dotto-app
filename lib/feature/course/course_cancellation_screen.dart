@@ -4,11 +4,10 @@ import 'package:dotto/controller/user_controller.dart';
 import 'package:dotto/feature/course/course_cancellation_reducer.dart';
 import 'package:dotto_design_system/component/button.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:openapi/openapi.dart';
 
-final class CourseCancellationScreen extends HookConsumerWidget {
+final class CourseCancellationScreen extends ConsumerWidget {
   const CourseCancellationScreen({super.key});
 
   @override
@@ -22,13 +21,6 @@ final class CourseCancellationScreen extends HookConsumerWidget {
     }
 
     final state = ref.watch(courseCancellationReducerProvider);
-
-    useEffect(() {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        unawaited(ref.read(courseCancellationReducerProvider.notifier).refresh());
-      });
-      return null;
-    }, const []);
 
     return DefaultTabController(
       length: 3,
