@@ -39,22 +39,7 @@ final class ApiEnvironment extends _$ApiEnvironment {
         (environment) => environment.tag == overrideTag,
         orElse: () => defaultEnvironment,
       );
-      state = _effectiveEnvironment;
-      return;
     }
-
-    final legacyTag = await UserPreferenceRepository.getString(UserPreferenceKeys.environment);
-    if (legacyTag == null) {
-      state = _effectiveEnvironment;
-      return;
-    }
-
-    _environmentOverride = Environment.values.firstWhere(
-      (environment) => environment.tag == legacyTag,
-      orElse: () => defaultEnvironment,
-    );
-    await UserPreferenceRepository.setString(UserPreferenceKeys.apiEnvironmentOverride, _environmentOverride!.tag);
-    await UserPreferenceRepository.remove(UserPreferenceKeys.environment);
     state = _effectiveEnvironment;
   }
 }

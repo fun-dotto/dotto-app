@@ -2,7 +2,6 @@ import 'package:dotto/controller/user_controller.dart';
 import 'package:dotto/domain/academic_area.dart';
 import 'package:dotto/domain/academic_class.dart';
 import 'package:dotto/domain/grade.dart';
-import 'package:dotto/domain/user_preference_keys.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_auth_platform_interface/firebase_auth_platform_interface.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -101,23 +100,6 @@ void main() {
       expect(user.grade, Grade.b2);
       expect(user.course, AcademicArea.informationDesignCourse);
       expect(user.class_, AcademicClass.c);
-    });
-
-    test('旧 UserPreference に値が残っていても復元しない', () async {
-      SharedPreferences.setMockInitialValues({
-        UserPreferenceKeys.grade.key: 'b4',
-        UserPreferenceKeys.course.key: 'complexCourse',
-        UserPreferenceKeys.class_.key: 'f',
-      });
-
-      final container = createContainer();
-      addTearDown(container.dispose);
-
-      final user = await container.read(userProvider.future);
-
-      expect(user.grade, isNull);
-      expect(user.course, isNull);
-      expect(user.class_, isNull);
     });
   });
 
