@@ -1,5 +1,5 @@
+import 'package:dotto/domain/bus_trip.dart';
 import 'package:dotto/feature/bus/bus_reducer.dart';
-import 'package:dotto/feature/bus/domain/bus_trip.dart';
 import 'package:flutter/material.dart';
 
 final class BusTimetableScreen extends StatelessWidget {

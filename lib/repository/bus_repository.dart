@@ -1,5 +1,5 @@
-import 'package:dotto/feature/bus/domain/bus_stop.dart';
-import 'package:dotto/feature/bus/domain/bus_trip.dart';
+import 'package:dotto/domain/bus_stop.dart';
+import 'package:dotto/domain/bus_trip.dart';
 import 'package:dotto/helper/firebase_realtime_database_repository.dart';
 
 abstract class BusRepository {

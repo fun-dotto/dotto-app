@@ -1,4 +1,4 @@
-import 'package:dotto/feature/bus/domain/bus_stop.dart';
+import 'package:dotto/domain/bus_stop.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'bus_trip.freezed.dart';

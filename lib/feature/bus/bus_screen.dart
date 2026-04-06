@@ -1,9 +1,9 @@
 import 'package:collection/collection.dart';
 import 'package:dotto/asset.dart';
+import 'package:dotto/feature/bus/bus_card.dart';
 import 'package:dotto/feature/bus/bus_reducer.dart';
-import 'package:dotto/feature/bus/widget/bus_card.dart';
-import 'package:dotto/feature/bus/widget/bus_stop_select.dart';
-import 'package:dotto/feature/bus/widget/bus_timetable.dart';
+import 'package:dotto/feature/bus/bus_stop_select.dart';
+import 'package:dotto/feature/bus/bus_timetable.dart';
 import 'package:dotto_design_system/style/semantic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';

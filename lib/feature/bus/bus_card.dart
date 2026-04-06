@@ -1,5 +1,5 @@
+import 'package:dotto/domain/bus_type.dart';
 import 'package:dotto/feature/bus/bus_reducer.dart';
-import 'package:dotto/feature/bus/domain/bus_type.dart';
 import 'package:dotto_design_system/style/semantic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
