@@ -62,9 +62,11 @@ class SearchSubjectScreen extends HookConsumerWidget {
         } else {
           await notifier.registerSubject(subjectId);
         }
-      } catch (_) {
+      } catch (e) {
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('履修登録の更新に失敗しました')));
+          final message = e is Exception ? e.toString().replaceFirst('Exception: ', '') : '履修登録の更新に失敗しました';
+          ScaffoldMessenger.of(context).removeCurrentSnackBar();
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
         }
       } finally {
         processingSubjectIds.value = {...processingSubjectIds.value.where((id) => id != subjectId)};

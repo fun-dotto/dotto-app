@@ -95,8 +95,38 @@ final class SearchSubjectReducer extends _$SearchSubjectReducer {
   }
 
   Future<void> registerSubject(String subjectId) async {
+    final currentState = state.asData?.value;
+    if (currentState != null) {
+      final subject = currentState.subjects.where((s) => s.id == subjectId).firstOrNull;
+      final slots = subject?.slots;
+      if (slots != null && slots.isNotEmpty) {
+        final timetableRepository = ref.read(timetableRepositoryProvider);
+        final timetableItems = await timetableRepository.getTimetableItems(Semester.values);
+        _cachedTimetableItems = timetableItems;
+
+        final courseRegistrationRepository = ref.read(courseRegistrationRepositoryProvider);
+        final courseRegistrations = await courseRegistrationRepository.getCourseRegistrations(Semester.values);
+        final registeredSubjectIds = courseRegistrations.map((e) => e.subject.id).toSet();
+
+        for (final slot in slots) {
+          final registeredCount = timetableItems
+              .where(
+                (item) =>
+                    item.slot?.dayOfWeek == slot.dayOfWeek &&
+                    item.slot?.period == slot.period &&
+                    registeredSubjectIds.contains(item.subject.id),
+              )
+              .length;
+          if (registeredCount >= 2) {
+            throw Exception('1つのコマに2科目以上を設定できません');
+          }
+        }
+      }
+    }
+
     final courseRegistrationRepository = ref.read(courseRegistrationRepositoryProvider);
     await courseRegistrationRepository.registerCourse(subjectId);
+    _cachedTimetableItems = null;
     _updateSubjectRegistrationState(subjectId: subjectId, isAddedToTimetable: true);
   }
 
