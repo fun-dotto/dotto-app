@@ -147,16 +147,20 @@ class _CancelledClassList extends StatelessWidget {
         separatorBuilder: (_, _) => const Divider(height: 0),
         itemBuilder: (context, index) {
           final item = items[index];
-          final subtitleLines = <String>[item.subject.name];
-          if (item.comment.trim().isNotEmpty) {
-            subtitleLines.add(item.comment.trim());
-          }
           return ListTile(
-            title: Text(
-              '${_formatDate(item.date)} ${_formatPeriod(item.period)}',
-              style: Theme.of(context).textTheme.labelMedium,
+            title: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '${_formatDate(item.date)} ${_formatPeriod(item.period)}',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+                Text(item.subject.name, style: Theme.of(context).textTheme.titleSmall),
+              ],
             ),
-            subtitle: Text(subtitleLines.join('\n')),
+            subtitle: item.comment.trim().isNotEmpty
+                ? Text(item.comment.trim(), style: Theme.of(context).textTheme.labelMedium)
+                : null,
           );
         },
       ),
@@ -192,16 +196,20 @@ class _MakeupClassList extends StatelessWidget {
         separatorBuilder: (_, _) => const Divider(height: 0),
         itemBuilder: (context, index) {
           final item = items[index];
-          final subtitleLines = <String>[item.subject.name];
-          if (item.comment.trim().isNotEmpty) {
-            subtitleLines.add(item.comment.trim());
-          }
           return ListTile(
-            title: Text(
-              '${_formatDate(item.date)} ${_formatPeriod(item.period)}',
-              style: Theme.of(context).textTheme.labelMedium,
+            title: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '${_formatDate(item.date)} ${_formatPeriod(item.period)}',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+                Text(item.subject.name, style: Theme.of(context).textTheme.titleSmall),
+              ],
             ),
-            subtitle: Text(subtitleLines.join('\n')),
+            subtitle: item.comment.trim().isNotEmpty
+                ? Text(item.comment.trim(), style: Theme.of(context).textTheme.labelMedium)
+                : null,
           );
         },
       ),
@@ -238,13 +246,19 @@ class _RoomChangeList extends StatelessWidget {
         itemBuilder: (context, index) {
           final item = items[index];
           return ListTile(
-            title: Text(
-              '${_formatDate(item.date)} ${_formatPeriod(item.period)}',
-              style: Theme.of(context).textTheme.labelMedium,
+            title: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '${_formatDate(item.date)} ${_formatPeriod(item.period)}',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+                Text(item.subject.name, style: Theme.of(context).textTheme.titleSmall),
+              ],
             ),
             subtitle: Text(
-              '${item.subject.name}\n'
               '${item.originalRoom.name} → ${item.newRoom.name}',
+              style: Theme.of(context).textTheme.labelMedium,
             ),
           );
         },
