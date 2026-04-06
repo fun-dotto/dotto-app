@@ -1,19 +1,13 @@
 enum UserPreferenceKeys {
-  environment(key: 'environment', type: String),
   apiEnvironmentOverride(key: 'apiEnvironmentOverride', type: String),
-  grade(key: 'grade', type: String),
-  course(key: 'course', type: String),
-  class_(key: 'class', type: String),
-  userKey(key: 'userKey', type: String),
-  kadaiFinishList(key: 'finishListKey', type: String),
-  kadaiAlertList(key: 'alertListKey', type: String),
-  kadaiDeleteList(key: 'deleteListKey', type: String),
+  // 廃止予定
   personalTimetableListKey(key: 'personalTimetableListKey2026', type: String),
+  // 廃止予定
   personalTimetableLastUpdateKey(key: 'personalTimetableLastUpdateKey', type: int),
   isAppTutorialComplete(key: 'isAppTutorialCompleted', type: bool),
-  isKadaiTutorialComplete(key: 'isKadaiTutorialCompleted', type: bool),
   myBusStop(key: 'myBusStop', type: int),
   timetablePeriodStyle(key: 'timetablePeriodStyle', type: String),
+  // 廃止予定
   isV2EnabledOverride(key: 'isV2EnabledOverride', type: bool),
   isFunchEnabledOverride(key: 'isFunchEnabledOverride', type: bool);
 
