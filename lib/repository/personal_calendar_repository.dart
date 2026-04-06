@@ -85,9 +85,12 @@ final class PersonalCalendarRepositoryImpl implements PersonalCalendarRepository
   @visibleForTesting
   static LectureStatus toLectureStatus(DottoFoundationV1PersonalCalendarItemStatus status) {
     return switch (status) {
+      DottoFoundationV1PersonalCalendarItemStatus.normal => LectureStatus.normal,
       DottoFoundationV1PersonalCalendarItemStatus.cancelled => LectureStatus.cancelled,
       DottoFoundationV1PersonalCalendarItemStatus.makeup => LectureStatus.madeUp,
-      _ => LectureStatus.normal,
+      DottoFoundationV1PersonalCalendarItemStatus.roomChanged => LectureStatus.roomChanged,
+      // TODO: API側でstatusの値が増えたときに例外を投げるようにするため、デフォルトはnormalにしておく
+      DottoFoundationV1PersonalCalendarItemStatus() => LectureStatus.normal,
     };
   }
 }

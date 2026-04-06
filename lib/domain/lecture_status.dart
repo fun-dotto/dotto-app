@@ -1,1 +1,1 @@
-enum LectureStatus { normal, cancelled, madeUp }
+enum LectureStatus { normal, cancelled, madeUp, roomChanged }

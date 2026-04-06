@@ -334,7 +334,13 @@ final class PersonalTimetableCalendarView extends HookConsumerWidget {
       child: TextButton(
         style: TextButton.styleFrom(
           padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-          backgroundColor: SemanticColor.light.backgroundSecondary,
+          backgroundColor: switch (item?.lectureStatus) {
+            LectureStatus.cancelled => SemanticColor.light.accentError.withValues(alpha: 0.1),
+            LectureStatus.madeUp => SemanticColor.light.accentWarning.withValues(alpha: 0.1),
+            LectureStatus.roomChanged => SemanticColor.light.accentInfo.withValues(alpha: 0.1),
+            LectureStatus.normal => SemanticColor.light.backgroundSecondary,
+            null => SemanticColor.light.backgroundSecondary,
+          },
           disabledBackgroundColor: SemanticColor.light.backgroundTertiary,
           overlayColor: SemanticColor.light.accentPrimary,
           side: BorderSide(color: SemanticColor.light.borderPrimary),
@@ -357,7 +363,26 @@ final class PersonalTimetableCalendarView extends HookConsumerWidget {
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: SemanticColor.light.labelPrimary),
                     ),
                   ),
-                  if (item != null) _lectureStatusLabel(item.lectureStatus),
+                  if (item != null)
+                    switch (item.lectureStatus) {
+                      LectureStatus.cancelled => Text(
+                        '休講',
+                        style: Theme.of(
+                          context,
+                        ).textTheme.labelMedium?.copyWith(color: SemanticColor.light.accentError),
+                      ),
+                      LectureStatus.madeUp => Text(
+                        '補講',
+                        style: Theme.of(
+                          context,
+                        ).textTheme.labelMedium?.copyWith(color: SemanticColor.light.accentWarning),
+                      ),
+                      LectureStatus.roomChanged => Text(
+                        '教室変更',
+                        style: Theme.of(context).textTheme.labelMedium?.copyWith(color: SemanticColor.light.accentInfo),
+                      ),
+                      LectureStatus.normal => const SizedBox.shrink(),
+                    },
                 ],
               ),
             ),
@@ -370,26 +395,6 @@ final class PersonalTimetableCalendarView extends HookConsumerWidget {
         ),
       ),
     );
-  }
-
-  Widget _lectureStatusLabel(LectureStatus status) {
-    return switch (status) {
-      LectureStatus.cancelled => Row(
-        spacing: 2,
-        children: [
-          Icon(Icons.cancel_outlined, size: 16, color: SemanticColor.light.accentError),
-          Text('休講', style: TextStyle(color: SemanticColor.light.accentError)),
-        ],
-      ),
-      LectureStatus.madeUp => Row(
-        spacing: 2,
-        children: [
-          Icon(Icons.info_outline, size: 16, color: SemanticColor.light.accentWarning),
-          Text('補講', style: TextStyle(color: SemanticColor.light.accentWarning)),
-        ],
-      ),
-      LectureStatus.normal => const SizedBox.shrink(),
-    };
   }
 
   bool _isSameDate(DateTime a, DateTime b) {
