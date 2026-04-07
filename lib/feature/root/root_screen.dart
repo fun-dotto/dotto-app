@@ -95,11 +95,11 @@ final class RootScreen extends ConsumerWidget {
           );
         }
 
-        WidgetsBinding.instance.addPostFrameCallback((_) {
+        WidgetsBinding.instance.addPostFrameCallback((_) async {
           if (!value.isLatestAppVersion && !value.hasShownUpdateAlert) {
             debugPrint('Not Latest App Version');
             ref.read(rootViewModelProvider.notifier).onUpdateAlertShown();
-            showDialog<void>(
+            await showDialog<void>(
               context: context,
               builder: (context) => _updateAlertDialog(
                 context: context,

@@ -106,13 +106,13 @@ final class MapScreen extends ConsumerWidget {
               child: MapSearchBar(
                 textEditingController: viewModel.textEditingController,
                 focusNode: viewModel.focusNode,
-                onChanged: (value) {
-                  ref
+                onChanged: (value) async {
+                  await ref
                       .read(mapViewModelProvider.notifier)
                       .onSearchTextChanged(value);
                 },
-                onSubmitted: (value) {
-                  ref
+                onSubmitted: (value) async {
+                  await ref
                       .read(mapViewModelProvider.notifier)
                       .onSearchTextSubmitted(value);
                 },

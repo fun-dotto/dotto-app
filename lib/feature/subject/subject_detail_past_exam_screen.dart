@@ -49,8 +49,8 @@ final class SubjectDetailPastExamScreen extends HookWidget {
     return Column(
       children: [
         TextButton(
-          onPressed: () {
-            Navigator.of(context).push(
+          onPressed: () async {
+            await Navigator.of(context).push(
               MaterialPageRoute<void>(
                 builder: (_) =>
                     CloudflarePdfViewer(url: url, filename: filename),

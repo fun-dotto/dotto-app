@@ -159,11 +159,12 @@ final class DebugScreen extends HookConsumerWidget {
             ),
             trailing: IconButton(
               icon: const Icon(Icons.copy),
-              onPressed: () {
+              onPressed: () async {
                 if (appCheckToken.data == null) return;
-                Clipboard.setData(
+                await Clipboard.setData(
                   ClipboardData(text: appCheckToken.data ?? ''),
                 );
+                if (!context.mounted) return;
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('クリップボードにコピーしました')),
                 );
@@ -179,9 +180,12 @@ final class DebugScreen extends HookConsumerWidget {
             ),
             trailing: IconButton(
               icon: const Icon(Icons.copy),
-              onPressed: () {
+              onPressed: () async {
                 if (idToken.data == null) return;
-                Clipboard.setData(ClipboardData(text: idToken.data ?? ''));
+                await Clipboard.setData(
+                  ClipboardData(text: idToken.data ?? ''),
+                );
+                if (!context.mounted) return;
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('クリップボードにコピーしました')),
                 );
@@ -197,9 +201,12 @@ final class DebugScreen extends HookConsumerWidget {
             ),
             trailing: IconButton(
               icon: const Icon(Icons.copy),
-              onPressed: () {
+              onPressed: () async {
                 if (fcmToken.data == null) return;
-                Clipboard.setData(ClipboardData(text: fcmToken.data ?? ''));
+                await Clipboard.setData(
+                  ClipboardData(text: fcmToken.data ?? ''),
+                );
+                if (!context.mounted) return;
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('クリップボードにコピーしました')),
                 );

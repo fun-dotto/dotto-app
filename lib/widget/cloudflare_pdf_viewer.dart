@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -35,13 +36,13 @@ final class _CloudflarePdfViewerState extends State<CloudflarePdfViewer>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _downloadPdf();
+    unawaited(_downloadPdf());
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    _cleanupTempFile();
+    unawaited(_cleanupTempFile());
     super.dispose();
   }
 

@@ -69,8 +69,8 @@ final class BusScreen extends HookConsumerWidget {
       data: (state) {
         final myBusStopButton = _busStopButton(
           context,
-          () {
-            Navigator.of(context).push(
+          () async {
+            await Navigator.of(context).push(
               MaterialPageRoute<void>(
                 builder: (context) => const BusStopSelectScreen(),
                 settings: const RouteSettings(
@@ -138,8 +138,8 @@ final class BusScreen extends HookConsumerWidget {
                 hasKey = true;
               }
               return InkWell(
-                onTap: () {
-                  Navigator.of(context).push(
+                onTap: () async {
+                  await Navigator.of(context).push(
                     MaterialPageRoute<void>(
                       builder: (context) => BusTimetableScreen(busTrip),
                       settings: const RouteSettings(
@@ -165,13 +165,13 @@ final class BusScreen extends HookConsumerWidget {
             })
             .toList();
 
-        WidgetsBinding.instance.addPostFrameCallback((_) {
+        WidgetsBinding.instance.addPostFrameCallback((_) async {
           if (state.isScrolled) return;
           final currentContext = busKey.currentContext;
           if (currentContext == null) return;
           final box = currentContext.findRenderObject()! as RenderBox;
           final position = box.localToGlobal(Offset.zero);
-          scrollController.animateTo(
+          await scrollController.animateTo(
             scrollController.offset + position.dy - 300,
             duration: const Duration(milliseconds: 500),
             curve: Curves.easeInOut,

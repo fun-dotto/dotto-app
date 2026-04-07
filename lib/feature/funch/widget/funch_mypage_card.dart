@@ -162,8 +162,8 @@ final class FunchMyPageCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return InkWell(
-      onTap: () {
-        Navigator.of(context).push(
+      onTap: () async {
+        await Navigator.of(context).push(
           MaterialPageRoute<void>(
             builder: (_) => const FunchScreen(),
             settings: const RouteSettings(name: '/home/funch'),

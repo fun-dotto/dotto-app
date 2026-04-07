@@ -154,10 +154,11 @@ final class SettingsScreen extends ConsumerWidget {
                               title: const Text('学年'),
                               children: [
                                 MaterialButton(
-                                  onPressed: () {
-                                    ref
+                                  onPressed: () async {
+                                    await ref
                                         .read(userProvider.notifier)
                                         .setGrade(null);
+                                    if (!context.mounted) return;
                                     Navigator.of(context).pop();
                                   },
                                   child: ListTile(
@@ -171,10 +172,11 @@ final class SettingsScreen extends ConsumerWidget {
                                 ),
                                 ...Grade.values.map((grade) {
                                   return MaterialButton(
-                                    onPressed: () {
-                                      ref
+                                    onPressed: () async {
+                                      await ref
                                           .read(userProvider.notifier)
                                           .setGrade(grade);
+                                      if (!context.mounted) return;
                                       Navigator.of(context).pop();
                                     },
                                     child: ListTile(
@@ -205,10 +207,11 @@ final class SettingsScreen extends ConsumerWidget {
                               title: const Text('コース'),
                               children: [
                                 MaterialButton(
-                                  onPressed: () {
-                                    ref
+                                  onPressed: () async {
+                                    await ref
                                         .read(userProvider.notifier)
                                         .setCourse(null);
+                                    if (!context.mounted) return;
                                     Navigator.of(context).pop();
                                   },
                                   child: ListTile(
@@ -222,10 +225,11 @@ final class SettingsScreen extends ConsumerWidget {
                                 ),
                                 ...AcademicArea.values.map((academicArea) {
                                   return MaterialButton(
-                                    onPressed: () {
-                                      ref
+                                    onPressed: () async {
+                                      await ref
                                           .read(userProvider.notifier)
                                           .setCourse(academicArea);
+                                      if (!context.mounted) return;
                                       Navigator.of(context).pop();
                                     },
                                     child: ListTile(
@@ -256,10 +260,11 @@ final class SettingsScreen extends ConsumerWidget {
                               title: const Text('クラス'),
                               children: [
                                 MaterialButton(
-                                  onPressed: () {
-                                    ref
+                                  onPressed: () async {
+                                    await ref
                                         .read(userProvider.notifier)
                                         .setClass(null);
+                                    if (!context.mounted) return;
                                     Navigator.of(context).pop();
                                   },
                                   child: ListTile(
@@ -273,10 +278,11 @@ final class SettingsScreen extends ConsumerWidget {
                                 ),
                                 ...AcademicClass.values.map((academicClass) {
                                   return MaterialButton(
-                                    onPressed: () {
-                                      ref
+                                    onPressed: () async {
+                                      await ref
                                           .read(userProvider.notifier)
                                           .setClass(academicClass);
+                                      if (!context.mounted) return;
                                       Navigator.of(context).pop();
                                     },
                                     child: ListTile(
@@ -307,8 +313,8 @@ final class SettingsScreen extends ConsumerWidget {
                     SettingsTile.navigation(
                       title: const Text('お知らせ'),
                       leading: const Icon(Icons.notifications),
-                      onPressed: (_) {
-                        Navigator.of(context).push(
+                      onPressed: (_) async {
+                        await Navigator.of(context).push(
                           MaterialPageRoute<void>(
                             builder: (_) => const AnnouncementScreen(),
                             settings: const RouteSettings(
@@ -322,14 +328,15 @@ final class SettingsScreen extends ConsumerWidget {
                     SettingsTile.navigation(
                       title: const Text('フィードバックを送る'),
                       leading: const Icon(Icons.messenger_rounded),
-                      onPressed: (_) => launchUrlSafely(config.feedbackFormUrl),
+                      onPressed: (_) async =>
+                          await launchUrlSafely(config.feedbackFormUrl),
                     ),
                     // Contributors表示
                     SettingsTile.navigation(
                       title: const Text('開発者'),
                       leading: const Icon(Icons.person),
-                      onPressed: (_) {
-                        Navigator.of(context).push(
+                      onPressed: (_) async {
+                        await Navigator.of(context).push(
                           MaterialPageRoute<void>(
                             builder: (_) => const GitHubContributorScreen(),
                             settings: const RouteSettings(
@@ -343,8 +350,8 @@ final class SettingsScreen extends ConsumerWidget {
                     SettingsTile.navigation(
                       title: const Text('アプリの使い方'),
                       leading: const Icon(Icons.assignment),
-                      onPressed: (_) {
-                        Navigator.of(context).push(
+                      onPressed: (_) async {
+                        await Navigator.of(context).push(
                           MaterialPageRoute<void>(
                             builder: (_) => OnboardingScreen(
                               onDismissed: () => Navigator.of(context).pop(),
@@ -360,22 +367,22 @@ final class SettingsScreen extends ConsumerWidget {
                     SettingsTile.navigation(
                       title: const Text('利用規約'),
                       leading: const Icon(Icons.verified_user),
-                      onPressed: (_) =>
-                          launchUrlSafely(config.termsOfServiceUrl),
+                      onPressed: (_) async =>
+                          await launchUrlSafely(config.termsOfServiceUrl),
                     ),
                     // プライバシーポリシー
                     SettingsTile.navigation(
                       title: const Text('プライバシーポリシー'),
                       leading: const Icon(Icons.admin_panel_settings),
-                      onPressed: (_) =>
-                          launchUrlSafely(config.privacyPolicyUrl),
+                      onPressed: (_) async =>
+                          await launchUrlSafely(config.privacyPolicyUrl),
                     ),
                     // ライセンス
                     SettingsTile.navigation(
                       title: const Text('ライセンス'),
                       leading: const Icon(Icons.info),
-                      onPressed: (_) {
-                        Navigator.of(context).push(
+                      onPressed: (_) async {
+                        await Navigator.of(context).push(
                           MaterialPageRoute<void>(
                             builder: (_) => const SettingsLicenseScreen(),
                             settings: const RouteSettings(

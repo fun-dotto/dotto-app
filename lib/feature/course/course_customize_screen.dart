@@ -18,8 +18,8 @@ final class CourseCustomizeScreen extends ConsumerWidget {
           value:
               preference.timetablePeriodStyle ==
               TimetablePeriodStyle.numberAndTime,
-          onChanged: (value) {
-            ref
+          onChanged: (value) async {
+            await ref
                 .read(dottoUserPreferenceProvider.notifier)
                 .setTimetablePeriodStyle(
                   value

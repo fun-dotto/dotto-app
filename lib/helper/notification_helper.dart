@@ -31,10 +31,10 @@ final class NotificationHelperImpl implements NotificationHelper {
     FirebaseMessaging.onMessageOpenedApp.listen(_handleMessage);
   }
 
-  void _handleMessage(RemoteMessage message) {
+  Future<void> _handleMessage(RemoteMessage message) async {
     final url = message.data['url'];
     if (url != null) {
-      launchUrlSafely(url as String);
+      await launchUrlSafely(url as String);
     }
   }
 }
