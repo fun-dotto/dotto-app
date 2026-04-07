@@ -3,8 +3,8 @@ import 'package:dotto/domain/academic_class.dart';
 import 'package:dotto/domain/dotto_user.dart';
 import 'package:dotto/domain/grade.dart';
 import 'package:dotto/helper/firebase_auth_helper.dart';
-import 'package:dotto/repository/repository_provider.dart';
 import 'package:dotto/repository/fcm_token_repository.dart';
+import 'package:dotto/repository/repository_provider.dart';
 import 'package:dotto/repository/user_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -32,7 +32,6 @@ final class UserNotifier extends _$UserNotifier {
     final authState = ref.watch(firebaseAuthStateChangesProvider);
     final firebaseUser = authState.value;
     if (firebaseUser != null) {
-      debugPrint('FCM Token: ${await FirebaseMessaging.instance.getToken()}');
       await _saveFCMToken(fcmTokenRepository);
     }
     return _syncUser(firebaseUser, userRepository);
