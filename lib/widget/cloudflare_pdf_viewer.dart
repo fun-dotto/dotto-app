@@ -118,14 +118,19 @@ final class _CloudflarePdfViewerState extends State<CloudflarePdfViewer>
       if (content != null) {
         final box = content.findRenderObject() as RenderBox?;
         if (box != null) {
-          await Share.shareXFiles([
-            XFile(_filePath!),
-          ], sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
+          await SharePlus.instance.share(
+            ShareParams(
+              files: [XFile(_filePath!)],
+              sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size,
+            ),
+          );
         } else {
-          await Share.shareXFiles([XFile(_filePath!)]);
+          await SharePlus.instance.share(
+            ShareParams(files: [XFile(_filePath!)]),
+          );
         }
       } else {
-        await Share.shareXFiles([XFile(_filePath!)]);
+        await SharePlus.instance.share(ShareParams(files: [XFile(_filePath!)]));
       }
     }
   }
