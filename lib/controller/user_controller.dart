@@ -3,6 +3,7 @@ import 'package:dotto/domain/academic_class.dart';
 import 'package:dotto/domain/dotto_user.dart';
 import 'package:dotto/domain/grade.dart';
 import 'package:dotto/helper/firebase_auth_helper.dart';
+import 'package:dotto/helper/logger.dart';
 import 'package:dotto/repository/fcm_token_repository.dart';
 import 'package:dotto/repository/repository_provider.dart';
 import 'package:dotto/repository/user_repository.dart';
@@ -53,9 +54,11 @@ final class UserNotifier extends _$UserNotifier {
   Future<void> signIn() async {
     final userRepository = ref.read(userRepositoryProvider);
     final fcmTokenRepository = ref.read(fcmTokenRepositoryProvider);
+    final logger = ref.read(loggerProvider);
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
       final firebaseUser = await FirebaseAuthHelper.signIn();
+      await logger.logLogin();
       await _saveFCMToken(fcmTokenRepository);
       return _syncUser(firebaseUser, userRepository);
     });
@@ -63,9 +66,11 @@ final class UserNotifier extends _$UserNotifier {
 
   Future<void> signOut() async {
     final userRepository = ref.read(userRepositoryProvider);
+    final logger = ref.read(loggerProvider);
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
       await FirebaseAuthHelper.signOut();
+      await logger.logLogout();
       return _syncUser(null, userRepository);
     });
   }

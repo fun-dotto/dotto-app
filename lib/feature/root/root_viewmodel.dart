@@ -112,8 +112,6 @@ class RootViewModel extends _$RootViewModel {
       return;
     }
     currentState.popUntil((route) => route.isFirst);
-
-    unawaited(ref.read(loggerProvider).logChangedTab(tabItem: selectedTab));
   }
 
   void onGoToSettingButtonTapped() {
