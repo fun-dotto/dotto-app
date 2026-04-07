@@ -37,7 +37,11 @@ void main() {
   ];
 
   ProviderContainer createContainer() => ProviderContainer(
-    overrides: [gitHubContributorRepositoryProvider.overrideWithValue(githubContributorRepository)],
+    overrides: [
+      gitHubContributorRepositoryProvider.overrideWithValue(
+        githubContributorRepository,
+      ),
+    ],
   );
 
   setUp(() {
@@ -55,22 +59,36 @@ void main() {
 
     test('初期状態が正しく設定される', () async {
       final container = createContainer()
-        ..listen(gitHubContributorViewModelProvider, listener.call, fireImmediately: true);
+        ..listen(
+          gitHubContributorViewModelProvider,
+          listener.call,
+          fireImmediately: true,
+        );
 
       await expectLater(
         container.read(gitHubContributorViewModelProvider.notifier).future,
         completion(
-          isA<GitHubContributorViewState>().having((p0) => p0.contributors, 'contributors', testGitHubContributors),
+          isA<GitHubContributorViewState>().having(
+            (p0) => p0.contributors,
+            'contributors',
+            testGitHubContributors,
+          ),
         ),
       );
     });
 
     test('GitHubProfileが正しく取得される', () async {
       final container = createContainer()
-        ..listen(gitHubContributorViewModelProvider, listener.call, fireImmediately: true);
+        ..listen(
+          gitHubContributorViewModelProvider,
+          listener.call,
+          fireImmediately: true,
+        );
 
       // 初期状態を待つ
-      final initialState = await container.read(gitHubContributorViewModelProvider.notifier).future;
+      final initialState = await container
+          .read(gitHubContributorViewModelProvider.notifier)
+          .future;
 
       expect(initialState.contributors, testGitHubContributors);
       expect(initialState.contributors.length, 2);
@@ -90,10 +108,16 @@ void main() {
       });
 
       final container = createContainer()
-        ..listen(gitHubContributorViewModelProvider, listener.call, fireImmediately: true);
+        ..listen(
+          gitHubContributorViewModelProvider,
+          listener.call,
+          fireImmediately: true,
+        );
 
       // 初期状態を待つ
-      final initialState = await container.read(gitHubContributorViewModelProvider.notifier).future;
+      final initialState = await container
+          .read(gitHubContributorViewModelProvider.notifier)
+          .future;
 
       expect(initialState.contributors, isEmpty);
 
@@ -104,11 +128,17 @@ void main() {
 
   group('GitHubContributorViewModel 並び順', () {
     setUp(() {
-      when(githubContributorRepository.getContributors()).thenAnswer((_) async => testGitHubContributors);
+      when(
+        githubContributorRepository.getContributors(),
+      ).thenAnswer((_) async => testGitHubContributors);
     });
     test('contributors は contributions の降順で並び替えられる', () async {
       final container = createContainer()
-        ..listen(gitHubContributorViewModelProvider, listener.call, fireImmediately: true);
+        ..listen(
+          gitHubContributorViewModelProvider,
+          listener.call,
+          fireImmediately: true,
+        );
       // AsyncValue が値を持つまで待機
       var asyncValue = container.read(gitHubContributorViewModelProvider);
       var attempts = 0;
@@ -132,13 +162,20 @@ void main() {
   group('GitHubContributorViewModel 異常系', () {
     setUp(() {
       when(githubContributorRepository.getContributors()).thenAnswer((_) async {
-        throw DomainError(type: DomainErrorType.invalidResponse, message: 'Failed to get contributors');
+        throw DomainError(
+          type: DomainErrorType.invalidResponse,
+          message: 'Failed to get contributors',
+        );
       });
     });
 
     test('GitHubProfileの取得に失敗した場合にエラーがthrowされる', () async {
       final container = createContainer()
-        ..listen(gitHubContributorViewModelProvider, listener.call, fireImmediately: true);
+        ..listen(
+          gitHubContributorViewModelProvider,
+          listener.call,
+          fireImmediately: true,
+        );
 
       // AsyncValue がエラー状態になるまで待つ
       var asyncValue = container.read(gitHubContributorViewModelProvider);

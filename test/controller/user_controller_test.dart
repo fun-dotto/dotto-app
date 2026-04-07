@@ -14,17 +14,24 @@ import 'package:shared_preferences/shared_preferences.dart';
 final class MockFirebaseUser extends Mock implements User {}
 
 final class FakeFirebaseAuthPlatform extends FirebaseAuthPlatform {
-  FakeFirebaseAuthPlatform({super.appInstance, UserPlatform? currentUser}) : _currentUser = currentUser;
+  FakeFirebaseAuthPlatform({super.appInstance, UserPlatform? currentUser})
+    : _currentUser = currentUser;
 
   UserPlatform? _currentUser;
 
   @override
   FirebaseAuthPlatform delegateFor({required FirebaseApp app}) {
-    return FakeFirebaseAuthPlatform(appInstance: app, currentUser: _currentUser);
+    return FakeFirebaseAuthPlatform(
+      appInstance: app,
+      currentUser: _currentUser,
+    );
   }
 
   @override
-  FirebaseAuthPlatform setInitialValues({PigeonUserDetails? currentUser, String? languageCode}) {
+  FirebaseAuthPlatform setInitialValues({
+    PigeonUserDetails? currentUser,
+    String? languageCode,
+  }) {
     return this;
   }
 
@@ -37,13 +44,16 @@ final class FakeFirebaseAuthPlatform extends FirebaseAuthPlatform {
   }
 
   @override
-  Stream<UserPlatform?> authStateChanges() => Stream<UserPlatform?>.value(_currentUser);
+  Stream<UserPlatform?> authStateChanges() =>
+      Stream<UserPlatform?>.value(_currentUser);
 
   @override
-  Stream<UserPlatform?> idTokenChanges() => Stream<UserPlatform?>.value(_currentUser);
+  Stream<UserPlatform?> idTokenChanges() =>
+      Stream<UserPlatform?>.value(_currentUser);
 
   @override
-  Stream<UserPlatform?> userChanges() => Stream<UserPlatform?>.value(_currentUser);
+  Stream<UserPlatform?> userChanges() =>
+      Stream<UserPlatform?>.value(_currentUser);
 
   @override
   void sendAuthChangesEvent(String appName, UserPlatform? userPlatform) {}
@@ -65,7 +75,11 @@ void main() {
   group('UserNotifier', () {
     ProviderContainer createContainer() {
       return ProviderContainer(
-        overrides: [firebaseAuthStateChangesProvider.overrideWith((ref) => Stream<User?>.value(null))],
+        overrides: [
+          firebaseAuthStateChangesProvider.overrideWith(
+            (ref) => Stream<User?>.value(null),
+          ),
+        ],
       );
     }
 
@@ -106,11 +120,19 @@ void main() {
   group('isAuthenticatedProvider', () {
     test('認証ユーザーがいないと false を返す', () async {
       final container = ProviderContainer(
-        overrides: [firebaseAuthStateChangesProvider.overrideWith((ref) => Stream<User?>.value(null))],
+        overrides: [
+          firebaseAuthStateChangesProvider.overrideWith(
+            (ref) => Stream<User?>.value(null),
+          ),
+        ],
       );
       addTearDown(container.dispose);
 
-      final subscription = container.listen(firebaseAuthStateChangesProvider, (_, _) {}, fireImmediately: true);
+      final subscription = container.listen(
+        firebaseAuthStateChangesProvider,
+        (_, _) {},
+        fireImmediately: true,
+      );
       addTearDown(subscription.close);
       await Future<void>.delayed(Duration.zero);
 
@@ -120,11 +142,19 @@ void main() {
     test('認証ユーザーがいると true を返す', () async {
       final mockUser = MockFirebaseUser();
       final container = ProviderContainer(
-        overrides: [firebaseAuthStateChangesProvider.overrideWith((ref) => Stream<User?>.value(mockUser))],
+        overrides: [
+          firebaseAuthStateChangesProvider.overrideWith(
+            (ref) => Stream<User?>.value(mockUser),
+          ),
+        ],
       );
       addTearDown(container.dispose);
 
-      final subscription = container.listen(firebaseAuthStateChangesProvider, (_, _) {}, fireImmediately: true);
+      final subscription = container.listen(
+        firebaseAuthStateChangesProvider,
+        (_, _) {},
+        fireImmediately: true,
+      );
       addTearDown(subscription.close);
       await Future<void>.delayed(Duration.zero);
 

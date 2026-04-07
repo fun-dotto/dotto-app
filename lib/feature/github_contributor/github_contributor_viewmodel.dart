@@ -6,9 +6,10 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'github_contributor_viewmodel.g.dart';
 
-final gitHubContributorRepositoryProvider = Provider<GitHubContributorRepository>(
-  (_) => GitHubContributorRepositoryImpl(),
-);
+final gitHubContributorRepositoryProvider =
+    Provider<GitHubContributorRepository>(
+      (_) => GitHubContributorRepositoryImpl(),
+    );
 
 @riverpod
 final class GitHubContributorViewModel extends _$GitHubContributorViewModel {
@@ -16,7 +17,9 @@ final class GitHubContributorViewModel extends _$GitHubContributorViewModel {
 
   @override
   Future<GitHubContributorViewState> build() async {
-    _service = GitHubContributorService(ref.read(gitHubContributorRepositoryProvider));
+    _service = GitHubContributorService(
+      ref.read(gitHubContributorRepositoryProvider),
+    );
     final contributors = await _service.getContributors();
     return GitHubContributorViewState(contributors: contributors);
   }

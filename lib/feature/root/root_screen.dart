@@ -24,7 +24,9 @@ final class RootScreen extends ConsumerWidget {
     if (isFunchEnabled) {
       return baseTabs;
     }
-    return baseTabs.map((tab) => tab == TabItem.funch ? TabItem.subject : tab).toList();
+    return baseTabs
+        .map((tab) => tab == TabItem.funch ? TabItem.subject : tab)
+        .toList();
   }
 
   Widget _tabRoot({required TabItem tab, required WidgetRef ref}) {
@@ -32,7 +34,9 @@ final class RootScreen extends ConsumerWidget {
       TabItem.course => const CourseScreen(),
       TabItem.funch => const FunchScreen(),
       TabItem.map => MapScreen(
-        onGoToSettingButtonTapped: () => ref.read(rootViewModelProvider.notifier).onGoToSettingButtonTapped(),
+        onGoToSettingButtonTapped: () => ref
+            .read(rootViewModelProvider.notifier)
+            .onGoToSettingButtonTapped(),
       ),
       TabItem.bus => const BusScreen(),
       TabItem.setting => const SettingsScreen(),
@@ -50,9 +54,13 @@ final class RootScreen extends ConsumerWidget {
       title: const Text('アップデートが必要です'),
       content: Text('現在のバージョン: $currentAppVersion\n最新バージョン: $latestAppVersion'),
       actions: [
-        TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('あとで')),
         TextButton(
-          onPressed: () => launchUrlSafely(appStorePageUrl, mode: .externalApplication),
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('あとで'),
+        ),
+        TextButton(
+          onPressed: () =>
+              launchUrlSafely(appStorePageUrl, mode: .externalApplication),
           child: const Text('今すぐアップデート'),
         ),
       ],
@@ -63,14 +71,20 @@ final class RootScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final viewModelAsync = ref.watch(rootViewModelProvider);
     final environment = ref.watch(apiEnvironmentProvider);
-    final isFunchEnabled = ref.watch(configProvider.select((config) => config.isFunchEnabled));
+    final isFunchEnabled = ref.watch(
+      configProvider.select((config) => config.isFunchEnabled),
+    );
     final activeTabs = _activeTabs(isFunchEnabled: isFunchEnabled);
 
     switch (viewModelAsync) {
       case AsyncData(:final value):
         if (!value.hasShownAppTutorial) {
           debugPrint('Show App Tutorial');
-          return OnboardingScreen(onDismissed: ref.read(rootViewModelProvider.notifier).onAppTutorialDismissed);
+          return OnboardingScreen(
+            onDismissed: ref
+                .read(rootViewModelProvider.notifier)
+                .onAppTutorialDismissed,
+          );
         }
         if (!value.isValidAppVersion) {
           debugPrint('Invalid App Version');
@@ -101,7 +115,8 @@ final class RootScreen extends ConsumerWidget {
           canPop: Platform.isIOS,
           onPopInvokedWithResult: (didPop, result) async {
             if (didPop) return;
-            await value.navigatorKeys[value.selectedTab]?.currentState?.maybePop();
+            await value.navigatorKeys[value.selectedTab]?.currentState
+                ?.maybePop();
           },
           child: Scaffold(
             resizeToAvoidBottomInset: false,
@@ -125,7 +140,9 @@ final class RootScreen extends ConsumerWidget {
                 Environment.development => Colors.blue.withValues(alpha: 0.15),
                 Environment.qa => Colors.purple.withValues(alpha: 0.15),
               },
-              onDestinationSelected: ref.read(rootViewModelProvider.notifier).onTabItemTapped,
+              onDestinationSelected: ref
+                  .read(rootViewModelProvider.notifier)
+                  .onTabItemTapped,
               selectedIndex: activeTabs.indexOf(value.selectedTab),
               destinations: activeTabs.map((tab) {
                 return NavigationDestination(
@@ -143,7 +160,10 @@ final class RootScreen extends ConsumerWidget {
         return const SizedBox.shrink();
 
       case AsyncLoading():
-        return const Scaffold(resizeToAvoidBottomInset: false, body: Center(child: CircularProgressIndicator()));
+        return const Scaffold(
+          resizeToAvoidBottomInset: false,
+          body: Center(child: CircularProgressIndicator()),
+        );
     }
   }
 }

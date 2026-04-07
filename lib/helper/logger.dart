@@ -74,6 +74,8 @@ final class LoggerImpl implements Logger {
       printDetails: printDetails,
       fatal: fatal,
     );
-    debugPrint('[Logger] error: $exception, reason: $reason, information: $information, fatal: $fatal');
+    debugPrint(
+      '[Logger] error: $exception, reason: $reason, information: $information, fatal: $fatal',
+    );
   }
 }

@@ -6,6 +6,8 @@ part 'subject_eligible_attribute.freezed.dart';
 
 @freezed
 abstract class SubjectEligibleAttribute with _$SubjectEligibleAttribute {
-  const factory SubjectEligibleAttribute({required Grade grade, required AcademicClass? class_}) =
-      _SubjectEligibleAttribute;
+  const factory SubjectEligibleAttribute({
+    required Grade grade,
+    required AcademicClass? class_,
+  }) = _SubjectEligibleAttribute;
 }

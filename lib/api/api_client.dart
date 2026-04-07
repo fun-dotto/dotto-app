@@ -28,7 +28,9 @@ final apiClientProvider = Provider<Openapi>((ref) {
               options.headers['X-Firebase-AppCheck'] = 'Bearer $appCheckToken';
             }
           } on Exception catch (e, stack) {
-            await ref.read(loggerProvider).logError(e, stack, reason: 'Failed to get App Check token');
+            await ref
+                .read(loggerProvider)
+                .logError(e, stack, reason: 'Failed to get App Check token');
           }
           final idToken = await FirebaseAuth.instance.currentUser?.getIdToken();
           if (idToken != null) {

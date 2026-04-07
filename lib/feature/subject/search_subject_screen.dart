@@ -28,12 +28,18 @@ class SearchSubjectScreen extends HookConsumerWidget {
         .toList();
     if (primaryNames.isNotEmpty) {
       final otherCount = faculties.length - primaryNames.length;
-      return otherCount > 0 ? '${primaryNames.join(', ')} 他$otherCount名' : primaryNames.join(', ');
+      return otherCount > 0
+          ? '${primaryNames.join(', ')} 他$otherCount名'
+          : primaryNames.join(', ');
     }
 
-    final fallbackNames = faculties.map((faculty) => faculty.faculty.name).toList();
+    final fallbackNames = faculties
+        .map((faculty) => faculty.faculty.name)
+        .toList();
     final otherCount = fallbackNames.length - 1;
-    return otherCount > 0 ? '${fallbackNames.first} 他$otherCount名' : fallbackNames.first;
+    return otherCount > 0
+        ? '${fallbackNames.first} 他$otherCount名'
+        : fallbackNames.first;
   }
 
   @override
@@ -43,13 +49,20 @@ class SearchSubjectScreen extends HookConsumerWidget {
     final focusNode = useFocusNode();
     final processingSubjectIds = useState(<String>{});
     final searchState = ref.watch(searchSubjectReducerProvider);
-    final filter = searchState.hasValue ? searchState.requireValue.filter : SubjectFilter();
+    final filter = searchState.hasValue
+        ? searchState.requireValue.filter
+        : SubjectFilter();
 
     Future<void> search() async {
-      await ref.read(searchSubjectReducerProvider.notifier).search(query: textEditingController.text, filter: filter);
+      await ref
+          .read(searchSubjectReducerProvider.notifier)
+          .search(query: textEditingController.text, filter: filter);
     }
 
-    Future<void> toggleCourseRegistration({required String subjectId, required bool isAddedToTimetable}) async {
+    Future<void> toggleCourseRegistration({
+      required String subjectId,
+      required bool isAddedToTimetable,
+    }) async {
       final processing = processingSubjectIds.value;
       if (processing.contains(subjectId)) {
         return;
@@ -64,16 +77,26 @@ class SearchSubjectScreen extends HookConsumerWidget {
         }
       } catch (e) {
         if (context.mounted) {
-          final message = e is Exception ? e.toString().replaceFirst('Exception: ', '') : '履修登録の更新に失敗しました';
+          final message = e is Exception
+              ? e.toString().replaceFirst('Exception: ', '')
+              : '履修登録の更新に失敗しました';
           ScaffoldMessenger.of(context).removeCurrentSnackBar();
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(message)));
         }
       } finally {
-        processingSubjectIds.value = {...processingSubjectIds.value.where((id) => id != subjectId)};
+        processingSubjectIds.value = {
+          ...processingSubjectIds.value.where((id) => id != subjectId),
+        };
       }
     }
 
-    Widget buildSubjectTile(BuildContext context, int index, List<SubjectSummary> value) {
+    Widget buildSubjectTile(
+      BuildContext context,
+      int index,
+      List<SubjectSummary> value,
+    ) {
       final subject = value[index];
       return ListTile(
         title: Text(subject.name),
@@ -82,9 +105,15 @@ class SearchSubjectScreen extends HookConsumerWidget {
           final semesterLabel = subject.semester?.label;
           final slots = subject.slots;
           final slotLabel = slots != null && slots.isNotEmpty
-              ? slots.map((slot) => '${slot.dayOfWeek.label}${slot.period.number}').join(',')
+              ? slots
+                    .map(
+                      (slot) => '${slot.dayOfWeek.label}${slot.period.number}',
+                    )
+                    .join(',')
               : null;
-          final creditLabel = subject.credit != null ? '${subject.credit}単位' : null;
+          final creditLabel = subject.credit != null
+              ? '${subject.credit}単位'
+              : null;
           final timeLine = [
             if (semesterLabel != null) semesterLabel,
             if (slotLabel != null) slotLabel,
@@ -103,9 +132,11 @@ class SearchSubjectScreen extends HookConsumerWidget {
           return Text(lines.join('\n'));
         }(),
         onTap: () async {
-          await Navigator.of(
-            context,
-          ).push(MaterialPageRoute<void>(builder: (context) => SubjectDetailScreen(id: subject.id)));
+          await Navigator.of(context).push(
+            MaterialPageRoute<void>(
+              builder: (context) => SubjectDetailScreen(id: subject.id),
+            ),
+          );
         },
         trailing: const Icon(Icons.chevron_right),
         leading: () {
@@ -118,7 +149,10 @@ class SearchSubjectScreen extends HookConsumerWidget {
           return IconButton(
             onPressed: isProcessing
                 ? null
-                : () => toggleCourseRegistration(subjectId: subject.id, isAddedToTimetable: isAddedToTimetable),
+                : () => toggleCourseRegistration(
+                    subjectId: subject.id,
+                    isAddedToTimetable: isAddedToTimetable,
+                  ),
             icon: AnimatedSwitcher(
               duration: const Duration(milliseconds: 220),
               switchInCurve: Curves.easeOutBack,
@@ -136,13 +170,18 @@ class SearchSubjectScreen extends HookConsumerWidget {
                       height: 20,
                       child: Shimmer(
                         child: Container(
-                          decoration: BoxDecoration(color: Colors.grey.shade300, shape: BoxShape.circle),
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade300,
+                            shape: BoxShape.circle,
+                          ),
                         ),
                       ),
                     )
                   : Icon(
                       isAddedToTimetable ? Icons.check : Icons.add,
-                      key: ValueKey(isAddedToTimetable ? 'registered' : 'unregistered'),
+                      key: ValueKey(
+                        isAddedToTimetable ? 'registered' : 'unregistered',
+                      ),
                     ),
             ),
             tooltip: isAddedToTimetable ? '履修解除' : '履修登録',
@@ -158,16 +197,32 @@ class SearchSubjectScreen extends HookConsumerWidget {
             if (i > 0) const Divider(height: 0),
             ListTile(
               title: Shimmer(
-                child: Container(height: 16, width: double.infinity, color: Colors.grey.shade300),
+                child: Container(
+                  height: 16,
+                  width: double.infinity,
+                  color: Colors.grey.shade300,
+                ),
               ),
               subtitle: Padding(
                 padding: const EdgeInsets.only(top: 8),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Shimmer(child: Container(height: 14, width: 220, color: Colors.grey.shade300)),
+                    Shimmer(
+                      child: Container(
+                        height: 14,
+                        width: 220,
+                        color: Colors.grey.shade300,
+                      ),
+                    ),
                     const SizedBox(height: 6),
-                    Shimmer(child: Container(height: 14, width: 180, color: Colors.grey.shade300)),
+                    Shimmer(
+                      child: Container(
+                        height: 14,
+                        width: 180,
+                        color: Colors.grey.shade300,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -188,7 +243,11 @@ class SearchSubjectScreen extends HookConsumerWidget {
                 )
               : Column(
                   children: [
-                    for (var index = 0; index < value.subjects.length; index++) ...[
+                    for (
+                      var index = 0;
+                      index < value.subjects.length;
+                      index++
+                    ) ...[
                       if (index > 0) const Divider(height: 0),
                       buildSubjectTile(context, index, value.subjects),
                     ],
@@ -206,14 +265,18 @@ class SearchSubjectScreen extends HookConsumerWidget {
       appBar: AppBar(
         title: Text(
           '科目検索',
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(color: SemanticColor.light.accentPrimary),
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+            color: SemanticColor.light.accentPrimary,
+          ),
         ),
         centerTitle: false,
         actions: [
           TextButton(
             onPressed: filter.hasActiveFilters
                 ? () {
-                    final notifier = ref.read(searchSubjectReducerProvider.notifier);
+                    final notifier = ref.read(
+                      searchSubjectReducerProvider.notifier,
+                    );
                     notifier.clearFilter();
                     notifier.clearResults();
                   }
@@ -239,9 +302,16 @@ class SearchSubjectScreen extends HookConsumerWidget {
               SearchSubjectFilterSection(
                 filter: filter,
                 onChanged: (value) {
-                  final notifier = ref.read(searchSubjectReducerProvider.notifier);
+                  final notifier = ref.read(
+                    searchSubjectReducerProvider.notifier,
+                  );
                   notifier.updateFilter(value);
-                  unawaited(notifier.search(query: textEditingController.text, filter: value));
+                  unawaited(
+                    notifier.search(
+                      query: textEditingController.text,
+                      filter: value,
+                    ),
+                  );
                 },
               ),
               const Divider(height: 0),

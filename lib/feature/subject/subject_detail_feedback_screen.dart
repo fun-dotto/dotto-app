@@ -19,7 +19,9 @@ final class SubjectDetailFeedbackScreen extends HookConsumerWidget {
     final isAuthenticated = ref.watch(isAuthenticatedProvider);
     final apiClient = ref.read(apiClientProvider);
     final subjectRepository = SubjectRepositoryImpl(apiClient);
-    final feedbacksSnapshot = useFuture(useMemoized(() => subjectRepository.getFeedbacks(lessonId)));
+    final feedbacksSnapshot = useFuture(
+      useMemoized(() => subjectRepository.getFeedbacks(lessonId)),
+    );
 
     return Scaffold(
       body: Padding(
@@ -38,7 +40,11 @@ final class SubjectDetailFeedbackScreen extends HookConsumerWidget {
               return const Center(child: Text('フィードバックがありません'));
             }
             return Column(
-              children: [_feedbackSummary(context, feedbacks), const Divider(height: 0), _feedbackList(feedbacks)],
+              children: [
+                _feedbackSummary(context, feedbacks),
+                const Divider(height: 0),
+                _feedbackList(feedbacks),
+              ],
             );
           }
           return const SizedBox.shrink();
@@ -47,9 +53,11 @@ final class SubjectDetailFeedbackScreen extends HookConsumerWidget {
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           if (!isAuthenticated) {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(const SnackBar(content: Text('Googleアカウント (@fun.ac.jp) による認証が必要です。')));
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Googleアカウント (@fun.ac.jp) による認証が必要です。'),
+              ),
+            );
             return;
           }
           final result = await showModalBottomSheet<SubjectFeedback>(
@@ -59,7 +67,9 @@ final class SubjectDetailFeedbackScreen extends HookConsumerWidget {
             builder: (_) => SubjectDetailAddFeedbackScreen(lessonId: lessonId),
           );
           if (result != null && context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('フィードバックを投稿しました。')));
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(const SnackBar(content: Text('フィードバックを投稿しました。')));
           }
         },
         child: const Icon(Icons.add),
@@ -67,8 +77,13 @@ final class SubjectDetailFeedbackScreen extends HookConsumerWidget {
     );
   }
 
-  Widget _feedbackSummary(BuildContext context, List<SubjectFeedback> feedbacks) {
-    final averageScore = feedbacks.map((feedback) => feedback.score).reduce((a, b) => a + b) / feedbacks.length;
+  Widget _feedbackSummary(
+    BuildContext context,
+    List<SubjectFeedback> feedbacks,
+  ) {
+    final averageScore =
+        feedbacks.map((feedback) => feedback.score).reduce((a, b) => a + b) /
+        feedbacks.length;
     return Padding(
       padding: const EdgeInsets.all(8),
       child: Row(
@@ -79,7 +94,10 @@ final class SubjectDetailFeedbackScreen extends HookConsumerWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(averageScore.toStringAsFixed(1), style: Theme.of(context).textTheme.displayLarge),
+              Text(
+                averageScore.toStringAsFixed(1),
+                style: Theme.of(context).textTheme.displayLarge,
+              ),
               const Text('5段階評価中'),
             ],
           ),
@@ -88,7 +106,11 @@ final class SubjectDetailFeedbackScreen extends HookConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 for (final rating in [5, 4, 3, 2, 1])
-                  _buildRatingBar(rating, feedbacks.where((f) => f.score == rating).length / feedbacks.length),
+                  _buildRatingBar(
+                    rating,
+                    feedbacks.where((f) => f.score == rating).length /
+                        feedbacks.length,
+                  ),
                 Text('${feedbacks.length}件のフィードバック'),
               ],
             ),
@@ -146,9 +168,13 @@ final class SubjectDetailFeedbackScreen extends HookConsumerWidget {
     return Row(
       children: List.generate(5, (index) {
         if (inverse) {
-          return index >= 5 - rating ? const Icon(Icons.star, size: 12) : const SizedBox(width: 12);
+          return index >= 5 - rating
+              ? const Icon(Icons.star, size: 12)
+              : const SizedBox(width: 12);
         }
-        return index < rating ? const Icon(Icons.star, size: 12) : const SizedBox(width: 12);
+        return index < rating
+            ? const Icon(Icons.star, size: 12)
+            : const SizedBox(width: 12);
       }),
     );
   }

@@ -5,7 +5,9 @@ import 'package:dotto/helper/firebase_realtime_database_repository.dart';
 
 abstract class BusRepository {
   Future<List<BusStop>> getAllBusStops();
-  Future<Map<String, Map<String, List<BusTrip>>>> getBusTrips(List<BusStop> allBusStops);
+  Future<Map<String, Map<String, List<BusTrip>>>> getBusTrips(
+    List<BusStop> allBusStops,
+  );
 }
 
 final class BusRepositoryImpl implements BusRepository {
@@ -18,10 +20,15 @@ final class BusRepositoryImpl implements BusRepository {
     try {
       final snapshot = await _database.getData('bus/stops');
       if (!snapshot.exists) {
-        throw DomainError(type: DomainErrorType.notFound, message: 'Failed to fetch bus stops');
+        throw DomainError(
+          type: DomainErrorType.notFound,
+          message: 'Failed to fetch bus stops',
+        );
       }
       final busDataStops = snapshot.value! as List;
-      return busDataStops.map((e) => BusStop.fromFirebase(Map<String, dynamic>.from(e as Map))).toList();
+      return busDataStops
+          .map((e) => BusStop.fromFirebase(Map<String, dynamic>.from(e as Map)))
+          .toList();
     } on DomainError {
       rethrow;
     } on Exception catch (e, stackTrace) {
@@ -30,11 +37,16 @@ final class BusRepositoryImpl implements BusRepository {
   }
 
   @override
-  Future<Map<String, Map<String, List<BusTrip>>>> getBusTrips(List<BusStop> allBusStops) async {
+  Future<Map<String, Map<String, List<BusTrip>>>> getBusTrips(
+    List<BusStop> allBusStops,
+  ) async {
     try {
       final snapshot = await _database.getData('bus/trips');
       if (!snapshot.exists) {
-        throw DomainError(type: DomainErrorType.notFound, message: 'Failed to fetch bus trips');
+        throw DomainError(
+          type: DomainErrorType.notFound,
+          message: 'Failed to fetch bus trips',
+        );
       }
       final busTripsData = snapshot.value! as Map;
       final allBusTrips = <String, Map<String, List<BusTrip>>>{
@@ -46,7 +58,12 @@ final class BusRepositoryImpl implements BusRepository {
         (value as Map).forEach((key2, value2) {
           final week = key2 as String;
           allBusTrips[fromTo]![week] = (value2 as List)
-              .map((e) => BusTrip.fromFirebase(Map<String, dynamic>.from(e as Map), allBusStops))
+              .map(
+                (e) => BusTrip.fromFirebase(
+                  Map<String, dynamic>.from(e as Map),
+                  allBusStops,
+                ),
+              )
               .toList();
         });
       });

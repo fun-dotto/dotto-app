@@ -18,7 +18,10 @@ final class RoomRepositoryImpl implements RoomRepository {
   @override
   Future<List<Room>> getRooms() async {
     try {
-      final (roomResponses, roomScheduleResponses) = await (RoomAPI.getRooms(), RoomAPI.getRoomSchedules()).wait;
+      final (roomResponses, roomScheduleResponses) = await (
+        RoomAPI.getRooms(),
+        RoomAPI.getRoomSchedules(),
+      ).wait;
 
       return roomResponses.entries.expand((floorEntry) {
         final floorLabel = floorEntry.key;
@@ -60,7 +63,8 @@ final class RoomRepositoryImpl implements RoomRepository {
   @override
   Future<RoomAssignmentIndex> getRoomAssignmentIndex() async {
     final rooms = await getRooms();
-    final roomNamesBySlotAndTitle = <({DayOfWeek dayOfWeek, Period period, String title}), Set<String>>{};
+    final roomNamesBySlotAndTitle =
+        <({DayOfWeek dayOfWeek, Period period, String title}), Set<String>>{};
     final roomNamesByTitle = <String, Set<String>>{};
 
     for (final room in rooms) {
@@ -80,24 +84,33 @@ final class RoomRepositoryImpl implements RoomRepository {
           continue;
         }
 
-        final key = (dayOfWeek: DayOfWeek.fromDateTime(schedule.beginDatetime), period: period, title: title);
-        roomNamesBySlotAndTitle.putIfAbsent(key, () => <String>{}).add(roomName);
+        final key = (
+          dayOfWeek: DayOfWeek.fromDateTime(schedule.beginDatetime),
+          period: period,
+          title: title,
+        );
+        roomNamesBySlotAndTitle
+            .putIfAbsent(key, () => <String>{})
+            .add(roomName);
         roomNamesByTitle.putIfAbsent(title, () => <String>{}).add(roomName);
       }
     }
 
     return RoomAssignmentIndex(
       roomNamesBySlotAndTitle: {
-        for (final entry in roomNamesBySlotAndTitle.entries) entry.key: (entry.value.toList()..sort()).join(', '),
+        for (final entry in roomNamesBySlotAndTitle.entries)
+          entry.key: (entry.value.toList()..sort()).join(', '),
       },
       roomNamesByTitle: {
-        for (final entry in roomNamesByTitle.entries) entry.key: (entry.value.toList()..sort()).join(', '),
+        for (final entry in roomNamesByTitle.entries)
+          entry.key: (entry.value.toList()..sort()).join(', '),
       },
     );
   }
 
   Period? _periodFromSchedule(RoomSchedule schedule) {
-    final beginMinutes = schedule.beginDatetime.hour * 60 + schedule.beginDatetime.minute;
+    final beginMinutes =
+        schedule.beginDatetime.hour * 60 + schedule.beginDatetime.minute;
 
     for (final period in Period.values) {
       final startMinutes = period.startTime.hour * 60 + period.startTime.minute;

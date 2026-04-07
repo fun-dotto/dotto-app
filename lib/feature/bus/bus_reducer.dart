@@ -44,7 +44,9 @@ final class BusReducer extends _$BusReducer {
   }
 
   Future<BusStop> _loadMyBusStop(List<BusStop> allStops) async {
-    final savedId = await UserPreferenceRepository.getInt(UserPreferenceKeys.myBusStop);
+    final savedId = await UserPreferenceRepository.getInt(
+      UserPreferenceKeys.myBusStop,
+    );
     if (savedId != null) {
       final found = allStops.where((s) => s.id == savedId);
       if (found.isNotEmpty) return found.first;
@@ -70,11 +72,16 @@ final class BusReducer extends _$BusReducer {
   void toggleWeekday() {
     final current = state.asData?.value;
     if (current == null) return;
-    state = AsyncData(current.copyWith(isWeekday: !current.isWeekday, isScrolled: false));
+    state = AsyncData(
+      current.copyWith(isWeekday: !current.isWeekday, isScrolled: false),
+    );
   }
 
   Future<void> selectBusStop(BusStop busStop) async {
-    await UserPreferenceRepository.setInt(UserPreferenceKeys.myBusStop, busStop.id);
+    await UserPreferenceRepository.setInt(
+      UserPreferenceKeys.myBusStop,
+      busStop.id,
+    );
     final current = state.asData?.value;
     if (current == null) return;
     state = AsyncData(current.copyWith(myBusStop: busStop));

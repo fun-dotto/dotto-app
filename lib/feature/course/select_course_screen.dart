@@ -27,10 +27,14 @@ final class SelectCourseScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final apiClient = ref.read(apiClientProvider);
-    final courseRegistrationRepository = CourseRegistrationRepositoryImpl(apiClient);
+    final courseRegistrationRepository = CourseRegistrationRepositoryImpl(
+      apiClient,
+    );
 
     return Scaffold(
-      appBar: AppBar(title: Text('${semester.label} ${dayOfWeek.label}曜${period.number}限')),
+      appBar: AppBar(
+        title: Text('${semester.label} ${dayOfWeek.label}曜${period.number}限'),
+      ),
       body: () {
         if (timetableItems.isEmpty) {
           return const Center(child: Text('対象の科目はありません'));
@@ -40,20 +44,26 @@ final class SelectCourseScreen extends HookConsumerWidget {
           itemBuilder: (context, index) {
             final item = timetableItems[index];
             final isAddedToTimetable = item.isAddedToTimetable ?? false;
-            final selectedCount = timetableItems.where((e) => e.isAddedToTimetable ?? false).length;
+            final selectedCount = timetableItems
+                .where((e) => e.isAddedToTimetable ?? false)
+                .length;
             return ListTile(
               title: Text(item.subject.name),
               trailing: isAddedToTimetable
                   ? DottoButton(
                       onPressed: () async {
-                        final courseRegistrations = await courseRegistrationRepository.getCourseRegistrations(
-                          semester.semesters,
+                        final courseRegistrations =
+                            await courseRegistrationRepository
+                                .getCourseRegistrations(semester.semesters);
+                        final targets = courseRegistrations.where(
+                          (e) => e.subject.id == item.subject.id,
                         );
-                        final targets = courseRegistrations.where((e) => e.subject.id == item.subject.id);
                         if (targets.isEmpty) {
                           return;
                         }
-                        await courseRegistrationRepository.unregisterCourse(targets.first.id);
+                        await courseRegistrationRepository.unregisterCourse(
+                          targets.first.id,
+                        );
                         await onChanged?.call();
                         if (context.mounted) {
                           Navigator.of(context).pop();
@@ -66,12 +76,16 @@ final class SelectCourseScreen extends HookConsumerWidget {
                       onPressed: () async {
                         if (selectedCount >= 2 && context.mounted) {
                           ScaffoldMessenger.of(context).removeCurrentSnackBar();
-                          ScaffoldMessenger.of(
-                            context,
-                          ).showSnackBar(const SnackBar(content: Text('1つのコマに2科目以上を設定できません')));
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('1つのコマに2科目以上を設定できません'),
+                            ),
+                          );
                           return;
                         }
-                        await courseRegistrationRepository.registerCourse(item.subject.id);
+                        await courseRegistrationRepository.registerCourse(
+                          item.subject.id,
+                        );
                         await onChanged?.call();
                         if (context.mounted) {
                           Navigator.of(context).pop();

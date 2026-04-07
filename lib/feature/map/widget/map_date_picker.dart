@@ -25,15 +25,25 @@ final class MapDatePicker extends StatelessWidget {
       child: Text(
         label,
         style: Theme.of(context).textTheme.labelMedium?.copyWith(
-          color: searchDatetime == dateTime ? SemanticColor.light.accentPrimary : SemanticColor.light.labelSecondary,
+          color: searchDatetime == dateTime
+              ? SemanticColor.light.accentPrimary
+              : SemanticColor.light.labelSecondary,
         ),
       ),
     );
   }
 
-  Widget _datePickerButton(BuildContext context, DateTime searchDatetime, DateTime monday, DateTime nextSunday) {
+  Widget _datePickerButton(
+    BuildContext context,
+    DateTime searchDatetime,
+    DateTime monday,
+    DateTime nextSunday,
+  ) {
     return TextButton(
-      style: TextButton.styleFrom(textStyle: Theme.of(context).textTheme.labelMedium, padding: EdgeInsets.zero),
+      style: TextButton.styleFrom(
+        textStyle: Theme.of(context).textTheme.labelMedium,
+        padding: EdgeInsets.zero,
+      ),
       onPressed: () async {
         final locale = WidgetsBinding.instance.platformDispatcher.locale;
         await DatePicker.showDateTimePicker(
@@ -71,7 +81,11 @@ final class MapDatePicker extends StatelessWidget {
 
     return Row(
       children: [
-        ...timeMap.entries.map((item) => Expanded(child: Center(child: _periodButton(context, item.key, item.value)))),
+        ...timeMap.entries.map(
+          (item) => Expanded(
+            child: Center(child: _periodButton(context, item.key, item.value)),
+          ),
+        ),
         _datePickerButton(context, searchDatetime, monday, nextSunday),
       ],
     );

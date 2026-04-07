@@ -34,12 +34,24 @@ final class QuickButton extends StatelessWidget {
                   width: 24,
                   height: 24,
                   fit: BoxFit.contain,
-                  errorBuilder: (_, _, _) => Icon(fallbackIcon, size: 24, color: SemanticColor.light.labelPrimary),
+                  errorBuilder: (_, _, _) => Icon(
+                    fallbackIcon,
+                    size: 24,
+                    color: SemanticColor.light.labelPrimary,
+                  ),
                 ),
               )
             else
-              Icon(fallbackIcon, size: 24, color: SemanticColor.light.labelPrimary),
-            Text(label, style: Theme.of(context).textTheme.labelSmall, textAlign: TextAlign.center),
+              Icon(
+                fallbackIcon,
+                size: 24,
+                color: SemanticColor.light.labelPrimary,
+              ),
+            Text(
+              label,
+              style: Theme.of(context).textTheme.labelSmall,
+              textAlign: TextAlign.center,
+            ),
           ],
         ),
       ),

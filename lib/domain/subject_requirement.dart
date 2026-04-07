@@ -6,6 +6,8 @@ part 'subject_requirement.freezed.dart';
 
 @freezed
 abstract class SubjectRequirement with _$SubjectRequirement {
-  const factory SubjectRequirement({required AcademicArea course, required SubjectRequirementType requirementType}) =
-      _SubjectRequirement;
+  const factory SubjectRequirement({
+    required AcademicArea course,
+    required SubjectRequirementType requirementType,
+  }) = _SubjectRequirement;
 }

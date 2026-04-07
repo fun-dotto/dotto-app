@@ -10,19 +10,30 @@ part 'dotto_user_preference_controller.g.dart';
 final class DottoUserPreferenceNotifier extends _$DottoUserPreferenceNotifier {
   @override
   Future<DottoUserPreference> build() async {
-    final timetablePeriodStyleKey = await UserPreferenceRepository.getString(UserPreferenceKeys.timetablePeriodStyle);
+    final timetablePeriodStyleKey = await UserPreferenceRepository.getString(
+      UserPreferenceKeys.timetablePeriodStyle,
+    );
     final timetablePeriodStyle =
-        TimetablePeriodStyle.fromKey(timetablePeriodStyleKey ?? TimetablePeriodStyle.numberOnly.key) ??
+        TimetablePeriodStyle.fromKey(
+          timetablePeriodStyleKey ?? TimetablePeriodStyle.numberOnly.key,
+        ) ??
         TimetablePeriodStyle.numberOnly;
     return DottoUserPreference(timetablePeriodStyle: timetablePeriodStyle);
   }
 
-  Future<void> setTimetablePeriodStyle(TimetablePeriodStyle timetablePeriodStyle) async {
+  Future<void> setTimetablePeriodStyle(
+    TimetablePeriodStyle timetablePeriodStyle,
+  ) async {
     final currentPreference = switch (state) {
       AsyncData(value: final preference) => preference,
       AsyncError() || AsyncLoading() => const DottoUserPreference(),
     };
-    state = AsyncValue.data(currentPreference.copyWith(timetablePeriodStyle: timetablePeriodStyle));
-    await UserPreferenceRepository.setString(UserPreferenceKeys.timetablePeriodStyle, timetablePeriodStyle.key);
+    state = AsyncValue.data(
+      currentPreference.copyWith(timetablePeriodStyle: timetablePeriodStyle),
+    );
+    await UserPreferenceRepository.setString(
+      UserPreferenceKeys.timetablePeriodStyle,
+      timetablePeriodStyle.key,
+    );
   }
 }

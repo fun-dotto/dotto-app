@@ -8,14 +8,20 @@ import 'package:dotto/helper/file_helper.dart';
 abstract interface class FunchRepositoryInterface {
   Future<List<FunchCommonMenu>> getAllCommonMenu();
   Future<List<FunchOriginalMenu>> getAllOriginalMenu();
-  Future<Map<String, FirestoreFunchMenu>> getMenuFromFirestore(MenuCollection collection, DateTime from, DateTime to);
+  Future<Map<String, FirestoreFunchMenu>> getMenuFromFirestore(
+    MenuCollection collection,
+    DateTime from,
+    DateTime to,
+  );
 }
 
 final class FunchRepositoryImpl implements FunchRepositoryInterface {
   @override
   Future<List<FunchCommonMenu>> getAllCommonMenu() async {
     final data = await FileHelper.getJSONData('funch/menu.json');
-    return data.map((e) => FunchCommonMenu.fromJson(e as Map<String, dynamic>)).toList();
+    return data
+        .map((e) => FunchCommonMenu.fromJson(e as Map<String, dynamic>))
+        .toList();
   }
 
   @override
@@ -45,11 +51,15 @@ final class FunchRepositoryImpl implements FunchRepositoryInterface {
     switch (collection) {
       case MenuCollection.monthly:
         correctedDateFrom = DateTimeUtility.firstDateOfMonth(from);
-        correctedDateTo = DateTimeUtility.firstDateOfMonth(DateTime(to.year, to.month + 1, to.day));
+        correctedDateTo = DateTimeUtility.firstDateOfMonth(
+          DateTime(to.year, to.month + 1, to.day),
+        );
 
       case MenuCollection.daily:
         correctedDateFrom = DateTimeUtility.startOfDay(from);
-        correctedDateTo = DateTimeUtility.startOfDay(DateTime(to.year, to.month, to.day + 1));
+        correctedDateTo = DateTimeUtility.startOfDay(
+          DateTime(to.year, to.month, to.day + 1),
+        );
     }
     final query = ref
         .where('date', isGreaterThanOrEqualTo: correctedDateFrom)

@@ -35,7 +35,13 @@ final class SettingsScreen extends ConsumerWidget {
   Widget _settingValueText(String text) {
     return ConstrainedBox(
       constraints: const BoxConstraints(maxWidth: 180),
-      child: Text(text, maxLines: 1, overflow: TextOverflow.ellipsis, softWrap: false, textAlign: TextAlign.end),
+      child: Text(
+        text,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        softWrap: false,
+        textAlign: TextAlign.end,
+      ),
     );
   }
 
@@ -83,7 +89,9 @@ final class SettingsScreen extends ConsumerWidget {
       appBar: AppBar(
         title: Text(
           '設定',
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(color: SemanticColor.light.accentPrimary),
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+            color: SemanticColor.light.accentPrimary,
+          ),
         ),
         centerTitle: false,
       ),
@@ -101,12 +109,19 @@ final class SettingsScreen extends ConsumerWidget {
                           onTap: value.id.isNotEmpty
                               ? () => ref.read(userProvider.notifier).signOut()
                               : () async {
-                                  await ref.read(userProvider.notifier).signIn();
+                                  await ref
+                                      .read(userProvider.notifier)
+                                      .signIn();
                                 },
                         ),
                       ),
                       loading: () {
-                        return CustomSettingsTile(child: UserInfoTile(user: user.value ?? _emptyUser, isLoading: true));
+                        return CustomSettingsTile(
+                          child: UserInfoTile(
+                            user: user.value ?? _emptyUser,
+                            isLoading: true,
+                          ),
+                        );
                       },
                       error: (err, stack) {
                         final previousUser = user.value ?? _emptyUser;
@@ -115,9 +130,12 @@ final class SettingsScreen extends ConsumerWidget {
                           child: UserInfoTile(
                             user: previousUser,
                             onTap: isAuthenticated
-                                ? () => ref.read(userProvider.notifier).signOut()
+                                ? () =>
+                                      ref.read(userProvider.notifier).signOut()
                                 : () async {
-                                    await ref.read(userProvider.notifier).signIn();
+                                    await ref
+                                        .read(userProvider.notifier)
+                                        .signIn();
                                   },
                           ),
                         );
@@ -137,23 +155,35 @@ final class SettingsScreen extends ConsumerWidget {
                               children: [
                                 MaterialButton(
                                   onPressed: () {
-                                    ref.read(userProvider.notifier).setGrade(null);
+                                    ref
+                                        .read(userProvider.notifier)
+                                        .setGrade(null);
                                     Navigator.of(context).pop();
                                   },
                                   child: ListTile(
                                     title: const Text('なし'),
-                                    trailing: Icon(user.value?.grade == null ? Icons.check : null),
+                                    trailing: Icon(
+                                      user.value?.grade == null
+                                          ? Icons.check
+                                          : null,
+                                    ),
                                   ),
                                 ),
                                 ...Grade.values.map((grade) {
                                   return MaterialButton(
                                     onPressed: () {
-                                      ref.read(userProvider.notifier).setGrade(grade);
+                                      ref
+                                          .read(userProvider.notifier)
+                                          .setGrade(grade);
                                       Navigator.of(context).pop();
                                     },
                                     child: ListTile(
                                       title: Text(grade.label),
-                                      trailing: Icon(user.value?.grade == grade ? Icons.check : null),
+                                      trailing: Icon(
+                                        user.value?.grade == grade
+                                            ? Icons.check
+                                            : null,
+                                      ),
                                     ),
                                   );
                                 }),
@@ -163,7 +193,9 @@ final class SettingsScreen extends ConsumerWidget {
                         },
                         leading: const Icon(Icons.school),
                         title: const Text('学年'),
-                        value: _settingValueText(user.value?.grade?.label ?? '未設定'),
+                        value: _settingValueText(
+                          user.value?.grade?.label ?? '未設定',
+                        ),
                       ),
                       SettingsTile.navigation(
                         onPressed: (_) async {
@@ -174,23 +206,35 @@ final class SettingsScreen extends ConsumerWidget {
                               children: [
                                 MaterialButton(
                                   onPressed: () {
-                                    ref.read(userProvider.notifier).setCourse(null);
+                                    ref
+                                        .read(userProvider.notifier)
+                                        .setCourse(null);
                                     Navigator.of(context).pop();
                                   },
                                   child: ListTile(
                                     title: const Text('なし'),
-                                    trailing: Icon(user.value?.course == null ? Icons.check : null),
+                                    trailing: Icon(
+                                      user.value?.course == null
+                                          ? Icons.check
+                                          : null,
+                                    ),
                                   ),
                                 ),
                                 ...AcademicArea.values.map((academicArea) {
                                   return MaterialButton(
                                     onPressed: () {
-                                      ref.read(userProvider.notifier).setCourse(academicArea);
+                                      ref
+                                          .read(userProvider.notifier)
+                                          .setCourse(academicArea);
                                       Navigator.of(context).pop();
                                     },
                                     child: ListTile(
                                       title: Text(academicArea.label),
-                                      trailing: Icon(user.value?.course == academicArea ? Icons.check : null),
+                                      trailing: Icon(
+                                        user.value?.course == academicArea
+                                            ? Icons.check
+                                            : null,
+                                      ),
                                     ),
                                   );
                                 }),
@@ -200,7 +244,9 @@ final class SettingsScreen extends ConsumerWidget {
                         },
                         leading: const Icon(Icons.school),
                         title: const Text('コース'),
-                        value: _settingValueText(user.value?.course?.label ?? '未設定'),
+                        value: _settingValueText(
+                          user.value?.course?.label ?? '未設定',
+                        ),
                       ),
                       SettingsTile.navigation(
                         onPressed: (_) async {
@@ -211,23 +257,35 @@ final class SettingsScreen extends ConsumerWidget {
                               children: [
                                 MaterialButton(
                                   onPressed: () {
-                                    ref.read(userProvider.notifier).setClass(null);
+                                    ref
+                                        .read(userProvider.notifier)
+                                        .setClass(null);
                                     Navigator.of(context).pop();
                                   },
                                   child: ListTile(
                                     title: const Text('なし'),
-                                    trailing: Icon(user.value?.class_ == null ? Icons.check : null),
+                                    trailing: Icon(
+                                      user.value?.class_ == null
+                                          ? Icons.check
+                                          : null,
+                                    ),
                                   ),
                                 ),
                                 ...AcademicClass.values.map((academicClass) {
                                   return MaterialButton(
                                     onPressed: () {
-                                      ref.read(userProvider.notifier).setClass(academicClass);
+                                      ref
+                                          .read(userProvider.notifier)
+                                          .setClass(academicClass);
                                       Navigator.of(context).pop();
                                     },
                                     child: ListTile(
                                       title: Text(academicClass.label),
-                                      trailing: Icon(user.value?.class_ == academicClass ? Icons.check : null),
+                                      trailing: Icon(
+                                        user.value?.class_ == academicClass
+                                            ? Icons.check
+                                            : null,
+                                      ),
                                     ),
                                   );
                                 }),
@@ -237,7 +295,9 @@ final class SettingsScreen extends ConsumerWidget {
                         },
                         leading: const Icon(Icons.school),
                         title: const Text('クラス'),
-                        value: _settingValueText(user.value?.class_?.label ?? '未設定'),
+                        value: _settingValueText(
+                          user.value?.class_?.label ?? '未設定',
+                        ),
                       ),
                     ],
                   ),
@@ -251,7 +311,9 @@ final class SettingsScreen extends ConsumerWidget {
                         Navigator.of(context).push(
                           MaterialPageRoute<void>(
                             builder: (_) => const AnnouncementScreen(),
-                            settings: const RouteSettings(name: '/setting/announcement'),
+                            settings: const RouteSettings(
+                              name: '/setting/announcement',
+                            ),
                           ),
                         );
                       },
@@ -270,7 +332,9 @@ final class SettingsScreen extends ConsumerWidget {
                         Navigator.of(context).push(
                           MaterialPageRoute<void>(
                             builder: (_) => const GitHubContributorScreen(),
-                            settings: const RouteSettings(name: '/setting/github_contributors'),
+                            settings: const RouteSettings(
+                              name: '/setting/github_contributors',
+                            ),
                           ),
                         );
                       },
@@ -282,8 +346,12 @@ final class SettingsScreen extends ConsumerWidget {
                       onPressed: (_) {
                         Navigator.of(context).push(
                           MaterialPageRoute<void>(
-                            builder: (_) => OnboardingScreen(onDismissed: () => Navigator.of(context).pop()),
-                            settings: const RouteSettings(name: '/setting/app_tutorial'),
+                            builder: (_) => OnboardingScreen(
+                              onDismissed: () => Navigator.of(context).pop(),
+                            ),
+                            settings: const RouteSettings(
+                              name: '/setting/app_tutorial',
+                            ),
                           ),
                         );
                       },
@@ -292,13 +360,15 @@ final class SettingsScreen extends ConsumerWidget {
                     SettingsTile.navigation(
                       title: const Text('利用規約'),
                       leading: const Icon(Icons.verified_user),
-                      onPressed: (_) => launchUrlSafely(config.termsOfServiceUrl),
+                      onPressed: (_) =>
+                          launchUrlSafely(config.termsOfServiceUrl),
                     ),
                     // プライバシーポリシー
                     SettingsTile.navigation(
                       title: const Text('プライバシーポリシー'),
                       leading: const Icon(Icons.admin_panel_settings),
-                      onPressed: (_) => launchUrlSafely(config.privacyPolicyUrl),
+                      onPressed: (_) =>
+                          launchUrlSafely(config.privacyPolicyUrl),
                     ),
                     // ライセンス
                     SettingsTile.navigation(
@@ -308,7 +378,9 @@ final class SettingsScreen extends ConsumerWidget {
                         Navigator.of(context).push(
                           MaterialPageRoute<void>(
                             builder: (_) => const SettingsLicenseScreen(),
-                            settings: const RouteSettings(name: '/setting/license'),
+                            settings: const RouteSettings(
+                              name: '/setting/license',
+                            ),
                           ),
                         );
                       },
@@ -319,14 +391,20 @@ final class SettingsScreen extends ConsumerWidget {
                           if (!canOpen || !context.mounted) {
                             return;
                           }
-                          Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const DebugScreen()));
+                          Navigator.of(context).push(
+                            MaterialPageRoute<void>(
+                              builder: (_) => const DebugScreen(),
+                            ),
+                          );
                         },
                         child: FutureBuilder(
                           future: PackageInfo.fromPlatform(),
                           builder: (context, snapshot) {
                             if (snapshot.hasData) {
                               final data = snapshot.data!;
-                              return Text('${data.version} (${data.buildNumber})');
+                              return Text(
+                                '${data.version} (${data.buildNumber})',
+                              );
                             } else {
                               return const Text('');
                             }

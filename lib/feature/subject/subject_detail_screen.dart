@@ -18,7 +18,9 @@ final class SubjectDetailScreen extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final apiClient = ref.read(apiClientProvider);
     final subjectRepository = SubjectRepositoryImpl(apiClient);
-    final subjectSnapshot = useFuture(useMemoized(() => subjectRepository.getSubject(id)));
+    final subjectSnapshot = useFuture(
+      useMemoized(() => subjectRepository.getSubject(id)),
+    );
     final isAuthenticated = ref.watch(isAuthenticatedProvider);
 
     return DefaultTabController(
@@ -61,7 +63,9 @@ final class SubjectDetailScreen extends HookConsumerWidget {
               }
               if (subjectSnapshot.hasData) {
                 final subject = subjectSnapshot.data!;
-                return SubjectDetailFeedbackScreen(lessonId: subject.syllabus.id);
+                return SubjectDetailFeedbackScreen(
+                  lessonId: subject.syllabus.id,
+                );
               }
               return const SizedBox.shrink();
             }(),
@@ -75,7 +79,10 @@ final class SubjectDetailScreen extends HookConsumerWidget {
               }
               if (subjectSnapshot.hasData) {
                 final subject = subjectSnapshot.data!;
-                return SubjectDetailPastExamScreen(pastExamId: subject.pastExamId, isAuthenticated: isAuthenticated);
+                return SubjectDetailPastExamScreen(
+                  pastExamId: subject.pastExamId,
+                  isAuthenticated: isAuthenticated,
+                );
               }
               return const SizedBox.shrink();
             }(),
@@ -86,12 +93,19 @@ final class SubjectDetailScreen extends HookConsumerWidget {
   }
 }
 
-Widget _skeletonBox({required double height, double? width, double radius = 8}) {
+Widget _skeletonBox({
+  required double height,
+  double? width,
+  double radius = 8,
+}) {
   return Shimmer(
     child: Container(
       width: width,
       height: height,
-      decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(radius)),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade300,
+        borderRadius: BorderRadius.circular(radius),
+      ),
     ),
   );
 }
@@ -107,12 +121,24 @@ final class _SubjectDetailSyllabusSkeleton extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           for (var index = 0; index < 6; index++) ...[
-            _skeletonBox(height: 18, width: 96 + (index.isEven ? 24 : 48), radius: 4),
+            _skeletonBox(
+              height: 18,
+              width: 96 + (index.isEven ? 24 : 48),
+              radius: 4,
+            ),
             const SizedBox(height: 12),
             _skeletonBox(height: 14, width: double.infinity, radius: 4),
             const SizedBox(height: 8),
-            _skeletonBox(height: 14, width: index.isEven ? 240 : 280, radius: 4),
-            if (index < 5) ...[const SizedBox(height: 16), const Divider(height: 0), const SizedBox(height: 16)],
+            _skeletonBox(
+              height: 14,
+              width: index.isEven ? 240 : 280,
+              radius: 4,
+            ),
+            if (index < 5) ...[
+              const SizedBox(height: 16),
+              const Divider(height: 0),
+              const SizedBox(height: 16),
+            ],
           ],
         ],
       ),
@@ -153,7 +179,9 @@ final class _SubjectDetailFeedbackSkeleton extends StatelessWidget {
                           children: [
                             _skeletonBox(height: 12, width: 56, radius: 4),
                             const SizedBox(width: 8),
-                            Expanded(child: _skeletonBox(height: 8, radius: 999)),
+                            Expanded(
+                              child: _skeletonBox(height: 8, radius: 999),
+                            ),
                           ],
                         ),
                       ),
@@ -170,13 +198,20 @@ final class _SubjectDetailFeedbackSkeleton extends StatelessWidget {
               separatorBuilder: (_, _) => const Divider(height: 0),
               itemBuilder: (_, _) {
                 return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 16,
+                    horizontal: 8,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       _skeletonBox(height: 12, width: 72, radius: 4),
                       const SizedBox(height: 8),
-                      _skeletonBox(height: 14, width: double.infinity, radius: 4),
+                      _skeletonBox(
+                        height: 14,
+                        width: double.infinity,
+                        radius: 4,
+                      ),
                       const SizedBox(height: 6),
                       _skeletonBox(height: 14, width: 220, radius: 4),
                     ],
@@ -204,7 +239,13 @@ final class _SubjectDetailPastExamSkeleton extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
           child: Row(
             children: [
-              Expanded(child: _skeletonBox(height: 16, width: index.isEven ? 240 : 200, radius: 4)),
+              Expanded(
+                child: _skeletonBox(
+                  height: 16,
+                  width: index.isEven ? 240 : 200,
+                  radius: 4,
+                ),
+              ),
               const SizedBox(width: 12),
               Icon(Icons.chevron_right, color: Colors.grey.shade400),
             ],

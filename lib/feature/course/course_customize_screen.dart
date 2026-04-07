@@ -15,11 +15,17 @@ final class CourseCustomizeScreen extends ConsumerWidget {
       body: switch (userPreference) {
         AsyncData(value: final preference) => SwitchListTile(
           title: const Text('時間割に時刻を表示'),
-          value: preference.timetablePeriodStyle == TimetablePeriodStyle.numberAndTime,
+          value:
+              preference.timetablePeriodStyle ==
+              TimetablePeriodStyle.numberAndTime,
           onChanged: (value) {
             ref
                 .read(dottoUserPreferenceProvider.notifier)
-                .setTimetablePeriodStyle(value ? TimetablePeriodStyle.numberAndTime : TimetablePeriodStyle.numberOnly);
+                .setTimetablePeriodStyle(
+                  value
+                      ? TimetablePeriodStyle.numberAndTime
+                      : TimetablePeriodStyle.numberOnly,
+                );
           },
         ),
         AsyncError() => const Center(child: Text('ユーザー設定の読み込みに失敗しました')),

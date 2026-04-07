@@ -21,7 +21,9 @@ final class InvalidAppVersionScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           'Dottoのアップデートが必要です',
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(color: SemanticColor.light.accentPrimary),
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+            color: SemanticColor.light.accentPrimary,
+          ),
         ),
         centerTitle: false,
       ),
@@ -30,9 +32,13 @@ final class InvalidAppVersionScreen extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           spacing: 64,
           children: [
-            Text('現在のバージョン: $currentAppVersion\n最新バージョン: $latestAppVersion', textAlign: TextAlign.center),
+            Text(
+              '現在のバージョン: $currentAppVersion\n最新バージョン: $latestAppVersion',
+              textAlign: TextAlign.center,
+            ),
             DottoButton(
-              onPressed: () => launchUrlSafely(appStorePageUrl, mode: .externalApplication),
+              onPressed: () =>
+                  launchUrlSafely(appStorePageUrl, mode: .externalApplication),
               child: const Text('今すぐアップデート'),
             ),
           ],

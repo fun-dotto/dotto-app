@@ -15,7 +15,10 @@ final class BusTimetableScreen extends StatelessWidget {
           final terminal = busTripStop.terminal;
           return ListTile(
             title: Text(busTripStop.stop.name),
-            trailing: Text(formatDuration(busTripStop.time), style: Theme.of(context).textTheme.labelMedium),
+            trailing: Text(
+              formatDuration(busTripStop.time),
+              style: Theme.of(context).textTheme.labelMedium,
+            ),
             subtitle: terminal != null ? Text('$terminal番乗り場') : null,
           );
         }).toList(),

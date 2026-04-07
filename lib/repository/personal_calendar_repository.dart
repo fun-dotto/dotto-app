@@ -12,24 +12,32 @@ import 'package:flutter/foundation.dart';
 import 'package:openapi/openapi.dart' hide SubjectFaculty, SubjectSummary;
 
 abstract class PersonalCalendarRepository {
-  Future<List<PersonalTimetableDay>> getPersonalTimetableDays({required List<DateTime> targetDates});
+  Future<List<PersonalTimetableDay>> getPersonalTimetableDays({
+    required List<DateTime> targetDates,
+  });
 }
 
-final class PersonalCalendarRepositoryImpl implements PersonalCalendarRepository {
+final class PersonalCalendarRepositoryImpl
+    implements PersonalCalendarRepository {
   PersonalCalendarRepositoryImpl(this.apiClient);
 
   final Openapi apiClient;
 
   @override
-  Future<List<PersonalTimetableDay>> getPersonalTimetableDays({required List<DateTime> targetDates}) async {
+  Future<List<PersonalTimetableDay>> getPersonalTimetableDays({
+    required List<DateTime> targetDates,
+  }) async {
     try {
       final api = apiClient.getPersonalCalendarItemsApi();
-      final dates = BuiltList<Date>(targetDates.map((d) => Date(d.year, d.month, d.day)));
+      final dates = BuiltList<Date>(
+        targetDates.map((d) => Date(d.year, d.month, d.day)),
+      );
       final response = await api.personalCalendarItemsV1List(dates: dates);
       if (response.statusCode != 200) {
         throw DomainError(
           type: DomainErrorType.invalidResponse,
-          message: 'Failed to get personal calendar items: status ${response.statusCode}',
+          message:
+              'Failed to get personal calendar items: status ${response.statusCode}',
         );
       }
       final data = response.data;
@@ -51,7 +59,11 @@ final class PersonalCalendarRepositoryImpl implements PersonalCalendarRepository
             faculties: item.subject.faculties
                 .map(
                   (e) => SubjectFaculty(
-                    faculty: Faculty(id: e.faculty.id, name: e.faculty.name, email: e.faculty.email),
+                    faculty: Faculty(
+                      id: e.faculty.id,
+                      name: e.faculty.name,
+                      email: e.faculty.email,
+                    ),
                     isPrimary: e.isPrimary,
                   ),
                 )
@@ -60,14 +72,20 @@ final class PersonalCalendarRepositoryImpl implements PersonalCalendarRepository
           lectureStatus: toLectureStatus(item.status),
           roomName: item.rooms.map((r) => r.name).join(', '),
         );
-        itemsByDate.putIfAbsent(dateKey, () => <PersonalTimetableItem>[]).add(timetableItem);
+        itemsByDate
+            .putIfAbsent(dateKey, () => <PersonalTimetableItem>[])
+            .add(timetableItem);
       }
 
       return targetDates.map((date) {
         final dateKey = '${date.year}-${date.month}-${date.day}';
         final items = itemsByDate[dateKey] ?? <PersonalTimetableItem>[]
           ..sort((a, b) => a.period.number.compareTo(b.period.number));
-        return PersonalTimetableDay(date: date, items: items, timetableDayOfWeek: DayOfWeek.fromDateTime(date));
+        return PersonalTimetableDay(
+          date: date,
+          items: items,
+          timetableDayOfWeek: DayOfWeek.fromDateTime(date),
+        );
       }).toList();
     } on DomainError {
       rethrow;
@@ -93,15 +111,22 @@ final class PersonalCalendarRepositoryImpl implements PersonalCalendarRepository
   }
 
   @visibleForTesting
-  static LectureStatus toLectureStatus(DottoFoundationV1PersonalCalendarItemStatus status) {
+  static LectureStatus toLectureStatus(
+    DottoFoundationV1PersonalCalendarItemStatus status,
+  ) {
     return switch (status) {
-      DottoFoundationV1PersonalCalendarItemStatus.normal => LectureStatus.normal,
-      DottoFoundationV1PersonalCalendarItemStatus.cancelled => LectureStatus.cancelled,
-      DottoFoundationV1PersonalCalendarItemStatus.makeup => LectureStatus.madeUp,
-      DottoFoundationV1PersonalCalendarItemStatus.roomChanged => LectureStatus.roomChanged,
+      DottoFoundationV1PersonalCalendarItemStatus.normal =>
+        LectureStatus.normal,
+      DottoFoundationV1PersonalCalendarItemStatus.cancelled =>
+        LectureStatus.cancelled,
+      DottoFoundationV1PersonalCalendarItemStatus.makeup =>
+        LectureStatus.madeUp,
+      DottoFoundationV1PersonalCalendarItemStatus.roomChanged =>
+        LectureStatus.roomChanged,
       _ => throw DomainError(
         type: DomainErrorType.invalidData,
-        message: 'Unsupported DottoFoundationV1PersonalCalendarItemStatus: $status',
+        message:
+            'Unsupported DottoFoundationV1PersonalCalendarItemStatus: $status',
       ),
     };
   }

@@ -3,7 +3,10 @@ enum UserPreferenceKeys {
   // 廃止予定
   personalTimetableListKey(key: 'personalTimetableListKey2026', type: String),
   // 廃止予定
-  personalTimetableLastUpdateKey(key: 'personalTimetableLastUpdateKey', type: int),
+  personalTimetableLastUpdateKey(
+    key: 'personalTimetableLastUpdateKey',
+    type: int,
+  ),
   isAppTutorialComplete(key: 'isAppTutorialCompleted', type: bool),
   myBusStop(key: 'myBusStop', type: int),
   timetablePeriodStyle(key: 'timetablePeriodStyle', type: String),

@@ -7,11 +7,15 @@ import 'package:dotto/helper/datetime.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final funchTodayDailyMenuListProvider = AsyncNotifierProvider<FunchTodayDailyMenuNotifier, Map<String, FunchDailyMenu>>(
-  () => FunchTodayDailyMenuNotifier(FunchRepositoryImpl()),
-);
+final funchTodayDailyMenuListProvider =
+    AsyncNotifierProvider<
+      FunchTodayDailyMenuNotifier,
+      Map<String, FunchDailyMenu>
+    >(() => FunchTodayDailyMenuNotifier(FunchRepositoryImpl()));
 
-final class FunchTodayDailyMenuNotifier<FunchRepository extends FunchRepositoryInterface>
+final class FunchTodayDailyMenuNotifier<
+  FunchRepository extends FunchRepositoryInterface
+>
     extends AsyncNotifier<Map<String, FunchDailyMenu>> {
   FunchTodayDailyMenuNotifier(this._funchRepository);
   final FunchRepository _funchRepository;
@@ -25,8 +29,10 @@ final class FunchTodayDailyMenuNotifier<FunchRepository extends FunchRepositoryI
       final from = DateTimeUtility.startOfDay(DateTime.now());
       final to = DateTimeUtility.startOfDay(from);
 
-      final monthlyMenuFromFirestore = await _funchRepository.getMenuFromFirestore(MenuCollection.monthly, from, to);
-      final dailyMenuFromFirestore = await _funchRepository.getMenuFromFirestore(MenuCollection.daily, from, to);
+      final monthlyMenuFromFirestore = await _funchRepository
+          .getMenuFromFirestore(MenuCollection.monthly, from, to);
+      final dailyMenuFromFirestore = await _funchRepository
+          .getMenuFromFirestore(MenuCollection.daily, from, to);
 
       final combinedMenus = <String, FunchDailyMenu>{};
 
@@ -34,11 +40,14 @@ final class FunchTodayDailyMenuNotifier<FunchRepository extends FunchRepositoryI
         final menuItems = <FunchMenu>[];
         final date = DateTimeUtility.parseDate(dateString);
         final firstDayOfMonth = DateTimeUtility.firstDateOfMonth(date);
-        final monthlyMenu = monthlyMenuFromFirestore[DateFormatter.date(firstDayOfMonth)];
+        final monthlyMenu =
+            monthlyMenuFromFirestore[DateFormatter.date(firstDayOfMonth)];
         final dailyMenu = dailyMenuFromFirestore[DateFormatter.date(date)];
 
         for (final id in (monthlyMenu?.commonMenuIds ?? [])) {
-          final menu = allCommonMenu.firstWhereOrNull((m) => m.id == id.toString());
+          final menu = allCommonMenu.firstWhereOrNull(
+            (m) => m.id == id.toString(),
+          );
           if (menu != null) {
             menuItems.add(menu);
           }
@@ -50,7 +59,9 @@ final class FunchTodayDailyMenuNotifier<FunchRepository extends FunchRepositoryI
           }
         }
         for (final id in (dailyMenu?.commonMenuIds ?? [])) {
-          final menu = allCommonMenu.firstWhereOrNull((m) => m.id == id.toString());
+          final menu = allCommonMenu.firstWhereOrNull(
+            (m) => m.id == id.toString(),
+          );
           if (menu != null) {
             menuItems.add(menu);
           }

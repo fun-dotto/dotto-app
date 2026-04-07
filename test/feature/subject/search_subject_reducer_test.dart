@@ -19,14 +19,17 @@ import 'package:dotto/repository/timetable_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-final class FakeCourseRegistrationRepository implements CourseRegistrationRepository {
+final class FakeCourseRegistrationRepository
+    implements CourseRegistrationRepository {
   FakeCourseRegistrationRepository({required this.result});
 
   final List<CourseRegistration> result;
   int getCourseRegistrationsCallCount = 0;
 
   @override
-  Future<List<CourseRegistration>> getCourseRegistrations(List<Semester> semesters) async {
+  Future<List<CourseRegistration>> getCourseRegistrations(
+    List<Semester> semesters,
+  ) async {
     getCourseRegistrationsCallCount += 1;
     return result;
   }
@@ -43,14 +46,20 @@ final class FakeCourseRegistrationRepository implements CourseRegistrationReposi
 }
 
 final class FakeSubjectRepository implements SubjectRepository {
-  FakeSubjectRepository({required this.resultsByQuery, this.futuresByQuery = const {}});
+  FakeSubjectRepository({
+    required this.resultsByQuery,
+    this.futuresByQuery = const {},
+  });
 
   final Map<String, List<SubjectSummary>> resultsByQuery;
   final Map<String, Future<List<SubjectSummary>>> futuresByQuery;
   int getSubjectsCallCount = 0;
 
   @override
-  Future<List<SubjectSummary>> getSubjects(String query, SubjectFilter filter) async {
+  Future<List<SubjectSummary>> getSubjects(
+    String query,
+    SubjectFilter filter,
+  ) async {
     getSubjectsCallCount += 1;
     final future = futuresByQuery[query];
     if (future != null) {
@@ -87,7 +96,9 @@ final class FakeTimetableRepository implements TimetableRepository {
   int getTimetableItemsCallCount = 0;
 
   @override
-  Future<List<TimetableItem>> getTimetableItems(List<Semester> semesters) async {
+  Future<List<TimetableItem>> getTimetableItems(
+    List<Semester> semesters,
+  ) async {
     getTimetableItemsCallCount += 1;
     return result;
   }
@@ -104,7 +115,9 @@ void main() {
     return ProviderContainer(
       overrides: [
         isAuthenticatedProvider.overrideWith((ref) => true),
-        courseRegistrationRepositoryProvider.overrideWithValue(courseRegistrationRepository),
+        courseRegistrationRepositoryProvider.overrideWithValue(
+          courseRegistrationRepository,
+        ),
         subjectRepositoryProvider.overrideWithValue(subjectRepository),
         timetableRepositoryProvider.overrideWithValue(timetableRepository),
       ],
@@ -112,8 +125,16 @@ void main() {
   }
 
   test('search で slots と isAddedToTimetable がマージされる', () async {
-    final withSlot = SubjectSummary(id: 'subject-1', name: 'Math', faculties: const []);
-    final withoutSlot = SubjectSummary(id: 'subject-2', name: 'English', faculties: const []);
+    final withSlot = SubjectSummary(
+      id: 'subject-1',
+      name: 'Math',
+      faculties: const [],
+    );
+    final withoutSlot = SubjectSummary(
+      id: 'subject-2',
+      name: 'English',
+      faculties: const [],
+    );
 
     final courseRegistrationRepository = FakeCourseRegistrationRepository(
       result: [CourseRegistration(id: 'reg-1', subject: withSlot)],
@@ -128,7 +149,10 @@ void main() {
         TimetableItem(
           id: 'item-1',
           subject: withSlot,
-          slot: const TimetableSlot(dayOfWeek: DayOfWeek.monday, period: Period.first),
+          slot: const TimetableSlot(
+            dayOfWeek: DayOfWeek.monday,
+            period: Period.first,
+          ),
         ),
       ],
     );
@@ -140,7 +164,9 @@ void main() {
     );
     addTearDown(container.dispose);
 
-    await container.read(searchSubjectReducerProvider.notifier).search(query: 'math', filter: filter);
+    await container
+        .read(searchSubjectReducerProvider.notifier)
+        .search(query: 'math', filter: filter);
 
     final value = container.read(searchSubjectReducerProvider).requireValue;
     final subjects = value.subjects;
@@ -148,7 +174,9 @@ void main() {
     expect(subjects, hasLength(2));
     expect(value.filter, filter);
     expect(subjects[0].id, 'subject-1');
-    expect(subjects[0].slots, [const TimetableSlot(dayOfWeek: DayOfWeek.monday, period: Period.first)]);
+    expect(subjects[0].slots, [
+      const TimetableSlot(dayOfWeek: DayOfWeek.monday, period: Period.first),
+    ]);
     expect(subjects[0].isAddedToTimetable, isTrue);
     expect(subjects[1].id, 'subject-2');
     expect(subjects[1].slots, isNull);
@@ -156,9 +184,15 @@ void main() {
   });
 
   test('timetableItems は初回検索のみ取得される', () async {
-    final subject = SubjectSummary(id: 'subject-1', name: 'Math', faculties: const []);
+    final subject = SubjectSummary(
+      id: 'subject-1',
+      name: 'Math',
+      faculties: const [],
+    );
 
-    final courseRegistrationRepository = FakeCourseRegistrationRepository(result: const []);
+    final courseRegistrationRepository = FakeCourseRegistrationRepository(
+      result: const [],
+    );
     final subjectRepository = FakeSubjectRepository(
       resultsByQuery: {
         'first': [subject],
@@ -191,7 +225,9 @@ void main() {
       futuresByQuery: {'math': delayedSubjects.future},
     );
     final container = createContainer(
-      courseRegistrationRepository: FakeCourseRegistrationRepository(result: const []),
+      courseRegistrationRepository: FakeCourseRegistrationRepository(
+        result: const [],
+      ),
       subjectRepository: subjectRepository,
       timetableRepository: FakeTimetableRepository(result: const []),
     );
@@ -215,15 +251,28 @@ void main() {
     final secondSubjects = Completer<List<SubjectSummary>>();
     final firstFilter = SubjectFilter(grades: const []);
     final secondFilter = SubjectFilter(semesters: const [Semester.h1]);
-    final oldSubject = SubjectSummary(id: 'subject-old', name: 'Old', faculties: const []);
-    final newSubject = SubjectSummary(id: 'subject-new', name: 'New', faculties: const []);
+    final oldSubject = SubjectSummary(
+      id: 'subject-old',
+      name: 'Old',
+      faculties: const [],
+    );
+    final newSubject = SubjectSummary(
+      id: 'subject-new',
+      name: 'New',
+      faculties: const [],
+    );
 
     final subjectRepository = FakeSubjectRepository(
       resultsByQuery: const {},
-      futuresByQuery: {'first': firstSubjects.future, 'second': secondSubjects.future},
+      futuresByQuery: {
+        'first': firstSubjects.future,
+        'second': secondSubjects.future,
+      },
     );
     final container = createContainer(
-      courseRegistrationRepository: FakeCourseRegistrationRepository(result: const []),
+      courseRegistrationRepository: FakeCourseRegistrationRepository(
+        result: const [],
+      ),
       subjectRepository: subjectRepository,
       timetableRepository: FakeTimetableRepository(result: const []),
     );

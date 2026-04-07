@@ -35,7 +35,9 @@ void main() {
 
   group('GitHubContributorService 正常系', () {
     test('getContributors がGitHubプロフィール一覧を正しく取得する', () async {
-      when(githubContributorRepository.getContributors()).thenAnswer((_) async => testGitHubProfiles);
+      when(
+        githubContributorRepository.getContributors(),
+      ).thenAnswer((_) async => testGitHubProfiles);
 
       final service = GitHubContributorService(githubContributorRepository);
 
@@ -54,7 +56,9 @@ void main() {
     });
 
     test('getContributors が空のリストを正しく取得する', () async {
-      when(githubContributorRepository.getContributors()).thenAnswer((_) async => <GitHubProfile>[]);
+      when(
+        githubContributorRepository.getContributors(),
+      ).thenAnswer((_) async => <GitHubProfile>[]);
 
       final service = GitHubContributorService(githubContributorRepository);
 
@@ -68,9 +72,12 @@ void main() {
 
   group('GitHubContributorService 異常系', () {
     test('getContributors がリポジトリの例外をそのまま伝播する', () async {
-      when(
-        githubContributorRepository.getContributors(),
-      ).thenThrow(DomainError(type: DomainErrorType.invalidResponse, message: 'Failed to get contributors'));
+      when(githubContributorRepository.getContributors()).thenThrow(
+        DomainError(
+          type: DomainErrorType.invalidResponse,
+          message: 'Failed to get contributors',
+        ),
+      );
 
       final service = GitHubContributorService(githubContributorRepository);
 

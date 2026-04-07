@@ -15,16 +15,24 @@ final class DebugScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final appCheckToken = useFuture(useMemoized(() => FirebaseAppCheck.instance.getToken()));
-    final idToken = useFuture(useMemoized(() => FirebaseAuth.instance.currentUser?.getIdToken()));
-    final fcmToken = useFuture(useMemoized(() => FirebaseMessaging.instance.getToken()));
+    final appCheckToken = useFuture(
+      useMemoized(() => FirebaseAppCheck.instance.getToken()),
+    );
+    final idToken = useFuture(
+      useMemoized(() => FirebaseAuth.instance.currentUser?.getIdToken()),
+    );
+    final fcmToken = useFuture(
+      useMemoized(() => FirebaseMessaging.instance.getToken()),
+    );
     final environment = ref.watch(apiEnvironmentProvider);
     final apiEnvironmentNotifier = ref.read(apiEnvironmentProvider.notifier);
     final environmentOverride = apiEnvironmentNotifier.environmentOverride;
     final config = ref.watch(configProvider);
     final configNotifier = ref.read(configProvider.notifier);
     final isFunchEnabledOverride = configNotifier.isFunchEnabledOverride;
-    final remoteConfigIsFunchEnabled = ref.read(remoteConfigHelperProvider).getBool(RemoteConfigKeys.isFunchEnabled);
+    final remoteConfigIsFunchEnabled = ref
+        .read(remoteConfigHelperProvider)
+        .getBool(RemoteConfigKeys.isFunchEnabled);
 
     Future<void> showEnvironmentPicker() async {
       await showDialog<void>(
@@ -40,8 +48,12 @@ final class DebugScreen extends HookConsumerWidget {
               child: ListTile(
                 contentPadding: EdgeInsets.zero,
                 title: const Text('Use Default'),
-                subtitle: Text('Default: ${apiEnvironmentNotifier.defaultEnvironment.label}'),
-                trailing: environmentOverride == null ? const Icon(Icons.check) : null,
+                subtitle: Text(
+                  'Default: ${apiEnvironmentNotifier.defaultEnvironment.label}',
+                ),
+                trailing: environmentOverride == null
+                    ? const Icon(Icons.check)
+                    : null,
               ),
             ),
             ...Environment.values.map((env) {
@@ -53,7 +65,9 @@ final class DebugScreen extends HookConsumerWidget {
                 child: ListTile(
                   contentPadding: EdgeInsets.zero,
                   title: Text('Force ${env.label}'),
-                  trailing: environmentOverride == env ? const Icon(Icons.check) : null,
+                  trailing: environmentOverride == env
+                      ? const Icon(Icons.check)
+                      : null,
                 ),
               );
             }),
@@ -77,7 +91,9 @@ final class DebugScreen extends HookConsumerWidget {
                 contentPadding: EdgeInsets.zero,
                 title: const Text('Use Remote Config'),
                 subtitle: Text('Remote Config: $remoteConfigIsFunchEnabled'),
-                trailing: isFunchEnabledOverride == null ? const Icon(Icons.check) : null,
+                trailing: isFunchEnabledOverride == null
+                    ? const Icon(Icons.check)
+                    : null,
               ),
             ),
             SimpleDialogOption(
@@ -88,7 +104,9 @@ final class DebugScreen extends HookConsumerWidget {
               child: ListTile(
                 contentPadding: EdgeInsets.zero,
                 title: const Text('Force true'),
-                trailing: isFunchEnabledOverride == true ? const Icon(Icons.check) : null,
+                trailing: isFunchEnabledOverride == true
+                    ? const Icon(Icons.check)
+                    : null,
               ),
             ),
             SimpleDialogOption(
@@ -99,7 +117,9 @@ final class DebugScreen extends HookConsumerWidget {
               child: ListTile(
                 contentPadding: EdgeInsets.zero,
                 title: const Text('Force false'),
-                trailing: isFunchEnabledOverride == false ? const Icon(Icons.check) : null,
+                trailing: isFunchEnabledOverride == false
+                    ? const Icon(Icons.check)
+                    : null,
               ),
             ),
           ],
@@ -132,44 +152,65 @@ final class DebugScreen extends HookConsumerWidget {
         children: [
           ListTile(
             title: const Text('App Check Access Token'),
-            subtitle: Text(appCheckToken.data ?? '-', maxLines: 1, overflow: TextOverflow.ellipsis),
+            subtitle: Text(
+              appCheckToken.data ?? '-',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
             trailing: IconButton(
               icon: const Icon(Icons.copy),
               onPressed: () {
                 if (appCheckToken.data == null) return;
-                Clipboard.setData(ClipboardData(text: appCheckToken.data ?? ''));
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('クリップボードにコピーしました')));
+                Clipboard.setData(
+                  ClipboardData(text: appCheckToken.data ?? ''),
+                );
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('クリップボードにコピーしました')),
+                );
               },
             ),
           ),
           ListTile(
             title: const Text('User ID Token'),
-            subtitle: Text(idToken.data ?? '-', maxLines: 1, overflow: TextOverflow.ellipsis),
+            subtitle: Text(
+              idToken.data ?? '-',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
             trailing: IconButton(
               icon: const Icon(Icons.copy),
               onPressed: () {
                 if (idToken.data == null) return;
                 Clipboard.setData(ClipboardData(text: idToken.data ?? ''));
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('クリップボードにコピーしました')));
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('クリップボードにコピーしました')),
+                );
               },
             ),
           ),
           ListTile(
             title: const Text('FCM Token'),
-            subtitle: Text(fcmToken.data ?? '-', maxLines: 1, overflow: TextOverflow.ellipsis),
+            subtitle: Text(
+              fcmToken.data ?? '-',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
             trailing: IconButton(
               icon: const Icon(Icons.copy),
               onPressed: () {
                 if (fcmToken.data == null) return;
                 Clipboard.setData(ClipboardData(text: fcmToken.data ?? ''));
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('クリップボードにコピーしました')));
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('クリップボードにコピーしました')),
+                );
               },
             ),
           ),
           ListTile(
             title: const Text('API Environment Override'),
             subtitle: Text(switch (environmentOverride) {
-              null => 'Use Default (${apiEnvironmentNotifier.defaultEnvironment.label})',
+              null =>
+                'Use Default (${apiEnvironmentNotifier.defaultEnvironment.label})',
               final value => 'Forced: ${value.label}',
             }),
             trailing: Text('Effective: ${environment.label}'),

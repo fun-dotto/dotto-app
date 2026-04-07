@@ -31,12 +31,20 @@ final class CourseCancellationScreen extends ConsumerWidget {
           title: const Text('休講・補講・教室変更'),
           actions: [
             DottoButton(
-              onPressed: () => unawaited(ref.read(courseCancellationReducerProvider.notifier).toggleFilter()),
+              onPressed: () => unawaited(
+                ref
+                    .read(courseCancellationReducerProvider.notifier)
+                    .toggleFilter(),
+              ),
               type: DottoButtonType.text,
               child: Row(
                 spacing: 4,
                 children: [
-                  Icon(state.value?.isFiltered ?? false ? Icons.filter_alt : Icons.filter_alt_outlined),
+                  Icon(
+                    state.value?.isFiltered ?? false
+                        ? Icons.filter_alt
+                        : Icons.filter_alt_outlined,
+                  ),
                   Text((state.value?.isFiltered ?? false) ? '履修中' : 'すべて'),
                 ],
               ),
@@ -56,15 +64,21 @@ final class CourseCancellationScreen extends ConsumerWidget {
             children: [
               _CancelledClassList(
                 items: value.cancelledClasses,
-                onRefresh: () => ref.read(courseCancellationReducerProvider.notifier).refresh(),
+                onRefresh: () => ref
+                    .read(courseCancellationReducerProvider.notifier)
+                    .refresh(),
               ),
               _MakeupClassList(
                 items: value.makeupClasses,
-                onRefresh: () => ref.read(courseCancellationReducerProvider.notifier).refresh(),
+                onRefresh: () => ref
+                    .read(courseCancellationReducerProvider.notifier)
+                    .refresh(),
               ),
               _RoomChangeList(
                 items: value.roomChanges,
-                onRefresh: () => ref.read(courseCancellationReducerProvider.notifier).refresh(),
+                onRefresh: () => ref
+                    .read(courseCancellationReducerProvider.notifier)
+                    .refresh(),
               ),
             ],
           ),
@@ -114,7 +128,10 @@ Widget _skeletonBox({required double height, required double width}) {
     child: Container(
       width: width,
       height: height,
-      decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(4)),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade300,
+        borderRadius: BorderRadius.circular(4),
+      ),
     ),
   );
 }
@@ -155,11 +172,17 @@ class _CancelledClassList extends StatelessWidget {
                   '${_formatDate(item.date)} ${_formatPeriod(item.period)}',
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
-                Text(item.subject.name, style: Theme.of(context).textTheme.titleSmall),
+                Text(
+                  item.subject.name,
+                  style: Theme.of(context).textTheme.titleSmall,
+                ),
               ],
             ),
             subtitle: item.comment.trim().isNotEmpty
-                ? Text(item.comment.trim(), style: Theme.of(context).textTheme.labelMedium)
+                ? Text(
+                    item.comment.trim(),
+                    style: Theme.of(context).textTheme.labelMedium,
+                  )
                 : null,
           );
         },
@@ -204,11 +227,17 @@ class _MakeupClassList extends StatelessWidget {
                   '${_formatDate(item.date)} ${_formatPeriod(item.period)}',
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
-                Text(item.subject.name, style: Theme.of(context).textTheme.titleSmall),
+                Text(
+                  item.subject.name,
+                  style: Theme.of(context).textTheme.titleSmall,
+                ),
               ],
             ),
             subtitle: item.comment.trim().isNotEmpty
-                ? Text(item.comment.trim(), style: Theme.of(context).textTheme.labelMedium)
+                ? Text(
+                    item.comment.trim(),
+                    style: Theme.of(context).textTheme.labelMedium,
+                  )
                 : null,
           );
         },
@@ -253,7 +282,10 @@ class _RoomChangeList extends StatelessWidget {
                   '${_formatDate(item.date)} ${_formatPeriod(item.period)}',
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
-                Text(item.subject.name, style: Theme.of(context).textTheme.titleSmall),
+                Text(
+                  item.subject.name,
+                  style: Theme.of(context).textTheme.titleSmall,
+                ),
               ],
             ),
             subtitle: Text(

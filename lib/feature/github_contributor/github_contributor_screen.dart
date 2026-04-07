@@ -22,7 +22,10 @@ final class GitHubContributorScreen extends ConsumerWidget {
     );
   }
 
-  Widget _body(AsyncValue<GitHubContributorViewState> viewModelAsync, {required Future<void> Function() onRefresh}) {
+  Widget _body(
+    AsyncValue<GitHubContributorViewState> viewModelAsync, {
+    required Future<void> Function() onRefresh,
+  }) {
     switch (viewModelAsync) {
       case AsyncData(:final value):
         return RefreshIndicator(
@@ -52,7 +55,9 @@ final class GitHubContributorScreen extends ConsumerWidget {
       body: _body(
         viewModelAsync,
         onRefresh: () async {
-          await ref.read(gitHubContributorViewModelProvider.notifier).onRefresh();
+          await ref
+              .read(gitHubContributorViewModelProvider.notifier)
+              .onRefresh();
         },
       ),
     );

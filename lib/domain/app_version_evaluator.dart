@@ -1,5 +1,8 @@
 final class AppVersionEvaluation {
-  const AppVersionEvaluation({required this.isValidAppVersion, required this.isLatestAppVersion});
+  const AppVersionEvaluation({
+    required this.isValidAppVersion,
+    required this.isLatestAppVersion,
+  });
 
   final bool isValidAppVersion;
   final bool isLatestAppVersion;
@@ -13,7 +16,10 @@ final class AppVersionEvaluator {
   }) {
     final current = _parseVersion(currentAppVersion);
     if (current == null) {
-      return const AppVersionEvaluation(isValidAppVersion: true, isLatestAppVersion: true);
+      return const AppVersionEvaluation(
+        isValidAppVersion: true,
+        isLatestAppVersion: true,
+      );
     }
 
     final valid = _parseVersion(validAppVersion);
@@ -22,7 +28,10 @@ final class AppVersionEvaluator {
     final isValid = valid == null ? true : _compare(current, valid) >= 0;
     final isLatest = latest == null ? true : _compare(current, latest) >= 0;
 
-    return AppVersionEvaluation(isValidAppVersion: isValid, isLatestAppVersion: isLatest);
+    return AppVersionEvaluation(
+      isValidAppVersion: isValid,
+      isLatestAppVersion: isLatest,
+    );
   }
 
   static List<int>? _parseVersion(String value) {

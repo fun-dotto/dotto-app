@@ -6,19 +6,25 @@ import 'package:dotto/repository/repository_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-final class FakePersonalCalendarRepository implements PersonalCalendarRepository {
+final class FakePersonalCalendarRepository
+    implements PersonalCalendarRepository {
   FakePersonalCalendarRepository({this.result = const []});
 
   final List<PersonalTimetableDay> result;
   final List<List<DateTime>> capturedCalls = [];
 
   @override
-  Future<List<PersonalTimetableDay>> getPersonalTimetableDays({required List<DateTime> targetDates}) async {
+  Future<List<PersonalTimetableDay>> getPersonalTimetableDays({
+    required List<DateTime> targetDates,
+  }) async {
     capturedCalls.add(targetDates);
-    return result.where((day) => targetDates.any((d) => _isSameDate(d, day.date))).toList();
+    return result
+        .where((day) => targetDates.any((d) => _isSameDate(d, day.date)))
+        .toList();
   }
 
-  bool _isSameDate(DateTime a, DateTime b) => a.year == b.year && a.month == b.month && a.day == b.day;
+  bool _isSameDate(DateTime a, DateTime b) =>
+      a.year == b.year && a.month == b.month && a.day == b.day;
 }
 
 void main() {
@@ -29,8 +35,12 @@ void main() {
   }) {
     return ProviderContainer(
       overrides: [
-        personalCalendarRepositoryProvider.overrideWithValue(personalCalendarRepository),
-        courseCanFetchProtectedDataProvider.overrideWithValue(() async => isAuthenticated),
+        personalCalendarRepositoryProvider.overrideWithValue(
+          personalCalendarRepository,
+        ),
+        courseCanFetchProtectedDataProvider.overrideWithValue(
+          () async => isAuthenticated,
+        ),
         clockProvider.overrideWithValue(clock),
       ],
     );
@@ -41,10 +51,18 @@ void main() {
   // 4週間: 2026-03-30〜04-03, 04-06〜04-10, 04-13〜04-17, 04-20〜04-24
   test('build は4週間分を週ごとにAPIを呼び出して days に反映する', () async {
     final personalCalendarRepository = FakePersonalCalendarRepository(
-      result: [PersonalTimetableDay(date: DateTime(2026, 4, 6), items: const [], timetableDayOfWeek: DayOfWeek.monday)],
+      result: [
+        PersonalTimetableDay(
+          date: DateTime(2026, 4, 6),
+          items: const [],
+          timetableDayOfWeek: DayOfWeek.monday,
+        ),
+      ],
     );
 
-    final container = createContainer(personalCalendarRepository: personalCalendarRepository);
+    final container = createContainer(
+      personalCalendarRepository: personalCalendarRepository,
+    );
     addTearDown(container.dispose);
 
     final state = await container.read(courseReducerProvider.future);
@@ -61,17 +79,41 @@ void main() {
     }
 
     // 1週目: 前週 (3/30〜4/3)
-    expect(personalCalendarRepository.capturedCalls[0].first, DateTime(2026, 3, 30));
-    expect(personalCalendarRepository.capturedCalls[0].last, DateTime(2026, 4, 3));
+    expect(
+      personalCalendarRepository.capturedCalls[0].first,
+      DateTime(2026, 3, 30),
+    );
+    expect(
+      personalCalendarRepository.capturedCalls[0].last,
+      DateTime(2026, 4, 3),
+    );
     // 2週目: 今週 (4/6〜4/10)
-    expect(personalCalendarRepository.capturedCalls[1].first, DateTime(2026, 4, 6));
-    expect(personalCalendarRepository.capturedCalls[1].last, DateTime(2026, 4, 10));
+    expect(
+      personalCalendarRepository.capturedCalls[1].first,
+      DateTime(2026, 4, 6),
+    );
+    expect(
+      personalCalendarRepository.capturedCalls[1].last,
+      DateTime(2026, 4, 10),
+    );
     // 3週目 (4/13〜4/17)
-    expect(personalCalendarRepository.capturedCalls[2].first, DateTime(2026, 4, 13));
-    expect(personalCalendarRepository.capturedCalls[2].last, DateTime(2026, 4, 17));
+    expect(
+      personalCalendarRepository.capturedCalls[2].first,
+      DateTime(2026, 4, 13),
+    );
+    expect(
+      personalCalendarRepository.capturedCalls[2].last,
+      DateTime(2026, 4, 17),
+    );
     // 4週目 (4/20〜4/24)
-    expect(personalCalendarRepository.capturedCalls[3].first, DateTime(2026, 4, 20));
-    expect(personalCalendarRepository.capturedCalls[3].last, DateTime(2026, 4, 24));
+    expect(
+      personalCalendarRepository.capturedCalls[3].first,
+      DateTime(2026, 4, 20),
+    );
+    expect(
+      personalCalendarRepository.capturedCalls[3].last,
+      DateTime(2026, 4, 24),
+    );
   });
 
   test('土日の場合は翌週が基準週になる', () async {
@@ -87,15 +129,24 @@ void main() {
     await container.read(courseReducerProvider.future);
 
     // 前週: 4/6〜4/10
-    expect(personalCalendarRepository.capturedCalls[0].first, DateTime(2026, 4, 6));
+    expect(
+      personalCalendarRepository.capturedCalls[0].first,
+      DateTime(2026, 4, 6),
+    );
     // 基準週: 4/13〜4/17
-    expect(personalCalendarRepository.capturedCalls[1].first, DateTime(2026, 4, 13));
+    expect(
+      personalCalendarRepository.capturedCalls[1].first,
+      DateTime(2026, 4, 13),
+    );
   });
 
   test('未認証時は PersonalTimetableDay を取得しない', () async {
     final personalCalendarRepository = FakePersonalCalendarRepository();
 
-    final container = createContainer(personalCalendarRepository: personalCalendarRepository, isAuthenticated: false);
+    final container = createContainer(
+      personalCalendarRepository: personalCalendarRepository,
+      isAuthenticated: false,
+    );
     addTearDown(container.dispose);
 
     final state = await container.read(courseReducerProvider.future);

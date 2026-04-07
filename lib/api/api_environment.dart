@@ -14,9 +14,11 @@ final class ApiEnvironment extends _$ApiEnvironment {
     return _effectiveEnvironment;
   }
 
-  Environment get defaultEnvironment => kReleaseMode ? Environment.production : Environment.staging;
+  Environment get defaultEnvironment =>
+      kReleaseMode ? Environment.production : Environment.staging;
 
-  Environment get _effectiveEnvironment => _environmentOverride ?? defaultEnvironment;
+  Environment get _effectiveEnvironment =>
+      _environmentOverride ?? defaultEnvironment;
 
   Environment get value => state;
 
@@ -25,15 +27,22 @@ final class ApiEnvironment extends _$ApiEnvironment {
   Future<void> setOverride({required Environment? value}) async {
     _environmentOverride = value;
     if (value == null) {
-      await UserPreferenceRepository.remove(UserPreferenceKeys.apiEnvironmentOverride);
+      await UserPreferenceRepository.remove(
+        UserPreferenceKeys.apiEnvironmentOverride,
+      );
     } else {
-      await UserPreferenceRepository.setString(UserPreferenceKeys.apiEnvironmentOverride, value.tag);
+      await UserPreferenceRepository.setString(
+        UserPreferenceKeys.apiEnvironmentOverride,
+        value.tag,
+      );
     }
     state = _effectiveEnvironment;
   }
 
   Future<void> loadOverride() async {
-    final overrideTag = await UserPreferenceRepository.getString(UserPreferenceKeys.apiEnvironmentOverride);
+    final overrideTag = await UserPreferenceRepository.getString(
+      UserPreferenceKeys.apiEnvironmentOverride,
+    );
     if (overrideTag != null) {
       _environmentOverride = Environment.values.firstWhere(
         (environment) => environment.tag == overrideTag,
@@ -65,9 +74,13 @@ enum Environment {
   };
 
   String get basePath => switch (this) {
-    Environment.development => 'https://app-bff-api-dev-107577467292.asia-northeast1.run.app',
-    Environment.staging => 'https://app-bff-api-stg-107577467292.asia-northeast1.run.app',
-    Environment.qa => 'https://app-bff-api-qa-107577467292.asia-northeast1.run.app',
-    Environment.production => 'https://app-bff-api-107577467292.asia-northeast1.run.app',
+    Environment.development =>
+      'https://app-bff-api-dev-107577467292.asia-northeast1.run.app',
+    Environment.staging =>
+      'https://app-bff-api-stg-107577467292.asia-northeast1.run.app',
+    Environment.qa =>
+      'https://app-bff-api-qa-107577467292.asia-northeast1.run.app',
+    Environment.production =>
+      'https://app-bff-api-107577467292.asia-northeast1.run.app',
   };
 }

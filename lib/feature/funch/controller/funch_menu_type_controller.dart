@@ -1,9 +1,10 @@
 import 'package:dotto/feature/funch/domain/funch_menu_category.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final funchMenuCategoryProvider = NotifierProvider<FunchMenuCategoryNotifier, FunchMenuCategory>(() {
-  return FunchMenuCategoryNotifier();
-});
+final funchMenuCategoryProvider =
+    NotifierProvider<FunchMenuCategoryNotifier, FunchMenuCategory>(() {
+      return FunchMenuCategoryNotifier();
+    });
 
 final class FunchMenuCategoryNotifier extends Notifier<FunchMenuCategory> {
   // 初期値を設定する

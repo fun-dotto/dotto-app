@@ -5,5 +5,7 @@ part 'course_state.freezed.dart';
 
 @freezed
 abstract class CourseState with _$CourseState {
-  const factory CourseState({@Default(<PersonalTimetableDay>[]) List<PersonalTimetableDay> days}) = _CourseState;
+  const factory CourseState({
+    @Default(<PersonalTimetableDay>[]) List<PersonalTimetableDay> days,
+  }) = _CourseState;
 }

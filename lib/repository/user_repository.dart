@@ -14,7 +14,10 @@ final userRepositoryProvider = Provider<UserRepository>(UserRepositoryImpl.new);
 abstract class UserRepository {
   Future<DottoUser?> getUser({required User firebaseUser});
 
-  Future<DottoUser> upsertUser({required User firebaseUser, required DottoUser user});
+  Future<DottoUser> upsertUser({
+    required User firebaseUser,
+    required DottoUser user,
+  });
 }
 
 final class UserRepositoryImpl implements UserRepository {
@@ -41,7 +44,10 @@ final class UserRepositoryImpl implements UserRepository {
   }
 
   @override
-  Future<DottoUser> upsertUser({required User firebaseUser, required DottoUser user}) async {
+  Future<DottoUser> upsertUser({
+    required User firebaseUser,
+    required DottoUser user,
+  }) async {
     try {
       final api = ref.read(apiClientProvider).getUsersApi();
       final userInfo = UserInfo(
@@ -59,11 +65,15 @@ final class UserRepositoryImpl implements UserRepository {
             null => null,
           }
           ..course = switch (user.course) {
-            AcademicArea.informationSystemCourse => DottoFoundationV1Course.informationSystem,
-            AcademicArea.informationDesignCourse => DottoFoundationV1Course.informationDesign,
+            AcademicArea.informationSystemCourse =>
+              DottoFoundationV1Course.informationSystem,
+            AcademicArea.informationDesignCourse =>
+              DottoFoundationV1Course.informationDesign,
             AcademicArea.complexCourse => DottoFoundationV1Course.complexSystem,
-            AcademicArea.intelligenceSystemCourse => DottoFoundationV1Course.intelligentSystem,
-            AcademicArea.advancedICTCourse => DottoFoundationV1Course.advancedICT,
+            AcademicArea.intelligenceSystemCourse =>
+              DottoFoundationV1Course.intelligentSystem,
+            AcademicArea.advancedICTCourse =>
+              DottoFoundationV1Course.advancedICT,
             _ => null,
           }
           ..class_ = switch (user.class_) {
@@ -86,7 +96,10 @@ final class UserRepositoryImpl implements UserRepository {
       final data = response.data;
       final updatedUserInfo = data?.user;
       if (updatedUserInfo == null) {
-        throw const DomainError(type: DomainErrorType.invalidResponse, message: 'Failed to upsert user');
+        throw const DomainError(
+          type: DomainErrorType.invalidResponse,
+          message: 'Failed to upsert user',
+        );
       }
       return _toDottoUser(firebaseUser, updatedUserInfo);
     } on DomainError {
@@ -115,10 +128,13 @@ final class UserRepositoryImpl implements UserRepository {
         _ => null,
       },
       course: switch (userInfo.course) {
-        DottoFoundationV1Course.informationSystem => AcademicArea.informationSystemCourse,
-        DottoFoundationV1Course.informationDesign => AcademicArea.informationDesignCourse,
+        DottoFoundationV1Course.informationSystem =>
+          AcademicArea.informationSystemCourse,
+        DottoFoundationV1Course.informationDesign =>
+          AcademicArea.informationDesignCourse,
         DottoFoundationV1Course.complexSystem => AcademicArea.complexCourse,
-        DottoFoundationV1Course.intelligentSystem => AcademicArea.intelligenceSystemCourse,
+        DottoFoundationV1Course.intelligentSystem =>
+          AcademicArea.intelligenceSystemCourse,
         DottoFoundationV1Course.advancedICT => AcademicArea.advancedICTCourse,
         _ => null,
       },

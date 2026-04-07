@@ -11,19 +11,34 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
 class SearchSubjectFilterSection extends HookWidget {
-  const SearchSubjectFilterSection({super.key, required this.filter, required this.onChanged, this.onClear});
+  const SearchSubjectFilterSection({
+    super.key,
+    required this.filter,
+    required this.onChanged,
+    this.onClear,
+  });
 
   final SubjectFilter filter;
   final ValueChanged<SubjectFilter> onChanged;
   final VoidCallback? onClear;
-  static const _availableGrades = [Grade.b1, Grade.b2, Grade.b3, Grade.b4, Grade.m1, Grade.m2];
+  static const _availableGrades = [
+    Grade.b1,
+    Grade.b2,
+    Grade.b3,
+    Grade.b4,
+    Grade.m1,
+    Grade.m2,
+  ];
 
   @override
   Widget build(BuildContext context) {
-    final hasCulturalClassification = filter.classifications.contains(SubjectClassification.cultural);
+    final hasCulturalClassification = filter.classifications.contains(
+      SubjectClassification.cultural,
+    );
     final isBasicAttributesExpanded = useState(false);
     final isOtherAttributesExpanded = useState(false);
-    final basicFilterCount = filter.courses.length + filter.grades.length + filter.classes.length;
+    final basicFilterCount =
+        filter.courses.length + filter.grades.length + filter.classes.length;
     final otherFilterCount =
         filter.semesters.length +
         filter.requirements.length +
@@ -36,7 +51,10 @@ class SearchSubjectFilterSection extends HookWidget {
         if (onClear != null) ...[
           Align(
             alignment: Alignment.centerRight,
-            child: TextButton(onPressed: filter.hasActiveFilters ? onClear : null, child: const Text('条件をクリア')),
+            child: TextButton(
+              onPressed: filter.hasActiveFilters ? onClear : null,
+              child: const Text('条件をクリア'),
+            ),
           ),
         ],
         _buildCollapsibleSection(
@@ -71,11 +89,15 @@ class SearchSubjectFilterSection extends HookWidget {
                 values: SubjectClassification.values,
                 selected: filter.classifications,
                 onChanged: (v) {
-                  final hasCultural = v.contains(SubjectClassification.cultural);
+                  final hasCultural = v.contains(
+                    SubjectClassification.cultural,
+                  );
                   onChanged(
                     filter.copyWith(
                       classifications: v,
-                      culturalSubjectCategories: hasCultural ? filter.culturalSubjectCategories : [],
+                      culturalSubjectCategories: hasCultural
+                          ? filter.culturalSubjectCategories
+                          : [],
                     ),
                   );
                 },
@@ -87,7 +109,8 @@ class SearchSubjectFilterSection extends HookWidget {
                   label: '教養区分',
                   values: CulturalSubjectCategory.values,
                   selected: filter.culturalSubjectCategories,
-                  onChanged: (v) => onChanged(filter.copyWith(culturalSubjectCategories: v)),
+                  onChanged: (v) =>
+                      onChanged(filter.copyWith(culturalSubjectCategories: v)),
                   labelBuilder: (v) => v.label,
                 ),
             ],
@@ -154,7 +177,8 @@ class SearchSubjectFilterSection extends HookWidget {
             if (states.contains(WidgetState.pressed)) {
               return Colors.black.withValues(alpha: 0.06);
             }
-            if (states.contains(WidgetState.hovered) || states.contains(WidgetState.focused)) {
+            if (states.contains(WidgetState.hovered) ||
+                states.contains(WidgetState.focused)) {
               return Colors.black.withValues(alpha: 0.03);
             }
             return null;
@@ -164,14 +188,27 @@ class SearchSubjectFilterSection extends HookWidget {
             child: Row(
               spacing: 8,
               children: [
-                Expanded(child: Text(label, style: Theme.of(context).textTheme.titleMedium)),
+                Expanded(
+                  child: Text(
+                    label,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                ),
                 if (badgeCount > 0)
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                    decoration: BoxDecoration(color: colors.accentPrimary, borderRadius: BorderRadius.circular(999)),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 2,
+                    ),
+                    decoration: BoxDecoration(
+                      color: colors.accentPrimary,
+                      borderRadius: BorderRadius.circular(999),
+                    ),
                     child: Text(
                       '$badgeCount',
-                      style: Theme.of(context).textTheme.labelMedium?.copyWith(color: colors.labelTertiary),
+                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                        color: colors.labelTertiary,
+                      ),
                     ),
                   ),
                 Icon(isExpanded ? Icons.expand_less : Icons.expand_more),
@@ -186,7 +223,11 @@ class SearchSubjectFilterSection extends HookWidget {
           child: Padding(padding: const EdgeInsets.only(top: 12), child: child),
           builder: (context, value, child) {
             return ClipRect(
-              child: Align(alignment: Alignment.topCenter, heightFactor: value, child: child),
+              child: Align(
+                alignment: Alignment.topCenter,
+                heightFactor: value,
+                child: child,
+              ),
             );
           },
         ),
@@ -246,7 +287,11 @@ class SearchSubjectFilterSection extends HookWidget {
                 },
                 showCheckmark: false,
                 selectedColor: colors.accentPrimary.withValues(alpha: 0.2),
-                side: BorderSide(color: isSelected ? colors.accentPrimary : colors.borderPrimary),
+                side: BorderSide(
+                  color: isSelected
+                      ? colors.accentPrimary
+                      : colors.borderPrimary,
+                ),
               );
             }(),
         ],

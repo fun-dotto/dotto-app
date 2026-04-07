@@ -11,8 +11,14 @@ final class AnnouncementScreen extends ConsumerWidget {
 
   Widget _announcementListRow(BuildContext context, Announcement announcement) {
     return ListTile(
-      title: Text(announcement.title, style: Theme.of(context).textTheme.titleSmall),
-      subtitle: Text(DateFormatter.full(announcement.date), style: Theme.of(context).textTheme.labelMedium),
+      title: Text(
+        announcement.title,
+        style: Theme.of(context).textTheme.titleSmall,
+      ),
+      subtitle: Text(
+        DateFormatter.full(announcement.date),
+        style: Theme.of(context).textTheme.labelMedium,
+      ),
       onTap: () => launchUrlSafely(announcement.url),
       trailing: const Icon(Icons.chevron_right_outlined),
     );

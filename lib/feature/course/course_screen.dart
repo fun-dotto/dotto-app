@@ -27,7 +27,9 @@ final class CourseScreen extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final config = ref.watch(configProvider);
     final isAuthenticated = ref.watch(isAuthenticatedProvider);
-    final state = isAuthenticated ? ref.watch(courseReducerProvider) : const AsyncData(CourseState());
+    final state = isAuthenticated
+        ? ref.watch(courseReducerProvider)
+        : const AsyncData(CourseState());
     final selectedDate = useState<DateTime?>(null);
 
     final quickFeatures = [
@@ -64,8 +66,13 @@ final class CourseScreen extends HookConsumerWidget {
         fallbackIcon: Icons.event_note,
         onPressed: () => Navigator.of(context).push(
           MaterialPageRoute<void>(
-            builder: (_) => WebPdfViewer(url: config.officialCalendarPdfUrl, filename: '学年暦'),
-            settings: RouteSettings(name: '/home/web_pdf_viewer?url=${config.officialCalendarPdfUrl}'),
+            builder: (_) => WebPdfViewer(
+              url: config.officialCalendarPdfUrl,
+              filename: '学年暦',
+            ),
+            settings: RouteSettings(
+              name: '/home/web_pdf_viewer?url=${config.officialCalendarPdfUrl}',
+            ),
           ),
         ),
       ),
@@ -75,8 +82,11 @@ final class CourseScreen extends HookConsumerWidget {
         fallbackIcon: Icons.calendar_view_month,
         onPressed: () => Navigator.of(context).push(
           MaterialPageRoute<void>(
-            builder: (_) => WebPdfViewer(url: config.timetable1PdfUrl, filename: '時間割 前期'),
-            settings: RouteSettings(name: '/home/web_pdf_viewer?url=${config.timetable1PdfUrl}'),
+            builder: (_) =>
+                WebPdfViewer(url: config.timetable1PdfUrl, filename: '時間割 前期'),
+            settings: RouteSettings(
+              name: '/home/web_pdf_viewer?url=${config.timetable1PdfUrl}',
+            ),
           ),
         ),
       ),
@@ -86,8 +96,11 @@ final class CourseScreen extends HookConsumerWidget {
         fallbackIcon: Icons.calendar_view_month,
         onPressed: () => Navigator.of(context).push(
           MaterialPageRoute<void>(
-            builder: (_) => WebPdfViewer(url: config.timetable2PdfUrl, filename: '時間割 後期'),
-            settings: RouteSettings(name: '/home/web_pdf_viewer?url=${config.timetable2PdfUrl}'),
+            builder: (_) =>
+                WebPdfViewer(url: config.timetable2PdfUrl, filename: '時間割 後期'),
+            settings: RouteSettings(
+              name: '/home/web_pdf_viewer?url=${config.timetable2PdfUrl}',
+            ),
           ),
         ),
       ),
@@ -96,11 +109,13 @@ final class CourseScreen extends HookConsumerWidget {
     final quickLinks = [
       QuickButton(
         label: 'HOPE',
-        iconUrl: 'https://hope.fun.ac.jp/pluginfile.php/1/core_admin/favicon/64x64/1756948564/favicon.ico',
+        iconUrl:
+            'https://hope.fun.ac.jp/pluginfile.php/1/core_admin/favicon/64x64/1756948564/favicon.ico',
         fallbackIcon: Icons.language,
         onPressed: () => _launchQuickLink(
           context,
-          url: 'https://hope.fun.ac.jp/auth/saml2/login.php?idp=1bec319bca7458548c77d545a2a1b3de',
+          url:
+              'https://hope.fun.ac.jp/auth/saml2/login.php?idp=1bec319bca7458548c77d545a2a1b3de',
           label: 'HOPE',
         ),
       ),
@@ -108,7 +123,11 @@ final class CourseScreen extends HookConsumerWidget {
         label: '学生ポータル',
         iconUrl: 'https://students.fun.ac.jp/favicon.ico',
         fallbackIcon: Icons.language,
-        onPressed: () => _launchQuickLink(context, url: 'https://students.fun.ac.jp/Portal', label: '学生ポータル'),
+        onPressed: () => _launchQuickLink(
+          context,
+          url: 'https://students.fun.ac.jp/Portal',
+          label: '学生ポータル',
+        ),
       ),
       // if (isAuthenticated)
       //   QuickButton(
@@ -122,7 +141,11 @@ final class CourseScreen extends HookConsumerWidget {
           label: 'Macサポート',
           iconUrl: null,
           fallbackIcon: Icons.laptop_mac,
-          onPressed: () => _launchQuickLink(context, url: config.macSupportDeskUrl, label: 'Macサポート'),
+          onPressed: () => _launchQuickLink(
+            context,
+            url: config.macSupportDeskUrl,
+            label: 'Macサポート',
+          ),
         ),
     ];
 
@@ -134,7 +157,8 @@ final class CourseScreen extends HookConsumerWidget {
       if (days == null || days.isEmpty) {
         return null;
       }
-      if (selectedDate.value == null || !days.any((e) => _isSameDate(e.date, selectedDate.value!))) {
+      if (selectedDate.value == null ||
+          !days.any((e) => _isSameDate(e.date, selectedDate.value!))) {
         final now = DateTime.now();
         final today = DateTime(now.year, now.month, now.day);
         // 平日 → 今日、土日 → 次の月曜日
@@ -142,10 +166,16 @@ final class CourseScreen extends HookConsumerWidget {
         if (today.weekday <= DateTime.friday) {
           initialDate = today;
         } else {
-          initialDate = today.add(Duration(days: DateTime.monday + 7 - today.weekday));
+          initialDate = today.add(
+            Duration(days: DateTime.monday + 7 - today.weekday),
+          );
         }
-        final matchingEntry = days.where((e) => _isSameDate(e.date, initialDate));
-        selectedDate.value = matchingEntry.isNotEmpty ? matchingEntry.first.date : days.first.date;
+        final matchingEntry = days.where(
+          (e) => _isSameDate(e.date, initialDate),
+        );
+        selectedDate.value = matchingEntry.isNotEmpty
+            ? matchingEntry.first.date
+            : days.first.date;
       }
       return null;
     }, [state]);
@@ -154,7 +184,9 @@ final class CourseScreen extends HookConsumerWidget {
       appBar: AppBar(
         title: Text(
           '講義',
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(color: SemanticColor.light.accentPrimary),
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+            color: SemanticColor.light.accentPrimary,
+          ),
         ),
         centerTitle: false,
         actions: [
@@ -179,13 +211,22 @@ final class CourseScreen extends HookConsumerWidget {
             child: Material(
               color: SemanticColor.light.accentPrimary.withValues(alpha: 0.75),
               child: InkWell(
-                onTap: () => _launchQuickLink(context, url: announcement.url, label: announcement.title),
+                onTap: () => _launchQuickLink(
+                  context,
+                  url: announcement.url,
+                  label: announcement.title,
+                ),
                 child: Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
                   child: Text(
                     announcement.title,
-                    style: Theme.of(context).textTheme.labelMedium?.copyWith(color: SemanticColor.light.labelTertiary),
+                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                      color: SemanticColor.light.labelTertiary,
+                    ),
                     textAlign: .center,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -218,17 +259,25 @@ final class CourseScreen extends HookConsumerWidget {
                         Column(
                           children: [
                             Padding(
-                              padding: const EdgeInsetsGeometry.symmetric(horizontal: 8),
+                              padding: const EdgeInsetsGeometry.symmetric(
+                                horizontal: 8,
+                              ),
                               child: PersonalTimetableCalendarView(
                                 personalTimetableDays: courseState.days,
                                 selectedDate: selectedDate.value,
-                                onDateSelected: (newDate) => selectedDate.value = newDate,
-                                onSubjectSelected: (subject) => Navigator.of(context).push(
-                                  MaterialPageRoute<void>(
-                                    builder: (context) => SubjectDetailScreen(id: subject.id),
-                                    settings: RouteSettings(name: '/course/subjects/${subject.id}'),
-                                  ),
-                                ),
+                                onDateSelected: (newDate) =>
+                                    selectedDate.value = newDate,
+                                onSubjectSelected: (subject) =>
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute<void>(
+                                        builder: (context) =>
+                                            SubjectDetailScreen(id: subject.id),
+                                        settings: RouteSettings(
+                                          name:
+                                              '/course/subjects/${subject.id}',
+                                        ),
+                                      ),
+                                    ),
                               ),
                             ),
                             Row(
@@ -238,14 +287,19 @@ final class CourseScreen extends HookConsumerWidget {
                                   onPressed: () async {
                                     await Navigator.of(context).push(
                                       MaterialPageRoute<void>(
-                                        builder: (context) => const CourseRegistrationScreen(),
-                                        settings: const RouteSettings(name: '/course/registration'),
+                                        builder: (context) =>
+                                            const CourseRegistrationScreen(),
+                                        settings: const RouteSettings(
+                                          name: '/course/registration',
+                                        ),
                                       ),
                                     );
                                     if (!context.mounted) {
                                       return;
                                     }
-                                    await ref.read(courseReducerProvider.notifier).refresh();
+                                    await ref
+                                        .read(courseReducerProvider.notifier)
+                                        .refresh();
                                   },
                                   type: DottoButtonType.text,
                                   child: const Text('1週間の時間割'),
@@ -256,7 +310,10 @@ final class CourseScreen extends HookConsumerWidget {
                         )
                       else
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 48),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 48,
+                          ),
                           child: Center(
                             child: DottoButton(
                               onPressed: () async {
@@ -267,7 +324,9 @@ final class CourseScreen extends HookConsumerWidget {
                           ),
                         ),
                       Padding(
-                        padding: const EdgeInsetsGeometry.symmetric(horizontal: 16),
+                        padding: const EdgeInsetsGeometry.symmetric(
+                          horizontal: 16,
+                        ),
                         child: _shortcutSections(
                           context,
                           isAuthenticated: isAuthenticated,
@@ -328,16 +387,33 @@ final class CourseScreen extends HookConsumerWidget {
             child: Column(
               children: [
                 if (isAuthenticated)
-                  Padding(padding: const EdgeInsets.symmetric(horizontal: 8), child: _courseTimetableSkeleton(context))
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: _courseTimetableSkeleton(context),
+                  )
                 else
                   const Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 48),
-                    child: Center(child: DottoButton(onPressed: null, child: const Text('ログインして時間割機能を使う'))),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 48,
+                    ),
+                    child: Center(
+                      child: DottoButton(
+                        onPressed: null,
+                        child: const Text('ログインして時間割機能を使う'),
+                      ),
+                    ),
                   ),
                 if (isAuthenticated)
                   const Row(
                     mainAxisAlignment: MainAxisAlignment.end,
-                    children: [DottoButton(onPressed: null, type: DottoButtonType.text, child: const Text('1週間の時間割'))],
+                    children: [
+                      DottoButton(
+                        onPressed: null,
+                        type: DottoButtonType.text,
+                        child: const Text('1週間の時間割'),
+                      ),
+                    ],
                   ),
                 Padding(
                   padding: const EdgeInsets.all(16),
@@ -369,7 +445,11 @@ final class CourseScreen extends HookConsumerWidget {
               (_) => Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 child: Column(
-                  children: [_skeletonBox(height: 14, width: 28), const SizedBox(height: 8), _skeletonCircle(48)],
+                  children: [
+                    _skeletonBox(height: 14, width: 28),
+                    const SizedBox(height: 8),
+                    _skeletonCircle(48),
+                  ],
                 ),
               ),
             ),
@@ -398,7 +478,10 @@ final class CourseScreen extends HookConsumerWidget {
       child: Container(
         width: size,
         height: size,
-        decoration: BoxDecoration(color: Colors.grey.shade300, shape: BoxShape.circle),
+        decoration: BoxDecoration(
+          color: Colors.grey.shade300,
+          shape: BoxShape.circle,
+        ),
       ),
     );
   }
@@ -406,7 +489,10 @@ final class CourseScreen extends HookConsumerWidget {
   Widget _courseTimetableCellSkeleton() {
     return Container(
       height: 52,
-      decoration: BoxDecoration(color: Colors.grey.shade200, borderRadius: const BorderRadius.all(Radius.circular(8))),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade200,
+        borderRadius: const BorderRadius.all(Radius.circular(8)),
+      ),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -420,12 +506,19 @@ final class CourseScreen extends HookConsumerWidget {
     );
   }
 
-  Widget _skeletonBox({required double height, double? width, double radius = 8}) {
+  Widget _skeletonBox({
+    required double height,
+    double? width,
+    double radius = 8,
+  }) {
     return Shimmer(
       child: Container(
         width: width,
         height: height,
-        decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(radius)),
+        decoration: BoxDecoration(
+          color: Colors.grey.shade300,
+          borderRadius: BorderRadius.circular(radius),
+        ),
       ),
     );
   }
@@ -460,7 +553,10 @@ final class CourseScreen extends HookConsumerWidget {
     );
   }
 
-  Widget _shortcutSection(BuildContext context, {required List<QuickButton> quickButtons}) {
+  Widget _shortcutSection(
+    BuildContext context, {
+    required List<QuickButton> quickButtons,
+  }) {
     if (quickButtons.isEmpty) {
       return const SizedBox.shrink();
     }
@@ -483,11 +579,17 @@ final class CourseScreen extends HookConsumerWidget {
     return a.year == b.year && a.month == b.month && a.day == b.day;
   }
 
-  Future<void> _launchQuickLink(BuildContext context, {required String url, required String label}) async {
+  Future<void> _launchQuickLink(
+    BuildContext context, {
+    required String url,
+    required String label,
+  }) async {
     final launched = await launchUrlSafely(url, mode: .externalApplication);
     if (!context.mounted || launched) {
       return;
     }
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$label を開けませんでした')));
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text('$label を開けませんでした')));
   }
 }

@@ -41,12 +41,19 @@ final class BusCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final tripType = getType();
-    final headerText = tripType != BusType.other ? tripType.where + (isTo ? 'から' : '行き') : '';
+    final headerText = tripType != BusType.other
+        ? tripType.where + (isTo ? 'から' : '行き')
+        : '';
     return Card(
       color: Colors.white,
       shadowColor: Colors.black,
       child: Container(
-        padding: EdgeInsets.only(top: home ? 0 : 16, left: 16, right: 16, bottom: 16),
+        padding: EdgeInsets.only(
+          top: home ? 0 : 16,
+          left: 16,
+          right: 16,
+          bottom: 16,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -82,8 +89,14 @@ final class BusCard extends ConsumerWidget {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Text(formatDuration(beginTime), style: Theme.of(context).textTheme.displayMedium),
-                      Transform.translate(offset: const Offset(0, -5), child: Text(isKameda && isTo ? '亀田支所発' : '発')),
+                      Text(
+                        formatDuration(beginTime),
+                        style: Theme.of(context).textTheme.displayMedium,
+                      ),
+                      Transform.translate(
+                        offset: const Offset(0, -5),
+                        child: Text(isKameda && isTo ? '亀田支所発' : '発'),
+                      ),
                       const Spacer(),
                       Transform.translate(
                         offset: const Offset(0, -5),
@@ -95,7 +108,10 @@ final class BusCard extends ConsumerWidget {
                     ],
                   ),
                   Divider(height: 6, color: tripType.dividerColor),
-                  Row(mainAxisAlignment: MainAxisAlignment.end, children: [Text('出発まで${arriveAt.inMinutes}分')]),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [Text('出発まで${arriveAt.inMinutes}分')],
+                  ),
                 ],
               )
             else

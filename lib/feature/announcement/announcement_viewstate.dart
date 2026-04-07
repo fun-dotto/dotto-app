@@ -5,5 +5,7 @@ part 'announcement_viewstate.freezed.dart';
 
 @freezed
 abstract class AnnouncementViewState with _$AnnouncementViewState {
-  const factory AnnouncementViewState({required List<Announcement> announcements}) = _AnnouncementViewState;
+  const factory AnnouncementViewState({
+    required List<Announcement> announcements,
+  }) = _AnnouncementViewState;
 }

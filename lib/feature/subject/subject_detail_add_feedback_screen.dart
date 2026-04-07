@@ -36,10 +36,15 @@ final class SubjectDetailAddFeedbackScreen extends HookConsumerWidget {
               AsyncData(:final value) => () async {
                 try {
                   if (score.value == null) {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('満足度を入力してください。')));
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('満足度を入力してください。')),
+                    );
                     return;
                   }
-                  final feedback = SubjectFeedback(score: score.value!, comment: commentTextEditingController.text);
+                  final feedback = SubjectFeedback(
+                    score: score.value!,
+                    comment: commentTextEditingController.text,
+                  );
                   await subjectRepository.createFeedback(
                     userId: value.id,
                     lessonId: lessonId,
@@ -52,7 +57,9 @@ final class SubjectDetailAddFeedbackScreen extends HookConsumerWidget {
                 } on Exception catch (e) {
                   debugPrint(e.toString());
                   if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('フィードバックの投稿に失敗しました。')));
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('フィードバックの投稿に失敗しました。')),
+                    );
                   }
                 }
               },
@@ -74,11 +81,16 @@ final class SubjectDetailAddFeedbackScreen extends HookConsumerWidget {
                   alignment: Alignment.centerLeft,
                   child: Text(
                     'タップして評価:',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(color: SemanticColor.light.accentPrimary),
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: SemanticColor.light.accentPrimary,
+                    ),
                   ),
                 ),
                 RatingBar.builder(
-                  itemBuilder: (context, index) => Icon(Icons.star, color: SemanticColor.light.accentPrimary),
+                  itemBuilder: (context, index) => Icon(
+                    Icons.star,
+                    color: SemanticColor.light.accentPrimary,
+                  ),
                   onRatingUpdate: (rating) => score.value = rating.toInt(),
                   glow: false,
                   itemSize: 32,
@@ -92,7 +104,9 @@ final class SubjectDetailAddFeedbackScreen extends HookConsumerWidget {
               children: [
                 Text(
                   'コメント',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(color: SemanticColor.light.accentPrimary),
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: SemanticColor.light.accentPrimary,
+                  ),
                 ),
                 TextFormField(
                   maxLength: 30,

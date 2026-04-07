@@ -15,11 +15,14 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'user_controller.g.dart';
 
-final StreamProvider<User?> firebaseAuthStateChangesProvider = StreamProvider.autoDispose<User?>((ref) {
-  return FirebaseAuth.instance.authStateChanges();
-});
+final StreamProvider<User?> firebaseAuthStateChangesProvider =
+    StreamProvider.autoDispose<User?>((ref) {
+      return FirebaseAuth.instance.authStateChanges();
+    });
 
-final Provider<bool> isAuthenticatedProvider = Provider.autoDispose<bool>((ref) {
+final Provider<bool> isAuthenticatedProvider = Provider.autoDispose<bool>((
+  ref,
+) {
   final authState = ref.watch(firebaseAuthStateChangesProvider);
   return authState.value != null;
 });
@@ -89,7 +92,10 @@ final class UserNotifier extends _$UserNotifier {
     if (current != null) {
       final userRepository = ref.read(userRepositoryProvider);
       state = AsyncValue.data(current.copyWith(course: course));
-      await _upsertCurrentUser(current.copyWith(course: course), userRepository);
+      await _upsertCurrentUser(
+        current.copyWith(course: course),
+        userRepository,
+      );
     }
   }
 
@@ -98,11 +104,17 @@ final class UserNotifier extends _$UserNotifier {
     if (current != null) {
       final userRepository = ref.read(userRepositoryProvider);
       state = AsyncValue.data(current.copyWith(class_: class_));
-      await _upsertCurrentUser(current.copyWith(class_: class_), userRepository);
+      await _upsertCurrentUser(
+        current.copyWith(class_: class_),
+        userRepository,
+      );
     }
   }
 
-  Future<void> _upsertCurrentUser(DottoUser user, UserRepository userRepository) async {
+  Future<void> _upsertCurrentUser(
+    DottoUser user,
+    UserRepository userRepository,
+  ) async {
     final firebaseUser = FirebaseAuth.instance.currentUser;
     if (firebaseUser == null) return;
     try {
@@ -112,8 +124,19 @@ final class UserNotifier extends _$UserNotifier {
     }
   }
 
-  Future<DottoUser> _syncUser(User? firebaseUser, UserRepository userRepository) async {
-    const defaultUser = DottoUser(id: '', name: '', email: '', avatarUrl: '', grade: null, course: null, class_: null);
+  Future<DottoUser> _syncUser(
+    User? firebaseUser,
+    UserRepository userRepository,
+  ) async {
+    const defaultUser = DottoUser(
+      id: '',
+      name: '',
+      email: '',
+      avatarUrl: '',
+      grade: null,
+      course: null,
+      class_: null,
+    );
     if (firebaseUser == null) {
       return defaultUser;
     }
@@ -127,7 +150,10 @@ final class UserNotifier extends _$UserNotifier {
             avatarUrl: firebaseUser.photoURL ?? '',
           );
       try {
-        return await userRepository.upsertUser(firebaseUser: firebaseUser, user: user);
+        return await userRepository.upsertUser(
+          firebaseUser: firebaseUser,
+          user: user,
+        );
       } on Exception catch (e) {
         debugPrint('Error during upserting user: $e');
         return user;

@@ -33,12 +33,18 @@ final class PersonalTimetableCalendarView extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final userPreference = ref.watch(dottoUserPreferenceProvider);
     final isTimetableTimeVisible = switch (userPreference) {
-      AsyncData(value: final preference) => preference.timetablePeriodStyle == TimetablePeriodStyle.numberAndTime,
+      AsyncData(value: final preference) =>
+        preference.timetablePeriodStyle == TimetablePeriodStyle.numberAndTime,
       AsyncError() || AsyncLoading() => false,
     };
     final safeSelectedDate =
-        selectedDate ?? (personalTimetableDays.isNotEmpty ? personalTimetableDays.first.date : DateTime.now());
-    final selectedDayIndex = personalTimetableDays.indexWhere((day) => _isSameDate(day.date, safeSelectedDate));
+        selectedDate ??
+        (personalTimetableDays.isNotEmpty
+            ? personalTimetableDays.first.date
+            : DateTime.now());
+    final selectedDayIndex = personalTimetableDays.indexWhere(
+      (day) => _isSameDate(day.date, safeSelectedDate),
+    );
     final initialPage = selectedDayIndex >= 0 ? selectedDayIndex : 0;
     final currentPage = useState(initialPage);
     final pageController = usePageController(initialPage: initialPage);
@@ -52,8 +58,12 @@ final class PersonalTimetableCalendarView extends HookConsumerWidget {
         currentPage.value = lastPageIndex;
         pageController.jumpToPage(lastPageIndex);
       }
-      final targetPage = personalTimetableDays.indexWhere((day) => _isSameDate(day.date, safeSelectedDate));
-      if (targetPage < 0 || targetPage == currentPage.value || !pageController.hasClients) {
+      final targetPage = personalTimetableDays.indexWhere(
+        (day) => _isSameDate(day.date, safeSelectedDate),
+      );
+      if (targetPage < 0 ||
+          targetPage == currentPage.value ||
+          !pageController.hasClients) {
         return null;
       }
       unawaited(
@@ -97,13 +107,19 @@ final class PersonalTimetableCalendarView extends HookConsumerWidget {
       final end = math.min(i + 5, days.length);
       datePages.add(days.sublist(i, end).map((e) => e.date).toList());
     }
-    final clampedPage = days.isEmpty ? 0 : math.max(0, math.min(currentPage, days.length - 1));
+    final clampedPage = days.isEmpty
+        ? 0
+        : math.max(0, math.min(currentPage, days.length - 1));
     final dateCarouselInitialPage = datePages.isEmpty
         ? 0
         : math.max(0, math.min(clampedPage ~/ 5, datePages.length - 1));
     final currentDay = days.isEmpty ? null : days[clampedPage];
-    final displayWeekDates = datePages.isEmpty ? <DateTime>[] : datePages[dateCarouselInitialPage];
-    final timetableHeight = currentDay == null ? 0.0 : _dayTimetableHeight(currentDay);
+    final displayWeekDates = datePages.isEmpty
+        ? <DateTime>[]
+        : datePages[dateCarouselInitialPage];
+    final timetableHeight = currentDay == null
+        ? 0.0
+        : _dayTimetableHeight(currentDay);
 
     return Column(
       spacing: 8,
@@ -119,7 +135,10 @@ final class PersonalTimetableCalendarView extends HookConsumerWidget {
                     child: Center(
                       child: Text(
                         DateFormatter.dayOfWeek(date),
-                        style: TextStyle(fontSize: 14, color: SemanticColor.light.labelPrimary),
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: SemanticColor.light.labelPrimary,
+                        ),
                       ),
                     ),
                   ),
@@ -129,7 +148,13 @@ final class PersonalTimetableCalendarView extends HookConsumerWidget {
         CarouselSlider(
           key: ValueKey(dateCarouselInitialPage),
           items: datePages
-              .map((dates) => _dateButtons(dates: dates, selectedDate: selectedDate, onDateSelected: onDateSelected))
+              .map(
+                (dates) => _dateButtons(
+                  dates: dates,
+                  selectedDate: selectedDate,
+                  onDateSelected: onDateSelected,
+                ),
+              )
               .toList(),
           options: CarouselOptions(
             height: 48,
@@ -138,12 +163,15 @@ final class PersonalTimetableCalendarView extends HookConsumerWidget {
             initialPage: dateCarouselInitialPage,
             onPageChanged: (index, _) {
               final pageDates = datePages[index];
-              if (pageDates.isEmpty || pageDates.any((date) => _isSameDate(date, selectedDate))) {
+              if (pageDates.isEmpty ||
+                  pageDates.any((date) => _isSameDate(date, selectedDate))) {
                 return;
               }
               // 前の週へ戻った場合は金曜日、進んだ場合は月曜日を選択
               final prevWeekIndex = dateCarouselInitialPage;
-              onDateSelected(index < prevWeekIndex ? pageDates.last : pageDates.first);
+              onDateSelected(
+                index < prevWeekIndex ? pageDates.last : pageDates.first,
+              );
             },
           ),
         ),
@@ -162,7 +190,11 @@ final class PersonalTimetableCalendarView extends HookConsumerWidget {
                   onDateSelected(days[index].date);
                 },
                 itemBuilder: (context, index) {
-                  return _dayTimetable(context, days[index], isTimetableTimeVisible: isTimetableTimeVisible);
+                  return _dayTimetable(
+                    context,
+                    days[index],
+                    isTimetableTimeVisible: isTimetableTimeVisible,
+                  );
                 },
               ),
             ),
@@ -191,15 +223,23 @@ final class PersonalTimetableCalendarView extends HookConsumerWidget {
     );
   }
 
-  Widget _dateButton({required DateTime date, required bool isSelected, required VoidCallback onPressed}) {
+  Widget _dateButton({
+    required DateTime date,
+    required bool isSelected,
+    required VoidCallback onPressed,
+  }) {
     return SizedBox(
       width: 48,
       height: 48,
       child: TextButton(
         style: TextButton.styleFrom(
           textStyle: const TextStyle(fontSize: 16),
-          foregroundColor: isSelected ? SemanticColor.light.labelTertiary : SemanticColor.light.labelSecondary,
-          backgroundColor: isSelected ? SemanticColor.light.accentPrimary : SemanticColor.light.backgroundSecondary,
+          foregroundColor: isSelected
+              ? SemanticColor.light.labelTertiary
+              : SemanticColor.light.labelSecondary,
+          backgroundColor: isSelected
+              ? SemanticColor.light.accentPrimary
+              : SemanticColor.light.backgroundSecondary,
           overlayColor: SemanticColor.light.accentPrimary,
           side: BorderSide(color: SemanticColor.light.borderPrimary),
           shape: const CircleBorder(),
@@ -223,7 +263,11 @@ final class PersonalTimetableCalendarView extends HookConsumerWidget {
             (period) => _periodRow(
               context,
               period: period,
-              items: selectedDay?.items.where((item) => item.period == period).toList() ?? const [],
+              items:
+                  selectedDay?.items
+                      .where((item) => item.period == period)
+                      .toList() ??
+                  const [],
               isTimetableTimeVisible: isTimetableTimeVisible,
             ),
           )
@@ -239,9 +283,12 @@ final class PersonalTimetableCalendarView extends HookConsumerWidget {
 
     final totalRowHeight = Period.values
         .map((period) {
-          final itemCount = day.items.where((item) => item.period == period).length;
+          final itemCount = day.items
+              .where((item) => item.period == period)
+              .length;
           final visibleItemCount = itemCount == 0 ? 1 : itemCount;
-          return (visibleItemCount * itemButtonHeight) + ((visibleItemCount - 1) * itemSpacing);
+          return (visibleItemCount * itemButtonHeight) +
+              ((visibleItemCount - 1) * itemSpacing);
         })
         .fold<double>(0, (sum, rowHeight) => sum + rowHeight);
     final rowGap = (Period.values.length - 1) * periodSpacing;
@@ -255,7 +302,9 @@ final class PersonalTimetableCalendarView extends HookConsumerWidget {
     required bool isTimetableTimeVisible,
   }) {
     final visibleItemCount = items.isEmpty ? 1 : items.length;
-    final periodRowHeight = (visibleItemCount * kMinInteractiveDimension) + ((visibleItemCount - 1) * 8);
+    final periodRowHeight =
+        (visibleItemCount * kMinInteractiveDimension) +
+        ((visibleItemCount - 1) * 8);
 
     return Row(
       spacing: 4,
@@ -267,12 +316,17 @@ final class PersonalTimetableCalendarView extends HookConsumerWidget {
             child: SizedBox(
               height: periodRowHeight,
               child: Row(
-                mainAxisAlignment: isTimetableTimeVisible ? MainAxisAlignment.spaceBetween : MainAxisAlignment.center,
+                mainAxisAlignment: isTimetableTimeVisible
+                    ? MainAxisAlignment.spaceBetween
+                    : MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
                     period.number.toString(),
-                    style: TextStyle(fontSize: 20, color: SemanticColor.light.accentPrimary),
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: SemanticColor.light.accentPrimary,
+                    ),
                   ),
                   if (isTimetableTimeVisible)
                     Padding(
@@ -284,23 +338,27 @@ final class PersonalTimetableCalendarView extends HookConsumerWidget {
                           Text(
                             _formatTime(period.startTime),
                             textAlign: TextAlign.right,
-                            style: Theme.of(
-                              context,
-                            ).textTheme.labelSmall!.copyWith(color: SemanticColor.light.accentPrimary),
+                            style: Theme.of(context).textTheme.labelSmall!
+                                .copyWith(
+                                  color: SemanticColor.light.accentPrimary,
+                                ),
                           ),
                           Text(
                             '|',
                             textAlign: TextAlign.center,
-                            style: Theme.of(
-                              context,
-                            ).textTheme.labelSmall!.copyWith(color: SemanticColor.light.accentPrimary, fontSize: 4),
+                            style: Theme.of(context).textTheme.labelSmall!
+                                .copyWith(
+                                  color: SemanticColor.light.accentPrimary,
+                                  fontSize: 4,
+                                ),
                           ),
                           Text(
                             _formatTime(period.endTime),
                             textAlign: TextAlign.right,
-                            style: Theme.of(
-                              context,
-                            ).textTheme.labelSmall!.copyWith(color: SemanticColor.light.accentPrimary),
+                            style: Theme.of(context).textTheme.labelSmall!
+                                .copyWith(
+                                  color: SemanticColor.light.accentPrimary,
+                                ),
                           ),
                         ],
                       ),
@@ -335,9 +393,12 @@ final class PersonalTimetableCalendarView extends HookConsumerWidget {
         style: TextButton.styleFrom(
           padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
           backgroundColor: switch (item?.lectureStatus) {
-            LectureStatus.cancelled => SemanticColor.light.accentError.withValues(alpha: 0.1),
-            LectureStatus.madeUp => SemanticColor.light.accentWarning.withValues(alpha: 0.1),
-            LectureStatus.roomChanged => SemanticColor.light.accentInfo.withValues(alpha: 0.1),
+            LectureStatus.cancelled =>
+              SemanticColor.light.accentError.withValues(alpha: 0.1),
+            LectureStatus.madeUp =>
+              SemanticColor.light.accentWarning.withValues(alpha: 0.1),
+            LectureStatus.roomChanged =>
+              SemanticColor.light.accentInfo.withValues(alpha: 0.1),
             LectureStatus.normal => SemanticColor.light.backgroundSecondary,
             null => SemanticColor.light.backgroundSecondary,
           },
@@ -360,26 +421,29 @@ final class PersonalTimetableCalendarView extends HookConsumerWidget {
                       item?.subject.name ?? '',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: SemanticColor.light.labelPrimary),
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        color: SemanticColor.light.labelPrimary,
+                      ),
                     ),
                   ),
                   if (item != null)
                     switch (item.lectureStatus) {
                       LectureStatus.cancelled => Text(
                         '休講',
-                        style: Theme.of(
-                          context,
-                        ).textTheme.labelMedium?.copyWith(color: SemanticColor.light.accentError),
+                        style: Theme.of(context).textTheme.labelMedium
+                            ?.copyWith(color: SemanticColor.light.accentError),
                       ),
                       LectureStatus.madeUp => Text(
                         '補講',
-                        style: Theme.of(
-                          context,
-                        ).textTheme.labelMedium?.copyWith(color: SemanticColor.light.accentWarning),
+                        style: Theme.of(context).textTheme.labelMedium
+                            ?.copyWith(
+                              color: SemanticColor.light.accentWarning,
+                            ),
                       ),
                       LectureStatus.roomChanged => Text(
                         '教室変更',
-                        style: Theme.of(context).textTheme.labelMedium?.copyWith(color: SemanticColor.light.accentInfo),
+                        style: Theme.of(context).textTheme.labelMedium
+                            ?.copyWith(color: SemanticColor.light.accentInfo),
                       ),
                       LectureStatus.normal => const SizedBox.shrink(),
                     },
@@ -389,7 +453,9 @@ final class PersonalTimetableCalendarView extends HookConsumerWidget {
             if (item != null && item.roomName.trim().isNotEmpty)
               Text(
                 item.roomName,
-                style: Theme.of(context).textTheme.labelMedium?.copyWith(color: SemanticColor.light.labelSecondary),
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                  color: SemanticColor.light.labelSecondary,
+                ),
               ),
           ],
         ),

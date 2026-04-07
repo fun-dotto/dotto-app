@@ -29,8 +29,17 @@ Future<int> checkEnvKeysSecurity() async {
   print('Checking .env.keys security...');
 
   // Get staged files
-  final stagedResult = await Process.run('git', ['diff', '--cached', '--name-only', '--diff-filter=ACM']);
-  final stagedFiles = (stagedResult.stdout as String).trim().split('\n').where((f) => f.trim().isNotEmpty).toList();
+  final stagedResult = await Process.run('git', [
+    'diff',
+    '--cached',
+    '--name-only',
+    '--diff-filter=ACM',
+  ]);
+  final stagedFiles = (stagedResult.stdout as String)
+      .trim()
+      .split('\n')
+      .where((f) => f.trim().isNotEmpty)
+      .toList();
 
   // Check if .env.keys is staged
   if (stagedFiles.any((f) => f.endsWith('.env.keys'))) {
@@ -44,7 +53,10 @@ Future<int> checkEnvKeysSecurity() async {
 
   // Check for unencrypted .env files
   final envFiles = stagedFiles
-      .where((f) => RegExp(r'(^|/)\.env(\.|$)').hasMatch(f) && !f.endsWith('.env.keys'))
+      .where(
+        (f) =>
+            RegExp(r'(^|/)\.env(\.|$)').hasMatch(f) && !f.endsWith('.env.keys'),
+      )
       .toList();
 
   for (final envFile in envFiles) {
@@ -118,7 +130,8 @@ Future<int> checkDartFormat() async {
   ]);
   if (stagedResult.exitCode != 0) {
     stderr.writeln('$red❌ ERROR: Failed to list staged Dart files.$reset');
-    if (stagedResult.stderr != null && stagedResult.stderr.toString().trim().isNotEmpty) {
+    if (stagedResult.stderr != null &&
+        stagedResult.stderr.toString().trim().isNotEmpty) {
       stderr.writeln(stagedResult.stderr);
     }
     return 1;

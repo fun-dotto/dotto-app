@@ -4,7 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
 final class SubjectDetailPastExamScreen extends HookWidget {
-  const SubjectDetailPastExamScreen({required this.pastExamId, required this.isAuthenticated, super.key});
+  const SubjectDetailPastExamScreen({
+    required this.pastExamId,
+    required this.isAuthenticated,
+    super.key,
+  });
 
   final String pastExamId;
   final bool isAuthenticated;
@@ -15,7 +19,9 @@ final class SubjectDetailPastExamScreen extends HookWidget {
       return const Center(child: Text('Googleアカウント (@fun.ac.jp) による認証が必要です'));
     }
 
-    final pastExamsSnapshot = useFuture(useMemoized(() => S3Repository().getListObjectsKey(url: pastExamId)));
+    final pastExamsSnapshot = useFuture(
+      useMemoized(() => S3Repository().getListObjectsKey(url: pastExamId)),
+    );
 
     if (pastExamsSnapshot.connectionState == ConnectionState.waiting) {
       return const Center(child: CircularProgressIndicator());
@@ -29,7 +35,9 @@ final class SubjectDetailPastExamScreen extends HookWidget {
       if (pastExams.isEmpty) {
         return const Center(child: Text('過去問はありません'));
       }
-      return ListView(children: pastExams.map((e) => _kakomonListRow(context, e)).toList());
+      return ListView(
+        children: pastExams.map((e) => _kakomonListRow(context, e)).toList(),
+      );
     }
     return const SizedBox.shrink();
   }
@@ -44,8 +52,12 @@ final class SubjectDetailPastExamScreen extends HookWidget {
           onPressed: () {
             Navigator.of(context).push(
               MaterialPageRoute<void>(
-                builder: (_) => CloudflarePdfViewer(url: url, filename: filename),
-                settings: RouteSettings(name: '/pdf_viewer?filename=$filename&url=$url&storage=cloudflare'),
+                builder: (_) =>
+                    CloudflarePdfViewer(url: url, filename: filename),
+                settings: RouteSettings(
+                  name:
+                      '/pdf_viewer?filename=$filename&url=$url&storage=cloudflare',
+                ),
               ),
             );
           },

@@ -5,7 +5,11 @@ part 'bus_trip.freezed.dart';
 
 @freezed
 abstract class BusTripStop with _$BusTripStop {
-  const factory BusTripStop({required Duration time, required BusStop stop, int? terminal}) = _BusTripStop;
+  const factory BusTripStop({
+    required Duration time,
+    required BusStop stop,
+    int? terminal,
+  }) = _BusTripStop;
 
   factory BusTripStop.fromFirebase(BusStop stop, Map<String, dynamic> map) {
     final timeStrList = (map['time'] as String).split(':');
@@ -21,16 +25,24 @@ abstract class BusTripStop with _$BusTripStop {
 
 @freezed
 abstract class BusTrip with _$BusTrip {
-  const factory BusTrip({required String route, required List<BusTripStop> stops}) = _BusTrip;
+  const factory BusTrip({
+    required String route,
+    required List<BusTripStop> stops,
+  }) = _BusTrip;
 
-  factory BusTrip.fromFirebase(Map<String, dynamic> map, List<BusStop> allStops) {
+  factory BusTrip.fromFirebase(
+    Map<String, dynamic> map,
+    List<BusStop> allStops,
+  ) {
     final stopsList = map['stops'] as List;
     return BusTrip(
       route: map['route'] as String,
       stops: stopsList.map((e) {
         final stopMap = Map<String, dynamic>.from(e as Map);
         final id = stopMap['id'] as int;
-        final targetBusStop = allStops.firstWhere((busStop) => busStop.id == id);
+        final targetBusStop = allStops.firstWhere(
+          (busStop) => busStop.id == id,
+        );
         return BusTripStop.fromFirebase(targetBusStop, stopMap);
       }).toList(),
     );

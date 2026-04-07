@@ -10,7 +10,14 @@ final class FunchMenu {
 }
 
 final class FunchCommonMenu extends FunchMenu {
-  FunchCommonMenu(super.id, super.name, super.categoryId, super.prices, super.imageUrl, this.energy);
+  FunchCommonMenu(
+    super.id,
+    super.name,
+    super.categoryId,
+    super.prices,
+    super.imageUrl,
+    this.energy,
+  );
 
   factory FunchCommonMenu.fromJson(Map<String, dynamic> json) {
     if (json.isEmpty) {
@@ -33,13 +40,26 @@ final class FunchCommonMenu extends FunchMenu {
     final category = json['category'];
     final imageUrl = json['image'];
     final energy = json['energy'];
-    return FunchCommonMenu(id, name as String, category as int, prices, imageUrl as String, energy as int);
+    return FunchCommonMenu(
+      id,
+      name as String,
+      category as int,
+      prices,
+      imageUrl as String,
+      energy as int,
+    );
   }
   final int energy;
 }
 
 final class FunchOriginalMenu extends FunchMenu {
-  FunchOriginalMenu(super.id, super.name, super.categoryId, super.prices, super.imageUrl);
+  FunchOriginalMenu(
+    super.id,
+    super.name,
+    super.categoryId,
+    super.prices,
+    super.imageUrl,
+  );
 
   factory FunchOriginalMenu.fromJson(Map<String, dynamic> json) {
     if (json.isEmpty) {
@@ -49,7 +69,9 @@ final class FunchOriginalMenu extends FunchMenu {
         !json.containsKey('name') ||
         !json.containsKey('category_id') ||
         !json.containsKey('prices')) {
-      throw ArgumentError('JSON must contain id, name, category_id, and prices keys');
+      throw ArgumentError(
+        'JSON must contain id, name, category_id, and prices keys',
+      );
     }
     final id = json['id'];
     final name = json['name'];
@@ -58,6 +80,12 @@ final class FunchOriginalMenu extends FunchMenu {
     final imageUrl =
         'https://firebasestorage.googleapis.com/v0/b/'
         'swift2023groupc.appspot.com/o/funch%2Fimages%2F$id.webp?alt=media';
-    return FunchOriginalMenu(id as String, name as String, categoryId as int, prices, imageUrl);
+    return FunchOriginalMenu(
+      id as String,
+      name as String,
+      categoryId as int,
+      prices,
+      imageUrl,
+    );
   }
 }

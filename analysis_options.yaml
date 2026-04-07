@@ -5,5 +5,5 @@ linter:
     one_member_abstracts: false
     public_member_api_docs: false
 formatter:
-  page_width: 120
+  page_width: 80
   trailing_commas: automate

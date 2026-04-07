@@ -19,7 +19,13 @@ final class FunchPrice {
 }
 
 final class FunchOriginalPrice extends FunchPrice {
-  FunchOriginalPrice(super.large, super.medium, super.small, this.id, this.categories);
+  FunchOriginalPrice(
+    super.large,
+    super.medium,
+    super.small,
+    this.id,
+    this.categories,
+  );
   final String id;
   final List<int> categories;
 }

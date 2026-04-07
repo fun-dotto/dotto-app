@@ -12,13 +12,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:openapi/openapi.dart' hide CourseRegistration, TimetableItem;
 
-final class FakeCourseRegistrationRepository implements CourseRegistrationRepository {
+final class FakeCourseRegistrationRepository
+    implements CourseRegistrationRepository {
   FakeCourseRegistrationRepository({required this.result});
 
   final List<CourseRegistration> result;
 
   @override
-  Future<List<CourseRegistration>> getCourseRegistrations(List<Semester> semesters) async {
+  Future<List<CourseRegistration>> getCourseRegistrations(
+    List<Semester> semesters,
+  ) async {
     return result;
   }
 
@@ -39,7 +42,9 @@ final class FakeCancelledClassRepository implements CancelledClassRepository {
   final BuiltList<CancelledClass> result;
 
   @override
-  Future<BuiltList<CancelledClass>> getCancelledClasses({BuiltList<String>? subjectIds}) async {
+  Future<BuiltList<CancelledClass>> getCancelledClasses({
+    BuiltList<String>? subjectIds,
+  }) async {
     if (subjectIds == null) return result;
     return BuiltList(result.where((c) => subjectIds.contains(c.subject.id)));
   }
@@ -51,7 +56,9 @@ final class FakeMakeupClassRepository implements MakeupClassRepository {
   final BuiltList<MakeupClass> result;
 
   @override
-  Future<BuiltList<MakeupClass>> getMakeupClasses({BuiltList<String>? subjectIds}) async {
+  Future<BuiltList<MakeupClass>> getMakeupClasses({
+    BuiltList<String>? subjectIds,
+  }) async {
     if (subjectIds == null) return result;
     return BuiltList(result.where((c) => subjectIds.contains(c.subject.id)));
   }
@@ -63,13 +70,19 @@ final class FakeRoomChangeRepository implements RoomChangeRepository {
   final BuiltList<RoomChange> result;
 
   @override
-  Future<BuiltList<RoomChange>> getRoomChanges({BuiltList<String>? subjectIds}) async {
+  Future<BuiltList<RoomChange>> getRoomChanges({
+    BuiltList<String>? subjectIds,
+  }) async {
     if (subjectIds == null) return result;
     return BuiltList(result.where((c) => subjectIds.contains(c.subject.id)));
   }
 }
 
-CancelledClass _createCancelledClass({required String id, required String subjectId, required String subjectName}) {
+CancelledClass _createCancelledClass({
+  required String id,
+  required String subjectId,
+  required String subjectName,
+}) {
   return CancelledClass(
     (b) => b
       ..id = id
@@ -90,7 +103,11 @@ CancelledClass _createCancelledClass({required String id, required String subjec
   );
 }
 
-MakeupClass _createMakeupClass({required String id, required String subjectId, required String subjectName}) {
+MakeupClass _createMakeupClass({
+  required String id,
+  required String subjectId,
+  required String subjectName,
+}) {
   return MakeupClass(
     (b) => b
       ..id = id
@@ -120,10 +137,14 @@ void main() {
   }) {
     return ProviderContainer(
       overrides: [
-        cancelledClassRepositoryProvider.overrideWithValue(cancelledClassRepository),
+        cancelledClassRepositoryProvider.overrideWithValue(
+          cancelledClassRepository,
+        ),
         makeupClassRepositoryProvider.overrideWithValue(makeupClassRepository),
         roomChangeRepositoryProvider.overrideWithValue(roomChangeRepository),
-        courseRegistrationRepositoryProvider.overrideWithValue(courseRegistrationRepository),
+        courseRegistrationRepositoryProvider.overrideWithValue(
+          courseRegistrationRepository,
+        ),
       ],
     );
   }
@@ -133,25 +154,39 @@ void main() {
       cancelledClassRepository: FakeCancelledClassRepository(
         result: BuiltList<CancelledClass>([
           _createCancelledClass(id: '1', subjectId: 's1', subjectName: 'Math'),
-          _createCancelledClass(id: '2', subjectId: 's2', subjectName: 'English'),
+          _createCancelledClass(
+            id: '2',
+            subjectId: 's2',
+            subjectName: 'English',
+          ),
         ]),
       ),
       makeupClassRepository: FakeMakeupClassRepository(
-        result: BuiltList<MakeupClass>([_createMakeupClass(id: '3', subjectId: 's1', subjectName: 'Math')]),
+        result: BuiltList<MakeupClass>([
+          _createMakeupClass(id: '3', subjectId: 's1', subjectName: 'Math'),
+        ]),
       ),
-      roomChangeRepository: FakeRoomChangeRepository(result: BuiltList<RoomChange>()),
+      roomChangeRepository: FakeRoomChangeRepository(
+        result: BuiltList<RoomChange>(),
+      ),
       courseRegistrationRepository: FakeCourseRegistrationRepository(
         result: [
           CourseRegistration(
             id: 'registration-1',
-            subject: domain.SubjectSummary(id: 's1', name: 'Math', faculties: const []),
+            subject: domain.SubjectSummary(
+              id: 's1',
+              name: 'Math',
+              faculties: const [],
+            ),
           ),
         ],
       ),
     );
     addTearDown(container.dispose);
 
-    final state = await container.read(courseCancellationReducerProvider.future);
+    final state = await container.read(
+      courseCancellationReducerProvider.future,
+    );
 
     expect(state.isFiltered, isTrue);
     expect(state.cancelledClasses, hasLength(1));
@@ -165,18 +200,30 @@ void main() {
       cancelledClassRepository: FakeCancelledClassRepository(
         result: BuiltList<CancelledClass>([
           _createCancelledClass(id: '1', subjectId: 's1', subjectName: 'Math'),
-          _createCancelledClass(id: '2', subjectId: 's2', subjectName: 'English'),
+          _createCancelledClass(
+            id: '2',
+            subjectId: 's2',
+            subjectName: 'English',
+          ),
         ]),
       ),
       makeupClassRepository: FakeMakeupClassRepository(
-        result: BuiltList<MakeupClass>([_createMakeupClass(id: '3', subjectId: 's1', subjectName: 'Math')]),
+        result: BuiltList<MakeupClass>([
+          _createMakeupClass(id: '3', subjectId: 's1', subjectName: 'Math'),
+        ]),
       ),
-      roomChangeRepository: FakeRoomChangeRepository(result: BuiltList<RoomChange>()),
+      roomChangeRepository: FakeRoomChangeRepository(
+        result: BuiltList<RoomChange>(),
+      ),
       courseRegistrationRepository: FakeCourseRegistrationRepository(
         result: [
           CourseRegistration(
             id: 'registration-1',
-            subject: domain.SubjectSummary(id: 's1', name: 'Math', faculties: const []),
+            subject: domain.SubjectSummary(
+              id: 's1',
+              name: 'Math',
+              faculties: const [],
+            ),
           ),
         ],
       ),
@@ -187,7 +234,9 @@ void main() {
     await container.read(courseCancellationReducerProvider.future);
     await notifier.toggleFilter();
 
-    final state = container.read(courseCancellationReducerProvider).requireValue;
+    final state = container
+        .read(courseCancellationReducerProvider)
+        .requireValue;
     expect(state.isFiltered, isFalse);
     expect(state.cancelledClasses, hasLength(2));
     expect(state.makeupClasses, hasLength(1));

@@ -4,7 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:shimmer_animation/shimmer_animation.dart';
 
 final class UserInfoTile extends StatelessWidget {
-  const UserInfoTile({super.key, required this.user, this.onTap, this.isLoading = false});
+  const UserInfoTile({
+    super.key,
+    required this.user,
+    this.onTap,
+    this.isLoading = false,
+  });
 
   /// 表示するユーザー（DottoUser）
   final DottoUser user;
@@ -23,7 +28,9 @@ final class UserInfoTile extends StatelessWidget {
         height: height,
         decoration: BoxDecoration(
           color: Colors.grey.shade300,
-          borderRadius: shape == BoxShape.circle ? null : (borderRadius ?? BorderRadius.circular(8)),
+          borderRadius: shape == BoxShape.circle
+              ? null
+              : (borderRadius ?? BorderRadius.circular(8)),
           shape: shape,
         ),
       ),
@@ -34,7 +41,9 @@ final class UserInfoTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final photoUrl = user.avatarUrl;
     final name = (user.name.trim().isNotEmpty) ? user.name.trim() : 'ログイン';
-    final email = user.email.trim().isNotEmpty ? '${user.email.trim()}でログイン中' : 'Google アカウント (@fun.ac.jp) でログイン';
+    final email = user.email.trim().isNotEmpty
+        ? '${user.email.trim()}でログイン中'
+        : 'Google アカウント (@fun.ac.jp) でログイン';
     final avatar = isLoading
         ? _buildSkeleton(width: 44, height: 44, shape: BoxShape.circle)
         : Container(
@@ -49,7 +58,11 @@ final class UserInfoTile extends StatelessWidget {
                 width: 48,
                 height: 48,
                 child: (photoUrl.trim().isNotEmpty)
-                    ? Image.network(photoUrl, fit: BoxFit.cover, errorBuilder: (_, _, _) => Icon(Icons.person))
+                    ? Image.network(
+                        photoUrl,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, _, _) => Icon(Icons.person),
+                      )
                     : const Icon(Icons.person),
               ),
             ),
@@ -70,13 +83,16 @@ final class UserInfoTile extends StatelessWidget {
                       _buildSkeleton(width: 220, height: 14),
                     ]
                   : [
-                      Text(name, style: Theme.of(context).textTheme.titleMedium),
+                      Text(
+                        name,
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
                       const SizedBox(height: 2),
                       Text(
                         email,
-                        style: Theme.of(
-                          context,
-                        ).textTheme.bodyMedium?.copyWith(color: SemanticColor.light.labelSecondary),
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: SemanticColor.light.labelSecondary,
+                        ),
                       ),
                     ],
             ),
@@ -89,7 +105,11 @@ final class UserInfoTile extends StatelessWidget {
       color: SemanticColor.light.backgroundSecondary,
       borderRadius: BorderRadius.circular(12),
       clipBehavior: Clip.antiAlias,
-      child: InkWell(onTap: isLoading ? null : onTap, borderRadius: BorderRadius.circular(12), child: content),
+      child: InkWell(
+        onTap: isLoading ? null : onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: content,
+      ),
     );
   }
 }

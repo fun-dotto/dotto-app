@@ -16,7 +16,9 @@ final class FCMTokenRepositoryImpl implements FCMTokenRepository {
   Future<void> upsertToken({required String token}) async {
     try {
       final api = ref.read(apiClientProvider).getFCMTokensApi();
-      await api.fCMTokenV1Upsert(fCMTokenRequest: FCMTokenRequest((b) => b..token = token));
+      await api.fCMTokenV1Upsert(
+        fCMTokenRequest: FCMTokenRequest((b) => b..token = token),
+      );
     } on Exception catch (e, stackTrace) {
       throw DomainError.fromException(e: e, stackTrace: stackTrace);
     }

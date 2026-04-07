@@ -8,7 +8,10 @@ final class LectureOverride {
 }
 
 final class LectureCancellationData {
-  LectureCancellationData({required this.cancelledByDate, required this.madeUpByDate});
+  LectureCancellationData({
+    required this.cancelledByDate,
+    required this.madeUpByDate,
+  });
 
   final Map<String, List<LectureOverride>> cancelledByDate;
   final Map<String, List<LectureOverride>> madeUpByDate;

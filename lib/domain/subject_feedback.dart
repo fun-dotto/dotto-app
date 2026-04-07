@@ -4,5 +4,6 @@ part 'subject_feedback.freezed.dart';
 
 @freezed
 abstract class SubjectFeedback with _$SubjectFeedback {
-  factory SubjectFeedback({required int score, required String comment}) = _SubjectFeedback;
+  factory SubjectFeedback({required int score, required String comment}) =
+      _SubjectFeedback;
 }

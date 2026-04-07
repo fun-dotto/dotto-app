@@ -4,10 +4,14 @@ import 'package:dotto/domain/domain_error.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:openapi/openapi.dart';
 
-final makeupClassRepositoryProvider = Provider<MakeupClassRepository>(MakeupClassRepositoryImpl.new);
+final makeupClassRepositoryProvider = Provider<MakeupClassRepository>(
+  MakeupClassRepositoryImpl.new,
+);
 
 abstract class MakeupClassRepository {
-  Future<BuiltList<MakeupClass>> getMakeupClasses({BuiltList<String>? subjectIds});
+  Future<BuiltList<MakeupClass>> getMakeupClasses({
+    BuiltList<String>? subjectIds,
+  });
 }
 
 final class MakeupClassRepositoryImpl implements MakeupClassRepository {
@@ -16,16 +20,27 @@ final class MakeupClassRepositoryImpl implements MakeupClassRepository {
   final Ref ref;
 
   @override
-  Future<BuiltList<MakeupClass>> getMakeupClasses({BuiltList<String>? subjectIds}) async {
+  Future<BuiltList<MakeupClass>> getMakeupClasses({
+    BuiltList<String>? subjectIds,
+  }) async {
     try {
       final api = ref.read(apiClientProvider).getMakeupClassesApi();
-      final response = await api.makeupClassesV1List(from: Date.now(), subjectIds: subjectIds);
+      final response = await api.makeupClassesV1List(
+        from: Date.now(),
+        subjectIds: subjectIds,
+      );
       if (response.statusCode != 200) {
-        throw const DomainError(type: DomainErrorType.invalidResponse, message: 'Failed to get makeup classes');
+        throw const DomainError(
+          type: DomainErrorType.invalidResponse,
+          message: 'Failed to get makeup classes',
+        );
       }
       final data = response.data;
       if (data == null) {
-        throw const DomainError(type: DomainErrorType.invalidResponse, message: 'Failed to get makeup classes');
+        throw const DomainError(
+          type: DomainErrorType.invalidResponse,
+          message: 'Failed to get makeup classes',
+        );
       }
       return data.makeupClasses;
     } on DomainError {

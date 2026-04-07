@@ -19,14 +19,20 @@ final class OnboardingScreen extends HookWidget {
           padding: const EdgeInsets.fromLTRB(40, 24, 40, 24),
           child: Row(
             children: [
-              ClipRRect(borderRadius: BorderRadius.circular(16), child: Image.asset(Asset.icon, width: 52, height: 52)),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: Image.asset(Asset.icon, width: 52, height: 52),
+              ),
               const Spacer(),
               DottoButton(
                 onPressed: onDismissed,
                 type: DottoButtonType.text,
                 style: DottoButton.styleFrom(
                   textStyle: Theme.of(context).textTheme.bodySmall,
-                  padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 10),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 2,
+                    horizontal: 10,
+                  ),
                 ),
                 child: const Text('スキップ'),
               ),
@@ -43,13 +49,19 @@ final class OnboardingScreen extends HookWidget {
         return SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(24, 20, 24, 20),
           child: ConstrainedBox(
-            constraints: BoxConstraints(minHeight: constraints.maxHeight > 40 ? constraints.maxHeight - 40 : 0),
+            constraints: BoxConstraints(
+              minHeight: constraints.maxHeight > 40
+                  ? constraints.maxHeight - 40
+                  : 0,
+            ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
                   page.title,
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(color: SemanticColor.light.accentPrimary),
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    color: SemanticColor.light.accentPrimary,
+                  ),
                 ),
                 const SizedBox(height: 20),
                 ClipRRect(
@@ -59,12 +71,16 @@ final class OnboardingScreen extends HookWidget {
                 const SizedBox(height: 110),
                 Text(
                   page.bodyTop,
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: SemanticColor.light.labelPrimary),
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    color: SemanticColor.light.labelPrimary,
+                  ),
                   textAlign: TextAlign.center,
                 ),
                 Text(
                   page.bodyBottom,
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: SemanticColor.light.labelPrimary),
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    color: SemanticColor.light.labelPrimary,
+                  ),
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -80,30 +96,44 @@ final class OnboardingScreen extends HookWidget {
       builder: (context, constraints) {
         final bodyStyle = Theme.of(context).textTheme.bodyLarge;
         final titleStyle = Theme.of(context).textTheme.titleLarge;
-        final estimatedTitleHeight = (titleStyle?.fontSize ?? 28) * (titleStyle?.height ?? 1.1);
-        final estimatedDescriptionHeight = ((bodyStyle?.fontSize ?? 16) * (bodyStyle?.height ?? 1.4) * 2);
+        final estimatedTitleHeight =
+            (titleStyle?.fontSize ?? 28) * (titleStyle?.height ?? 1.1);
+        final estimatedDescriptionHeight =
+            ((bodyStyle?.fontSize ?? 16) * (bodyStyle?.height ?? 1.4) * 2);
         const horizontalPadding = 0.0;
         const topPadding = 0.0;
         const bottomPadding = 0.0;
         const titleToImageSpacing = 14.0;
         const imageToDescriptionSpacing = 12.0;
-        const topAndBottomSpacing = topPadding + bottomPadding + titleToImageSpacing + imageToDescriptionSpacing;
+        const topAndBottomSpacing =
+            topPadding +
+            bottomPadding +
+            titleToImageSpacing +
+            imageToDescriptionSpacing;
         final availableImageHeight =
-            (constraints.maxHeight - topAndBottomSpacing - estimatedTitleHeight - estimatedDescriptionHeight).clamp(
-              0.0,
-              680.0,
-            );
+            (constraints.maxHeight -
+                    topAndBottomSpacing -
+                    estimatedTitleHeight -
+                    estimatedDescriptionHeight)
+                .clamp(0.0, 680.0);
 
         const imageAspectRatio = 2130 / 1080;
         const visibleTopRatio = 0.7;
         final contentWidth = constraints.maxWidth - (horizontalPadding * 2);
         const desiredImageWidthFactor = 1.0;
-        final maxWidthFactorForTop70 = (availableImageHeight / (contentWidth * imageAspectRatio * visibleTopRatio))
-            .clamp(0.0, 1.0);
-        final imageWidthFactor = desiredImageWidthFactor <= maxWidthFactorForTop70
+        final maxWidthFactorForTop70 =
+            (availableImageHeight /
+                    (contentWidth * imageAspectRatio * visibleTopRatio))
+                .clamp(0.0, 1.0);
+        final imageWidthFactor =
+            desiredImageWidthFactor <= maxWidthFactorForTop70
             ? desiredImageWidthFactor
             : maxWidthFactorForTop70;
-        final imageViewportHeight = contentWidth * imageWidthFactor * imageAspectRatio * visibleTopRatio;
+        final imageViewportHeight =
+            contentWidth *
+            imageWidthFactor *
+            imageAspectRatio *
+            visibleTopRatio;
 
         return Column(
           children: [
@@ -129,8 +159,11 @@ final class OnboardingScreen extends HookWidget {
                       page.imagePath,
                       fit: BoxFit.fitWidth,
                       alignment: Alignment.topCenter,
-                      errorBuilder: (_, _, _) =>
-                          Image.asset(Asset.noImage, fit: BoxFit.fitWidth, alignment: Alignment.topCenter),
+                      errorBuilder: (_, _, _) => Image.asset(
+                        Asset.noImage,
+                        fit: BoxFit.fitWidth,
+                        alignment: Alignment.topCenter,
+                      ),
                     ),
                   ),
                 ),
@@ -150,7 +183,10 @@ final class OnboardingScreen extends HookWidget {
     );
   }
 
-  Widget _buildBottomArea({required int activeIndicatorIndex, required VoidCallback onNextButtonTapped}) {
+  Widget _buildBottomArea({
+    required int activeIndicatorIndex,
+    required VoidCallback onNextButtonTapped,
+  }) {
     final indicatorCount = OnboardingPage.pages.length - 1;
 
     return Padding(
@@ -167,7 +203,9 @@ final class OnboardingScreen extends HookWidget {
                 height: 8,
                 margin: const EdgeInsets.symmetric(horizontal: 4),
                 decoration: BoxDecoration(
-                  color: isReached ? SemanticColor.light.accentPrimary : SemanticColor.light.borderPrimary,
+                  color: isReached
+                      ? SemanticColor.light.accentPrimary
+                      : SemanticColor.light.borderPrimary,
                   shape: BoxShape.circle,
                 ),
               );
@@ -178,7 +216,9 @@ final class OnboardingScreen extends HookWidget {
             width: double.infinity,
             child: DottoButton(
               onPressed: onNextButtonTapped,
-              child: Text(activeIndicatorIndex == indicatorCount ? 'はじめる' : '次へ'),
+              child: Text(
+                activeIndicatorIndex == indicatorCount ? 'はじめる' : '次へ',
+              ),
             ),
           ),
         ],
@@ -200,7 +240,9 @@ final class OnboardingScreen extends HookWidget {
                 fontSize: 170,
                 fontWeight: FontWeight.w700,
                 letterSpacing: -1.5,
-                color: SemanticColor.light.accentPrimary.withValues(alpha: 0.09),
+                color: SemanticColor.light.accentPrimary.withValues(
+                  alpha: 0.09,
+                ),
               ),
             ),
           ),
@@ -242,13 +284,18 @@ final class OnboardingScreen extends HookWidget {
                   ),
                 ),
                 _buildBottomArea(
-                  activeIndicatorIndex: currentPage.value == 0 ? -1 : currentPage.value - 1,
+                  activeIndicatorIndex: currentPage.value == 0
+                      ? -1
+                      : currentPage.value - 1,
                   onNextButtonTapped: () async {
                     if (currentPage.value == OnboardingPage.pages.length - 1) {
                       onDismissed();
                       return;
                     }
-                    await pageController.nextPage(duration: const Duration(milliseconds: 250), curve: Curves.easeOut);
+                    await pageController.nextPage(
+                      duration: const Duration(milliseconds: 250),
+                      curve: Curves.easeOut,
+                    );
                   },
                 ),
               ],

@@ -5,7 +5,9 @@ abstract class DateFormatter {
   // 2024-01-02T12:00+09:00 → 2024年1月2日 12:00
   static String full(DateTime dateTime) {
     final locale = WidgetsBinding.instance.platformDispatcher.locale;
-    return DateFormat.yMMMd(locale.toString()).add_jm().format(dateTime.toLocal());
+    return DateFormat.yMMMd(
+      locale.toString(),
+    ).add_jm().format(dateTime.toLocal());
   }
 
   // 2024-01-02T12:00+09:00 → 2024/1/2 火

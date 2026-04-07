@@ -18,7 +18,9 @@ final class BusStopSelectScreen extends ConsumerWidget {
                 .map(
                   (e) => ListTile(
                     onTap: () async {
-                      await ref.read(busReducerProvider.notifier).selectBusStop(e);
+                      await ref
+                          .read(busReducerProvider.notifier)
+                          .selectBusStop(e);
                       if (context.mounted) {
                         Navigator.of(context).pop();
                       }

@@ -23,7 +23,9 @@ class RootViewModel extends _$RootViewModel {
     if (isFunchEnabled) {
       return baseTabs;
     }
-    return baseTabs.map((tab) => tab == TabItem.funch ? TabItem.subject : tab).toList();
+    return baseTabs
+        .map((tab) => tab == TabItem.funch ? TabItem.subject : tab)
+        .toList();
   }
 
   @override
@@ -37,12 +39,18 @@ class RootViewModel extends _$RootViewModel {
     // Setup Logger
     await ref.read(loggerProvider).setup();
     // Setup Universal Links
-    AppLinks().uriLinkStream.listen((event) {}).onError((Object error, StackTrace stackTrace) {
+    AppLinks().uriLinkStream.listen((event) {}).onError((
+      Object error,
+      StackTrace stackTrace,
+    ) {
       debugPrint(error.toString());
     });
 
     final hasShownAppTutorial =
-        await UserPreferenceRepository.getBool(UserPreferenceKeys.isAppTutorialComplete) ?? false;
+        await UserPreferenceRepository.getBool(
+          UserPreferenceKeys.isAppTutorialComplete,
+        ) ??
+        false;
 
     final config = ref.read(configProvider);
     final currentAppVersion = (await PackageInfo.fromPlatform()).version;
@@ -68,7 +76,9 @@ class RootViewModel extends _$RootViewModel {
       );
       state = AsyncValue.data(
         currentState.copyWith(
-          selectedTab: activeTabs.contains(currentState.selectedTab) ? currentState.selectedTab : activeTabs.first,
+          selectedTab: activeTabs.contains(currentState.selectedTab)
+              ? currentState.selectedTab
+              : activeTabs.first,
           isValidAppVersion: nextVersionEvaluation.isValidAppVersion,
           isLatestAppVersion: nextVersionEvaluation.isLatestAppVersion,
           currentAppVersion: currentAppVersion,
@@ -87,7 +97,10 @@ class RootViewModel extends _$RootViewModel {
       currentAppVersion: currentAppVersion,
       latestAppVersion: config.latestAppVersion,
       appStorePageUrl: config.appStorePageUrl,
-      navigatorKeys: {for (final tabItem in TabItem.values) tabItem: GlobalKey<NavigatorState>()},
+      navigatorKeys: {
+        for (final tabItem in TabItem.values)
+          tabItem: GlobalKey<NavigatorState>(),
+      },
     );
   }
 
@@ -115,12 +128,19 @@ class RootViewModel extends _$RootViewModel {
   }
 
   void onGoToSettingButtonTapped() {
-    state = AsyncValue.data(state.value!.copyWith(selectedTab: TabItem.setting));
+    state = AsyncValue.data(
+      state.value!.copyWith(selectedTab: TabItem.setting),
+    );
   }
 
   void onAppTutorialDismissed() {
     state = AsyncValue.data(state.value!.copyWith(hasShownAppTutorial: true));
-    unawaited(UserPreferenceRepository.setBool(UserPreferenceKeys.isAppTutorialComplete, value: true));
+    unawaited(
+      UserPreferenceRepository.setBool(
+        UserPreferenceKeys.isAppTutorialComplete,
+        value: true,
+      ),
+    );
   }
 
   void onUpdateAlertShown() {

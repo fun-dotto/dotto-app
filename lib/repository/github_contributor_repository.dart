@@ -7,7 +7,8 @@ abstract class GitHubContributorRepository {
   Future<List<GitHubProfile>> getContributors();
 }
 
-final class GitHubContributorRepositoryImpl implements GitHubContributorRepository {
+final class GitHubContributorRepositoryImpl
+    implements GitHubContributorRepository {
   GitHubContributorRepositoryImpl();
 
   @override
@@ -21,12 +22,18 @@ final class GitHubContributorRepositoryImpl implements GitHubContributorReposito
       // ignore: inference_failure_on_function_invocation
       final response = await dio.get(url);
       if (response.statusCode != 200) {
-        throw const DomainError(type: DomainErrorType.invalidResponse, message: 'Failed to get contributors');
+        throw const DomainError(
+          type: DomainErrorType.invalidResponse,
+          message: 'Failed to get contributors',
+        );
       }
 
       final data = response.data;
       if (data == null || data is! List) {
-        throw const DomainError(type: DomainErrorType.invalidResponse, message: 'Failed to get contributors');
+        throw const DomainError(
+          type: DomainErrorType.invalidResponse,
+          message: 'Failed to get contributors',
+        );
       }
 
       final githubProfileResponses = data

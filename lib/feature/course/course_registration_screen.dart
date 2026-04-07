@@ -17,11 +17,15 @@ class CourseRegistrationScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(courseRegistrationReducerProvider);
-    final tabController = useTabController(initialLength: TimetableSemester.values.length);
+    final tabController = useTabController(
+      initialLength: TimetableSemester.values.length,
+    );
 
     useEffect(() {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        unawaited(ref.read(courseRegistrationReducerProvider.notifier).refresh());
+        unawaited(
+          ref.read(courseRegistrationReducerProvider.notifier).refresh(),
+        );
       });
       return null;
     }, const []);
@@ -32,7 +36,9 @@ class CourseRegistrationScreen extends HookConsumerWidget {
         bottom: TabBar(
           dividerColor: Colors.transparent,
           controller: tabController,
-          tabs: TimetableSemester.values.map((e) => Tab(text: e.label)).toList(),
+          tabs: TimetableSemester.values
+              .map((e) => Tab(text: e.label))
+              .toList(),
         ),
       ),
       body: switch (state) {
@@ -40,8 +46,12 @@ class CourseRegistrationScreen extends HookConsumerWidget {
           controller: tabController,
           children: TimetableSemester.values
               .map(
-                (e) =>
-                    _personalWeeklyTimetable(context, ref, e, timetableItemsBySemester[e] ?? const <TimetableItem>[]),
+                (e) => _personalWeeklyTimetable(
+                  context,
+                  ref,
+                  e,
+                  timetableItemsBySemester[e] ?? const <TimetableItem>[],
+                ),
               )
               .toList(),
         ),
@@ -57,19 +67,30 @@ class CourseRegistrationScreen extends HookConsumerWidget {
       child: Padding(
         padding: const EdgeInsets.all(8),
         child: Table(
-          columnWidths: {for (final e in Period.values) e.number: const FlexColumnWidth()},
+          columnWidths: {
+            for (final e in Period.values) e.number: const FlexColumnWidth(),
+          },
           children: <TableRow>[
             TableRow(
               children: DayOfWeek.weekdays
                   .map(
                     (e) => TableCell(
-                      child: Center(child: Text(e.label, style: Theme.of(context).textTheme.labelMedium)),
+                      child: Center(
+                        child: Text(
+                          e.label,
+                          style: Theme.of(context).textTheme.labelMedium,
+                        ),
+                      ),
                     ),
                   )
                   .toList(),
             ),
             ...Period.values.map(
-              (_) => TableRow(children: DayOfWeek.weekdays.map((_) => _personalWeeklyTimetableCellSkeleton()).toList()),
+              (_) => TableRow(
+                children: DayOfWeek.weekdays
+                    .map((_) => _personalWeeklyTimetableCellSkeleton())
+                    .toList(),
+              ),
             ),
           ],
         ),
@@ -77,12 +98,19 @@ class CourseRegistrationScreen extends HookConsumerWidget {
     );
   }
 
-  Widget _skeletonBox({required double height, double? width, double radius = 8}) {
+  Widget _skeletonBox({
+    required double height,
+    double? width,
+    double radius = 8,
+  }) {
     return Shimmer(
       child: Container(
         width: width,
         height: height,
-        decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(radius)),
+        decoration: BoxDecoration(
+          color: Colors.grey.shade300,
+          borderRadius: BorderRadius.circular(radius),
+        ),
       ),
     );
   }
@@ -91,7 +119,10 @@ class CourseRegistrationScreen extends HookConsumerWidget {
     return Container(
       margin: const EdgeInsets.all(2),
       height: 100,
-      decoration: BoxDecoration(color: Colors.grey.shade200, borderRadius: const BorderRadius.all(Radius.circular(4))),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade200,
+        borderRadius: const BorderRadius.all(Radius.circular(4)),
+      ),
       padding: const EdgeInsets.all(8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -112,19 +143,27 @@ class CourseRegistrationScreen extends HookConsumerWidget {
     List<TimetableItem> timetableItems,
   ) {
     return RefreshIndicator(
-      onRefresh: () => ref.read(courseRegistrationReducerProvider.notifier).refresh(),
+      onRefresh: () =>
+          ref.read(courseRegistrationReducerProvider.notifier).refresh(),
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
         child: Padding(
           padding: const EdgeInsets.all(8),
           child: Table(
-            columnWidths: {for (final e in Period.values) e.number: const FlexColumnWidth()},
+            columnWidths: {
+              for (final e in Period.values) e.number: const FlexColumnWidth(),
+            },
             children: <TableRow>[
               TableRow(
                 children: DayOfWeek.weekdays
                     .map(
                       (e) => TableCell(
-                        child: Center(child: Text(e.label, style: Theme.of(context).textTheme.labelMedium)),
+                        child: Center(
+                          child: Text(
+                            e.label,
+                            style: Theme.of(context).textTheme.labelMedium,
+                          ),
+                        ),
                       ),
                     )
                     .toList(),
@@ -133,11 +172,16 @@ class CourseRegistrationScreen extends HookConsumerWidget {
                 (period) => TableRow(
                   children: DayOfWeek.weekdays.map((dayOfWeek) {
                     final filteredTimetableItems = timetableItems
-                        .where((item) => item.slot?.dayOfWeek == dayOfWeek && item.slot?.period == period)
+                        .where(
+                          (item) =>
+                              item.slot?.dayOfWeek == dayOfWeek &&
+                              item.slot?.period == period,
+                        )
                         .toList();
-                    final filteredRegisteredTimetableItems = filteredTimetableItems
-                        .where((item) => item.isAddedToTimetable ?? false)
-                        .toList();
+                    final filteredRegisteredTimetableItems =
+                        filteredTimetableItems
+                            .where((item) => item.isAddedToTimetable ?? false)
+                            .toList();
                     return _personalWeeklyTimetableCell(
                       context,
                       filteredRegisteredTimetableItems,
@@ -152,7 +196,11 @@ class CourseRegistrationScreen extends HookConsumerWidget {
                             period,
                             filteredTimetableItems,
                             onChanged: () async {
-                              await ref.read(courseRegistrationReducerProvider.notifier).refresh();
+                              await ref
+                                  .read(
+                                    courseRegistrationReducerProvider.notifier,
+                                  )
+                                  .refresh();
                             },
                           ),
                         );
@@ -188,7 +236,9 @@ class CourseRegistrationScreen extends HookConsumerWidget {
                           decoration: BoxDecoration(
                             border: Border.all(color: Colors.grey.shade400),
                             color: Colors.grey.shade300,
-                            borderRadius: const BorderRadius.all(Radius.circular(4)),
+                            borderRadius: const BorderRadius.all(
+                              Radius.circular(4),
+                            ),
                           ),
                           padding: const EdgeInsets.all(2),
                           child: Text(
@@ -206,7 +256,9 @@ class CourseRegistrationScreen extends HookConsumerWidget {
                   color: Colors.grey.shade200,
                   borderRadius: const BorderRadius.all(Radius.circular(4)),
                 ),
-                child: Center(child: Icon(Icons.add, color: Colors.grey.shade400)),
+                child: Center(
+                  child: Icon(Icons.add, color: Colors.grey.shade400),
+                ),
               ),
       ),
     );

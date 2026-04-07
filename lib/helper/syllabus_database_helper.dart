@@ -16,7 +16,10 @@ final class SyllabusDatabaseHelper {
       debugPrint('Creating new copy from asset');
       await Directory(dirname(path)).create(recursive: true);
       final data = await rootBundle.load(Asset.syllabus);
-      final bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
+      final bytes = data.buffer.asUint8List(
+        data.offsetInBytes,
+        data.lengthInBytes,
+      );
       await File(path).writeAsBytes(bytes, flush: true);
     } else {
       debugPrint('Database already exists');
@@ -25,7 +28,9 @@ final class SyllabusDatabaseHelper {
     if (kDebugMode) {
       final dbFactory = SqfliteDatabaseFactoryLogger(
         databaseFactory,
-        options: SqfliteLoggerOptions(type: SqfliteDatabaseFactoryLoggerType.all),
+        options: SqfliteLoggerOptions(
+          type: SqfliteDatabaseFactoryLoggerType.all,
+        ),
       );
       return dbFactory.openDatabase(path);
     }

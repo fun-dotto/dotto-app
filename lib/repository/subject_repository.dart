@@ -41,7 +41,10 @@ final class SubjectRepositoryImpl implements SubjectRepository {
   final Openapi apiClient;
 
   @override
-  Future<List<SubjectSummary>> getSubjects(String query, SubjectFilter filter) async {
+  Future<List<SubjectSummary>> getSubjects(
+    String query,
+    SubjectFilter filter,
+  ) async {
     try {
       final api = apiClient.getSubjectsApi();
       final response = await api.subjectsV1List(
@@ -61,11 +64,15 @@ final class SubjectRepositoryImpl implements SubjectRepository {
         ),
         courses: filter.courses.mapToBuiltListOrNull(
           (e) => switch (e) {
-            AcademicArea.informationSystemCourse => DottoFoundationV1Course.informationSystem,
-            AcademicArea.informationDesignCourse => DottoFoundationV1Course.informationDesign,
+            AcademicArea.informationSystemCourse =>
+              DottoFoundationV1Course.informationSystem,
+            AcademicArea.informationDesignCourse =>
+              DottoFoundationV1Course.informationDesign,
             AcademicArea.complexCourse => DottoFoundationV1Course.complexSystem,
-            AcademicArea.intelligenceSystemCourse => DottoFoundationV1Course.intelligentSystem,
-            AcademicArea.advancedICTCourse => DottoFoundationV1Course.advancedICT,
+            AcademicArea.intelligenceSystemCourse =>
+              DottoFoundationV1Course.intelligentSystem,
+            AcademicArea.advancedICTCourse =>
+              DottoFoundationV1Course.advancedICT,
           },
         ),
         classes: filter.classes.isEmpty
@@ -93,10 +100,13 @@ final class SubjectRepositoryImpl implements SubjectRepository {
             : BuiltList<DottoFoundationV1SubjectClassification>(
                 filter.classifications.map(
                   (e) => switch (e) {
-                    SubjectClassification.specialized => DottoFoundationV1SubjectClassification.specialized,
-                    SubjectClassification.cultural => DottoFoundationV1SubjectClassification.cultural,
+                    SubjectClassification.specialized =>
+                      DottoFoundationV1SubjectClassification.specialized,
+                    SubjectClassification.cultural =>
+                      DottoFoundationV1SubjectClassification.cultural,
                     SubjectClassification.researchInstruction =>
-                      DottoFoundationV1SubjectClassification.researchInstruction,
+                      DottoFoundationV1SubjectClassification
+                          .researchInstruction,
                   },
                 ),
               ),
@@ -112,8 +122,10 @@ final class SubjectRepositoryImpl implements SubjectRepository {
                     Semester.q2 => DottoFoundationV1CourseSemester.q2,
                     Semester.q3 => DottoFoundationV1CourseSemester.q3,
                     Semester.q4 => DottoFoundationV1CourseSemester.q4,
-                    Semester.summerIntensive => DottoFoundationV1CourseSemester.summerIntensive,
-                    Semester.winterIntensive => DottoFoundationV1CourseSemester.winterIntensive,
+                    Semester.summerIntensive =>
+                      DottoFoundationV1CourseSemester.summerIntensive,
+                    Semester.winterIntensive =>
+                      DottoFoundationV1CourseSemester.winterIntensive,
                   },
                 ),
               ),
@@ -122,9 +134,12 @@ final class SubjectRepositoryImpl implements SubjectRepository {
             : BuiltList<DottoFoundationV1SubjectRequirementType>(
                 filter.requirements.map(
                   (e) => switch (e) {
-                    SubjectRequirementType.required => DottoFoundationV1SubjectRequirementType.required_,
-                    SubjectRequirementType.optional => DottoFoundationV1SubjectRequirementType.optional,
-                    SubjectRequirementType.optionalRequired => DottoFoundationV1SubjectRequirementType.optionalRequired,
+                    SubjectRequirementType.required =>
+                      DottoFoundationV1SubjectRequirementType.required_,
+                    SubjectRequirementType.optional =>
+                      DottoFoundationV1SubjectRequirementType.optional,
+                    SubjectRequirementType.optionalRequired =>
+                      DottoFoundationV1SubjectRequirementType.optionalRequired,
                   },
                 ),
               ),
@@ -133,21 +148,32 @@ final class SubjectRepositoryImpl implements SubjectRepository {
             : BuiltList<DottoFoundationV1CulturalSubjectCategory>(
                 filter.culturalSubjectCategories.map(
                   (e) => switch (e) {
-                    CulturalSubjectCategory.society => DottoFoundationV1CulturalSubjectCategory.society,
-                    CulturalSubjectCategory.human => DottoFoundationV1CulturalSubjectCategory.human,
-                    CulturalSubjectCategory.science => DottoFoundationV1CulturalSubjectCategory.science,
-                    CulturalSubjectCategory.health => DottoFoundationV1CulturalSubjectCategory.health,
-                    CulturalSubjectCategory.communication => DottoFoundationV1CulturalSubjectCategory.communication,
+                    CulturalSubjectCategory.society =>
+                      DottoFoundationV1CulturalSubjectCategory.society,
+                    CulturalSubjectCategory.human =>
+                      DottoFoundationV1CulturalSubjectCategory.human,
+                    CulturalSubjectCategory.science =>
+                      DottoFoundationV1CulturalSubjectCategory.science,
+                    CulturalSubjectCategory.health =>
+                      DottoFoundationV1CulturalSubjectCategory.health,
+                    CulturalSubjectCategory.communication =>
+                      DottoFoundationV1CulturalSubjectCategory.communication,
                   },
                 ),
               ),
       );
       if (response.statusCode != 200) {
-        throw const DomainError(type: DomainErrorType.invalidResponse, message: 'Failed to get subjects');
+        throw const DomainError(
+          type: DomainErrorType.invalidResponse,
+          message: 'Failed to get subjects',
+        );
       }
       final data = response.data;
       if (data == null) {
-        throw const DomainError(type: DomainErrorType.invalidResponse, message: 'Failed to get subjects');
+        throw const DomainError(
+          type: DomainErrorType.invalidResponse,
+          message: 'Failed to get subjects',
+        );
       }
       return data.subjects
           .map(
@@ -157,7 +183,11 @@ final class SubjectRepositoryImpl implements SubjectRepository {
               faculties: e.faculties
                   .map(
                     (e) => SubjectFaculty(
-                      faculty: Faculty(id: e.faculty.id, name: e.faculty.name, email: e.faculty.email),
+                      faculty: Faculty(
+                        id: e.faculty.id,
+                        name: e.faculty.name,
+                        email: e.faculty.email,
+                      ),
                       isPrimary: e.isPrimary,
                     ),
                   )
@@ -171,8 +201,10 @@ final class SubjectRepositoryImpl implements SubjectRepository {
                 DottoFoundationV1CourseSemester.q2 => Semester.q2,
                 DottoFoundationV1CourseSemester.q3 => Semester.q3,
                 DottoFoundationV1CourseSemester.q4 => Semester.q4,
-                DottoFoundationV1CourseSemester.summerIntensive => Semester.summerIntensive,
-                DottoFoundationV1CourseSemester.winterIntensive => Semester.winterIntensive,
+                DottoFoundationV1CourseSemester.summerIntensive =>
+                  Semester.summerIntensive,
+                DottoFoundationV1CourseSemester.winterIntensive =>
+                  Semester.winterIntensive,
                 _ => null,
               },
             ),
@@ -191,11 +223,17 @@ final class SubjectRepositoryImpl implements SubjectRepository {
       final api = apiClient.getSubjectsApi();
       final response = await api.subjectsV1Detail(id: id);
       if (response.statusCode != 200) {
-        throw const DomainError(type: DomainErrorType.invalidResponse, message: 'Failed to get subject');
+        throw const DomainError(
+          type: DomainErrorType.invalidResponse,
+          message: 'Failed to get subject',
+        );
       }
       final data = response.data;
       if (data == null) {
-        throw const DomainError(type: DomainErrorType.invalidResponse, message: 'Failed to get subject');
+        throw const DomainError(
+          type: DomainErrorType.invalidResponse,
+          message: 'Failed to get subject',
+        );
       }
       final subject = data.subject;
       final db = await SyllabusDatabaseHelper.getDatabase();
@@ -206,14 +244,19 @@ final class SubjectRepositoryImpl implements SubjectRepository {
         whereArgs: [subject.syllabus.id],
       );
       final rawPastExam = records.firstOrNull?['過去問'];
-      final pastExamId = (rawPastExam as int?)?.toString() ?? subject.syllabus.id;
+      final pastExamId =
+          (rawPastExam as int?)?.toString() ?? subject.syllabus.id;
       return Subject(
         id: subject.id,
         name: subject.name,
         faculties: subject.faculties
             .map(
               (e) => SubjectFaculty(
-                faculty: Faculty(id: e.faculty.id, name: e.faculty.name, email: e.faculty.email),
+                faculty: Faculty(
+                  id: e.faculty.id,
+                  name: e.faculty.name,
+                  email: e.faculty.email,
+                ),
                 isPrimary: e.isPrimary,
               ),
             )
@@ -227,9 +270,14 @@ final class SubjectRepositoryImpl implements SubjectRepository {
           DottoFoundationV1CourseSemester.q2 => Semester.q2,
           DottoFoundationV1CourseSemester.q3 => Semester.q3,
           DottoFoundationV1CourseSemester.q4 => Semester.q4,
-          DottoFoundationV1CourseSemester.summerIntensive => Semester.summerIntensive,
-          DottoFoundationV1CourseSemester.winterIntensive => Semester.winterIntensive,
-          _ => throw DomainError(type: DomainErrorType.invalidData, message: 'Invalid semester: ${subject.semester}'),
+          DottoFoundationV1CourseSemester.summerIntensive =>
+            Semester.summerIntensive,
+          DottoFoundationV1CourseSemester.winterIntensive =>
+            Semester.winterIntensive,
+          _ => throw DomainError(
+            type: DomainErrorType.invalidData,
+            message: 'Invalid semester: ${subject.semester}',
+          ),
         },
         credit: subject.credit,
         eligibleAttributes: subject.eligibleAttributes
@@ -245,7 +293,10 @@ final class SubjectRepositoryImpl implements SubjectRepository {
                   DottoFoundationV1Grade.d1 => Grade.d1,
                   DottoFoundationV1Grade.d2 => Grade.d2,
                   DottoFoundationV1Grade.d3 => Grade.d3,
-                  _ => throw DomainError(type: DomainErrorType.invalidData, message: 'Invalid grade: ${e.grade}'),
+                  _ => throw DomainError(
+                    type: DomainErrorType.invalidData,
+                    message: 'Invalid grade: ${e.grade}',
+                  ),
                 },
                 class_: switch (e.class_) {
                   DottoFoundationV1Class.A => AcademicClass.a,
@@ -261,7 +312,10 @@ final class SubjectRepositoryImpl implements SubjectRepository {
                   DottoFoundationV1Class.K => AcademicClass.k,
                   DottoFoundationV1Class.L => AcademicClass.l,
                   null => null,
-                  _ => throw DomainError(type: DomainErrorType.invalidData, message: 'Invalid class: ${e.class_}'),
+                  _ => throw DomainError(
+                    type: DomainErrorType.invalidData,
+                    message: 'Invalid class: ${e.class_}',
+                  ),
                 },
               ),
             )
@@ -270,17 +324,28 @@ final class SubjectRepositoryImpl implements SubjectRepository {
             .map(
               (e) => SubjectRequirement(
                 course: switch (e.course) {
-                  DottoFoundationV1Course.informationSystem => AcademicArea.informationSystemCourse,
-                  DottoFoundationV1Course.informationDesign => AcademicArea.informationDesignCourse,
-                  DottoFoundationV1Course.complexSystem => AcademicArea.complexCourse,
-                  DottoFoundationV1Course.intelligentSystem => AcademicArea.intelligenceSystemCourse,
-                  DottoFoundationV1Course.advancedICT => AcademicArea.advancedICTCourse,
-                  _ => throw DomainError(type: DomainErrorType.invalidData, message: 'Invalid course: ${e.course}'),
+                  DottoFoundationV1Course.informationSystem =>
+                    AcademicArea.informationSystemCourse,
+                  DottoFoundationV1Course.informationDesign =>
+                    AcademicArea.informationDesignCourse,
+                  DottoFoundationV1Course.complexSystem =>
+                    AcademicArea.complexCourse,
+                  DottoFoundationV1Course.intelligentSystem =>
+                    AcademicArea.intelligenceSystemCourse,
+                  DottoFoundationV1Course.advancedICT =>
+                    AcademicArea.advancedICTCourse,
+                  _ => throw DomainError(
+                    type: DomainErrorType.invalidData,
+                    message: 'Invalid course: ${e.course}',
+                  ),
                 },
                 requirementType: switch (e.requirementType) {
-                  DottoFoundationV1SubjectRequirementType.required_ => SubjectRequirementType.required,
-                  DottoFoundationV1SubjectRequirementType.optional => SubjectRequirementType.optional,
-                  DottoFoundationV1SubjectRequirementType.optionalRequired => SubjectRequirementType.optionalRequired,
+                  DottoFoundationV1SubjectRequirementType.required_ =>
+                    SubjectRequirementType.required,
+                  DottoFoundationV1SubjectRequirementType.optional =>
+                    SubjectRequirementType.optional,
+                  DottoFoundationV1SubjectRequirementType.optionalRequired =>
+                    SubjectRequirementType.optionalRequired,
                   _ => throw DomainError(
                     type: DomainErrorType.invalidData,
                     message: 'Invalid requirement type: ${e.requirementType}',
@@ -296,8 +361,10 @@ final class SubjectRepositoryImpl implements SubjectRepository {
           grades: subject.syllabus.grades,
           credit: subject.syllabus.credit,
           facultyNames: subject.syllabus.facultyNames,
-          practicalHomeFacultyCategory: subject.syllabus.practicalHomeFacultyCategory,
-          multiplePersonTeachingForm: subject.syllabus.multiplePersonTeachingForm,
+          practicalHomeFacultyCategory:
+              subject.syllabus.practicalHomeFacultyCategory,
+          multiplePersonTeachingForm:
+              subject.syllabus.multiplePersonTeachingForm,
           teachingForm: subject.syllabus.teachingForm,
           summary: subject.syllabus.summary,
           learningOutcomes: subject.syllabus.learningOutcomes,
@@ -365,7 +432,10 @@ final class SubjectRepositoryImpl implements SubjectRepository {
 
       if (querySnapshot.docs.isNotEmpty) {
         final docId = querySnapshot.docs[0].id;
-        await FirebaseFirestore.instance.collection('feedback').doc(docId).update({'score': score, 'detail': comment});
+        await FirebaseFirestore.instance
+            .collection('feedback')
+            .doc(docId)
+            .update({'score': score, 'detail': comment});
       } else {
         await FirebaseFirestore.instance.collection('feedback').add({
           'User': userId,

@@ -25,25 +25,60 @@ final class ConfigNotifier extends _$ConfigNotifier {
     }
 
     final remoteConfigRepository = ref.read(remoteConfigHelperProvider);
-    final remoteConfigIsFunchEnabled = remoteConfigRepository.getBool(RemoteConfigKeys.isFunchEnabled);
-    final isFunchEnabled = _isFunchEnabledOverride ?? remoteConfigIsFunchEnabled;
-    final validAppVersion = remoteConfigRepository.getString(RemoteConfigKeys.validAppVersion);
-    final latestAppVersion = remoteConfigRepository.getString(RemoteConfigKeys.latestAppVersion);
-    final isUnderMaintenance = remoteConfigRepository.getBool(RemoteConfigKeys.isUnderMaintenance);
-    final feedbackFormUrl = remoteConfigRepository.getString(RemoteConfigKeys.feedbackFormUrl);
-    final termsOfServiceUrl = remoteConfigRepository.getString(RemoteConfigKeys.termsOfServiceUrl);
-    final privacyPolicyUrl = remoteConfigRepository.getString(RemoteConfigKeys.privacyPolicyUrl);
-    final appStorePageUrl = remoteConfigRepository.getString(RemoteConfigKeys.appStorePageUrl);
-    final officialCalendarPdfUrl = remoteConfigRepository.getString(RemoteConfigKeys.officialCalendarPdfUrl);
-    final timetable1PdfUrl = remoteConfigRepository.getString(RemoteConfigKeys.timetable1PdfUrl);
-    final timetable2PdfUrl = remoteConfigRepository.getString(RemoteConfigKeys.timetable2PdfUrl);
-    final dottoWebUrl = remoteConfigRepository.getString(RemoteConfigKeys.dottoWebUrl);
-    final macSupportDeskUrl = remoteConfigRepository.getString(RemoteConfigKeys.macSupportDeskUrl);
+    final remoteConfigIsFunchEnabled = remoteConfigRepository.getBool(
+      RemoteConfigKeys.isFunchEnabled,
+    );
+    final isFunchEnabled =
+        _isFunchEnabledOverride ?? remoteConfigIsFunchEnabled;
+    final validAppVersion = remoteConfigRepository.getString(
+      RemoteConfigKeys.validAppVersion,
+    );
+    final latestAppVersion = remoteConfigRepository.getString(
+      RemoteConfigKeys.latestAppVersion,
+    );
+    final isUnderMaintenance = remoteConfigRepository.getBool(
+      RemoteConfigKeys.isUnderMaintenance,
+    );
+    final feedbackFormUrl = remoteConfigRepository.getString(
+      RemoteConfigKeys.feedbackFormUrl,
+    );
+    final termsOfServiceUrl = remoteConfigRepository.getString(
+      RemoteConfigKeys.termsOfServiceUrl,
+    );
+    final privacyPolicyUrl = remoteConfigRepository.getString(
+      RemoteConfigKeys.privacyPolicyUrl,
+    );
+    final appStorePageUrl = remoteConfigRepository.getString(
+      RemoteConfigKeys.appStorePageUrl,
+    );
+    final officialCalendarPdfUrl = remoteConfigRepository.getString(
+      RemoteConfigKeys.officialCalendarPdfUrl,
+    );
+    final timetable1PdfUrl = remoteConfigRepository.getString(
+      RemoteConfigKeys.timetable1PdfUrl,
+    );
+    final timetable2PdfUrl = remoteConfigRepository.getString(
+      RemoteConfigKeys.timetable2PdfUrl,
+    );
+    final dottoWebUrl = remoteConfigRepository.getString(
+      RemoteConfigKeys.dottoWebUrl,
+    );
+    final macSupportDeskUrl = remoteConfigRepository.getString(
+      RemoteConfigKeys.macSupportDeskUrl,
+    );
 
-    final breakingAnnouncementJson = remoteConfigRepository.getJSON(RemoteConfigKeys.breakingAnnouncement);
-    final breakingAnnouncementTitle = _asStringOrNull(breakingAnnouncementJson['title']);
-    final breakingAnnouncementUrl = _asStringOrNull(breakingAnnouncementJson['url']);
-    final breakingAnnouncementIsExternal = _asBoolOrNull(breakingAnnouncementJson['is_external']);
+    final breakingAnnouncementJson = remoteConfigRepository.getJSON(
+      RemoteConfigKeys.breakingAnnouncement,
+    );
+    final breakingAnnouncementTitle = _asStringOrNull(
+      breakingAnnouncementJson['title'],
+    );
+    final breakingAnnouncementUrl = _asStringOrNull(
+      breakingAnnouncementJson['url'],
+    );
+    final breakingAnnouncementIsExternal = _asBoolOrNull(
+      breakingAnnouncementJson['is_external'],
+    );
     BreakingAnnouncement? breakingAnnouncement;
     if (breakingAnnouncementTitle != null &&
         breakingAnnouncementUrl != null &&
@@ -89,15 +124,24 @@ final class ConfigNotifier extends _$ConfigNotifier {
   Future<void> setIsFunchEnabledOverride({required bool? value}) async {
     _isFunchEnabledOverride = value;
     if (value == null) {
-      await UserPreferenceRepository.remove(UserPreferenceKeys.isFunchEnabledOverride);
+      await UserPreferenceRepository.remove(
+        UserPreferenceKeys.isFunchEnabledOverride,
+      );
     } else {
-      await UserPreferenceRepository.setBool(UserPreferenceKeys.isFunchEnabledOverride, value: value);
+      await UserPreferenceRepository.setBool(
+        UserPreferenceKeys.isFunchEnabledOverride,
+        value: value,
+      );
     }
     refresh();
   }
 
-  Future<void> _loadIsFunchEnabledOverride({required bool refreshAfterLoad}) async {
-    _isFunchEnabledOverride = await UserPreferenceRepository.getBool(UserPreferenceKeys.isFunchEnabledOverride);
+  Future<void> _loadIsFunchEnabledOverride({
+    required bool refreshAfterLoad,
+  }) async {
+    _isFunchEnabledOverride = await UserPreferenceRepository.getBool(
+      UserPreferenceKeys.isFunchEnabledOverride,
+    );
     if (refreshAfterLoad) {
       refresh();
     }

@@ -26,19 +26,27 @@ Future<void> main() async {
 
   // Firebase Crashlytics
   // Debugモードではクラッシュレポートを送信しない
-  await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(!kDebugMode);
+  await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(
+    !kDebugMode,
+  );
   // Pass all uncaught "fatal" errors from the framework to Crashlytics
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
   // Pass all uncaught asynchronous errors that aren't handled by the Flutter framework to Crashlytics
   PlatformDispatcher.instance.onError = (error, stack) {
-    unawaited(FirebaseCrashlytics.instance.recordError(error, stack, fatal: true));
+    unawaited(
+      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true),
+    );
     return true;
   };
 
   // Firebase App Check
   await FirebaseAppCheck.instance.activate(
-    providerApple: kReleaseMode ? const AppleAppAttestProvider() : const AppleDebugProvider(),
-    providerAndroid: kReleaseMode ? const AndroidPlayIntegrityProvider() : const AndroidDebugProvider(),
+    providerApple: kReleaseMode
+        ? const AppleAppAttestProvider()
+        : const AppleDebugProvider(),
+    providerAndroid: kReleaseMode
+        ? const AndroidPlayIntegrityProvider()
+        : const AndroidDebugProvider(),
   );
 
   // Firebase Authentication
@@ -58,13 +66,20 @@ Future<void> main() async {
   tz.setLocalLocation(tz.getLocation('Asia/Tokyo'));
 
   // 画面の向きを固定
-  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
 
   // ファイルをダウンロード
   try {
     await FirebaseStorageRepository().download('funch/menu.json');
   } on Exception catch (e, stack) {
-    await LoggerImpl().logError(e, stack, reason: 'Failed to download menu.json');
+    await LoggerImpl().logError(
+      e,
+      stack,
+      reason: 'Failed to download menu.json',
+    );
   }
 
   // アプリの起動ログを送信
