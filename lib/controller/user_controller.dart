@@ -33,7 +33,7 @@ final class UserNotifier extends _$UserNotifier {
     final firebaseUser = authState.value;
     if (firebaseUser != null) {
       debugPrint('FCM Token: ${await FirebaseMessaging.instance.getToken()}');
-      await _saveFCMToken(firebaseUser, fcmTokenRepository);
+      await _saveFCMToken(fcmTokenRepository);
     }
     return _syncUser(firebaseUser, userRepository);
   }
@@ -45,7 +45,7 @@ final class UserNotifier extends _$UserNotifier {
     state = await AsyncValue.guard(() async {
       final firebaseUser = FirebaseAuth.instance.currentUser;
       if (firebaseUser != null) {
-        await _saveFCMToken(firebaseUser, fcmTokenRepository);
+        await _saveFCMToken(fcmTokenRepository);
       }
       return _syncUser(firebaseUser, userRepository);
     });
@@ -57,7 +57,7 @@ final class UserNotifier extends _$UserNotifier {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
       final firebaseUser = await FirebaseAuthHelper.signIn();
-      await _saveFCMToken(firebaseUser, fcmTokenRepository);
+      await _saveFCMToken(fcmTokenRepository);
       return _syncUser(firebaseUser, userRepository);
     });
   }
@@ -123,7 +123,7 @@ final class UserNotifier extends _$UserNotifier {
             avatarUrl: firebaseUser.photoURL ?? '',
           );
       try {
-        return userRepository.upsertUser(firebaseUser: firebaseUser, user: user);
+        return await userRepository.upsertUser(firebaseUser: firebaseUser, user: user);
       } on Exception catch (e) {
         debugPrint('Error during upserting user: $e');
         return user;
@@ -134,7 +134,7 @@ final class UserNotifier extends _$UserNotifier {
     }
   }
 
-  Future<void> _saveFCMToken(User firebaseUser, FCMTokenRepository fcmTokenRepository) async {
+  Future<void> _saveFCMToken(FCMTokenRepository fcmTokenRepository) async {
     final fcmToken = await FirebaseMessaging.instance.getToken();
     if (fcmToken == null) {
       return;
