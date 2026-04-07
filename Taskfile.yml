@@ -132,12 +132,13 @@ tasks:
   format:
     desc: Format Dart code
     cmds:
+      - "{{.DART}} fix --apply"
       - "{{.DART}} format lib/ test/ scripts/ dotto_design_system/"
 
   analyze:
     desc: Analyze Dart code
     cmds:
-      - "{{.DART}} analyze ./lib/ ./test/"
+      - "{{.DART}} analyze lib/ test/"
 
   build-ios:
     desc: Build iOS release
