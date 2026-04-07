@@ -60,12 +60,10 @@ Future<void> main() async {
   await LocationRepository().requestLocationPermission();
 
   // ファイルをダウンロード
-  for (final path in <String>['funch/menu.json']) {
-    try {
-      await FirebaseStorageRepository().download(path);
-    } on Exception catch (e) {
-      debugPrint(e.toString());
-    }
+  try {
+    await FirebaseStorageRepository().download('funch/menu.json');
+  } on Exception catch (e) {
+    debugPrint(e.toString());
   }
 
   await LoggerImpl().logAppOpen();
