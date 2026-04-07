@@ -31,7 +31,7 @@ Future<void> main() async {
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
   // Pass all uncaught asynchronous errors that aren't handled by the Flutter framework to Crashlytics
   PlatformDispatcher.instance.onError = (error, stack) {
-    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+    unawaited(FirebaseCrashlytics.instance.recordError(error, stack, fatal: true));
     return true;
   };
 
@@ -64,7 +64,7 @@ Future<void> main() async {
   try {
     await FirebaseStorageRepository().download('funch/menu.json');
   } on Exception catch (e, stack) {
-    await FirebaseCrashlytics.instance.recordError(e, stack, reason: 'Failed to download menu.json');
+    await LoggerImpl().logError(e, stack, reason: 'Failed to download menu.json');
   }
 
   // アプリの起動ログを送信

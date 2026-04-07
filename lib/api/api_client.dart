@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:dotto/api/api_environment.dart';
+import 'package:dotto/helper/logger.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:openapi/openapi.dart';
@@ -28,7 +28,7 @@ final apiClientProvider = Provider<Openapi>((ref) {
               options.headers['X-Firebase-AppCheck'] = 'Bearer $appCheckToken';
             }
           } on Exception catch (e, stack) {
-            await FirebaseCrashlytics.instance.recordError(e, stack, reason: 'Failed to get App Check token');
+            await ref.read(loggerProvider).logError(e, stack, reason: 'Failed to get App Check token');
           }
           final idToken = await FirebaseAuth.instance.currentUser?.getIdToken();
           if (idToken != null) {
