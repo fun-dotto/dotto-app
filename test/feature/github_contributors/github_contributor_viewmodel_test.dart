@@ -8,11 +8,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
+import '../../helpers/mock_listener.dart';
 import 'github_contributor_viewmodel_test.mocks.dart';
-
-abstract interface class Listener<T> {
-  void call(T? previous, T next);
-}
 
 @GenerateMocks([GitHubContributorRepository, Listener])
 void main() {

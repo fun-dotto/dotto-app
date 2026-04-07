@@ -9,17 +9,14 @@ import 'package:dotto/feature/map/map_viewmodel.dart';
 import 'package:dotto/feature/map/map_viewstate.dart';
 import 'package:dotto/repository/repository_provider.dart';
 import 'package:dotto/repository/room_repository.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Listener;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
+import '../../helpers/mock_listener.dart';
 import 'map_viewmodel_test.mocks.dart';
-
-abstract interface class Listener<T> {
-  void call(T? previous, T next);
-}
 
 @GenerateMocks([RoomRepository, Listener])
 void main() {
