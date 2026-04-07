@@ -73,9 +73,7 @@ final class BusScreen extends HookConsumerWidget {
             await Navigator.of(context).push(
               MaterialPageRoute<void>(
                 builder: (context) => const BusStopSelectScreen(),
-                settings: const RouteSettings(
-                  name: '/home/bus/bus_stop_select',
-                ),
+                settings: const RouteSettings(name: '/bus/select_stop'),
               ),
             );
           },
@@ -142,8 +140,8 @@ final class BusScreen extends HookConsumerWidget {
                   await Navigator.of(context).push(
                     MaterialPageRoute<void>(
                       builder: (context) => BusTimetableScreen(busTrip),
-                      settings: const RouteSettings(
-                        name: '/home/bus/bus_timetable',
+                      settings: RouteSettings(
+                        name: '/bus/timetable?route=${busTrip.route}',
                       ),
                     ),
                   );

@@ -320,7 +320,7 @@ final class SettingsScreen extends ConsumerWidget {
                           MaterialPageRoute<void>(
                             builder: (_) => const AnnouncementScreen(),
                             settings: const RouteSettings(
-                              name: '/setting/announcement',
+                              name: '/setting/announcements',
                             ),
                           ),
                         );
@@ -342,7 +342,7 @@ final class SettingsScreen extends ConsumerWidget {
                           MaterialPageRoute<void>(
                             builder: (_) => const GitHubContributorScreen(),
                             settings: const RouteSettings(
-                              name: '/setting/github_contributors',
+                              name: '/setting/developers',
                             ),
                           ),
                         );
@@ -359,7 +359,7 @@ final class SettingsScreen extends ConsumerWidget {
                               onDismissed: () => Navigator.of(context).pop(),
                             ),
                             settings: const RouteSettings(
-                              name: '/setting/app_tutorial',
+                              name: '/setting/onboarding',
                             ),
                           ),
                         );
@@ -388,7 +388,7 @@ final class SettingsScreen extends ConsumerWidget {
                           MaterialPageRoute<void>(
                             builder: (_) => const SettingsLicenseScreen(),
                             settings: const RouteSettings(
-                              name: '/setting/license',
+                              name: '/setting/licenses',
                             ),
                           ),
                         );
@@ -404,6 +404,9 @@ final class SettingsScreen extends ConsumerWidget {
                             Navigator.of(context).push(
                               MaterialPageRoute<void>(
                                 builder: (_) => const DebugScreen(),
+                                settings: const RouteSettings(
+                                  name: '/setting/debug',
+                                ),
                               ),
                             ),
                           );

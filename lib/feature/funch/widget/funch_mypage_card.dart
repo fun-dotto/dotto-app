@@ -166,6 +166,7 @@ final class FunchMyPageCard extends ConsumerWidget {
         await Navigator.of(context).push(
           MaterialPageRoute<void>(
             builder: (_) => const FunchScreen(),
+            // TODO(kantacky): Home廃止に伴う変更
             settings: const RouteSettings(name: '/home/funch'),
           ),
         );

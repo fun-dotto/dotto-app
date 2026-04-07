@@ -128,6 +128,7 @@ class SearchSubjectScreen extends HookConsumerWidget {
           await Navigator.of(context).push(
             MaterialPageRoute<void>(
               builder: (context) => SubjectDetailScreen(id: subject.id),
+              settings: RouteSettings(name: '/subjects/${subject.id}'),
             ),
           );
         },

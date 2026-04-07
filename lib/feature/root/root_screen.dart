@@ -128,6 +128,7 @@ final class RootScreen extends ConsumerWidget {
                   onGenerateRoute: (settings) {
                     return MaterialPageRoute(
                       builder: (context) => _tabRoot(tab: tab, ref: ref),
+                      settings: RouteSettings(name: '/${tab.name}'),
                     );
                   },
                 );

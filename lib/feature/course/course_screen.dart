@@ -53,7 +53,7 @@ final class CourseScreen extends HookConsumerWidget {
           onPressed: () => Navigator.of(context).push(
             MaterialPageRoute<void>(
               builder: (context) => const CourseCancellationScreen(),
-              settings: const RouteSettings(name: '/course/cancellations'),
+              settings: const RouteSettings(name: '/course/irregular_classes'),
             ),
           ),
         ),
@@ -71,7 +71,8 @@ final class CourseScreen extends HookConsumerWidget {
               filename: '学年暦',
             ),
             settings: RouteSettings(
-              name: '/home/web_pdf_viewer?url=${config.officialCalendarPdfUrl}',
+              name:
+                  '/course/web_pdf_viewer?url=${config.officialCalendarPdfUrl}',
             ),
           ),
         ),
@@ -85,7 +86,7 @@ final class CourseScreen extends HookConsumerWidget {
             builder: (_) =>
                 WebPdfViewer(url: config.timetable1PdfUrl, filename: '時間割 前期'),
             settings: RouteSettings(
-              name: '/home/web_pdf_viewer?url=${config.timetable1PdfUrl}',
+              name: '/course/web_pdf_viewer?url=${config.timetable1PdfUrl}',
             ),
           ),
         ),
@@ -99,7 +100,7 @@ final class CourseScreen extends HookConsumerWidget {
             builder: (_) =>
                 WebPdfViewer(url: config.timetable2PdfUrl, filename: '時間割 後期'),
             settings: RouteSettings(
-              name: '/home/web_pdf_viewer?url=${config.timetable2PdfUrl}',
+              name: '/course/web_pdf_viewer?url=${config.timetable2PdfUrl}',
             ),
           ),
         ),
@@ -200,7 +201,7 @@ final class CourseScreen extends HookConsumerWidget {
               MaterialPageRoute<void>(
                 fullscreenDialog: true,
                 builder: (context) => const CourseCustomizeScreen(),
-                settings: const RouteSettings(name: '/course/customize'),
+                settings: const RouteSettings(name: '/course/preferences'),
               ),
             ),
             icon: const Icon(Icons.tune),

@@ -55,8 +55,8 @@ final class SubjectDetailPastExamScreen extends HookWidget {
                 builder: (_) =>
                     CloudflarePdfViewer(url: url, filename: filename),
                 settings: RouteSettings(
-                  name:
-                      '/pdf_viewer?filename=$filename&url=$url&storage=cloudflare',
+                  // TODO(kantacky): /subjects/${subjectId}/past_exams/${pastExamId} にする
+                  name: '/subjects/${pastExamId}/past_exams/${filename}',
                 ),
               ),
             );
