@@ -21,43 +21,44 @@ import 'package:timezone/timezone.dart' as tz;
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Firebaseの初期化
+  // Firebase
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  await FirebaseAuthHelper.initialize();
-
-  // Firebase Crashlyticsの初期化
+  // Firebase Crashlytics
   // Debugモードではクラッシュレポートを送信しない
   await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(!kDebugMode);
-  FlutterError.onError = (errorDetails) async {
-    await FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
-  };
+  // Pass all uncaught "fatal" errors from the framework to Crashlytics
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+  // Pass all uncaught asynchronous errors that aren't handled by the Flutter framework to Crashlytics
   PlatformDispatcher.instance.onError = (error, stack) {
-    unawaited(FirebaseCrashlytics.instance.recordError(error, stack, fatal: true));
+    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
     return true;
   };
 
-  // Firebase App Checkの初期化
+  // Firebase App Check
   await FirebaseAppCheck.instance.activate(
     providerApple: kReleaseMode ? const AppleAppAttestProvider() : const AppleDebugProvider(),
     providerAndroid: kReleaseMode ? const AndroidPlayIntegrityProvider() : const AndroidDebugProvider(),
   );
 
-  // 画面の向きを固定
-  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+  // Firebase Authentication
+  await FirebaseAuthHelper.initialize();
+
+  // Firebase Messaging
+  // 通知許可をリクエスト
+  await FirebaseMessaging.instance.requestPermission(provisional: true);
+  // バックグラウンドハンドラーを設定
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+  // 位置情報の許可をリクエスト
+  await LocationRepository().requestLocationPermission();
 
   // ローカルタイムゾーンの設定
   tz.initializeTimeZones();
   tz.setLocalLocation(tz.getLocation('Asia/Tokyo'));
 
-  // Firebase Messagingの通知許可をリクエスト
-  await FirebaseMessaging.instance.requestPermission(provisional: true);
-
-  // Firebase Messagingのバックグラウンドハンドラーを設定
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-
-  // 位置情報の許可をリクエスト
-  await LocationRepository().requestLocationPermission();
+  // 画面の向きを固定
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 
   // ファイルをダウンロード
   try {
@@ -66,6 +67,7 @@ Future<void> main() async {
     debugPrint(e.toString());
   }
 
+  // アプリの起動ログを送信
   await LoggerImpl().logAppOpen();
 
   // アプリの起動
