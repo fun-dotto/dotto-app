@@ -10,7 +10,6 @@ import 'package:dotto/helper/logger.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -24,14 +23,6 @@ Future<void> main() async {
 
   // Firebaseの初期化
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-
-  // Firebase Realtime Databaseのパーシステンスを有効化
-  // 他のFirebaseサービスより先に呼び出す必要がある
-  try {
-    FirebaseDatabase.instance.setPersistenceEnabled(true);
-  } on Exception catch (e) {
-    debugPrint('Failed to set persistence enabled: $e');
-  }
 
   await FirebaseAuthHelper.initialize();
 
