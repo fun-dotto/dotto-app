@@ -2,9 +2,9 @@ import 'package:dotto/domain/announcement.dart';
 import 'package:dotto/feature/announcement/announcement_viewmodel.dart';
 import 'package:dotto/feature/announcement/announcement_viewstate.dart';
 import 'package:dotto/helper/date_formatter.dart';
+import 'package:dotto/helper/url_launcher_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:url_launcher/url_launcher_string.dart';
 
 final class AnnouncementScreen extends ConsumerWidget {
   const AnnouncementScreen({super.key});
@@ -13,13 +13,7 @@ final class AnnouncementScreen extends ConsumerWidget {
     return ListTile(
       title: Text(announcement.title, style: Theme.of(context).textTheme.titleSmall),
       subtitle: Text(DateFormatter.full(announcement.date), style: Theme.of(context).textTheme.labelMedium),
-      onTap: () {
-        try {
-          launchUrlString(announcement.url);
-        } catch (e) {
-          debugPrint('Failed to launch announcement URL: $e');
-        }
-      },
+      onTap: () => launchUrlSafely(announcement.url),
       trailing: const Icon(Icons.chevron_right_outlined),
     );
   }

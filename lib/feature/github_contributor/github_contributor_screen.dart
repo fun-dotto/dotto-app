@@ -1,9 +1,9 @@
 import 'package:dotto/domain/github_profile.dart';
 import 'package:dotto/feature/github_contributor/github_contributor_viewmodel.dart';
 import 'package:dotto/feature/github_contributor/github_contributor_viewstate.dart';
+import 'package:dotto/helper/url_launcher_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:url_launcher/url_launcher_string.dart';
 
 final class GitHubContributorScreen extends ConsumerWidget {
   const GitHubContributorScreen({super.key});
@@ -18,13 +18,7 @@ final class GitHubContributorScreen extends ConsumerWidget {
         ),
       ),
       title: Text(githubProfile.login),
-      onTap: () {
-        try {
-          launchUrlString(githubProfile.htmlUrl);
-        } catch (e) {
-          debugPrint('Failed to launch GitHub profile URL: $e');
-        }
-      },
+      onTap: () => launchUrlSafely(githubProfile.htmlUrl),
     );
   }
 

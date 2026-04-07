@@ -11,6 +11,7 @@ import 'package:dotto/feature/course/personal_timetable_calendar_view.dart';
 import 'package:dotto/feature/course/quick_button.dart';
 import 'package:dotto/feature/subject/search_subject_screen.dart';
 import 'package:dotto/feature/subject/subject_detail_screen.dart';
+import 'package:dotto/helper/url_launcher_helper.dart';
 import 'package:dotto/widget/web_pdf_viewer.dart';
 import 'package:dotto_design_system/component/button.dart';
 import 'package:dotto_design_system/style/semantic_color.dart';
@@ -18,7 +19,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shimmer_animation/shimmer_animation.dart';
-import 'package:url_launcher/url_launcher_string.dart';
 
 final class CourseScreen extends HookConsumerWidget {
   const CourseScreen({super.key});
@@ -484,7 +484,7 @@ final class CourseScreen extends HookConsumerWidget {
   }
 
   Future<void> _launchQuickLink(BuildContext context, {required String url, required String label}) async {
-    final launched = await launchUrlString(url, mode: LaunchMode.externalApplication);
+    final launched = await launchUrlSafely(url, mode: .externalApplication);
     if (!context.mounted || launched) {
       return;
     }

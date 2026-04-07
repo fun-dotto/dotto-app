@@ -10,6 +10,7 @@ import 'package:dotto/feature/github_contributor/github_contributor_screen.dart'
 import 'package:dotto/feature/onboarding/onboarding_screen.dart';
 import 'package:dotto/feature/setting/widget/license.dart';
 import 'package:dotto/feature/setting/widget/user_info_tile.dart';
+import 'package:dotto/helper/url_launcher_helper.dart';
 import 'package:dotto_design_system/style/semantic_color.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
@@ -17,7 +18,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:settings_ui/settings_ui.dart';
-import 'package:url_launcher/url_launcher_string.dart';
 
 final class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -260,13 +260,7 @@ final class SettingsScreen extends ConsumerWidget {
                     SettingsTile.navigation(
                       title: const Text('フィードバックを送る'),
                       leading: const Icon(Icons.messenger_rounded),
-                      onPressed: (_) {
-                        try {
-                          launchUrlString(config.feedbackFormUrl);
-                        } catch (e) {
-                          debugPrint('Failed to launch feedback form URL: $e');
-                        }
-                      },
+                      onPressed: (_) => launchUrlSafely(config.feedbackFormUrl),
                     ),
                     // Contributors表示
                     SettingsTile.navigation(
@@ -298,25 +292,13 @@ final class SettingsScreen extends ConsumerWidget {
                     SettingsTile.navigation(
                       title: const Text('利用規約'),
                       leading: const Icon(Icons.verified_user),
-                      onPressed: (_) {
-                        try {
-                          launchUrlString(config.termsOfServiceUrl);
-                        } catch (e) {
-                          debugPrint('Failed to launch terms of service URL: $e');
-                        }
-                      },
+                      onPressed: (_) => launchUrlSafely(config.termsOfServiceUrl),
                     ),
                     // プライバシーポリシー
                     SettingsTile.navigation(
                       title: const Text('プライバシーポリシー'),
                       leading: const Icon(Icons.admin_panel_settings),
-                      onPressed: (_) {
-                        try {
-                          launchUrlString(config.privacyPolicyUrl);
-                        } catch (e) {
-                          debugPrint('Failed to launch privacy policy URL: $e');
-                        }
-                      },
+                      onPressed: (_) => launchUrlSafely(config.privacyPolicyUrl),
                     ),
                     // ライセンス
                     SettingsTile.navigation(
