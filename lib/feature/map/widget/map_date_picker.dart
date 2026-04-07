@@ -2,7 +2,6 @@ import 'package:dotto/helper/date_formatter.dart';
 import 'package:dotto_design_system/style/semantic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart';
-import 'package:intl/intl.dart';
 
 final class MapDatePicker extends StatelessWidget {
   const MapDatePicker({

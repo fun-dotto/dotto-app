@@ -6,7 +6,6 @@ import 'package:dotto/helper/date_formatter.dart';
 import 'package:dotto_design_system/component/button.dart';
 import 'package:dotto_design_system/style/semantic_color.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 final class MapDetailBottomSheet extends StatelessWidget {
   const MapDetailBottomSheet({
