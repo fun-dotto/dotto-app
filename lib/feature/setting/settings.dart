@@ -261,7 +261,11 @@ final class SettingsScreen extends ConsumerWidget {
                       title: const Text('フィードバックを送る'),
                       leading: const Icon(Icons.messenger_rounded),
                       onPressed: (_) {
-                        launchUrlString(config.feedbackFormUrl);
+                        try {
+                          launchUrlString(config.feedbackFormUrl);
+                        } catch (e) {
+                          debugPrint('Failed to launch feedback form URL: $e');
+                        }
                       },
                     ),
                     // Contributors表示
@@ -295,7 +299,11 @@ final class SettingsScreen extends ConsumerWidget {
                       title: const Text('利用規約'),
                       leading: const Icon(Icons.verified_user),
                       onPressed: (_) {
-                        launchUrlString(config.termsOfServiceUrl);
+                        try {
+                          launchUrlString(config.termsOfServiceUrl);
+                        } catch (e) {
+                          debugPrint('Failed to launch terms of service URL: $e');
+                        }
                       },
                     ),
                     // プライバシーポリシー
@@ -303,7 +311,11 @@ final class SettingsScreen extends ConsumerWidget {
                       title: const Text('プライバシーポリシー'),
                       leading: const Icon(Icons.admin_panel_settings),
                       onPressed: (_) {
-                        launchUrlString(config.privacyPolicyUrl);
+                        try {
+                          launchUrlString(config.privacyPolicyUrl);
+                        } catch (e) {
+                          debugPrint('Failed to launch privacy policy URL: $e');
+                        }
                       },
                     ),
                     // ライセンス

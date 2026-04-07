@@ -18,7 +18,13 @@ final class GitHubContributorScreen extends ConsumerWidget {
         ),
       ),
       title: Text(githubProfile.login),
-      onTap: () => launchUrlString(githubProfile.htmlUrl),
+      onTap: () {
+        try {
+          launchUrlString(githubProfile.htmlUrl);
+        } catch (e) {
+          debugPrint('Failed to launch GitHub profile URL: $e');
+        }
+      },
     );
   }
 

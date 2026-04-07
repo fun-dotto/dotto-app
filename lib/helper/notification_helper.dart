@@ -1,4 +1,5 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -31,7 +32,11 @@ final class NotificationHelperImpl implements NotificationHelper {
   void _handleMessage(RemoteMessage message) {
     final url = message.data['url'];
     if (url != null) {
-      launchUrlString(url as String);
+      try {
+        launchUrlString(url as String);
+      } catch (e) {
+        debugPrint('Failed to launch notification URL: $e');
+      }
     }
   }
 }

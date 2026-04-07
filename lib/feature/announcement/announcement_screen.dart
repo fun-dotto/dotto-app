@@ -13,7 +13,13 @@ final class AnnouncementScreen extends ConsumerWidget {
     return ListTile(
       title: Text(announcement.title, style: Theme.of(context).textTheme.titleSmall),
       subtitle: Text(DateFormatter.full(announcement.date), style: Theme.of(context).textTheme.labelMedium),
-      onTap: () => launchUrlString(announcement.url),
+      onTap: () {
+        try {
+          launchUrlString(announcement.url);
+        } catch (e) {
+          debugPrint('Failed to launch announcement URL: $e');
+        }
+      },
       trailing: const Icon(Icons.chevron_right_outlined),
     );
   }
