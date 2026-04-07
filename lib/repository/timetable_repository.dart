@@ -1,5 +1,6 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:dotto/domain/day_of_week.dart';
+import 'package:dotto/domain/domain_error.dart';
 import 'package:dotto/domain/faculty.dart';
 import 'package:dotto/domain/period.dart';
 import 'package:dotto/domain/semester.dart';
@@ -41,11 +42,11 @@ final class TimetableRepositoryImpl implements TimetableRepository {
         ),
       );
       if (response.statusCode != 200) {
-        throw Exception('Failed to get subjects');
+        throw DomainError(type: DomainErrorType.invalidResponse, message: 'Failed to get timetable items');
       }
       final data = response.data;
       if (data == null) {
-        throw Exception('Failed to get subjects');
+        throw DomainError(type: DomainErrorType.invalidResponse, message: 'Failed to get timetable items');
       }
       return data.timetableItems
           .map(
@@ -75,7 +76,7 @@ final class TimetableRepositoryImpl implements TimetableRepository {
                     DottoFoundationV1DayOfWeek.friday => DayOfWeek.friday,
                     DottoFoundationV1DayOfWeek.saturday => DayOfWeek.saturday,
                     DottoFoundationV1DayOfWeek.sunday => DayOfWeek.sunday,
-                    _ => throw Exception('Invalid day of week'),
+                    _ => throw DomainError(type: DomainErrorType.invalidData, message: 'Invalid day of week'),
                   },
                   period: switch (slot.period) {
                     DottoFoundationV1Period.period1 => Period.first,
@@ -84,16 +85,18 @@ final class TimetableRepositoryImpl implements TimetableRepository {
                     DottoFoundationV1Period.period4 => Period.fourth,
                     DottoFoundationV1Period.period5 => Period.fifth,
                     DottoFoundationV1Period.period6 => Period.sixth,
-                    _ => throw Exception('Invalid period'),
+                    _ => throw DomainError(type: DomainErrorType.invalidData, message: 'Invalid period'),
                   },
                 );
               }(),
             ),
           )
           .toList();
-    } catch (e) {
-      debugPrint(e.toString());
+    } on DomainError {
       rethrow;
+    } on Exception catch (e, stackTrace) {
+      debugPrint(e.toString());
+      throw DomainError.fromException(e: e, stackTrace: stackTrace);
     }
   }
 }

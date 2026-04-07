@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:dotto/api/api_client.dart';
 import 'package:dotto/domain/academic_area.dart';
 import 'package:dotto/domain/academic_class.dart';
+import 'package:dotto/domain/domain_error.dart';
 import 'package:dotto/domain/dotto_user.dart';
 import 'package:dotto/domain/grade.dart';
 import 'package:firebase_auth/firebase_auth.dart' hide UserInfo;
@@ -32,15 +33,12 @@ final class UserRepositoryImpl implements UserRepository {
         return null;
       }
       return _toDottoUser(firebaseUser, data.user);
-    } on DioException catch (e) {
-      if (e.response?.statusCode == 404) {
+    } on Exception catch (e, stackTrace) {
+      if (e is DioException && e.response?.statusCode == 404) {
         return null;
       }
       debugPrint('Error during getting user: $e');
-      rethrow;
-    } on Exception catch (e) {
-      debugPrint('Error during getting user: $e');
-      rethrow;
+      throw DomainError.fromException(e: e, stackTrace: stackTrace);
     }
   }
 
@@ -90,15 +88,14 @@ final class UserRepositoryImpl implements UserRepository {
       final data = response.data;
       final updatedUserInfo = data?.user;
       if (updatedUserInfo == null) {
-        throw Exception('Failed to upsert user');
+        throw DomainError(type: DomainErrorType.invalidResponse, message: 'Failed to upsert user');
       }
       return _toDottoUser(firebaseUser, updatedUserInfo);
-    } on DioException catch (e) {
-      debugPrint('Error during upserting user: $e');
+    } on DomainError {
       rethrow;
-    } on Exception catch (e) {
+    } on Exception catch (e, stackTrace) {
       debugPrint('Error during upserting user: $e');
-      rethrow;
+      throw DomainError.fromException(e: e, stackTrace: stackTrace);
     }
   }
 

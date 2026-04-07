@@ -1,3 +1,4 @@
+import 'package:dotto/domain/domain_error.dart';
 import 'package:dotto/domain/github_profile.dart';
 import 'package:dotto/feature/github_contributor/github_contributor_service.dart';
 import 'package:dotto/repository/github_contributor_repository.dart';
@@ -67,11 +68,13 @@ void main() {
 
   group('GitHubContributorService 異常系', () {
     test('getContributors がリポジトリの例外をそのまま伝播する', () async {
-      when(githubContributorRepository.getContributors()).thenThrow(Exception('Failed to get contributors'));
+      when(
+        githubContributorRepository.getContributors(),
+      ).thenThrow(DomainError(type: DomainErrorType.invalidResponse, message: 'Failed to get contributors'));
 
       final service = GitHubContributorService(githubContributorRepository);
 
-      expect(() => service.getContributors(), throwsA(isA<Exception>()));
+      expect(() => service.getContributors(), throwsA(isA<DomainError>()));
 
       verify(githubContributorRepository.getContributors()).called(1);
     });

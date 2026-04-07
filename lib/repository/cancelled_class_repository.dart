@@ -1,5 +1,6 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:dotto/api/api_client.dart';
+import 'package:dotto/domain/domain_error.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:openapi/openapi.dart';
@@ -21,16 +22,18 @@ final class CancelledClassRepositoryImpl implements CancelledClassRepository {
       final api = ref.read(apiClientProvider).getCancelledClassesApi();
       final response = await api.cancelledClassesV1List(from: Date.now(), subjectIds: subjectIds);
       if (response.statusCode != 200) {
-        throw Exception('Failed to get cancelled classes');
+        throw DomainError(type: DomainErrorType.invalidResponse, message: 'Failed to get cancelled classes');
       }
       final data = response.data;
       if (data == null) {
-        throw Exception('Failed to get cancelled classes');
+        throw DomainError(type: DomainErrorType.invalidResponse, message: 'Failed to get cancelled classes');
       }
       return data.cancelledClasses;
-    } catch (e) {
-      debugPrint(e.toString());
+    } on DomainError {
       rethrow;
+    } on Exception catch (e, stackTrace) {
+      debugPrint(e.toString());
+      throw DomainError.fromException(e: e, stackTrace: stackTrace);
     }
   }
 }

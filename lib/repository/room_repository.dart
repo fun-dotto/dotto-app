@@ -1,5 +1,6 @@
 import 'package:dotto/api/firebase/room_api.dart';
 import 'package:dotto/domain/day_of_week.dart';
+import 'package:dotto/domain/domain_error.dart';
 import 'package:dotto/domain/floor.dart';
 import 'package:dotto/domain/period.dart';
 import 'package:dotto/domain/room.dart';
@@ -16,38 +17,44 @@ final class RoomRepositoryImpl implements RoomRepository {
 
   @override
   Future<List<Room>> getRooms() async {
-    final (roomResponses, roomScheduleResponses) = await (RoomAPI.getRooms(), RoomAPI.getRoomSchedules()).wait;
+    try {
+      final (roomResponses, roomScheduleResponses) = await (RoomAPI.getRooms(), RoomAPI.getRoomSchedules()).wait;
 
-    return roomResponses.entries.expand((floorEntry) {
-      final floorLabel = floorEntry.key;
-      final roomsMap = floorEntry.value;
-      final floor = Floor.fromLabel(floorLabel);
+      return roomResponses.entries.expand((floorEntry) {
+        final floorLabel = floorEntry.key;
+        final roomsMap = floorEntry.value;
+        final floor = Floor.fromLabel(floorLabel);
 
-      return roomsMap.entries.map((roomEntry) {
-        final roomResponse = roomEntry.value;
+        return roomsMap.entries.map((roomEntry) {
+          final roomResponse = roomEntry.value;
 
-        final schedules = (roomScheduleResponses[roomEntry.key] ?? [])
-            .map(
-              (scheduleResponse) => RoomSchedule(
-                beginDatetime: scheduleResponse.beginDatetime,
-                endDatetime: scheduleResponse.endDatetime,
-                title: scheduleResponse.title,
-              ),
-            )
-            .toList();
+          final schedules = (roomScheduleResponses[roomEntry.key] ?? [])
+              .map(
+                (scheduleResponse) => RoomSchedule(
+                  beginDatetime: scheduleResponse.beginDatetime,
+                  endDatetime: scheduleResponse.endDatetime,
+                  title: scheduleResponse.title,
+                ),
+              )
+              .toList();
 
-        return Room(
-          id: roomResponse.classroomNo ?? roomEntry.key,
-          name: roomResponse.header,
-          shortName: roomEntry.key,
-          description: roomResponse.detail ?? '',
-          floor: floor,
-          email: roomResponse.mail ?? '',
-          keywords: roomResponse.searchWordList ?? [],
-          schedules: schedules,
-        );
-      });
-    }).toList();
+          return Room(
+            id: roomResponse.classroomNo ?? roomEntry.key,
+            name: roomResponse.header,
+            shortName: roomEntry.key,
+            description: roomResponse.detail ?? '',
+            floor: floor,
+            email: roomResponse.mail ?? '',
+            keywords: roomResponse.searchWordList ?? [],
+            schedules: schedules,
+          );
+        });
+      }).toList();
+    } on DomainError {
+      rethrow;
+    } on Exception catch (e, stackTrace) {
+      throw DomainError.fromException(e: e, stackTrace: stackTrace);
+    }
   }
 
   @override

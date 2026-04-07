@@ -1,5 +1,6 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:dotto/domain/day_of_week.dart';
+import 'package:dotto/domain/domain_error.dart';
 import 'package:dotto/domain/faculty.dart';
 import 'package:dotto/domain/lecture_status.dart';
 import 'package:dotto/domain/period.dart';
@@ -27,11 +28,14 @@ final class PersonalCalendarRepositoryImpl implements PersonalCalendarRepository
       final dates = BuiltList<Date>(targetDates.map((d) => Date(d.year, d.month, d.day)));
       final response = await api.personalCalendarItemsV1List(dates: dates);
       if (response.statusCode != 200) {
-        throw Exception('Failed to get personal calendar items: status ${response.statusCode}');
+        throw DomainError(
+          type: DomainErrorType.invalidResponse,
+          message: 'Failed to get personal calendar items: status ${response.statusCode}',
+        );
       }
       final data = response.data;
       if (data == null) {
-        throw Exception('Failed to get personal calendar items');
+        throw DomainError(type: DomainErrorType.invalidResponse, message: 'Failed to get personal calendar items');
       }
 
       final itemsByDate = <String, List<PersonalTimetableItem>>{};
@@ -63,9 +67,11 @@ final class PersonalCalendarRepositoryImpl implements PersonalCalendarRepository
         items.sort((a, b) => a.period.number.compareTo(b.period.number));
         return PersonalTimetableDay(date: date, items: items, timetableDayOfWeek: DayOfWeek.fromDateTime(date));
       }).toList();
-    } catch (e) {
-      debugPrint(e.toString());
+    } on DomainError {
       rethrow;
+    } on Exception catch (e, stackTrace) {
+      debugPrint(e.toString());
+      throw DomainError.fromException(e: e, stackTrace: stackTrace);
     }
   }
 
@@ -78,7 +84,10 @@ final class PersonalCalendarRepositoryImpl implements PersonalCalendarRepository
       DottoFoundationV1Period.period4 => Period.fourth,
       DottoFoundationV1Period.period5 => Period.fifth,
       DottoFoundationV1Period.period6 => Period.sixth,
-      _ => throw UnsupportedError('Unsupported DottoFoundationV1Period: $period'),
+      _ => throw DomainError(
+        type: DomainErrorType.invalidData,
+        message: 'Unsupported DottoFoundationV1Period: $period',
+      ),
     };
   }
 

@@ -1,4 +1,5 @@
 import 'package:dotto/api/api_client.dart';
+import 'package:dotto/domain/domain_error.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:openapi/openapi.dart';
@@ -17,9 +18,9 @@ final class FCMTokenRepositoryImpl implements FCMTokenRepository {
     try {
       final api = ref.read(apiClientProvider).getFCMTokensApi();
       await api.fCMTokenV1Upsert(fCMTokenRequest: FCMTokenRequest((b) => b..token = token));
-    } on Exception catch (e) {
+    } on Exception catch (e, stackTrace) {
       debugPrint('Error during upserting FCM token: $e');
-      rethrow;
+      throw DomainError.fromException(e: e, stackTrace: stackTrace);
     }
   }
 }

@@ -1,3 +1,4 @@
+import 'package:dotto/domain/domain_error.dart';
 import 'package:dotto/domain/github_profile.dart';
 import 'package:dotto/feature/github_contributor/github_contributor_viewmodel.dart';
 import 'package:dotto/feature/github_contributor/github_contributor_viewstate.dart';
@@ -131,7 +132,7 @@ void main() {
   group('GitHubContributorViewModel 異常系', () {
     setUp(() {
       when(githubContributorRepository.getContributors()).thenAnswer((_) async {
-        throw Exception('Failed to get contributors');
+        throw DomainError(type: DomainErrorType.invalidResponse, message: 'Failed to get contributors');
       });
     });
 

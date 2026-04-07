@@ -1,3 +1,4 @@
+import 'package:dotto/domain/domain_error.dart';
 import 'package:dotto/domain/floor.dart';
 import 'package:dotto/domain/map_tile_props.dart';
 import 'package:dotto/domain/room.dart';
@@ -250,7 +251,7 @@ void main() {
   group('MapViewModel 異常系', () {
     setUp(() {
       when(roomRepository.getRooms()).thenAnswer((_) async {
-        throw Exception('Failed to get rooms');
+        throw DomainError(type: DomainErrorType.invalidResponse, message: 'Failed to get rooms');
       });
     });
 
