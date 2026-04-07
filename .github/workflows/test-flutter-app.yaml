@@ -1,15 +1,19 @@
-name: CI
+name: Test Flutter App
 
 on:
   push:
     branches:
       - main
+    paths:
+      - flutter/**
   pull_request:
     types:
       - opened
       - ready_for_review
       - reopened
       - synchronize
+    paths:
+      - flutter/**
   schedule:
     - cron: 0 15 * * *
   workflow_dispatch:
@@ -17,6 +21,11 @@ on:
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+    working-directory: ./flutter
 
 jobs:
   test:

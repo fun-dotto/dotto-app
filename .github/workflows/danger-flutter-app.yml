@@ -1,4 +1,4 @@
-name: Danger
+name: Danger Flutter App
 
 on:
   pull_request:
@@ -16,10 +16,17 @@ on:
       - synchronize
       - unassigned
       - unlabeled
+    paths:
+      - flutter/**
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+    working-directory: ./flutter
 
 jobs:
   danger:
