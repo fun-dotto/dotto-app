@@ -5,7 +5,7 @@ import 'package:dotto/app.dart';
 import 'package:dotto/firebase_options.dart';
 import 'package:dotto/helper/firebase_auth_helper.dart';
 import 'package:dotto/helper/firebase_storage_repository.dart';
-import 'package:dotto/helper/location_repository.dart';
+import 'package:dotto/helper/location_helper.dart';
 import 'package:dotto/helper/logger.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -51,7 +51,7 @@ Future<void> main() async {
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   // 位置情報の許可をリクエスト
-  await LocationRepository().requestLocationPermission();
+  await LocationHelper.requestLocationPermission();
 
   // ローカルタイムゾーンの設定
   tz.initializeTimeZones();
