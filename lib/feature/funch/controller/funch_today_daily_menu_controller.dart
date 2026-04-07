@@ -76,7 +76,7 @@ final class FunchTodayDailyMenuNotifier<
       }
 
       return combinedMenus;
-    } catch (e) {
+    } on Exception catch (e) {
       debugPrint('FunchTodayDailyMenuNotifier Error: $e');
       rethrow;
     }

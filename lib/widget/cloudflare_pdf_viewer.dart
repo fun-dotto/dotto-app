@@ -78,7 +78,7 @@ final class _CloudflarePdfViewerState extends State<CloudflarePdfViewer>
           _isLoading = false;
         });
       }
-    } catch (e) {
+    } on Exception catch (e) {
       if (mounted) {
         setState(() {
           _errorMessage = e.toString();
@@ -95,7 +95,7 @@ final class _CloudflarePdfViewerState extends State<CloudflarePdfViewer>
         if (await file.exists()) {
           await file.delete();
         }
-      } catch (e) {
+      } on Exception catch (e) {
         // エラーは無視（一時ファイルの削除失敗は問題ない）
       }
     }

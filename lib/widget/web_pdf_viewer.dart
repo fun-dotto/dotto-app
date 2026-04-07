@@ -75,7 +75,7 @@ final class _WebPdfViewerState extends State<WebPdfViewer>
           _isLoading = false;
         });
       }
-    } catch (e) {
+    } on Exception catch (e) {
       if (mounted) {
         setState(() {
           _errorMessage = e.toString();
@@ -92,7 +92,7 @@ final class _WebPdfViewerState extends State<WebPdfViewer>
         if (await file.exists()) {
           await file.delete();
         }
-      } catch (e) {
+      } on Exception catch (e) {
         // エラーは無視（一時ファイルの削除失敗は問題ない）
       }
     }

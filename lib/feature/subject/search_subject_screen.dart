@@ -75,7 +75,7 @@ class SearchSubjectScreen extends HookConsumerWidget {
         } else {
           await notifier.registerSubject(subjectId);
         }
-      } catch (e) {
+      } on Exception catch (e) {
         if (context.mounted) {
           final message = e is Exception
               ? e.toString().replaceFirst('Exception: ', '')

@@ -14,7 +14,6 @@ import 'package:openapi/src/model/date.dart';
 import 'package:openapi/src/model/makeup_classes_v1_list200_response.dart';
 
 class MakeupClassesApi {
-
   final Dio _dio;
 
   final Serializers _serializers;
@@ -37,7 +36,7 @@ class MakeupClassesApi {
   ///
   /// Returns a [Future] containing a [Response] with a [MakeupClassesV1List200Response] as data
   /// Throws [DioException] if API call or serialization fails
-  Future<Response<MakeupClassesV1List200Response>> makeupClassesV1List({ 
+  Future<Response<MakeupClassesV1List200Response>> makeupClassesV1List({
     BuiltList<String>? subjectIds,
     Date? from,
     Date? until,
@@ -69,9 +68,18 @@ class MakeupClassesApi {
     );
 
     final _queryParameters = <String, dynamic>{
-      if (subjectIds != null) r'subjectIds': encodeCollectionQueryParameter<String>(_serializers, subjectIds, const FullType(BuiltList, [FullType(String)]), format: ListFormat.csv,),
-      if (from != null) r'from': encodeQueryParameter(_serializers, from, const FullType(Date)),
-      if (until != null) r'until': encodeQueryParameter(_serializers, until, const FullType(Date)),
+      if (subjectIds != null)
+        r'subjectIds': encodeCollectionQueryParameter<String>(
+          _serializers,
+          subjectIds,
+          const FullType(BuiltList, [FullType(String)]),
+          format: ListFormat.csv,
+        ),
+      if (from != null)
+        r'from': encodeQueryParameter(_serializers, from, const FullType(Date)),
+      if (until != null)
+        r'until':
+            encodeQueryParameter(_serializers, until, const FullType(Date)),
     };
 
     final _response = await _dio.request<Object>(
@@ -87,12 +95,13 @@ class MakeupClassesApi {
 
     try {
       final rawResponse = _response.data;
-      _responseData = rawResponse == null ? null : _serializers.deserialize(
-        rawResponse,
-        specifiedType: const FullType(MakeupClassesV1List200Response),
-      ) as MakeupClassesV1List200Response;
-
-    } catch (error, stackTrace) {
+      _responseData = rawResponse == null
+          ? null
+          : _serializers.deserialize(
+              rawResponse,
+              specifiedType: const FullType(MakeupClassesV1List200Response),
+            ) as MakeupClassesV1List200Response;
+    } on Exception catch (error, stackTrace) {
       throw DioException(
         requestOptions: _response.requestOptions,
         response: _response,
@@ -113,5 +122,4 @@ class MakeupClassesApi {
       extra: _response.extra,
     );
   }
-
 }

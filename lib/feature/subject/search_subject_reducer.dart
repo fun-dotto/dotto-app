@@ -98,7 +98,7 @@ final class SearchSubjectReducer extends _$SearchSubjectReducer {
       state = AsyncData(
         previousState.copyWith(subjects: mergedSubjects, filter: filter),
       );
-    } catch (error, stackTrace) {
+    } on Exception catch (error, stackTrace) {
       if (!ref.mounted || requestId != _latestSearchRequestId) {
         return;
       }

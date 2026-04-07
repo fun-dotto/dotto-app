@@ -16,7 +16,6 @@ import 'package:openapi/src/model/course_registrations_v1_list200_response.dart'
 import 'package:openapi/src/model/dotto_foundation_v1_course_semester.dart';
 
 class CourseRegistrationsApi {
-
   final Dio _dio;
 
   final Serializers _serializers;
@@ -37,7 +36,8 @@ class CourseRegistrationsApi {
   ///
   /// Returns a [Future] containing a [Response] with a [CourseRegistrationsV1Create201Response] as data
   /// Throws [DioException] if API call or serialization fails
-  Future<Response<CourseRegistrationsV1Create201Response>> courseRegistrationsV1Create({ 
+  Future<Response<CourseRegistrationsV1Create201Response>>
+      courseRegistrationsV1Create({
     required CourseRegistrationRequest courseRegistrationRequest,
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
@@ -59,7 +59,8 @@ class CourseRegistrationsApi {
             'name': 'FirebaseAppCheckAuth',
             'keyName': 'X-Firebase-AppCheck',
             'where': 'header',
-          },{
+          },
+          {
             'type': 'http',
             'scheme': 'Bearer',
             'name': 'BearerAuth',
@@ -75,11 +76,11 @@ class CourseRegistrationsApi {
 
     try {
       const _type = FullType(CourseRegistrationRequest);
-      _bodyData = _serializers.serialize(courseRegistrationRequest, specifiedType: _type);
-
-    } catch(error, stackTrace) {
+      _bodyData = _serializers.serialize(courseRegistrationRequest,
+          specifiedType: _type);
+    } catch (error, stackTrace) {
       throw DioException(
-         requestOptions: _options.compose(
+        requestOptions: _options.compose(
           _dio.options,
           _path,
         ),
@@ -102,12 +103,14 @@ class CourseRegistrationsApi {
 
     try {
       final rawResponse = _response.data;
-      _responseData = rawResponse == null ? null : _serializers.deserialize(
-        rawResponse,
-        specifiedType: const FullType(CourseRegistrationsV1Create201Response),
-      ) as CourseRegistrationsV1Create201Response;
-
-    } catch (error, stackTrace) {
+      _responseData = rawResponse == null
+          ? null
+          : _serializers.deserialize(
+              rawResponse,
+              specifiedType:
+                  const FullType(CourseRegistrationsV1Create201Response),
+            ) as CourseRegistrationsV1Create201Response;
+    } on Exception catch (error, stackTrace) {
       throw DioException(
         requestOptions: _response.requestOptions,
         response: _response,
@@ -143,7 +146,7 @@ class CourseRegistrationsApi {
   ///
   /// Returns a [Future]
   /// Throws [DioException] if API call or serialization fails
-  Future<Response<void>> courseRegistrationsV1Delete({ 
+  Future<Response<void>> courseRegistrationsV1Delete({
     required String id,
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
@@ -152,7 +155,10 @@ class CourseRegistrationsApi {
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
   }) async {
-    final _path = r'/v1/courseRegistrations/{id}'.replaceAll('{' r'id' '}', encodeQueryParameter(_serializers, id, const FullType(String)).toString());
+    final _path = r'/v1/courseRegistrations/{id}'.replaceAll(
+        '{' r'id' '}',
+        encodeQueryParameter(_serializers, id, const FullType(String))
+            .toString());
     final _options = Options(
       method: r'DELETE',
       headers: <String, dynamic>{
@@ -165,7 +171,8 @@ class CourseRegistrationsApi {
             'name': 'FirebaseAppCheckAuth',
             'keyName': 'X-Firebase-AppCheck',
             'where': 'header',
-          },{
+          },
+          {
             'type': 'http',
             'scheme': 'Bearer',
             'name': 'BearerAuth',
@@ -202,7 +209,8 @@ class CourseRegistrationsApi {
   ///
   /// Returns a [Future] containing a [Response] with a [CourseRegistrationsV1List200Response] as data
   /// Throws [DioException] if API call or serialization fails
-  Future<Response<CourseRegistrationsV1List200Response>> courseRegistrationsV1List({ 
+  Future<Response<CourseRegistrationsV1List200Response>>
+      courseRegistrationsV1List({
     required BuiltList<DottoFoundationV1CourseSemester> semesters,
     int? year,
     CancelToken? cancelToken,
@@ -225,7 +233,8 @@ class CourseRegistrationsApi {
             'name': 'FirebaseAppCheckAuth',
             'keyName': 'X-Firebase-AppCheck',
             'where': 'header',
-          },{
+          },
+          {
             'type': 'http',
             'scheme': 'Bearer',
             'name': 'BearerAuth',
@@ -237,8 +246,15 @@ class CourseRegistrationsApi {
     );
 
     final _queryParameters = <String, dynamic>{
-      if (year != null) r'year': encodeQueryParameter(_serializers, year, const FullType(int)),
-      r'semesters': encodeCollectionQueryParameter<DottoFoundationV1CourseSemester>(_serializers, semesters, const FullType(BuiltList, [FullType(DottoFoundationV1CourseSemester)]), format: ListFormat.csv,),
+      if (year != null)
+        r'year': encodeQueryParameter(_serializers, year, const FullType(int)),
+      r'semesters':
+          encodeCollectionQueryParameter<DottoFoundationV1CourseSemester>(
+        _serializers,
+        semesters,
+        const FullType(BuiltList, [FullType(DottoFoundationV1CourseSemester)]),
+        format: ListFormat.csv,
+      ),
     };
 
     final _response = await _dio.request<Object>(
@@ -254,12 +270,14 @@ class CourseRegistrationsApi {
 
     try {
       final rawResponse = _response.data;
-      _responseData = rawResponse == null ? null : _serializers.deserialize(
-        rawResponse,
-        specifiedType: const FullType(CourseRegistrationsV1List200Response),
-      ) as CourseRegistrationsV1List200Response;
-
-    } catch (error, stackTrace) {
+      _responseData = rawResponse == null
+          ? null
+          : _serializers.deserialize(
+              rawResponse,
+              specifiedType:
+                  const FullType(CourseRegistrationsV1List200Response),
+            ) as CourseRegistrationsV1List200Response;
+    } on Exception catch (error, stackTrace) {
       throw DioException(
         requestOptions: _response.requestOptions,
         response: _response,
@@ -280,5 +298,4 @@ class CourseRegistrationsApi {
       extra: _response.extra,
     );
   }
-
 }
