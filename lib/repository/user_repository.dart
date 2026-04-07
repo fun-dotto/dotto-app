@@ -33,13 +33,10 @@ final class UserRepositoryImpl implements UserRepository {
         return null;
       }
       return _toDottoUser(firebaseUser, data.user);
-    } on DioException catch (e, stackTrace) {
-      if (e.response?.statusCode == 404) {
+    } on Exception catch (e, stackTrace) {
+      if (e is DioException && e.response?.statusCode == 404) {
         return null;
       }
-      debugPrint('Error during getting user: $e');
-      throw DomainError.fromException(e: e, stackTrace: stackTrace);
-    } on Exception catch (e, stackTrace) {
       debugPrint('Error during getting user: $e');
       throw DomainError.fromException(e: e, stackTrace: stackTrace);
     }
@@ -96,9 +93,6 @@ final class UserRepositoryImpl implements UserRepository {
       return _toDottoUser(firebaseUser, updatedUserInfo);
     } on DomainError {
       rethrow;
-    } on DioException catch (e, stackTrace) {
-      debugPrint('Error during upserting user: $e');
-      throw DomainError.fromException(e: e, stackTrace: stackTrace);
     } on Exception catch (e, stackTrace) {
       debugPrint('Error during upserting user: $e');
       throw DomainError.fromException(e: e, stackTrace: stackTrace);
