@@ -31,8 +31,8 @@ enum Semester {
       Semester.q2 => date.month >= 7 && date.month <= 9,
       Semester.q3 => date.month >= 10 && date.month <= 12,
       Semester.q4 => date.month >= 1 && date.month <= 3,
-      Semester.summerIntensive => date.month >= 7 && date.month <= 9,
-      Semester.winterIntensive => date.month >= 1 && date.month <= 3,
+      Semester.summerIntensive => date.month >= 8 && date.month <= 9,
+      Semester.winterIntensive => date.month >= 2 && date.month <= 3,
     };
   }
 
