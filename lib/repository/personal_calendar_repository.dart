@@ -106,17 +106,10 @@ final class PersonalCalendarRepositoryImpl implements PersonalCalendarRepository
 
   @visibleForTesting
   static Semester toSemester(DottoFoundationV1CourseSemester semester) {
-    return switch (semester) {
-      DottoFoundationV1CourseSemester.h1 => Semester.h1,
-      DottoFoundationV1CourseSemester.h2 => Semester.h2,
-      DottoFoundationV1CourseSemester.allYear => Semester.allYear,
-      DottoFoundationV1CourseSemester.q1 => Semester.q1,
-      DottoFoundationV1CourseSemester.q2 => Semester.q2,
-      DottoFoundationV1CourseSemester.q3 => Semester.q3,
-      DottoFoundationV1CourseSemester.q4 => Semester.q4,
-      DottoFoundationV1CourseSemester.summerIntensive => Semester.summerIntensive,
-      DottoFoundationV1CourseSemester.winterIntensive => Semester.winterIntensive,
-      _ => throw UnsupportedError('Unsupported DottoFoundationV1CourseSemester: $semester'),
-    };
+    try {
+      return Semester.values.byName(semester.name);
+    } on StateError {
+      throw UnsupportedError('Unsupported DottoFoundationV1CourseSemester: $semester');
+    }
   }
 }
