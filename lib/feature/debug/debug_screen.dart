@@ -217,7 +217,8 @@ final class DebugScreen extends HookConsumerWidget {
             title: const Text('API Environment Override'),
             subtitle: Text(switch (environmentOverride) {
               null =>
-                'Use Default (${apiEnvironmentNotifier.defaultEnvironment.label})',
+                'Use Default '
+                    '(${apiEnvironmentNotifier.defaultEnvironment.label})',
               final value => 'Forced: ${value.label}',
             }),
             trailing: Text('Effective: ${environment.label}'),

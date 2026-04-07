@@ -37,7 +37,8 @@ final class PersonalCalendarRepositoryImpl
         throw DomainError(
           type: DomainErrorType.invalidResponse,
           message:
-              'Failed to get personal calendar items: status ${response.statusCode}',
+              'Failed to get personal calendar items: '
+              'status ${response.statusCode}',
         );
       }
       final data = response.data;

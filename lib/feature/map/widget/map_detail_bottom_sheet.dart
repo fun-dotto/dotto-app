@@ -65,7 +65,9 @@ final class MapDetailBottomSheet extends StatelessWidget {
               ),
               const SizedBox(width: 5),
               Text(
-                '${DateFormatter.timeWithoutSecond(begin)}-${DateFormatter.timeWithoutSecond(end)}',
+                '${DateFormatter.timeWithoutSecond(begin)}'
+                '-'
+                '${DateFormatter.timeWithoutSecond(end)}',
                 style: Theme.of(context).textTheme.labelMedium,
               ),
             ],

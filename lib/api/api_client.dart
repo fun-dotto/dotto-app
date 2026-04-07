@@ -40,13 +40,17 @@ final apiClientProvider = Provider<Openapi>((ref) {
         },
         onResponse: (response, handler) {
           debugPrint(
-            'Response: ${response.statusCode} ${response.requestOptions.method} ${response.requestOptions.uri}',
+            'Response: ${response.statusCode} '
+            '${response.requestOptions.method} '
+            '${response.requestOptions.uri}',
           );
           return handler.next(response);
         },
         onError: (error, handler) {
           debugPrint(
-            'Response: ${error.response?.statusCode} ${error.requestOptions.method} ${error.requestOptions.uri}',
+            'Response: ${error.response?.statusCode} '
+            '${error.requestOptions.method} '
+            '${error.requestOptions.uri}',
           );
           return handler.next(error);
         },

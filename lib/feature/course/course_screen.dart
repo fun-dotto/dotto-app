@@ -134,7 +134,11 @@ final class CourseScreen extends HookConsumerWidget {
       //     label: 'Dotto Web',
       //     iconUrl: '${config.dottoWebUrl}/favicon.ico',
       //     fallbackIcon: Icons.language,
-      //     onPressed: () => _launchQuickLink(context, url: config.dottoWebUrl, label: 'Dotto Web'),
+      //     onPressed: () => _launchQuickLink(
+      //       context,
+      //       url: config.dottoWebUrl,
+      //       label: 'Dotto Web',
+      //     ),
       //   ),
       if (isAuthenticated)
         QuickButton(
@@ -149,8 +153,9 @@ final class CourseScreen extends HookConsumerWidget {
         ),
     ];
 
-    // courseReducerProvider.build() already fetches data when first watched.
-    // No need to call refresh() here as it would duplicate the initial API call.
+    // courseReducerProvider.build() already fetches data
+    // when first watched. No need to call refresh() here
+    // as it would duplicate the initial API call.
 
     useEffect(() {
       final days = state.value?.days;
