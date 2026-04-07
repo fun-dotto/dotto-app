@@ -63,8 +63,8 @@ Future<void> main() async {
   // ファイルをダウンロード
   try {
     await FirebaseStorageRepository().download('funch/menu.json');
-  } on Exception catch (e) {
-    debugPrint(e.toString());
+  } on Exception catch (e, stack) {
+    await FirebaseCrashlytics.instance.recordError(e, stack, reason: 'Failed to download menu.json');
   }
 
   // アプリの起動ログを送信
