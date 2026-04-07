@@ -1,5 +1,6 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:dotto/domain/course_registration.dart';
+import 'package:dotto/domain/domain_error.dart';
 import 'package:dotto/domain/faculty.dart';
 import 'package:dotto/domain/semester.dart';
 import 'package:dotto/domain/subject_faculty.dart';
@@ -40,11 +41,11 @@ final class CourseRegistrationRepositoryImpl implements CourseRegistrationReposi
         ),
       );
       if (response.statusCode != 200) {
-        throw Exception('Failed to get course registrations');
+        throw DomainError(type: DomainErrorType.invalidResponse, message: 'Failed to get course registrations');
       }
       final data = response.data;
       if (data == null) {
-        throw Exception('Failed to get course registrations');
+        throw DomainError(type: DomainErrorType.invalidResponse, message: 'Failed to get course registrations');
       }
       return data.courseRegistrations
           .map(
@@ -65,9 +66,11 @@ final class CourseRegistrationRepositoryImpl implements CourseRegistrationReposi
             ),
           )
           .toList();
-    } catch (e) {
-      debugPrint(e.toString());
+    } on DomainError {
       rethrow;
+    } on Exception catch (e, stackTrace) {
+      debugPrint(e.toString());
+      throw DomainError.fromException(e: e, stackTrace: stackTrace);
     }
   }
 
@@ -78,11 +81,13 @@ final class CourseRegistrationRepositoryImpl implements CourseRegistrationReposi
       final request = CourseRegistrationRequest((b) => b.subjectId = subjectId);
       final response = await api.courseRegistrationsV1Create(courseRegistrationRequest: request);
       if (response.statusCode != 201) {
-        throw Exception('Failed to register course');
+        throw DomainError(type: DomainErrorType.invalidResponse, message: 'Failed to register course');
       }
-    } catch (e) {
-      debugPrint(e.toString());
+    } on DomainError {
       rethrow;
+    } on Exception catch (e, stackTrace) {
+      debugPrint(e.toString());
+      throw DomainError.fromException(e: e, stackTrace: stackTrace);
     }
   }
 
@@ -92,11 +97,13 @@ final class CourseRegistrationRepositoryImpl implements CourseRegistrationReposi
       final api = apiClient.getCourseRegistrationsApi();
       final response = await api.courseRegistrationsV1Delete(id: id);
       if (response.statusCode != 204) {
-        throw Exception('Failed to unregister course');
+        throw DomainError(type: DomainErrorType.invalidResponse, message: 'Failed to unregister course');
       }
-    } catch (e) {
-      debugPrint(e.toString());
+    } on DomainError {
       rethrow;
+    } on Exception catch (e, stackTrace) {
+      debugPrint(e.toString());
+      throw DomainError.fromException(e: e, stackTrace: stackTrace);
     }
   }
 }

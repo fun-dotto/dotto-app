@@ -3,6 +3,7 @@ import 'dart:collection';
 import 'package:built_collection/built_collection.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dotto/domain/academic_area.dart';
+import 'package:dotto/domain/domain_error.dart';
 import 'package:dotto/domain/academic_class.dart';
 import 'package:dotto/domain/cultural_subject_category.dart';
 import 'package:dotto/domain/faculty.dart';
@@ -143,11 +144,11 @@ final class SubjectRepositoryImpl implements SubjectRepository {
               ),
       );
       if (response.statusCode != 200) {
-        throw Exception('Failed to get subjects');
+        throw DomainError(type: DomainErrorType.invalidResponse, message: 'Failed to get subjects');
       }
       final data = response.data;
       if (data == null) {
-        throw Exception('Failed to get subjects');
+        throw DomainError(type: DomainErrorType.invalidResponse, message: 'Failed to get subjects');
       }
       return data.subjects
           .map(
@@ -178,9 +179,11 @@ final class SubjectRepositoryImpl implements SubjectRepository {
             ),
           )
           .toList();
-    } catch (e) {
-      debugPrint(e.toString());
+    } on DomainError {
       rethrow;
+    } on Exception catch (e, stackTrace) {
+      debugPrint(e.toString());
+      throw DomainError.fromException(e: e, stackTrace: stackTrace);
     }
   }
 
@@ -190,11 +193,11 @@ final class SubjectRepositoryImpl implements SubjectRepository {
       final api = apiClient.getSubjectsApi();
       final response = await api.subjectsV1Detail(id: id);
       if (response.statusCode != 200) {
-        throw Exception('Failed to get subject');
+        throw DomainError(type: DomainErrorType.invalidResponse, message: 'Failed to get subject');
       }
       final data = response.data;
       if (data == null) {
-        throw Exception('Failed to get subject');
+        throw DomainError(type: DomainErrorType.invalidResponse, message: 'Failed to get subject');
       }
       final subject = data.subject;
       final db = await SyllabusDatabaseHelper.getDatabase();
@@ -228,7 +231,7 @@ final class SubjectRepositoryImpl implements SubjectRepository {
           DottoFoundationV1CourseSemester.q4 => Semester.q4,
           DottoFoundationV1CourseSemester.summerIntensive => Semester.summerIntensive,
           DottoFoundationV1CourseSemester.winterIntensive => Semester.winterIntensive,
-          _ => throw Exception('Invalid semester: ${subject.semester}'),
+          _ => throw DomainError(type: DomainErrorType.invalidData, message: 'Invalid semester: ${subject.semester}'),
         },
         credit: subject.credit,
         eligibleAttributes: subject.eligibleAttributes
@@ -244,7 +247,7 @@ final class SubjectRepositoryImpl implements SubjectRepository {
                   DottoFoundationV1Grade.d1 => Grade.d1,
                   DottoFoundationV1Grade.d2 => Grade.d2,
                   DottoFoundationV1Grade.d3 => Grade.d3,
-                  _ => throw Exception('Invalid grade: ${e.grade}'),
+                  _ => throw DomainError(type: DomainErrorType.invalidData, message: 'Invalid grade: ${e.grade}'),
                 },
                 class_: switch (e.class_) {
                   DottoFoundationV1Class.A => AcademicClass.a,
@@ -260,7 +263,7 @@ final class SubjectRepositoryImpl implements SubjectRepository {
                   DottoFoundationV1Class.K => AcademicClass.k,
                   DottoFoundationV1Class.L => AcademicClass.l,
                   null => null,
-                  _ => throw Exception('Invalid class: ${e.class_}'),
+                  _ => throw DomainError(type: DomainErrorType.invalidData, message: 'Invalid class: ${e.class_}'),
                 },
               ),
             )
@@ -274,13 +277,16 @@ final class SubjectRepositoryImpl implements SubjectRepository {
                   DottoFoundationV1Course.complexSystem => AcademicArea.complexCourse,
                   DottoFoundationV1Course.intelligentSystem => AcademicArea.intelligenceSystemCourse,
                   DottoFoundationV1Course.advancedICT => AcademicArea.advancedICTCourse,
-                  _ => throw Exception('Invalid course: ${e.course}'),
+                  _ => throw DomainError(type: DomainErrorType.invalidData, message: 'Invalid course: ${e.course}'),
                 },
                 requirementType: switch (e.requirementType) {
                   DottoFoundationV1SubjectRequirementType.required_ => SubjectRequirementType.required,
                   DottoFoundationV1SubjectRequirementType.optional => SubjectRequirementType.optional,
                   DottoFoundationV1SubjectRequirementType.optionalRequired => SubjectRequirementType.optionalRequired,
-                  _ => throw Exception('Invalid requirement type: ${e.requirementType}'),
+                  _ => throw DomainError(
+                    type: DomainErrorType.invalidData,
+                    message: 'Invalid requirement type: ${e.requirementType}',
+                  ),
                 },
               ),
             )
@@ -316,28 +322,34 @@ final class SubjectRepositoryImpl implements SubjectRepository {
         ),
         pastExamId: pastExamId,
       );
-    } catch (e) {
-      debugPrint(e.toString());
+    } on DomainError {
       rethrow;
+    } on Exception catch (e, stackTrace) {
+      debugPrint(e.toString());
+      throw DomainError.fromException(e: e, stackTrace: stackTrace);
     }
   }
 
   @override
   Future<List<SubjectFeedback>> getFeedbacks(String lessonId) async {
-    final querySnapshot = await FirebaseFirestore.instance
-        .collection('feedback')
-        .where('lessonId', isEqualTo: int.parse(lessonId))
-        .get();
-    final feedbacks = <SubjectFeedback>[];
-    for (final doc in querySnapshot.docs) {
-      final score = doc['score'] as double?;
-      final comment = doc['detail'] as String?;
-      if (score == null || comment == null) {
-        continue;
+    try {
+      final querySnapshot = await FirebaseFirestore.instance
+          .collection('feedback')
+          .where('lessonId', isEqualTo: int.parse(lessonId))
+          .get();
+      final feedbacks = <SubjectFeedback>[];
+      for (final doc in querySnapshot.docs) {
+        final score = doc['score'] as double?;
+        final comment = doc['detail'] as String?;
+        if (score == null || comment == null) {
+          continue;
+        }
+        feedbacks.add(SubjectFeedback(score: score.toInt(), comment: comment));
       }
-      feedbacks.add(SubjectFeedback(score: score.toInt(), comment: comment));
+      return feedbacks;
+    } on Exception catch (e, stackTrace) {
+      throw DomainError.fromException(e: e, stackTrace: stackTrace);
     }
-    return feedbacks;
   }
 
   @override
@@ -347,22 +359,26 @@ final class SubjectRepositoryImpl implements SubjectRepository {
     required int score,
     required String comment,
   }) async {
-    final querySnapshot = await FirebaseFirestore.instance
-        .collection('feedback')
-        .where('User', isEqualTo: userId)
-        .where('lessonId', isEqualTo: int.parse(lessonId))
-        .get();
+    try {
+      final querySnapshot = await FirebaseFirestore.instance
+          .collection('feedback')
+          .where('User', isEqualTo: userId)
+          .where('lessonId', isEqualTo: int.parse(lessonId))
+          .get();
 
-    if (querySnapshot.docs.isNotEmpty) {
-      final docId = querySnapshot.docs[0].id;
-      await FirebaseFirestore.instance.collection('feedback').doc(docId).update({'score': score, 'detail': comment});
-    } else {
-      await FirebaseFirestore.instance.collection('feedback').add({
-        'User': userId,
-        'lessonId': int.parse(lessonId),
-        'score': score.toDouble(),
-        'detail': comment,
-      });
+      if (querySnapshot.docs.isNotEmpty) {
+        final docId = querySnapshot.docs[0].id;
+        await FirebaseFirestore.instance.collection('feedback').doc(docId).update({'score': score, 'detail': comment});
+      } else {
+        await FirebaseFirestore.instance.collection('feedback').add({
+          'User': userId,
+          'lessonId': int.parse(lessonId),
+          'score': score.toDouble(),
+          'detail': comment,
+        });
+      }
+    } on Exception catch (e, stackTrace) {
+      throw DomainError.fromException(e: e, stackTrace: stackTrace);
     }
   }
 }

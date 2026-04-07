@@ -1,4 +1,5 @@
 import 'package:dotto/domain/announcement.dart';
+import 'package:dotto/domain/domain_error.dart';
 import 'package:dotto/feature/announcement/announcement_viewmodel.dart';
 import 'package:dotto/feature/announcement/announcement_viewstate.dart';
 import 'package:dotto/repository/announcement_repository.dart';
@@ -86,7 +87,7 @@ void main() {
   group('AnnouncementViewModel 異常系', () {
     setUp(() {
       when(announcementRepository.getAnnouncements()).thenAnswer((_) async {
-        throw Exception('Failed to get announcements');
+        throw DomainError(type: DomainErrorType.invalidResponse, message: 'Failed to get announcements');
       });
     });
 

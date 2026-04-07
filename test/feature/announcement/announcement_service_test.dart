@@ -1,4 +1,5 @@
 import 'package:dotto/domain/announcement.dart';
+import 'package:dotto/domain/domain_error.dart';
 import 'package:dotto/feature/announcement/announcement_service.dart';
 import 'package:dotto/repository/announcement_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -62,12 +63,14 @@ void main() {
 
   group('AnnouncementService 異常系', () {
     test('getAnnouncements がリポジトリの例外をそのまま伝播する', () async {
-      when(announcementRepository.getAnnouncements()).thenThrow(Exception('Failed to get announcements'));
+      when(
+        announcementRepository.getAnnouncements(),
+      ).thenThrow(DomainError(type: DomainErrorType.invalidResponse, message: 'Failed to get announcements'));
 
       final container = createContainer();
       final service = container.read(announcementServiceProvider);
 
-      expect(() => service.getAnnouncements(), throwsA(isA<Exception>()));
+      expect(() => service.getAnnouncements(), throwsA(isA<DomainError>()));
 
       verify(announcementRepository.getAnnouncements()).called(1);
     });

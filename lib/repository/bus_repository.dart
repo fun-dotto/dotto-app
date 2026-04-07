@@ -1,5 +1,6 @@
 import 'package:dotto/domain/bus_stop.dart';
 import 'package:dotto/domain/bus_trip.dart';
+import 'package:dotto/domain/domain_error.dart';
 import 'package:dotto/helper/firebase_realtime_database_repository.dart';
 
 abstract class BusRepository {
@@ -14,19 +15,27 @@ final class BusRepositoryImpl implements BusRepository {
 
   @override
   Future<List<BusStop>> getAllBusStops() async {
-    final snapshot = await _database.getData('bus/stops');
-    if (snapshot.exists) {
+    try {
+      final snapshot = await _database.getData('bus/stops');
+      if (!snapshot.exists) {
+        throw DomainError(type: DomainErrorType.notFound, message: 'Failed to fetch bus stops');
+      }
       final busDataStops = snapshot.value! as List;
       return busDataStops.map((e) => BusStop.fromFirebase(Map<String, dynamic>.from(e as Map))).toList();
-    } else {
-      throw Exception('Failed to fetch bus stops');
+    } on DomainError {
+      rethrow;
+    } on Exception catch (e, stackTrace) {
+      throw DomainError.fromException(e: e, stackTrace: stackTrace);
     }
   }
 
   @override
   Future<Map<String, Map<String, List<BusTrip>>>> getBusTrips(List<BusStop> allBusStops) async {
-    final snapshot = await _database.getData('bus/trips');
-    if (snapshot.exists) {
+    try {
+      final snapshot = await _database.getData('bus/trips');
+      if (!snapshot.exists) {
+        throw DomainError(type: DomainErrorType.notFound, message: 'Failed to fetch bus trips');
+      }
       final busTripsData = snapshot.value! as Map;
       final allBusTrips = <String, Map<String, List<BusTrip>>>{
         'from_fun': {'holiday': [], 'weekday': []},
@@ -42,8 +51,10 @@ final class BusRepositoryImpl implements BusRepository {
         });
       });
       return allBusTrips;
-    } else {
-      throw Exception('Failed to fetch bus trips');
+    } on DomainError {
+      rethrow;
+    } on Exception catch (e, stackTrace) {
+      throw DomainError.fromException(e: e, stackTrace: stackTrace);
     }
   }
 }
