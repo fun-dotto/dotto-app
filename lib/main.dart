@@ -24,6 +24,15 @@ Future<void> main() async {
 
   // Firebaseの初期化
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  // Firebase Realtime Databaseのパーシステンスを有効化
+  // 他のFirebaseサービスより先に呼び出す必要がある
+  try {
+    FirebaseDatabase.instance.setPersistenceEnabled(true);
+  } on Exception catch (e) {
+    debugPrint('Failed to set persistence enabled: $e');
+  }
+
   await FirebaseAuthHelper.initialize();
 
   // Firebase Crashlyticsの初期化
@@ -42,9 +51,6 @@ Future<void> main() async {
     providerApple: kReleaseMode ? const AppleAppAttestProvider() : const AppleDebugProvider(),
     providerAndroid: kReleaseMode ? const AndroidPlayIntegrityProvider() : const AndroidDebugProvider(),
   );
-
-  // Firebase Realtime Databaseのパーシステンスを有効化
-  FirebaseDatabase.instance.setPersistenceEnabled(true);
 
   // 画面の向きを固定
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
