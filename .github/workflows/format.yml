@@ -1,0 +1,42 @@
+name: Format
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types:
+      - opened
+      - ready_for_review
+      - reopened
+      - synchronize
+  schedule:
+    - cron: 0 15 * * *
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  format:
+    name: Format
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+      - uses: jdx/mise-action@v3
+      - name: Install dependencies
+        run: task install-all
+      - name: Run format
+        run: task format
+      - name: Check for diff
+        run: |
+          if [ -n "$(git diff --name-only)" ]; then
+            echo "::error::Code is not formatted. Run 'task format' and commit the changes."
+            git diff --name-only
+            exit 1
+          fi
