@@ -6,9 +6,17 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:openapi/openapi.dart';
 
-final apiClientProvider = Provider<Openapi>(
-  (ref) => Openapi(
-    basePathOverride: ref.watch(apiEnvironmentProvider).basePath,
+final apiClientProvider = Provider<Openapi>((ref) {
+  final basePath = ref.watch(apiEnvironmentProvider).basePath;
+  final dio = Dio(
+    BaseOptions(
+      baseUrl: basePath,
+      connectTimeout: const Duration(seconds: 10),
+      receiveTimeout: const Duration(seconds: 15),
+    ),
+  );
+  return Openapi(
+    dio: dio,
     interceptors: [
       InterceptorsWrapper(
         onRequest: (options, handler) async {
@@ -37,5 +45,5 @@ final apiClientProvider = Provider<Openapi>(
         },
       ),
     ],
-  ),
-);
+  );
+});
