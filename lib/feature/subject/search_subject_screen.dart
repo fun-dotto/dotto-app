@@ -267,11 +267,9 @@ class SearchSubjectScreen extends HookConsumerWidget {
           TextButton(
             onPressed: filter.hasActiveFilters
                 ? () {
-                    final notifier = ref.read(
-                      searchSubjectReducerProvider.notifier,
-                    );
-                    notifier.clearFilter();
-                    notifier.clearResults();
+                    ref.read(searchSubjectReducerProvider.notifier)
+                      ..clearFilter()
+                      ..clearResults();
                   }
                 : null,
             child: const Text('条件をクリア'),
@@ -297,8 +295,7 @@ class SearchSubjectScreen extends HookConsumerWidget {
                 onChanged: (value) {
                   final notifier = ref.read(
                     searchSubjectReducerProvider.notifier,
-                  );
-                  notifier.updateFilter(value);
+                  )..updateFilter(value);
                   unawaited(
                     notifier.search(
                       query: textEditingController.text,

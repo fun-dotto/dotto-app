@@ -233,8 +233,8 @@ void main() {
     );
     addTearDown(container.dispose);
 
-    final notifier = container.read(searchSubjectReducerProvider.notifier);
-    notifier.updateFilter(activeFilter);
+    final notifier = container.read(searchSubjectReducerProvider.notifier)
+      ..updateFilter(activeFilter);
     final searchFuture = notifier.search(query: 'math', filter: activeFilter);
 
     final loadingState = container.read(searchSubjectReducerProvider);
