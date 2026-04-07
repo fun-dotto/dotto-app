@@ -12,7 +12,10 @@
       "Bash(ls:*)",
       "Bash(task:*)",
       "Bash(wc:*)",
-      "Read(*)"
+      "Read(*)",
+      "mcp__dotto-figma__*",
+      "mcp__dotto-notion__*",
+      "mcp__firebase-mcp-server__*"
     ]
   }
 }
