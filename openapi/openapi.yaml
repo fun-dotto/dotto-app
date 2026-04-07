@@ -82,6 +82,9 @@ paths:
           description: Access is unauthorized.
       tags:
         - CancelledClasses
+      security:
+        - BearerAuth: []
+          FirebaseAppCheckAuth: []
   /v1/courseRegistrations:
     get:
       operationId: CourseRegistrationsV1_list
@@ -256,6 +259,9 @@ paths:
           description: Access is unauthorized.
       tags:
         - MakeupClasses
+      security:
+        - BearerAuth: []
+          FirebaseAppCheckAuth: []
   /v1/personalCalendarItems:
     get:
       operationId: PersonalCalendarItemsV1_list
@@ -338,6 +344,9 @@ paths:
           description: Access is unauthorized.
       tags:
         - RoomChanges
+      security:
+        - BearerAuth: []
+          FirebaseAppCheckAuth: []
   /v1/subjects:
     get:
       operationId: SubjectsV1_list
