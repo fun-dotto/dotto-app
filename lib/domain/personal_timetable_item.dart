@@ -11,7 +11,6 @@ abstract class PersonalTimetableItem with _$PersonalTimetableItem {
     required Period period,
     required SubjectSummary subject,
     required LectureStatus lectureStatus,
-    // TODO
     required String roomName,
   }) = _PersonalTimetableItem;
 }

@@ -65,6 +65,8 @@ dependencies:
 
 dev_dependencies:
   build_runner: 2.11.0
+  firebase_auth_platform_interface: any
+  firebase_core_platform_interface: any
   flutter_launcher_icons: 0.14.4
   flutter_lints: 6.0.0
   flutter_native_splash: 2.4.7
@@ -75,9 +77,6 @@ dev_dependencies:
   mockito: 5.6.3
   riverpod_generator: 4.0.0+1
   very_good_analysis: 10.1.0
-
-  firebase_auth_platform_interface: any
-  firebase_core_platform_interface: any
 flutter:
   assets:
     - assets/

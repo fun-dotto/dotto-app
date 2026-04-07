@@ -39,6 +39,8 @@ final class SearchSubjectReducer extends _$SearchSubjectReducer {
     final previousState = state.hasValue
         ? state.requireValue
         : const SearchSubjectState();
+    // ローディング中も前回の検索結果をUIに表示し続けるために必要
+    // ignore: invalid_use_of_internal_member
     state = const AsyncLoading<SearchSubjectState>().copyWithPrevious(
       previousAsyncState,
       isRefresh: false,
@@ -103,10 +105,10 @@ final class SearchSubjectReducer extends _$SearchSubjectReducer {
         return;
       }
 
-      state = AsyncError<SearchSubjectState>(
-        error,
-        stackTrace,
-      ).copyWithPrevious(previousAsyncState);
+      state = AsyncError<SearchSubjectState>(error, stackTrace)
+          // エラー発生時も前回の検索結果をUIに表示し続けるために必要
+          // ignore: invalid_use_of_internal_member
+          .copyWithPrevious(previousAsyncState);
     }
   }
 

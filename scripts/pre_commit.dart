@@ -1,4 +1,6 @@
 #!/usr/bin/env dart
+// CLIスクリプトのため、printによるコンソール出力を許可する。
+// ignore_for_file: avoid_print
 
 import 'dart:io';
 
@@ -75,7 +77,7 @@ Future<int> checkEnvKeysSecurity() async {
 
     var content = (contentResult.stdout as String).trim();
     // If empty, try to read from working tree (for new files)
-    if (content.isEmpty && await File(envFile).exists()) {
+    if (content.isEmpty && File(envFile).existsSync()) {
       content = await File(envFile).readAsString();
     }
 
