@@ -5,6 +5,7 @@ import 'package:dotto/domain/lecture_status.dart';
 import 'package:dotto/domain/period.dart';
 import 'package:dotto/domain/personal_timetable_day.dart';
 import 'package:dotto/domain/personal_timetable_item.dart';
+import 'package:dotto/domain/semester.dart';
 import 'package:dotto/domain/subject_faculty.dart';
 import 'package:dotto/domain/subject_summary.dart';
 import 'package:flutter/foundation.dart';
@@ -37,6 +38,14 @@ final class PersonalCalendarRepositoryImpl implements PersonalCalendarRepository
       final itemsByDate = <String, List<PersonalTimetableItem>>{};
       for (final item in data.personalCalendarItems) {
         final dateKey = '${item.date.year}-${item.date.month}-${item.date.day}';
+        final itemDate = DateTime(item.date.year, item.date.month, item.date.day);
+        final semester = toSemester(item.subject.semester);
+
+        // その日付に該当しない学期の授業は除外する
+        if (!semester.isActiveAt(itemDate)) {
+          continue;
+        }
+
         final timetableItem = PersonalTimetableItem(
           period: toPeriod(item.period),
           subject: SubjectSummary(
@@ -50,6 +59,7 @@ final class PersonalCalendarRepositoryImpl implements PersonalCalendarRepository
                   ),
                 )
                 .toList(),
+            semester: semester,
           ),
           lectureStatus: toLectureStatus(item.status),
           roomName: item.rooms.map((r) => r.name).join(', '),
@@ -91,6 +101,22 @@ final class PersonalCalendarRepositoryImpl implements PersonalCalendarRepository
       DottoFoundationV1PersonalCalendarItemStatus.roomChanged => LectureStatus.roomChanged,
       // TODO: API側でstatusの値が増えたときに例外を投げるようにするため、デフォルトはnormalにしておく
       DottoFoundationV1PersonalCalendarItemStatus() => LectureStatus.normal,
+    };
+  }
+
+  @visibleForTesting
+  static Semester toSemester(DottoFoundationV1CourseSemester semester) {
+    return switch (semester) {
+      DottoFoundationV1CourseSemester.h1 => Semester.h1,
+      DottoFoundationV1CourseSemester.h2 => Semester.h2,
+      DottoFoundationV1CourseSemester.allYear => Semester.allYear,
+      DottoFoundationV1CourseSemester.q1 => Semester.q1,
+      DottoFoundationV1CourseSemester.q2 => Semester.q2,
+      DottoFoundationV1CourseSemester.q3 => Semester.q3,
+      DottoFoundationV1CourseSemester.q4 => Semester.q4,
+      DottoFoundationV1CourseSemester.summerIntensive => Semester.summerIntensive,
+      DottoFoundationV1CourseSemester.winterIntensive => Semester.winterIntensive,
+      _ => throw UnsupportedError('Unsupported DottoFoundationV1CourseSemester: $semester'),
     };
   }
 }
