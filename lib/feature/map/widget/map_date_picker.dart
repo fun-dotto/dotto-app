@@ -1,3 +1,4 @@
+import 'package:dotto/helper/date_formatter.dart';
 import 'package:dotto_design_system/style/semantic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart';
@@ -34,18 +35,22 @@ final class MapDatePicker extends StatelessWidget {
   Widget _datePickerButton(BuildContext context, DateTime searchDatetime, DateTime monday, DateTime nextSunday) {
     return TextButton(
       style: TextButton.styleFrom(textStyle: Theme.of(context).textTheme.labelMedium, padding: EdgeInsets.zero),
-      onPressed: () {
-        DatePicker.showDateTimePicker(
+      onPressed: () async {
+        final locale = WidgetsBinding.instance.platformDispatcher.locale;
+        await DatePicker.showDateTimePicker(
           context,
           minTime: monday,
           maxTime: nextSunday,
           onConfirm: onDatePickerConfirmed,
           currentTime: searchDatetime,
-          locale: LocaleType.jp,
+          locale: locale,
         );
       },
       child: Column(
-        children: [Text(DateFormat('MM月dd日').format(searchDatetime)), Text(DateFormat('HH:mm').format(searchDatetime))],
+        children: [
+          Text(DateFormatter.dateWithoutYear(searchDatetime)),
+          Text(DateFormatter.timeWithoutSecond(searchDatetime)),
+        ],
       ),
     );
   }

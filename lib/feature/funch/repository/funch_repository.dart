@@ -1,7 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dotto/feature/funch/domain/firestore_funch_menu.dart';
 import 'package:dotto/feature/funch/domain/funch_menu.dart';
-import 'package:dotto/feature/funch/utility/datetime.dart';
+import 'package:dotto/helper/date_formatter.dart';
+import 'package:dotto/helper/datetime.dart';
 import 'package:dotto/helper/file_helper.dart';
 
 abstract interface class FunchRepositoryInterface {
@@ -57,7 +58,7 @@ final class FunchRepositoryImpl implements FunchRepositoryInterface {
     final firestoreFunchMenuList = <String, FirestoreFunchMenu>{};
     for (final doc in data.docs) {
       final menu = FirestoreFunchMenu.fromJson(doc.data());
-      firestoreFunchMenuList[DateTimeUtility.dateKey(menu.date)] = menu;
+      firestoreFunchMenuList[DateFormatter.date(menu.date)] = menu;
     }
 
     return firestoreFunchMenuList;

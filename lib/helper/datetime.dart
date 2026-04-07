@@ -1,5 +1,3 @@
-import 'package:intl/intl.dart';
-
 final class DateTimeUtility {
   /// Returns the first day of the month for the given date.
   static DateTime firstDateOfMonth(DateTime datetime) {
@@ -11,13 +9,7 @@ final class DateTimeUtility {
     return DateTime(datetime.year, datetime.month, datetime.day);
   }
 
-  static final DateFormat dateKeyFormatter = DateFormat('yyyy-MM-dd');
-
-  static String dateKey(DateTime datetime) {
-    return dateKeyFormatter.format(datetime);
-  }
-
-  static DateTime parseDateKey(String dateKey) {
-    return DateTime.parse(dateKey);
+  static DateTime parseDate(String date) {
+    return DateTime.parse(date);
   }
 }

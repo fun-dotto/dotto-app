@@ -2,6 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:dotto/domain/map_tile_props.dart';
 import 'package:dotto/domain/room.dart';
 import 'package:dotto/domain/room_equipment.dart';
+import 'package:dotto/helper/date_formatter.dart';
 import 'package:dotto_design_system/component/button.dart';
 import 'package:dotto_design_system/style/semantic_color.dart';
 import 'package:flutter/material.dart';
@@ -50,11 +51,10 @@ final class MapDetailBottomSheet extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text(DateFormat('MM/dd').format(begin), style: Theme.of(context).textTheme.labelMedium),
+              Text(DateFormatter.dateWithoutYear(begin), style: Theme.of(context).textTheme.labelMedium),
               const SizedBox(width: 5),
               Text(
-                '${DateFormat('HH:mm').format(begin)} - '
-                '${DateFormat('HH:mm').format(end)}',
+                '${DateFormatter.timeWithoutSecond(begin)}-${DateFormatter.timeWithoutSecond(end)}',
                 style: Theme.of(context).textTheme.labelMedium,
               ),
             ],

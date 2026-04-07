@@ -4,12 +4,12 @@ import 'package:dotto/feature/funch/controller/funch_mypage_card_index_controlle
 import 'package:dotto/feature/funch/controller/funch_today_daily_menu_controller.dart';
 import 'package:dotto/feature/funch/domain/funch_menu.dart';
 import 'package:dotto/feature/funch/funch.dart';
-import 'package:dotto/feature/funch/utility/datetime.dart';
 import 'package:dotto/feature/funch/widget/funch_price_list.dart';
+import 'package:dotto/helper/date_formatter.dart';
+import 'package:dotto/helper/datetime.dart';
 import 'package:dotto_design_system/style/semantic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 import 'package:shimmer_animation/shimmer_animation.dart';
 
 final class FunchMyPageCard extends ConsumerWidget {
@@ -21,17 +21,6 @@ final class FunchMyPageCard extends ConsumerWidget {
     } else {
       return const AssetImage(Asset.noImage);
     }
-  }
-
-  String _getDayString(DateTime date) {
-    final today = DateTime.now();
-    if (today.day == date.day) {
-      return '今日';
-    } else if (today.day + 1 == date.day) {
-      return '明日';
-    }
-    final formatter = DateFormat('MM月dd日');
-    return formatter.format(date);
   }
 
   Widget _buildEmptyCard(BuildContext context, DateTime date) {
@@ -127,10 +116,10 @@ final class FunchMyPageCard extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           spacing: 16,
           children: [
-            Text('${_getDayString(date)}の学食'),
+            Text('${DateFormatter.dateWithoutYear(date)}の学食'),
             funchDailyMenuList.when(
               data: (data) {
-                final menuItems = data[DateTimeUtility.dateKey(date)]?.menuItems;
+                final menuItems = data[DateFormatter.date(date)]?.menuItems;
                 if (menuItems == null) {
                   return _buildEmptyCard(context, date);
                 }

@@ -4,12 +4,12 @@ import 'package:dotto/feature/funch/controller/funch_date_controller.dart';
 import 'package:dotto/feature/funch/controller/funch_menu_type_controller.dart';
 import 'package:dotto/feature/funch/domain/funch_daily_menu.dart';
 import 'package:dotto/feature/funch/domain/funch_menu_category.dart';
-import 'package:dotto/feature/funch/utility/datetime.dart';
 import 'package:dotto/feature/funch/widget/funch_menu_card.dart';
+import 'package:dotto/helper/date_formatter.dart';
+import 'package:dotto/helper/datetime.dart';
 import 'package:dotto_design_system/style/semantic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 
 final class FunchScreen extends ConsumerWidget {
   const FunchScreen({super.key});
@@ -28,7 +28,7 @@ final class FunchScreen extends ConsumerWidget {
         return const SizedBox.shrink();
       },
       data: (data) {
-        final dailyMenu = data[DateTimeUtility.dateKey(date)];
+        final dailyMenu = data[DateFormatter.date(date)];
         if (dailyMenu == null) {
           return const SizedBox.shrink();
         }
@@ -46,7 +46,7 @@ final class FunchScreen extends ConsumerWidget {
         actions: [
           TextButton(
             child: Text(
-              getDateString(date),
+              DateFormatter.dateWithDayOfWeek(date),
               style: Theme.of(context).textTheme.titleMedium?.copyWith(color: SemanticColor.light.accentPrimary),
             ),
             onPressed: () async {
@@ -134,10 +134,6 @@ final class FunchScreen extends ConsumerWidget {
     return FunchMenuCategory.values.map((e) => makeMenuTypeButton(context, ref, e)).toList();
   }
 
-  String getDateString(DateTime date) {
-    return DateFormat.yMd('ja').add_E().format(date);
-  }
-
   Future<void> _showModalBottomSheet(BuildContext context, WidgetRef ref) async {
     final funchDailyMenuList = ref.watch(funchAllDailyMenuListProvider);
 
@@ -154,7 +150,7 @@ final class FunchScreen extends ConsumerWidget {
         return data.keys.map((e) {
           return InkWell(
             onTap: () {
-              ref.read(funchDateProvider.notifier).value = DateTimeUtility.parseDateKey(e);
+              ref.read(funchDateProvider.notifier).value = DateTimeUtility.parseDate(e);
               Navigator.of(context).pop();
             },
             child: Container(
@@ -165,7 +161,10 @@ final class FunchScreen extends ConsumerWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(getDateString(DateTimeUtility.parseDateKey(e)), style: Theme.of(context).textTheme.titleMedium),
+                  Text(
+                    DateFormatter.dateWithDayOfWeek(DateTimeUtility.parseDate(e)),
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
                 ],
               ),
             ),

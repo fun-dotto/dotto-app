@@ -2,7 +2,8 @@ import 'package:collection/collection.dart';
 import 'package:dotto/feature/funch/domain/funch_daily_menu.dart';
 import 'package:dotto/feature/funch/domain/funch_menu.dart';
 import 'package:dotto/feature/funch/repository/funch_repository.dart';
-import 'package:dotto/feature/funch/utility/datetime.dart';
+import 'package:dotto/helper/date_formatter.dart';
+import 'package:dotto/helper/datetime.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -31,10 +32,10 @@ final class FunchAllDailyMenuNotifier<FunchRepository extends FunchRepositoryInt
 
       for (final dateString in dailyMenuFromFirestore.keys) {
         final menuItems = <FunchMenu>[];
-        final date = DateTimeUtility.parseDateKey(dateString);
+        final date = DateTimeUtility.parseDate(dateString);
         final firstDayOfMonth = DateTimeUtility.firstDateOfMonth(date);
-        final monthlyMenu = monthlyMenuFromFirestore[DateTimeUtility.dateKey(firstDayOfMonth)];
-        final dailyMenu = dailyMenuFromFirestore[DateTimeUtility.dateKey(date)];
+        final monthlyMenu = monthlyMenuFromFirestore[DateFormatter.date(firstDayOfMonth)];
+        final dailyMenu = dailyMenuFromFirestore[DateFormatter.date(date)];
 
         for (final id in (monthlyMenu?.commonMenuIds ?? [])) {
           final menu = allCommonMenu.firstWhereOrNull((m) => m.id == id.toString());
@@ -60,7 +61,7 @@ final class FunchAllDailyMenuNotifier<FunchRepository extends FunchRepositoryInt
             menuItems.add(menu);
           }
         }
-        combinedMenus[DateTimeUtility.dateKey(date)] = FunchDailyMenu(menuItems);
+        combinedMenus[DateFormatter.date(date)] = FunchDailyMenu(menuItems);
       }
 
       return combinedMenus;

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:dotto/controller/user_controller.dart';
 import 'package:dotto/feature/course/course_cancellation_reducer.dart';
+import 'package:dotto/helper/date_formatter.dart';
 import 'package:dotto_design_system/component/button.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -269,7 +270,7 @@ class _RoomChangeList extends StatelessWidget {
 
 String _formatDate(Date value) {
   final dateTime = value.toDateTime();
-  return DateFormat.yMd('ja').add_E().format(dateTime);
+  return DateFormatter.dateWithDayOfWeek(dateTime);
 }
 
 String _formatPeriod(DottoFoundationV1Period period) {
