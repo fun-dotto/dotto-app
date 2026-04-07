@@ -13,9 +13,13 @@ final apiClientProvider = Provider<Openapi>(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
           debugPrint('Request: ${options.method} ${options.uri}');
-          final appCheckToken = await FirebaseAppCheck.instance.getToken();
-          if (appCheckToken != null) {
-            options.headers['X-Firebase-AppCheck'] = 'Bearer $appCheckToken';
+          try {
+            final appCheckToken = await FirebaseAppCheck.instance.getToken();
+            if (appCheckToken != null) {
+              options.headers['X-Firebase-AppCheck'] = 'Bearer $appCheckToken';
+            }
+          } on Exception catch (e) {
+            debugPrint('App Check token retrieval failed: $e');
           }
           final idToken = await FirebaseAuth.instance.currentUser?.getIdToken();
           if (idToken != null) {
