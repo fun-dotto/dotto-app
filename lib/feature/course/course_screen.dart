@@ -393,14 +393,11 @@ final class CourseScreen extends HookConsumerWidget {
                   )
                 else
                   const Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 48,
-                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 48),
                     child: Center(
                       child: DottoButton(
                         onPressed: null,
-                        child: const Text('ログインして時間割機能を使う'),
+                        child: Text('ログインして時間割機能を使う'),
                       ),
                     ),
                   ),
@@ -411,7 +408,7 @@ final class CourseScreen extends HookConsumerWidget {
                       DottoButton(
                         onPressed: null,
                         type: DottoButtonType.text,
-                        child: const Text('1週間の時間割'),
+                        child: Text('1週間の時間割'),
                       ),
                     ],
                   ),

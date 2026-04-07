@@ -22,7 +22,7 @@ void main() {
     Announcement(
       id: '1',
       title: 'お知らせ1',
-      date: DateTime(2025, 1, 1),
+      date: DateTime(2025),
       url: 'https://example.com/announcement1',
     ),
     Announcement(
@@ -83,7 +83,7 @@ void main() {
   group('AnnouncementService 異常系', () {
     test('getAnnouncements がリポジトリの例外をそのまま伝播する', () async {
       when(announcementRepository.getAnnouncements()).thenThrow(
-        DomainError(
+        const DomainError(
           type: DomainErrorType.invalidResponse,
           message: 'Failed to get announcements',
         ),
@@ -92,7 +92,7 @@ void main() {
       final container = createContainer();
       final service = container.read(announcementServiceProvider);
 
-      expect(() => service.getAnnouncements(), throwsA(isA<DomainError>()));
+      expect(service.getAnnouncements, throwsA(isA<DomainError>()));
 
       verify(announcementRepository.getAnnouncements()).called(1);
     });

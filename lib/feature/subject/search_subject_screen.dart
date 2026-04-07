@@ -51,7 +51,7 @@ class SearchSubjectScreen extends HookConsumerWidget {
     final searchState = ref.watch(searchSubjectReducerProvider);
     final filter = searchState.hasValue
         ? searchState.requireValue.filter
-        : SubjectFilter();
+        : const SubjectFilter();
 
     Future<void> search() async {
       await ref
@@ -114,11 +114,7 @@ class SearchSubjectScreen extends HookConsumerWidget {
           final creditLabel = subject.credit != null
               ? '${subject.credit}単位'
               : null;
-          final timeLine = [
-            if (semesterLabel != null) semesterLabel,
-            if (slotLabel != null) slotLabel,
-            if (creditLabel != null) creditLabel,
-          ].join(' ');
+          final timeLine = [?semesterLabel, ?slotLabel, ?creditLabel].join(' ');
           if (timeLine.isNotEmpty) {
             lines.add(timeLine);
           }

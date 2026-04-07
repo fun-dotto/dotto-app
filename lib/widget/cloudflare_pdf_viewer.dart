@@ -196,10 +196,10 @@ final class _CloudflarePdfViewerState extends State<CloudflarePdfViewer>
           },
           onPageError: (page, error) {
             setState(() {
-              _errorMessage = 'ページ $page の読み込みエラー: ${error.toString()}';
+              _errorMessage = 'ページ $page の読み込みエラー: $error';
             });
           },
-          onPageChanged: (int? page, int? total) {
+          onPageChanged: (page, total) {
             setState(() {
               _currentPage = page ?? 0;
             });

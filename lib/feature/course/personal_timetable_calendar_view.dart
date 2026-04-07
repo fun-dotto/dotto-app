@@ -319,7 +319,6 @@ final class PersonalTimetableCalendarView extends HookConsumerWidget {
                 mainAxisAlignment: isTimetableTimeVisible
                     ? MainAxisAlignment.spaceBetween
                     : MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
                     period.number.toString(),
@@ -333,7 +332,6 @@ final class PersonalTimetableCalendarView extends HookConsumerWidget {
                       padding: const EdgeInsets.symmetric(vertical: 4),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Text(
                             _formatTime(period.startTime),

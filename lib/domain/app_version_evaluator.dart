@@ -25,8 +25,8 @@ final class AppVersionEvaluator {
     final valid = _parseVersion(validAppVersion);
     final latest = _parseVersion(latestAppVersion);
 
-    final isValid = valid == null ? true : _compare(current, valid) >= 0;
-    final isLatest = latest == null ? true : _compare(current, latest) >= 0;
+    final isValid = valid == null || _compare(current, valid) >= 0;
+    final isLatest = latest == null || _compare(current, latest) >= 0;
 
     return AppVersionEvaluation(
       isValidAppVersion: isValid,

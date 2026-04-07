@@ -171,12 +171,12 @@ void main() {
       ),
       courseRegistrationRepository: FakeCourseRegistrationRepository(
         result: [
-          CourseRegistration(
+          const CourseRegistration(
             id: 'registration-1',
             subject: domain.SubjectSummary(
               id: 's1',
               name: 'Math',
-              faculties: const [],
+              faculties: [],
             ),
           ),
         ],
@@ -217,12 +217,12 @@ void main() {
       ),
       courseRegistrationRepository: FakeCourseRegistrationRepository(
         result: [
-          CourseRegistration(
+          const CourseRegistration(
             id: 'registration-1',
             subject: domain.SubjectSummary(
               id: 's1',
               name: 'Math',
-              faculties: const [],
+              faculties: [],
             ),
           ),
         ],

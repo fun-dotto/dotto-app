@@ -33,8 +33,8 @@ abstract class OneWeekScheduleEntry with _$OneWeekScheduleEntry {
 
   static int? _toNullableInt(Object? value) {
     return switch (value) {
-      int number => number,
-      String text => int.tryParse(text),
+      final int number => number,
+      final String text => int.tryParse(text),
       _ => null,
     };
   }

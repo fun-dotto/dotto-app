@@ -34,14 +34,18 @@ final class DomainError implements Exception {
       case DioExceptionType.badResponse:
         final statusCode = e.response?.statusCode;
         if (statusCode != null) {
-          if (statusCode == 401)
+          if (statusCode == 401) {
             return DomainError.unauthorized(e: e, stackTrace: stackTrace);
-          if (statusCode == 403)
+          }
+          if (statusCode == 403) {
             return DomainError.forbidden(e: e, stackTrace: stackTrace);
-          if (statusCode == 404)
+          }
+          if (statusCode == 404) {
             return DomainError.notFound(e: e, stackTrace: stackTrace);
-          if (statusCode >= 500)
+          }
+          if (statusCode >= 500) {
             return DomainError.server(e: e, stackTrace: stackTrace);
+          }
         }
         return DomainError.invalidResponse(e: e, stackTrace: stackTrace);
       case DioExceptionType.cancel:

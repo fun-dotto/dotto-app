@@ -52,8 +52,7 @@ final class SearchSubjectReducer extends _$SearchSubjectReducer {
       final subjectRepository = ref.read(subjectRepositoryProvider);
       final timetableRepository = ref.read(timetableRepositoryProvider);
 
-      final Future<List<CourseRegistration>> courseRegistrationsFuture =
-          isAuthenticated
+      final courseRegistrationsFuture = isAuthenticated
           ? courseRegistrationRepository.getCourseRegistrations(Semester.values)
           : Future.value(const <CourseRegistration>[]);
       final subjectsFuture = subjectRepository.getSubjects(query, filter);
@@ -195,7 +194,7 @@ final class SearchSubjectReducer extends _$SearchSubjectReducer {
 
   void clearFilter() {
     final currentState = state.asData?.value ?? const SearchSubjectState();
-    state = AsyncData(currentState.copyWith(filter: SubjectFilter()));
+    state = AsyncData(currentState.copyWith(filter: const SubjectFilter()));
   }
 
   void _updateSubjectRegistrationState({

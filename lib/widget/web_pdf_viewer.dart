@@ -193,10 +193,10 @@ final class _WebPdfViewerState extends State<WebPdfViewer>
           },
           onPageError: (page, error) {
             setState(() {
-              _errorMessage = 'ページ $page の読み込みエラー: ${error.toString()}';
+              _errorMessage = 'ページ $page の読み込みエラー: $error';
             });
           },
-          onPageChanged: (int? page, int? total) {
+          onPageChanged: (page, total) {
             setState(() {
               _currentPage = page ?? 0;
             });

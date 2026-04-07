@@ -23,7 +23,7 @@ void main() {
     Announcement(
       id: '1',
       title: 'お知らせ1',
-      date: DateTime(2025, 1, 1),
+      date: DateTime(2025),
       url: 'https://example.com/announcement1',
     ),
     Announcement(
@@ -125,7 +125,7 @@ void main() {
   group('AnnouncementViewModel 異常系', () {
     setUp(() {
       when(announcementRepository.getAnnouncements()).thenAnswer((_) async {
-        throw DomainError(
+        throw const DomainError(
           type: DomainErrorType.invalidResponse,
           message: 'Failed to get announcements',
         );

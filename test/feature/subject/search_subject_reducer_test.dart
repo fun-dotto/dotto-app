@@ -105,7 +105,7 @@ final class FakeTimetableRepository implements TimetableRepository {
 }
 
 void main() {
-  final filter = SubjectFilter();
+  const filter = SubjectFilter();
 
   ProviderContainer createContainer({
     required FakeCourseRegistrationRepository courseRegistrationRepository,
@@ -125,19 +125,19 @@ void main() {
   }
 
   test('search で slots と isAddedToTimetable がマージされる', () async {
-    final withSlot = SubjectSummary(
+    const withSlot = SubjectSummary(
       id: 'subject-1',
       name: 'Math',
-      faculties: const [],
+      faculties: [],
     );
-    final withoutSlot = SubjectSummary(
+    const withoutSlot = SubjectSummary(
       id: 'subject-2',
       name: 'English',
-      faculties: const [],
+      faculties: [],
     );
 
     final courseRegistrationRepository = FakeCourseRegistrationRepository(
-      result: [CourseRegistration(id: 'reg-1', subject: withSlot)],
+      result: [const CourseRegistration(id: 'reg-1', subject: withSlot)],
     );
     final subjectRepository = FakeSubjectRepository(
       resultsByQuery: {
@@ -146,10 +146,10 @@ void main() {
     );
     final timetableRepository = FakeTimetableRepository(
       result: [
-        TimetableItem(
+        const TimetableItem(
           id: 'item-1',
           subject: withSlot,
-          slot: const TimetableSlot(
+          slot: TimetableSlot(
             dayOfWeek: DayOfWeek.monday,
             period: Period.first,
           ),
@@ -184,10 +184,10 @@ void main() {
   });
 
   test('timetableItems は初回検索のみ取得される', () async {
-    final subject = SubjectSummary(
+    const subject = SubjectSummary(
       id: 'subject-1',
       name: 'Math',
-      faculties: const [],
+      faculties: [],
     );
 
     final courseRegistrationRepository = FakeCourseRegistrationRepository(
@@ -219,7 +219,7 @@ void main() {
 
   test('search 中も直前の filter を保持する', () async {
     final delayedSubjects = Completer<List<SubjectSummary>>();
-    final activeFilter = SubjectFilter(grades: const []);
+    const activeFilter = SubjectFilter();
     final subjectRepository = FakeSubjectRepository(
       resultsByQuery: const {},
       futuresByQuery: {'math': delayedSubjects.future},
@@ -249,17 +249,17 @@ void main() {
   test('古い検索結果では filter と subjects を巻き戻さない', () async {
     final firstSubjects = Completer<List<SubjectSummary>>();
     final secondSubjects = Completer<List<SubjectSummary>>();
-    final firstFilter = SubjectFilter(grades: const []);
-    final secondFilter = SubjectFilter(semesters: const [Semester.h1]);
-    final oldSubject = SubjectSummary(
+    const firstFilter = SubjectFilter();
+    const secondFilter = SubjectFilter(semesters: [Semester.h1]);
+    const oldSubject = SubjectSummary(
       id: 'subject-old',
       name: 'Old',
-      faculties: const [],
+      faculties: [],
     );
-    final newSubject = SubjectSummary(
+    const newSubject = SubjectSummary(
       id: 'subject-new',
       name: 'New',
-      faculties: const [],
+      faculties: [],
     );
 
     final subjectRepository = FakeSubjectRepository(

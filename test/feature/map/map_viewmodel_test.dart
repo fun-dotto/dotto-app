@@ -37,7 +37,7 @@ void main() {
       keywords: ['講キーワード義キーワード室1', '講キーワード義キーワード室2'],
       schedules: [
         RoomSchedule(
-          beginDatetime: DateTime(2025, 11, 1, 9, 0),
+          beginDatetime: DateTime(2025, 11, 1, 9),
           endDatetime: DateTime(2025, 11, 1, 10, 30),
           title: '情報学入門',
         ),
@@ -357,7 +357,7 @@ void main() {
   group('MapViewModel 異常系', () {
     setUp(() {
       when(roomRepository.getRooms()).thenAnswer((_) async {
-        throw DomainError(
+        throw const DomainError(
           type: DomainErrorType.invalidResponse,
           message: 'Failed to get rooms',
         );

@@ -20,14 +20,14 @@ void main() {
   final listener = MockListener<AsyncValue<GitHubContributorViewState>>();
 
   final testGitHubContributors = [
-    GitHubProfile(
+    const GitHubProfile(
       id: '1',
       login: 'GitHubUser1',
       avatarUrl: 'https://avatars.githubusercontent.com/u/1?v=4',
       htmlUrl: 'https://github.com/GitHubUser1',
       contributions: 50,
     ),
-    GitHubProfile(
+    const GitHubProfile(
       id: '2',
       login: 'GitHubUser2',
       avatarUrl: 'https://avatars.githubusercontent.com/u/2?v=4',
@@ -162,7 +162,7 @@ void main() {
   group('GitHubContributorViewModel 異常系', () {
     setUp(() {
       when(githubContributorRepository.getContributors()).thenAnswer((_) async {
-        throw DomainError(
+        throw const DomainError(
           type: DomainErrorType.invalidResponse,
           message: 'Failed to get contributors',
         );

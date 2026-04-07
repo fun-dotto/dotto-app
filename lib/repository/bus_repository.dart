@@ -20,7 +20,7 @@ final class BusRepositoryImpl implements BusRepository {
     try {
       final snapshot = await _database.getData('bus/stops');
       if (!snapshot.exists) {
-        throw DomainError(
+        throw const DomainError(
           type: DomainErrorType.notFound,
           message: 'Failed to fetch bus stops',
         );
@@ -43,7 +43,7 @@ final class BusRepositoryImpl implements BusRepository {
     try {
       final snapshot = await _database.getData('bus/trips');
       if (!snapshot.exists) {
-        throw DomainError(
+        throw const DomainError(
           type: DomainErrorType.notFound,
           message: 'Failed to fetch bus trips',
         );

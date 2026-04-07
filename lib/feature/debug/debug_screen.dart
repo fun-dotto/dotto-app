@@ -104,7 +104,7 @@ final class DebugScreen extends HookConsumerWidget {
               child: ListTile(
                 contentPadding: EdgeInsets.zero,
                 title: const Text('Force true'),
-                trailing: isFunchEnabledOverride == true
+                trailing: isFunchEnabledOverride ?? false
                     ? const Icon(Icons.check)
                     : null,
               ),

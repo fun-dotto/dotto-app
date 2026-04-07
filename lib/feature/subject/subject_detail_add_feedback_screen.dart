@@ -58,7 +58,7 @@ final class SubjectDetailAddFeedbackScreen extends HookConsumerWidget {
                   debugPrint(e.toString());
                   if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('フィードバックの投稿に失敗しました。')),
+                      const SnackBar(content: Text('フィードバックの投稿に失敗しました。')),
                     );
                   }
                 }

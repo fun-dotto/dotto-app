@@ -99,7 +99,7 @@ final class OnboardingScreen extends HookWidget {
         final estimatedTitleHeight =
             (titleStyle?.fontSize ?? 28) * (titleStyle?.height ?? 1.1);
         final estimatedDescriptionHeight =
-            ((bodyStyle?.fontSize ?? 16) * (bodyStyle?.height ?? 1.4) * 2);
+            (bodyStyle?.fontSize ?? 16) * (bodyStyle?.height ?? 1.4) * 2;
         const horizontalPadding = 0.0;
         const topPadding = 0.0;
         const bottomPadding = 0.0;

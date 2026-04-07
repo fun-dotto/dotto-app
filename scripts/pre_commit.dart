@@ -73,7 +73,7 @@ Future<int> checkEnvKeysSecurity() async {
       return 1;
     }
 
-    String content = (contentResult.stdout as String).trim();
+    var content = (contentResult.stdout as String).trim();
     // If empty, try to read from working tree (for new files)
     if (content.isEmpty && await File(envFile).exists()) {
       content = await File(envFile).readAsString();
@@ -97,7 +97,7 @@ Future<int> checkEnvKeysSecurity() async {
       print('平文のままコミットしようとしている行:');
       for (final line in unencryptedLines) {
         // セキュリティのため、キー名のみ表示し値はマスクする
-        final keyMatch = RegExp(r'^([^=]+)=').firstMatch(line);
+        final keyMatch = RegExp('^([^=]+)=').firstMatch(line);
         if (keyMatch != null) {
           print('$red  ${keyMatch.group(1)}=***$reset');
         } else {

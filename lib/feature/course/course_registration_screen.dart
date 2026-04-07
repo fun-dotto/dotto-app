@@ -125,7 +125,6 @@ class CourseRegistrationScreen extends HookConsumerWidget {
       ),
       padding: const EdgeInsets.all(8),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           _skeletonBox(height: 14, width: 56, radius: 4),

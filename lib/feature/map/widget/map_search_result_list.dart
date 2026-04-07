@@ -27,7 +27,7 @@ final class MapSearchResultList extends StatelessWidget {
             child: ListView.separated(
               itemCount: rooms.length,
               separatorBuilder: (_, _) => const Divider(height: 0),
-              itemBuilder: (context, int index) {
+              itemBuilder: (context, index) {
                 final item = rooms[index];
                 return ListTile(
                   title: Text(item.name),

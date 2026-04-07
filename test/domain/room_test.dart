@@ -19,7 +19,7 @@ void main() {
     group('スケジュールがない場合', () {
       test('falseを返す', () {
         final room = createRoom(schedules: []);
-        final dateTime = DateTime(2025, 11, 1, 10, 0);
+        final dateTime = DateTime(2025, 11, 1, 10);
 
         expect(room.isInUse(dateTime), isFalse);
       });
@@ -30,13 +30,13 @@ void main() {
         final room = createRoom(
           schedules: [
             RoomSchedule(
-              beginDatetime: DateTime(2025, 11, 1, 9, 0),
+              beginDatetime: DateTime(2025, 11, 1, 9),
               endDatetime: DateTime(2025, 11, 1, 10, 30),
               title: 'テスト講義',
             ),
           ],
         );
-        final dateTime = DateTime(2025, 11, 1, 10, 0);
+        final dateTime = DateTime(2025, 11, 1, 10);
 
         expect(room.isInUse(dateTime), isTrue);
       });
@@ -45,13 +45,13 @@ void main() {
         final room = createRoom(
           schedules: [
             RoomSchedule(
-              beginDatetime: DateTime(2025, 11, 1, 9, 0),
+              beginDatetime: DateTime(2025, 11, 1, 9),
               endDatetime: DateTime(2025, 11, 1, 10, 30),
               title: 'テスト講義',
             ),
           ],
         );
-        final dateTime = DateTime(2025, 11, 1, 8, 0);
+        final dateTime = DateTime(2025, 11, 1, 8);
 
         expect(room.isInUse(dateTime), isFalse);
       });
@@ -60,13 +60,13 @@ void main() {
         final room = createRoom(
           schedules: [
             RoomSchedule(
-              beginDatetime: DateTime(2025, 11, 1, 9, 0),
+              beginDatetime: DateTime(2025, 11, 1, 9),
               endDatetime: DateTime(2025, 11, 1, 10, 30),
               title: 'テスト講義',
             ),
           ],
         );
-        final dateTime = DateTime(2025, 11, 1, 11, 0);
+        final dateTime = DateTime(2025, 11, 1, 11);
 
         expect(room.isInUse(dateTime), isFalse);
       });
@@ -75,13 +75,13 @@ void main() {
         final room = createRoom(
           schedules: [
             RoomSchedule(
-              beginDatetime: DateTime(2025, 11, 1, 9, 0),
+              beginDatetime: DateTime(2025, 11, 1, 9),
               endDatetime: DateTime(2025, 11, 1, 10, 30),
               title: 'テスト講義',
             ),
           ],
         );
-        final dateTime = DateTime(2025, 11, 1, 9, 0);
+        final dateTime = DateTime(2025, 11, 1, 9);
 
         expect(room.isInUse(dateTime), isTrue);
       });
@@ -90,7 +90,7 @@ void main() {
         final room = createRoom(
           schedules: [
             RoomSchedule(
-              beginDatetime: DateTime(2025, 11, 1, 9, 0),
+              beginDatetime: DateTime(2025, 11, 1, 9),
               endDatetime: DateTime(2025, 11, 1, 10, 30),
               title: 'テスト講義',
             ),
@@ -107,7 +107,7 @@ void main() {
         final room = createRoom(
           schedules: [
             RoomSchedule(
-              beginDatetime: DateTime(2025, 11, 1, 9, 0),
+              beginDatetime: DateTime(2025, 11, 1, 9),
               endDatetime: DateTime(2025, 11, 1, 10, 30),
               title: '1限目',
             ),
@@ -120,16 +120,16 @@ void main() {
         );
 
         // 1限目の範囲内
-        expect(room.isInUse(DateTime(2025, 11, 1, 10, 0)), isTrue);
+        expect(room.isInUse(DateTime(2025, 11, 1, 10)), isTrue);
         // 2限目の範囲内
-        expect(room.isInUse(DateTime(2025, 11, 1, 11, 0)), isTrue);
+        expect(room.isInUse(DateTime(2025, 11, 1, 11)), isTrue);
       });
 
       test('すべてのスケジュールの範囲外であればfalseを返す', () {
         final room = createRoom(
           schedules: [
             RoomSchedule(
-              beginDatetime: DateTime(2025, 11, 1, 9, 0),
+              beginDatetime: DateTime(2025, 11, 1, 9),
               endDatetime: DateTime(2025, 11, 1, 10, 30),
               title: '1限目',
             ),
@@ -144,9 +144,9 @@ void main() {
         // 1限目と2限目の間
         expect(room.isInUse(DateTime(2025, 11, 1, 10, 35)), isFalse);
         // すべてのスケジュールの前
-        expect(room.isInUse(DateTime(2025, 11, 1, 8, 0)), isFalse);
+        expect(room.isInUse(DateTime(2025, 11, 1, 8)), isFalse);
         // すべてのスケジュールの後
-        expect(room.isInUse(DateTime(2025, 11, 1, 13, 0)), isFalse);
+        expect(room.isInUse(DateTime(2025, 11, 1, 13)), isFalse);
       });
     });
   });

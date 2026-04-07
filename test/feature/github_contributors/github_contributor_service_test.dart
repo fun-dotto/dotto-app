@@ -13,14 +13,14 @@ void main() {
   final githubContributorRepository = MockGitHubContributorRepository();
 
   final testGitHubProfiles = [
-    GitHubProfile(
+    const GitHubProfile(
       id: '1',
       login: 'GitHubUser1',
       avatarUrl: 'https://avatars.githubusercontent.com/u/1?v=4',
       htmlUrl: 'https://github.com/GitHubUser1',
       contributions: 50,
     ),
-    GitHubProfile(
+    const GitHubProfile(
       id: '2',
       login: 'GitHubUser2',
       avatarUrl: 'https://avatars.githubusercontent.com/u/2?v=4',
@@ -73,7 +73,7 @@ void main() {
   group('GitHubContributorService 異常系', () {
     test('getContributors がリポジトリの例外をそのまま伝播する', () async {
       when(githubContributorRepository.getContributors()).thenThrow(
-        DomainError(
+        const DomainError(
           type: DomainErrorType.invalidResponse,
           message: 'Failed to get contributors',
         ),
@@ -81,7 +81,7 @@ void main() {
 
       final service = GitHubContributorService(githubContributorRepository);
 
-      expect(() => service.getContributors(), throwsA(isA<DomainError>()));
+      expect(service.getContributors, throwsA(isA<DomainError>()));
 
       verify(githubContributorRepository.getContributors()).called(1);
     });

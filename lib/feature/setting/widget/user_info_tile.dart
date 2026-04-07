@@ -5,8 +5,8 @@ import 'package:shimmer_animation/shimmer_animation.dart';
 
 final class UserInfoTile extends StatelessWidget {
   const UserInfoTile({
-    super.key,
     required this.user,
+    super.key,
     this.onTap,
     this.isLoading = false,
   });
@@ -61,7 +61,7 @@ final class UserInfoTile extends StatelessWidget {
                     ? Image.network(
                         photoUrl,
                         fit: BoxFit.cover,
-                        errorBuilder: (_, _, _) => Icon(Icons.person),
+                        errorBuilder: (_, _, _) => const Icon(Icons.person),
                       )
                     : const Icon(Icons.person),
               ),

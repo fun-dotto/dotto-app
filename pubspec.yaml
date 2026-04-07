@@ -76,6 +76,8 @@ dev_dependencies:
   riverpod_generator: 4.0.0+1
   very_good_analysis: 10.1.0
 
+  firebase_auth_platform_interface: any
+  firebase_core_platform_interface: any
 flutter:
   assets:
     - assets/

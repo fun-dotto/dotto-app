@@ -12,16 +12,16 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 
 class SearchSubjectFilterSection extends HookWidget {
   const SearchSubjectFilterSection({
-    super.key,
     required this.filter,
     required this.onChanged,
+    super.key,
     this.onClear,
   });
 
   final SubjectFilter filter;
   final ValueChanged<SubjectFilter> onChanged;
   final VoidCallback? onClear;
-  static const _availableGrades = [
+  static const List<Grade> _availableGrades = [
     Grade.b1,
     Grade.b2,
     Grade.b3,
@@ -278,7 +278,7 @@ class SearchSubjectFilterSection extends HookWidget {
               return FilterChip(
                 label: Text(labelBuilder(value)),
                 selected: isSelected,
-                onSelected: (bool newValue) {
+                onSelected: (newValue) {
                   if (newValue) {
                     onChanged([...selected, value]);
                   } else {
