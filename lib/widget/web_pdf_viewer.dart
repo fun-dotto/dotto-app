@@ -42,7 +42,7 @@ final class _WebPdfViewerState extends State<WebPdfViewer>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    unawaited(_cleanupTempFile());
+    _cleanupTempFile();
     super.dispose();
   }
 
@@ -86,14 +86,14 @@ final class _WebPdfViewerState extends State<WebPdfViewer>
     }
   }
 
-  Future<void> _cleanupTempFile() async {
+  void _cleanupTempFile() {
     if (_filePath != null) {
       try {
         final file = File(_filePath!);
-        if (await file.exists()) {
-          await file.delete();
+        if (file.existsSync()) {
+          file.deleteSync();
         }
-      } on Exception catch (e) {
+      } on Exception {
         // エラーは無視（一時ファイルの削除失敗は問題ない）
       }
     }

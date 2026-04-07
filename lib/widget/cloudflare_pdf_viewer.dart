@@ -42,7 +42,7 @@ final class _CloudflarePdfViewerState extends State<CloudflarePdfViewer>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    unawaited(_cleanupTempFile());
+    _cleanupTempFile();
     super.dispose();
   }
 
@@ -58,9 +58,7 @@ final class _CloudflarePdfViewerState extends State<CloudflarePdfViewer>
 
       // ストリームからバイトデータを読み込む
       final memory = <int>[];
-      await for (final value in stream) {
-        memory.addAll(value);
-      }
+      await stream.forEach(memory.addAll);
 
       final bytes = Uint8List.fromList(memory);
 
@@ -89,14 +87,14 @@ final class _CloudflarePdfViewerState extends State<CloudflarePdfViewer>
     }
   }
 
-  Future<void> _cleanupTempFile() async {
+  void _cleanupTempFile() {
     if (_filePath != null) {
       try {
         final file = File(_filePath!);
-        if (await file.exists()) {
-          await file.delete();
+        if (file.existsSync()) {
+          file.deleteSync();
         }
-      } on Exception catch (e) {
+      } on Exception {
         // エラーは無視（一時ファイルの削除失敗は問題ない）
       }
     }
