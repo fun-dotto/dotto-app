@@ -1,7 +1,7 @@
+import 'package:dotto/helper/url_launcher_helper.dart';
 import 'package:dotto_design_system/component/button.dart';
 import 'package:dotto_design_system/style/semantic_color.dart';
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher_string.dart';
 
 final class InvalidAppVersionScreen extends StatelessWidget {
   const InvalidAppVersionScreen({
@@ -32,7 +32,7 @@ final class InvalidAppVersionScreen extends StatelessWidget {
           children: [
             Text('現在のバージョン: $currentAppVersion\n最新バージョン: $latestAppVersion', textAlign: TextAlign.center),
             DottoButton(
-              onPressed: () => launchUrlString(appStorePageUrl, mode: LaunchMode.externalApplication),
+              onPressed: () => launchUrlSafely(appStorePageUrl, mode: .externalApplication),
               child: const Text('今すぐアップデート'),
             ),
           ],

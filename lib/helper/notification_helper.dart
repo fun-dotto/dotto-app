@@ -1,6 +1,6 @@
+import 'package:dotto/helper/url_launcher_helper.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:url_launcher/url_launcher_string.dart';
 
 final notificationHelperProvider = Provider<NotificationHelper>((ref) => NotificationHelperImpl());
 
@@ -31,7 +31,7 @@ final class NotificationHelperImpl implements NotificationHelper {
   void _handleMessage(RemoteMessage message) {
     final url = message.data['url'];
     if (url != null) {
-      launchUrlString(url as String);
+      launchUrlSafely(url as String);
     }
   }
 }

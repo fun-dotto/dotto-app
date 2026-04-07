@@ -11,10 +11,10 @@ import 'package:dotto/feature/onboarding/onboarding_screen.dart';
 import 'package:dotto/feature/root/root_viewmodel.dart';
 import 'package:dotto/feature/setting/settings.dart';
 import 'package:dotto/feature/subject/search_subject_screen.dart';
+import 'package:dotto/helper/url_launcher_helper.dart';
 import 'package:dotto/widget/invalid_app_version_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:url_launcher/url_launcher_string.dart';
 
 final class RootScreen extends ConsumerWidget {
   const RootScreen({super.key});
@@ -52,7 +52,7 @@ final class RootScreen extends ConsumerWidget {
       actions: [
         TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('あとで')),
         TextButton(
-          onPressed: () => launchUrlString(appStorePageUrl, mode: LaunchMode.externalApplication),
+          onPressed: () => launchUrlSafely(appStorePageUrl, mode: .externalApplication),
           child: const Text('今すぐアップデート'),
         ),
       ],
