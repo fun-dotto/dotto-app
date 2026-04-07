@@ -8,7 +8,6 @@ import 'package:dotto/domain/subject_faculty.dart';
 import 'package:dotto/domain/subject_summary.dart';
 import 'package:dotto/domain/timetable_item.dart';
 import 'package:dotto/domain/timetable_slot.dart';
-import 'package:flutter/foundation.dart';
 import 'package:openapi/openapi.dart' hide SubjectFaculty, SubjectSummary, TimetableItem;
 
 abstract class TimetableRepository {
@@ -42,11 +41,11 @@ final class TimetableRepositoryImpl implements TimetableRepository {
         ),
       );
       if (response.statusCode != 200) {
-        throw DomainError(type: DomainErrorType.invalidResponse, message: 'Failed to get timetable items');
+        throw const DomainError(type: DomainErrorType.invalidResponse, message: 'Failed to get timetable items');
       }
       final data = response.data;
       if (data == null) {
-        throw DomainError(type: DomainErrorType.invalidResponse, message: 'Failed to get timetable items');
+        throw const DomainError(type: DomainErrorType.invalidResponse, message: 'Failed to get timetable items');
       }
       return data.timetableItems
           .map(
@@ -76,7 +75,7 @@ final class TimetableRepositoryImpl implements TimetableRepository {
                     DottoFoundationV1DayOfWeek.friday => DayOfWeek.friday,
                     DottoFoundationV1DayOfWeek.saturday => DayOfWeek.saturday,
                     DottoFoundationV1DayOfWeek.sunday => DayOfWeek.sunday,
-                    _ => throw DomainError(type: DomainErrorType.invalidData, message: 'Invalid day of week'),
+                    _ => throw const DomainError(type: DomainErrorType.invalidData, message: 'Invalid day of week'),
                   },
                   period: switch (slot.period) {
                     DottoFoundationV1Period.period1 => Period.first,
@@ -85,7 +84,7 @@ final class TimetableRepositoryImpl implements TimetableRepository {
                     DottoFoundationV1Period.period4 => Period.fourth,
                     DottoFoundationV1Period.period5 => Period.fifth,
                     DottoFoundationV1Period.period6 => Period.sixth,
-                    _ => throw DomainError(type: DomainErrorType.invalidData, message: 'Invalid period'),
+                    _ => throw const DomainError(type: DomainErrorType.invalidData, message: 'Invalid period'),
                   },
                 );
               }(),
@@ -95,7 +94,6 @@ final class TimetableRepositoryImpl implements TimetableRepository {
     } on DomainError {
       rethrow;
     } on Exception catch (e, stackTrace) {
-      debugPrint(e.toString());
       throw DomainError.fromException(e: e, stackTrace: stackTrace);
     }
   }

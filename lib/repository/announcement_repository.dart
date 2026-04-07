@@ -1,7 +1,6 @@
 import 'package:dotto/api/api_client.dart';
 import 'package:dotto/domain/announcement.dart';
 import 'package:dotto/domain/domain_error.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final announcementRepositoryProvider = Provider<AnnouncementRepository>(AnnouncementRepositoryImpl.new);
@@ -21,17 +20,16 @@ final class AnnouncementRepositoryImpl implements AnnouncementRepository {
       final api = ref.read(apiClientProvider).getAnnouncementsApi();
       final response = await api.announcementsV1List();
       if (response.statusCode != 200) {
-        throw DomainError(type: DomainErrorType.invalidResponse, message: 'Failed to get announcements');
+        throw const DomainError(type: DomainErrorType.invalidResponse, message: 'Failed to get announcements');
       }
       final data = response.data;
       if (data == null) {
-        throw DomainError(type: DomainErrorType.invalidResponse, message: 'Failed to get announcements');
+        throw const DomainError(type: DomainErrorType.invalidResponse, message: 'Failed to get announcements');
       }
       return data.announcements.map((e) => Announcement(id: e.id, title: e.title, date: e.date, url: e.url)).toList();
     } on DomainError {
       rethrow;
     } on Exception catch (e, stackTrace) {
-      debugPrint(e.toString());
       throw DomainError.fromException(e: e, stackTrace: stackTrace);
     }
   }

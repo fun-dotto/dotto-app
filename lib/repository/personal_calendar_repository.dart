@@ -9,7 +9,6 @@ import 'package:dotto/domain/personal_timetable_item.dart';
 import 'package:dotto/domain/subject_faculty.dart';
 import 'package:dotto/domain/subject_summary.dart';
 import 'package:flutter/foundation.dart';
-import 'package:meta/meta.dart';
 import 'package:openapi/openapi.dart' hide SubjectFaculty, SubjectSummary;
 
 abstract class PersonalCalendarRepository {
@@ -35,7 +34,10 @@ final class PersonalCalendarRepositoryImpl implements PersonalCalendarRepository
       }
       final data = response.data;
       if (data == null) {
-        throw DomainError(type: DomainErrorType.invalidResponse, message: 'Failed to get personal calendar items');
+        throw const DomainError(
+          type: DomainErrorType.invalidResponse,
+          message: 'Failed to get personal calendar items',
+        );
       }
 
       final itemsByDate = <String, List<PersonalTimetableItem>>{};
@@ -63,14 +65,13 @@ final class PersonalCalendarRepositoryImpl implements PersonalCalendarRepository
 
       return targetDates.map((date) {
         final dateKey = '${date.year}-${date.month}-${date.day}';
-        final items = itemsByDate[dateKey] ?? <PersonalTimetableItem>[];
-        items.sort((a, b) => a.period.number.compareTo(b.period.number));
+        final items = itemsByDate[dateKey] ?? <PersonalTimetableItem>[]
+          ..sort((a, b) => a.period.number.compareTo(b.period.number));
         return PersonalTimetableDay(date: date, items: items, timetableDayOfWeek: DayOfWeek.fromDateTime(date));
       }).toList();
     } on DomainError {
       rethrow;
     } on Exception catch (e, stackTrace) {
-      debugPrint(e.toString());
       throw DomainError.fromException(e: e, stackTrace: stackTrace);
     }
   }
@@ -98,8 +99,10 @@ final class PersonalCalendarRepositoryImpl implements PersonalCalendarRepository
       DottoFoundationV1PersonalCalendarItemStatus.cancelled => LectureStatus.cancelled,
       DottoFoundationV1PersonalCalendarItemStatus.makeup => LectureStatus.madeUp,
       DottoFoundationV1PersonalCalendarItemStatus.roomChanged => LectureStatus.roomChanged,
-      // TODO: API側でstatusの値が増えたときに例外を投げるようにするため、デフォルトはnormalにしておく
-      DottoFoundationV1PersonalCalendarItemStatus() => LectureStatus.normal,
+      _ => throw DomainError(
+        type: DomainErrorType.invalidData,
+        message: 'Unsupported DottoFoundationV1PersonalCalendarItemStatus: $status',
+      ),
     };
   }
 }

@@ -6,7 +6,6 @@ import 'package:dotto/domain/domain_error.dart';
 import 'package:dotto/domain/dotto_user.dart';
 import 'package:dotto/domain/grade.dart';
 import 'package:firebase_auth/firebase_auth.dart' hide UserInfo;
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:openapi/openapi.dart';
 
@@ -37,7 +36,6 @@ final class UserRepositoryImpl implements UserRepository {
       if (e is DioException && e.response?.statusCode == 404) {
         return null;
       }
-      debugPrint('Error during getting user: $e');
       throw DomainError.fromException(e: e, stackTrace: stackTrace);
     }
   }
@@ -88,13 +86,12 @@ final class UserRepositoryImpl implements UserRepository {
       final data = response.data;
       final updatedUserInfo = data?.user;
       if (updatedUserInfo == null) {
-        throw DomainError(type: DomainErrorType.invalidResponse, message: 'Failed to upsert user');
+        throw const DomainError(type: DomainErrorType.invalidResponse, message: 'Failed to upsert user');
       }
       return _toDottoUser(firebaseUser, updatedUserInfo);
     } on DomainError {
       rethrow;
     } on Exception catch (e, stackTrace) {
-      debugPrint('Error during upserting user: $e');
       throw DomainError.fromException(e: e, stackTrace: stackTrace);
     }
   }

@@ -2,7 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:dotto/domain/domain_error.dart';
 import 'package:dotto/domain/github_profile.dart';
 import 'package:dotto/repository/model/github_profile_response.dart';
-import 'package:flutter/foundation.dart';
 
 abstract class GitHubContributorRepository {
   Future<List<GitHubProfile>> getContributors();
@@ -22,12 +21,12 @@ final class GitHubContributorRepositoryImpl implements GitHubContributorReposito
       // ignore: inference_failure_on_function_invocation
       final response = await dio.get(url);
       if (response.statusCode != 200) {
-        throw DomainError(type: DomainErrorType.invalidResponse, message: 'Failed to get contributors');
+        throw const DomainError(type: DomainErrorType.invalidResponse, message: 'Failed to get contributors');
       }
 
       final data = response.data;
       if (data == null || data is! List) {
-        throw DomainError(type: DomainErrorType.invalidResponse, message: 'Failed to get contributors');
+        throw const DomainError(type: DomainErrorType.invalidResponse, message: 'Failed to get contributors');
       }
 
       final githubProfileResponses = data
@@ -48,7 +47,6 @@ final class GitHubContributorRepositoryImpl implements GitHubContributorReposito
     } on DomainError {
       rethrow;
     } on Exception catch (e, stackTrace) {
-      debugPrint(e.toString());
       throw DomainError.fromException(e: e, stackTrace: stackTrace);
     }
   }

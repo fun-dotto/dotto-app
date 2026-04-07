@@ -3,9 +3,9 @@ import 'dart:collection';
 import 'package:built_collection/built_collection.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dotto/domain/academic_area.dart';
-import 'package:dotto/domain/domain_error.dart';
 import 'package:dotto/domain/academic_class.dart';
 import 'package:dotto/domain/cultural_subject_category.dart';
+import 'package:dotto/domain/domain_error.dart';
 import 'package:dotto/domain/faculty.dart';
 import 'package:dotto/domain/grade.dart';
 import 'package:dotto/domain/semester.dart';
@@ -21,7 +21,6 @@ import 'package:dotto/domain/subject_summary.dart';
 import 'package:dotto/domain/syllabus.dart';
 import 'package:dotto/extension/iterable_extension.dart';
 import 'package:dotto/helper/syllabus_database_helper.dart';
-import 'package:flutter/foundation.dart';
 import 'package:openapi/openapi.dart' hide SubjectFaculty, SubjectSummary;
 
 abstract class SubjectRepository {
@@ -144,11 +143,11 @@ final class SubjectRepositoryImpl implements SubjectRepository {
               ),
       );
       if (response.statusCode != 200) {
-        throw DomainError(type: DomainErrorType.invalidResponse, message: 'Failed to get subjects');
+        throw const DomainError(type: DomainErrorType.invalidResponse, message: 'Failed to get subjects');
       }
       final data = response.data;
       if (data == null) {
-        throw DomainError(type: DomainErrorType.invalidResponse, message: 'Failed to get subjects');
+        throw const DomainError(type: DomainErrorType.invalidResponse, message: 'Failed to get subjects');
       }
       return data.subjects
           .map(
@@ -182,7 +181,6 @@ final class SubjectRepositoryImpl implements SubjectRepository {
     } on DomainError {
       rethrow;
     } on Exception catch (e, stackTrace) {
-      debugPrint(e.toString());
       throw DomainError.fromException(e: e, stackTrace: stackTrace);
     }
   }
@@ -193,11 +191,11 @@ final class SubjectRepositoryImpl implements SubjectRepository {
       final api = apiClient.getSubjectsApi();
       final response = await api.subjectsV1Detail(id: id);
       if (response.statusCode != 200) {
-        throw DomainError(type: DomainErrorType.invalidResponse, message: 'Failed to get subject');
+        throw const DomainError(type: DomainErrorType.invalidResponse, message: 'Failed to get subject');
       }
       final data = response.data;
       if (data == null) {
-        throw DomainError(type: DomainErrorType.invalidResponse, message: 'Failed to get subject');
+        throw const DomainError(type: DomainErrorType.invalidResponse, message: 'Failed to get subject');
       }
       final subject = data.subject;
       final db = await SyllabusDatabaseHelper.getDatabase();
@@ -325,7 +323,6 @@ final class SubjectRepositoryImpl implements SubjectRepository {
     } on DomainError {
       rethrow;
     } on Exception catch (e, stackTrace) {
-      debugPrint(e.toString());
       throw DomainError.fromException(e: e, stackTrace: stackTrace);
     }
   }
