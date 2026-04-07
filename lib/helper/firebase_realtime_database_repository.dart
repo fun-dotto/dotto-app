@@ -1,6 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/material.dart';
 
 final class FirebaseRealtimeDatabaseRepository {
   factory FirebaseRealtimeDatabaseRepository() {
@@ -17,12 +16,6 @@ final class FirebaseRealtimeDatabaseRepository {
   );
 
   Future<DataSnapshot> getData(String path) async {
-    final ref = _database.ref();
-    try {
-      return await ref.child(path).get();
-    } on FirebaseException catch (e) {
-      debugPrintStack(stackTrace: e.stackTrace);
-      return getData(path);
-    }
+    return _database.ref().child(path).get();
   }
 }

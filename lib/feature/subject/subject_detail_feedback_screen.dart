@@ -31,7 +31,6 @@ final class SubjectDetailFeedbackScreen extends HookConsumerWidget {
             return const Center(child: CircularProgressIndicator());
           }
           if (feedbacksSnapshot.hasError) {
-            debugPrint(feedbacksSnapshot.error.toString());
             return const Center(child: Text('フィードバックの読み込みに失敗しました。'));
           }
           if (feedbacksSnapshot.hasData) {

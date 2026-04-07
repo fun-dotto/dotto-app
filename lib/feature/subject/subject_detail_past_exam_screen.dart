@@ -27,7 +27,6 @@ final class SubjectDetailPastExamScreen extends HookWidget {
       return const Center(child: CircularProgressIndicator());
     }
     if (pastExamsSnapshot.hasError) {
-      debugPrint(pastExamsSnapshot.error.toString());
       return const Center(child: Text('過去問の読み込みに失敗しました。'));
     }
     if (pastExamsSnapshot.hasData) {

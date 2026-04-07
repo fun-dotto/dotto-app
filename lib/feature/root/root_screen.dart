@@ -79,7 +79,6 @@ final class RootScreen extends ConsumerWidget {
     switch (viewModelAsync) {
       case AsyncData(:final value):
         if (!value.hasShownAppTutorial) {
-          debugPrint('Show App Tutorial');
           return OnboardingScreen(
             onDismissed: ref
                 .read(rootViewModelProvider.notifier)
@@ -87,7 +86,6 @@ final class RootScreen extends ConsumerWidget {
           );
         }
         if (!value.isValidAppVersion) {
-          debugPrint('Invalid App Version');
           return InvalidAppVersionScreen(
             appStorePageUrl: value.appStorePageUrl,
             currentAppVersion: value.currentAppVersion,
@@ -97,7 +95,6 @@ final class RootScreen extends ConsumerWidget {
 
         WidgetsBinding.instance.addPostFrameCallback((_) async {
           if (!value.isLatestAppVersion && !value.hasShownUpdateAlert) {
-            debugPrint('Not Latest App Version');
             ref.read(rootViewModelProvider.notifier).onUpdateAlertShown();
             await showDialog<void>(
               context: context,
@@ -156,9 +153,13 @@ final class RootScreen extends ConsumerWidget {
           ),
         );
 
-      case AsyncError(:final error):
-        debugPrint('RootScreen Error: $error');
-        return const SizedBox.shrink();
+      case AsyncError():
+        return const Center(
+          child: Padding(
+            padding: EdgeInsets.all(16),
+            child: Text('データの読み込みに失敗しました'),
+          ),
+        );
 
       case AsyncLoading():
         return const Scaffold(

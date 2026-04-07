@@ -41,9 +41,9 @@ class RootViewModel extends _$RootViewModel {
     // Setup Universal Links
     AppLinks().uriLinkStream.listen((event) {}).onError((
       Object error,
-      StackTrace stackTrace,
-    ) {
-      debugPrint(error.toString());
+      StackTrace stack,
+    ) async {
+      await ref.read(loggerProvider).logError(error, stack);
     });
 
     final hasShownAppTutorial =
