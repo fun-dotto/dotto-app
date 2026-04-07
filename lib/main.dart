@@ -61,10 +61,7 @@ Future<void> main() async {
 
   // ファイルをダウンロード
   try {
-    await Future(() {
-      // Firebaseからファイルをダウンロード
-      <String>['funch/menu.json'].forEach(FirebaseStorageRepository().download);
-    });
+    await FirebaseStorageRepository().download('funch/menu.json');
   } on Exception catch (e) {
     debugPrint(e.toString());
   }
