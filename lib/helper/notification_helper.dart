@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dotto/helper/url_launcher_helper.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -23,7 +25,7 @@ final class NotificationHelperImpl implements NotificationHelper {
     final initialMessage = await FirebaseMessaging.instance.getInitialMessage();
 
     if (initialMessage != null) {
-      _handleMessage(initialMessage);
+      unawaited(_handleMessage(initialMessage));
     }
 
     // Also handle any interaction when the app is in the background via a

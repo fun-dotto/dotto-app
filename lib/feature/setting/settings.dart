@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dotto/controller/config_controller.dart';
 import 'package:dotto/controller/user_controller.dart';
 import 'package:dotto/domain/academic_area.dart';
@@ -329,7 +331,7 @@ final class SettingsScreen extends ConsumerWidget {
                       title: const Text('フィードバックを送る'),
                       leading: const Icon(Icons.messenger_rounded),
                       onPressed: (_) async =>
-                          await launchUrlSafely(config.feedbackFormUrl),
+                          launchUrlSafely(config.feedbackFormUrl),
                     ),
                     // Contributors表示
                     SettingsTile.navigation(
@@ -368,14 +370,14 @@ final class SettingsScreen extends ConsumerWidget {
                       title: const Text('利用規約'),
                       leading: const Icon(Icons.verified_user),
                       onPressed: (_) async =>
-                          await launchUrlSafely(config.termsOfServiceUrl),
+                          launchUrlSafely(config.termsOfServiceUrl),
                     ),
                     // プライバシーポリシー
                     SettingsTile.navigation(
                       title: const Text('プライバシーポリシー'),
                       leading: const Icon(Icons.admin_panel_settings),
                       onPressed: (_) async =>
-                          await launchUrlSafely(config.privacyPolicyUrl),
+                          launchUrlSafely(config.privacyPolicyUrl),
                     ),
                     // ライセンス
                     SettingsTile.navigation(
@@ -398,9 +400,11 @@ final class SettingsScreen extends ConsumerWidget {
                           if (!canOpen || !context.mounted) {
                             return;
                           }
-                          Navigator.of(context).push(
-                            MaterialPageRoute<void>(
-                              builder: (_) => const DebugScreen(),
+                          unawaited(
+                            Navigator.of(context).push(
+                              MaterialPageRoute<void>(
+                                builder: (_) => const DebugScreen(),
+                              ),
                             ),
                           );
                         },
