@@ -10,7 +10,6 @@ import 'package:dotto/helper/logger.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +23,7 @@ Future<void> main() async {
 
   // Firebaseの初期化
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
   await FirebaseAuthHelper.initialize();
 
   // Firebase Crashlyticsの初期化
@@ -43,9 +43,6 @@ Future<void> main() async {
     providerAndroid: kReleaseMode ? const AndroidPlayIntegrityProvider() : const AndroidDebugProvider(),
   );
 
-  // Firebase Realtime Databaseのパーシステンスを有効化
-  FirebaseDatabase.instance.setPersistenceEnabled(true);
-
   // 画面の向きを固定
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 
@@ -64,10 +61,7 @@ Future<void> main() async {
 
   // ファイルをダウンロード
   try {
-    await Future(() {
-      // Firebaseからファイルをダウンロード
-      <String>['funch/menu.json'].forEach(FirebaseStorageRepository().download);
-    });
+    await FirebaseStorageRepository().download('funch/menu.json');
   } on Exception catch (e) {
     debugPrint(e.toString());
   }

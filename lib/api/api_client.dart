@@ -6,16 +6,28 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:openapi/openapi.dart';
 
-final apiClientProvider = Provider<Openapi>(
-  (ref) => Openapi(
-    basePathOverride: ref.watch(apiEnvironmentProvider).basePath,
+final apiClientProvider = Provider<Openapi>((ref) {
+  final basePath = ref.watch(apiEnvironmentProvider).basePath;
+  final dio = Dio(
+    BaseOptions(
+      baseUrl: basePath,
+      connectTimeout: const Duration(seconds: 10),
+      receiveTimeout: const Duration(seconds: 15),
+    ),
+  );
+  return Openapi(
+    dio: dio,
     interceptors: [
       InterceptorsWrapper(
         onRequest: (options, handler) async {
           debugPrint('Request: ${options.method} ${options.uri}');
-          final appCheckToken = await FirebaseAppCheck.instance.getToken();
-          if (appCheckToken != null) {
-            options.headers['X-Firebase-AppCheck'] = 'Bearer $appCheckToken';
+          try {
+            final appCheckToken = await FirebaseAppCheck.instance.getToken();
+            if (appCheckToken != null) {
+              options.headers['X-Firebase-AppCheck'] = 'Bearer $appCheckToken';
+            }
+          } on Exception catch (e) {
+            debugPrint('App Check token retrieval failed: $e');
           }
           final idToken = await FirebaseAuth.instance.currentUser?.getIdToken();
           if (idToken != null) {
@@ -37,5 +49,5 @@ final apiClientProvider = Provider<Openapi>(
         },
       ),
     ],
-  ),
-);
+  );
+});
