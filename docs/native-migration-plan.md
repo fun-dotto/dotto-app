@@ -11,21 +11,37 @@ FlutterアプリをiOS/Androidネイティブアプリに置き換える。Flutt
 
 ---
 
+## 進捗サマリー（2026-04-08 時点）
+
+| Phase | タスク | ステータス |
+|-------|--------|-----------|
+| 0-1 | OpenAPI仕様の移動 | ✅ 完了 |
+| 0-2 | 共有Swiftパッケージ (`Shared/`) | ⚠️ スキャフォールドのみ（モデル未実装） |
+| 0-3 | iOS APIクライアントパッケージ | ❌ 未着手 |
+| 0-4 | iOS Xcodeプロジェクト設定 | ⚠️ スキャフォールドのみ（SPM依存未追加） |
+| 1 | iOS アプリシェル + 認証基盤 | ❌ 未着手 |
+| 2 | iOS 各機能実装 | ❌ 未着手 |
+| 3 | iOS 横断的機能 | ❌ 未着手 |
+| 4 | Android アプリ | ❌ 未着手 |
+
+---
+
 ## モノレポ構成
 
 ```
 dotto-app/
-  flutter/                 # 既存（参照用、段階的にアーカイブ）
-  openapi/                 # OpenAPI仕様（共有）
-    openapi.yaml           # flutter/openapi/openapi.yaml から移動
-  shared/                  # 純粋Swift（クロスプラットフォーム共有モデル）
-    Package.swift
+  Flutter/                 # 既存（参照用、段階的にアーカイブ）
+  openapi/                 # OpenAPI仕様（共有） ✅ 済
+    openapi.yaml           # Flutter/openapi/openapi.yaml から移動済み
+  Shared/                  # 純粋Swift（クロスプラットフォーム共有モデル） ✅ スキャフォールド済
+    Package.swift          # Swift tools version 6.3, Swift 6 language mode
     Sources/
-      DottoModels/         # ドメインモデル（enum, struct）※Foundationに依存しない
+      Shared/              # ドメインモデル（enum, struct）※Foundationに依存しない
     Tests/
-      DottoModelsTests/
-  ios/                     # iOSアプリ（SwiftUI + TCA）
-    Dotto.xcodeproj        # 既存
+      SharedTests/
+  iOS/                     # iOSアプリ（SwiftUI + TCA） ✅ スキャフォールド済
+    Dotto.xcworkspace      # Shared パッケージをリンク済み
+    Dotto.xcodeproj
     Dotto/
       App/                 # DottoApp.swift, AppFeature (ルートReducer)
       Features/            # 各機能モジュール
@@ -45,7 +61,7 @@ dotto-app/
         Sources/
           openapi.yaml     # (symlink to /openapi/openapi.yaml)
           openapi-generator-config.yaml
-  android/                 # Androidアプリ（Jetpack Compose）
+  Android/                 # Androidアプリ（Jetpack Compose）
     app/
     shared-bridge/         # Swift for Android JNIブリッジ
 ```
@@ -54,17 +70,19 @@ dotto-app/
 
 ## Phase 0: 基盤整備
 
-### 0-1. OpenAPI仕様の移動
-- `flutter/openapi/openapi.yaml` → `openapi/openapi.yaml`
+### 0-1. OpenAPI仕様の移動 ✅ 完了
+- `Flutter/openapi/openapi.yaml` → `openapi/openapi.yaml` に移動済み
+- `Flutter/openapi/openapi.yaml` は `../../openapi/openapi.yaml` へのsymlink化済み
 
-### 0-2. 共有Swiftパッケージ (`shared/`)
-- `DottoModels` ターゲット: Foundation非依存の純粋Swiftモデル
+### 0-2. 共有Swiftパッケージ (`Shared/`) ⚠️ スキャフォールドのみ
+- `Shared` ターゲット: Foundation非依存の純粋Swiftモデル（Swift tools version 6.3, Swift 6 language mode）
+- Package.swift・ディレクトリ構造は作成済み、モデル実装は未着手
 - Flutterの `lib/domain/` から移植する型:
   - **Enum**: `Grade`, `Course`, `CourseSemester`, `AcademicClass`, `Period`, `DayOfWeek`, `Floor`, `SubjectClassification`, `SubjectRequirementType`, `CulturalSubjectCategory`, `PersonalCalendarItemStatus`, `LectureStatus`, `BusType`, `FunchMenuCategory`, `TabItem`
   - **Struct**: `DottoUser`, `Announcement`, `TimetableItem`, `TimetableSlot`, `PersonalCalendarItem`, `PersonalTimetableDay`, `CancelledClass`, `MakeupClass`, `RoomChange`, `CourseRegistration`, `SubjectSummary`, `SubjectDetail`, `Syllabus`, `Faculty`, `SubjectFeedback`, `Room`, `RoomSchedule`, `BusStop`, `BusTrip`, `FunchMenu`, `FunchDailyMenu`, `FunchPrice`, `Config`
 - 全型に `Sendable`, `Equatable`, `Codable` 準拠
 
-### 0-3. iOS APIクライアントパッケージ (`ios/Packages/DottoAPIClient/`)
+### 0-3. iOS APIクライアントパッケージ (`iOS/Packages/DottoAPIClient/`) ❌ 未着手
 - swift-openapi-generator + swift-openapi-runtime + swift-openapi-urlsession
 - `openapi-generator-config.yaml`:
   ```yaml
@@ -92,18 +110,19 @@ dotto-app/
   }
   ```
 
-### 0-4. iOS Xcodeプロジェクト設定
-- SPM依存追加:
+### 0-4. iOS Xcodeプロジェクト設定 ⚠️ スキャフォールドのみ
+- Xcode workspace (`iOS/Dotto.xcworkspace`) 作成済み、`Shared` パッケージをリンク済み
+- SPM依存追加（未着手）:
   - `pointfreeco/swift-composable-architecture` (TCA)
   - `pointfreeco/swift-dependencies`
   - `firebase/firebase-ios-sdk` (Auth, AppCheck, Messaging, Crashlytics, Analytics, Firestore, Database, Storage, RemoteConfig)
   - `google/GoogleSignIn-iOS`
-  - ローカル: `shared/` (DottoModels)
-  - ローカル: `ios/Packages/DottoAPIClient/`
+  - ローカル: `Shared/` (Shared)
+  - ローカル: `iOS/Packages/DottoAPIClient/`
 
 ---
 
-## Phase 1: iOS アプリシェル + 認証基盤
+## Phase 1: iOS アプリシェル + 認証基盤 ❌ 未着手
 
 ### 1-1. AppFeature (ルートReducer)
 ```
@@ -136,13 +155,13 @@ AppFeature
 ### 1-3. タブナビゲーション
 - TCA の `@Reducer(state: .equatable)` で各タブをcase reducerとして合成
 - SwiftUI `TabView` + `@Bindable` で選択タブをバインド
-- 参照: `flutter/lib/feature/root/root_screen.dart` のタブ構成
+- 参照: `Flutter/lib/feature/root/root_screen.dart` のタブ構成
   - v2タブ: Course, Funch, Map, Bus, Settings
   - Funch無効時: Funch → SubjectSearchに差し替え (RemoteConfigで制御)
 
 ---
 
-## Phase 2: iOS 各機能実装
+## Phase 2: iOS 各機能実装 ❌ 未着手
 
 ### 2-1. Settings (設定) — 最初に実装
 **理由**: 認証パイプラインのE2E検証、最もシンプル
@@ -166,9 +185,9 @@ SettingsFeature
 - `UserPreferenceClient` — UserDefaults
 
 **参照ファイル:**
-- `flutter/lib/feature/setting/settings.dart`
-- `flutter/lib/controller/user_controller.dart`
-- `flutter/lib/repository/announcement_repository.dart`
+- `Flutter/lib/feature/setting/settings.dart`
+- `Flutter/lib/controller/user_controller.dart`
+- `Flutter/lib/repository/announcement_repository.dart`
 
 ### 2-2. Bus (バス) — 2番目に実装
 **理由**: Firebase Realtime Database連携の検証、自己完結
@@ -185,9 +204,9 @@ BusFeature
 - `BusClient` — Firebase Realtime Database (`bus/stops`, `bus/trips`)
 
 **参照ファイル:**
-- `flutter/lib/feature/bus/bus_screen.dart`
-- `flutter/lib/feature/bus/bus_reducer.dart`
-- `flutter/lib/repository/bus_repository.dart`
+- `Flutter/lib/feature/bus/bus_screen.dart`
+- `Flutter/lib/feature/bus/bus_reducer.dart`
+- `Flutter/lib/repository/bus_repository.dart`
 
 ### 2-3. Course (講義) — 3番目に実装
 **理由**: コアの機能、BFF APIの包括的な利用
@@ -218,12 +237,12 @@ CourseFeature
 - `TimetableClient` — BFF API (`GET /v1/timetableItems`)
 
 **参照ファイル:**
-- `flutter/lib/feature/course/course_reducer.dart`
-- `flutter/lib/feature/course/course_registration_reducer.dart`
-- `flutter/lib/feature/course/course_cancellation_reducer.dart`
-- `flutter/lib/repository/personal_calendar_repository.dart`
-- `flutter/lib/repository/course_registration_repository.dart`
-- `flutter/lib/repository/timetable_repository.dart`
+- `Flutter/lib/feature/course/course_reducer.dart`
+- `Flutter/lib/feature/course/course_registration_reducer.dart`
+- `Flutter/lib/feature/course/course_cancellation_reducer.dart`
+- `Flutter/lib/repository/personal_calendar_repository.dart`
+- `Flutter/lib/repository/course_registration_repository.dart`
+- `Flutter/lib/repository/timetable_repository.dart`
 
 ### 2-4. Subject Search (科目検索) — 4番目
 **TCA構成:**
@@ -247,9 +266,9 @@ SubjectSearchFeature
 - `SyllabusDBClient` — ローカルSQLite (過去問ID検索)
 
 **参照ファイル:**
-- `flutter/lib/feature/subject/search_subject_reducer.dart`
-- `flutter/lib/feature/subject/subject_detail_screen.dart`
-- `flutter/lib/repository/subject_repository.dart`
+- `Flutter/lib/feature/subject/search_subject_reducer.dart`
+- `Flutter/lib/feature/subject/subject_detail_screen.dart`
+- `Flutter/lib/repository/subject_repository.dart`
 
 ### 2-5. Funch (学食) — 5番目
 **TCA構成:**
@@ -266,8 +285,8 @@ FunchFeature
 - `FunchClient` — Firebase Firestore + Storage
 
 **参照ファイル:**
-- `flutter/lib/feature/funch/`
-- `flutter/lib/repository/funch_repository.dart`
+- `Flutter/lib/feature/funch/`
+- `Flutter/lib/repository/funch_repository.dart`
 
 ### 2-6. Map (マップ) — 6番目（最も複雑なUI）
 **TCA構成:**
@@ -285,17 +304,17 @@ MapFeature
 - `RoomClient` — Firebase Realtime Database (`map`, `map_room_schedule`)
 
 **参照ファイル:**
-- `flutter/lib/feature/map/`
-- `flutter/lib/repository/room_repository.dart`
+- `Flutter/lib/feature/map/`
+- `Flutter/lib/repository/room_repository.dart`
 
 ---
 
-## Phase 3: iOS 横断的機能
+## Phase 3: iOS 横断的機能 ❌ 未着手
 
 ### 3-1. プッシュ通知 (FCM)
 - FCMトークン取得 → `POST /v1/fcmTokens`
 - ユーザーログイン時にトークン登録
-- 参照: `flutter/lib/controller/user_controller.dart`
+- 参照: `Flutter/lib/controller/user_controller.dart`
 
 ### 3-2. Crashlytics + Analytics
 - クラッシュレポート自動送信
@@ -309,18 +328,18 @@ MapFeature
 - RemoteConfig: `validAppVersion`, `latestAppVersion`, `appStorePageUrl`
 - 無効バージョン → ブロック画面
 - 古いバージョン → 更新アラート
-- 参照: `flutter/lib/feature/root/root_viewmodel.dart`
+- 参照: `Flutter/lib/feature/root/root_viewmodel.dart`
 
 ### 3-5. オンボーディング
 - 初回起動時のチュートリアル表示
-- 参照: `flutter/lib/feature/onboarding/onboarding_screen.dart`
+- 参照: `Flutter/lib/feature/onboarding/onboarding_screen.dart`
 
 ---
 
-## Phase 4: Android アプリ
+## Phase 4: Android アプリ ❌ 未着手
 
 ### 4-1. 共有モデルブリッジ
-- `shared/` の `DottoModels` を Swift for Android でビルド (.so)
+- `Shared/` の `Shared` モジュールを Swift for Android でビルド (.so)
 - `swift-java` (swiftlang/swift-java) でKotlinバインディング生成
 - または: OpenAPI specからKotlinモデルも自動生成し、Swift共有は段階的に導入
 
