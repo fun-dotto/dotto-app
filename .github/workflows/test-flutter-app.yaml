@@ -40,6 +40,7 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           cache: false
+          working_directory: Flutter
       - name: Install Dependencies
         run: task install-all
       - name: Run Build
