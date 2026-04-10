@@ -45,6 +45,8 @@ jobs:
           working_directory: Flutter
       - name: Install dependencies
         run: task install-all
+      - name: Generate code
+        run: task build-all
       - name: Run format
         run: task format
       - name: Check for diff
