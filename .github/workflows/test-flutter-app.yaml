@@ -34,10 +34,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
       - uses: jdx/mise-action@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           cache: false
+          working_directory: Flutter
       - name: Install Dependencies
         run: task install-all
       - name: Run Build
