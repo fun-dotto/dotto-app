@@ -4,8 +4,8 @@ import 'package:dotto/feature/onboarding/domain/onboarding_page.dart';
 import 'package:dotto_design_system/component/button.dart';
 import 'package:dotto_design_system/style/semantic_color.dart';
 import 'package:flutter/material.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 final class OnboardingScreen extends HookConsumerWidget {
   const OnboardingScreen({required this.onDismissed, super.key});
