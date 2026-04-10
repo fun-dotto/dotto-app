@@ -5,37 +5,38 @@ class OnboardingPage {
 
   final String title;
 
-  static const pages = <OnboardingPage>[
-    OnboardingWelcomePage(
+  static List<OnboardingPage> pages({required bool isFunchEnabled}) => [
+    const OnboardingWelcomePage(
       title: 'ようこそ',
       bodyTop: 'Dottoで',
       bodyBottom: 'はこだて未来大学のすべてを',
     ),
-    OnboardingContentPage(
+    const OnboardingContentPage(
       title: '時間割の管理',
       description: '自分の時間割を設定して\n休講/補講情報を受け取ろう',
       imagePath: Asset.tutorialTimetableMock,
     ),
-    OnboardingContentPage(
+    const OnboardingContentPage(
       title: 'バスの時刻表',
       description: '大学から最寄りのバス停までの\n時刻表を確認しよう',
       imagePath: Asset.tutorialBusMock,
     ),
-    OnboardingContentPage(
+    const OnboardingContentPage(
       title: '学内マップ',
       description: '空き教室を確認したり\n研究室を検索しよう',
       imagePath: Asset.tutorialCampusMapMock,
     ),
-    OnboardingContentPage(
+    const OnboardingContentPage(
       title: '科目検索',
       description: 'レビューや過去問を\n閲覧しよう',
       imagePath: Asset.tutorialSubjectMock,
     ),
-    OnboardingContentPage(
-      title: '学食メニュー',
-      description: '学食のメニューや価格を\n確認しよう',
-      imagePath: Asset.tutorialCafeteriaMock,
-    ),
+    if (isFunchEnabled)
+      const OnboardingContentPage(
+        title: '学食メニュー',
+        description: '学食のメニューや価格を\n確認しよう',
+        imagePath: Asset.tutorialCafeteriaMock,
+      ),
   ];
 }
 
