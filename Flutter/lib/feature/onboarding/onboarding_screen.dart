@@ -220,7 +220,7 @@ final class OnboardingScreen extends HookConsumerWidget {
             child: DottoButton(
               onPressed: onNextButtonTapped,
               child: Text(
-                activeIndicatorIndex == indicatorCount ? 'はじめる' : '次へ',
+                activeIndicatorIndex == indicatorCount - 1 ? 'はじめる' : '次へ',
               ),
             ),
           ),
@@ -262,6 +262,19 @@ final class OnboardingScreen extends HookConsumerWidget {
     final pages = OnboardingPage.pages(isFunchEnabled: isFunchEnabled);
     final pageController = usePageController();
     final currentPage = useState(0);
+
+    useEffect(() {
+      if (currentPage.value >= pages.length) {
+        final clamped = pages.length - 1;
+        currentPage.value = clamped;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (pageController.hasClients) {
+            pageController.jumpToPage(clamped);
+          }
+        });
+      }
+      return null;
+    }, [pages.length]);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Dottoの使い方')),
