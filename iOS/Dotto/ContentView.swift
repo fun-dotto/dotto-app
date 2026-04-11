@@ -5,17 +5,20 @@
 //  Created by Kanta Oikawa on 2026/04/07.
 //
 
+import ComposableArchitecture
 import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        TabView {
+            Tab("Setting", systemImage: "gear") {
+                SettingScreen(
+                    store: Store(initialState: .init()) {
+                        SettingFeature()
+                    }
+                )
+            }
         }
-        .padding()
     }
 }
 
