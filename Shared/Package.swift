@@ -12,12 +12,10 @@ let package = Package(
     products: [
         .library(
             name: "DottoAPI",
-            type: .dynamic,
             targets: ["DottoAPI"]
         ),
         .library(
             name: "DottoModel",
-            type: .dynamic,
             targets: ["DottoModel"]
         ),
     ],
