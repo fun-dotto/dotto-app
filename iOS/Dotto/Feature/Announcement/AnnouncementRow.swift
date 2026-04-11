@@ -18,9 +18,12 @@ struct AnnouncementRow: View {
                     .font(.body)
                     .foregroundStyle(.primary)
                     .lineLimit(2)
-                Text(announcement.date, style: .date)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                HStack {
+                    Text(announcement.date, style: .date)
+                    Text(announcement.date, style: .time)
+                }
+                .font(.caption)
+                .foregroundStyle(.secondary)
             }
 
             Spacer()
