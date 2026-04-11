@@ -8,6 +8,7 @@
 import Foundation
 
 public enum DomainError: Error {
+    case unauthenticated
     case unauthorized
     case unknown
 }
