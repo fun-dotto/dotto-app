@@ -11,7 +11,7 @@ import SwiftUI
 struct ContentView: View {
     var body: some View {
         TabView {
-            Tab("Setting", systemImage: "gear") {
+            Tab("Settings", systemImage: "gear") {
                 SettingScreen(
                     store: Store(initialState: .init()) {
                         SettingFeature()
