@@ -12,6 +12,7 @@
 		F10136142F89F6BB009A8957 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = F10136132F89F6BB009A8957 /* FirebaseCore */; };
 		F101361F2F89F834009A8957 /* DottoAPI in Frameworks */ = {isa = PBXBuildFile; productRef = F101361E2F89F834009A8957 /* DottoAPI */; };
 		F10136212F89F834009A8957 /* DottoModel in Frameworks */ = {isa = PBXBuildFile; productRef = F10136202F89F834009A8957 /* DottoModel */; };
+		F101362D2F89FB65009A8957 /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = F101362C2F89FB65009A8957 /* ComposableArchitecture */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -62,6 +63,7 @@
 			files = (
 				F101361F2F89F834009A8957 /* DottoAPI in Frameworks */,
 				F10136102F89F6BB009A8957 /* FirebaseAppCheck in Frameworks */,
+				F101362D2F89FB65009A8957 /* ComposableArchitecture in Frameworks */,
 				F10136212F89F834009A8957 /* DottoModel in Frameworks */,
 				F10136142F89F6BB009A8957 /* FirebaseCore in Frameworks */,
 				F10136122F89F6BB009A8957 /* FirebaseAuth in Frameworks */,
@@ -130,6 +132,7 @@
 				F10136132F89F6BB009A8957 /* FirebaseCore */,
 				F101361E2F89F834009A8957 /* DottoAPI */,
 				F10136202F89F834009A8957 /* DottoModel */,
+				F101362C2F89FB65009A8957 /* ComposableArchitecture */,
 			);
 			productName = Dotto;
 			productReference = F1DE8F962F851E4300A72EDD /* Dotto.app */;
@@ -216,6 +219,7 @@
 			packageReferences = (
 				F101360E2F89F6BB009A8957 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				F101361D2F89F834009A8957 /* XCLocalSwiftPackageReference "../Shared" */,
+				F101362B2F89FB65009A8957 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = F1DE8F972F851E4300A72EDD /* Products */;
@@ -619,6 +623,16 @@
 				minimumVersion = 12.12.0;
 			};
 		};
+		F101362B2F89FB65009A8957 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pointfreeco/swift-composable-architecture";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.25.5;
+			};
+			traits = (
+			);
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -644,6 +658,11 @@
 		F10136202F89F834009A8957 /* DottoModel */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = DottoModel;
+		};
+		F101362C2F89FB65009A8957 /* ComposableArchitecture */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F101362B2F89FB65009A8957 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */;
+			productName = ComposableArchitecture;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
