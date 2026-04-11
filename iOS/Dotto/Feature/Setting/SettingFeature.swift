@@ -7,6 +7,7 @@
 
 import ComposableArchitecture
 import DottoModel
+import SwiftUI
 
 @Reducer
 struct SettingFeature {
@@ -16,7 +17,7 @@ struct SettingFeature {
     }
 
     enum Action {
-        case onSignInButtonTapped
+        case onSignInButtonTapped(viewController: UIViewController)
         case onSignOutButtonTapped
         case signInResult(Result<DottoUser, Error>)
         case signOutResult(Result<Void, Error>)
@@ -27,12 +28,12 @@ struct SettingFeature {
     var body: some Reducer<State, Action> {
         Reduce { state, action in
             switch action {
-            case .onSignInButtonTapped:
+            case .onSignInButtonTapped(let viewController):
                 return .run { send in
                     await send(
                         .signInResult(
                             Result {
-                                try await authClient.signIn()
+                                try await authClient.signIn(viewController)
                             }
                         )
                     )

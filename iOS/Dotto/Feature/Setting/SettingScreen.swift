@@ -27,7 +27,11 @@ struct SettingScreen: View {
                     }
                 } else {
                     Button("Sign In") {
-                        store.send(.onSignInButtonTapped)
+                        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                              let viewController = windowScene.windows.first?.rootViewController else {
+                            return
+                        }
+                        store.send(.onSignInButtonTapped(viewController: viewController))
                     }
                 }
             }

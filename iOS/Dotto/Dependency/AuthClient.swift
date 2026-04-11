@@ -11,16 +11,17 @@ import DottoModel
 import FirebaseAuth
 import FirebaseCore
 import GoogleSignIn
+import SwiftUI
 
 @DependencyClient
 struct AuthClient {
-    var signIn: @Sendable () async throws -> DottoUser
+    var signIn: @Sendable (_ viewController: UIViewController) async throws -> DottoUser
     var signOut: @Sendable () async throws -> Void
 }
 
 extension AuthClient: TestDependencyKey {
     static let previewValue = AuthClient(
-        signIn: {
+        signIn: { _ in
             DottoUser(
                 id: "dotto-user",
                 name: "Dotto User",
@@ -44,13 +45,12 @@ extension DependencyValues {
 
 extension AuthClient: DependencyKey {
     static let liveValue = AuthClient(
-        signIn: {
+        signIn: { viewController in
             guard let clientID = FirebaseApp.app()?.options.clientID else {
                 throw DomainError.failedToAuthenticate
             }
             let config = GIDConfiguration(clientID: clientID)
             GIDSignIn.sharedInstance.configuration = config
-            let viewController = UIViewController()
             let gidSignInResult = try await GIDSignIn.sharedInstance.signIn(withPresenting: viewController)
             let gidUser = gidSignInResult.user
             guard let idToken = gidUser.idToken?.tokenString else {
