@@ -39,9 +39,22 @@
 		F1DE8FAD2F851E4300A72EDD /* DottoUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DottoUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		F10136362F89FC80009A8957 /* Exceptions for "Dotto" folder in "Dotto" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = F1DE8F952F851E4300A72EDD /* Dotto */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		F1DE8F982F851E4300A72EDD /* Dotto */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				F10136362F89FC80009A8957 /* Exceptions for "Dotto" folder in "Dotto" target */,
+			);
 			path = Dotto;
 			sourceTree = "<group>";
 		};
@@ -430,6 +443,7 @@
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 64LEQXTB98;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Dotto/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -466,6 +480,7 @@
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 64LEQXTB98;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Dotto/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
