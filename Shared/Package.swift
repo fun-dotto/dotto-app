@@ -1,5 +1,6 @@
 // swift-tools-version: 6.3
 
+import Foundation
 import PackageDescription
 
 let package = Package(
@@ -35,14 +36,19 @@ let package = Package(
                 .product(name: "OpenAPIRuntime", package: "swift-openapi-runtime"),
                 .product(name: "OpenAPIURLSession", package: "swift-openapi-urlsession", condition: .when(platforms: [.iOS, .macOS])),
                 .product(name: "OpenAPIAsyncHTTPClient", package: "swift-openapi-async-http-client", condition: .when(platforms: [.android])),
-                .product(name: "SwiftJava", package: "swift-java")
+                .product(name: "SwiftJava", package: "swift-java", condition: .when(platforms: [.android]))
             ],
             plugins: [
                 .plugin(name: "OpenAPIGenerator", package: "swift-openapi-generator"),
-                .plugin(name: "JExtractSwiftPlugin", package: "swift-java")
             ]
         ),
         .target(name: "DottoModel"),
     ],
     swiftLanguageModes: [.v6]
 )
+
+if ProcessInfo.processInfo.environment["ANDROID_NDK_ROOT"] != nil {
+    package.targets.first { $0.name == "DottoAPI" }?.plugins?.append(
+        .plugin(name: "JExtractSwiftPlugin", package: "swift-java")
+    )
+}
