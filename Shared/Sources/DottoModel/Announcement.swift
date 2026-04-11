@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct Announcement: Hashable, Sendable {
+public struct Announcement: Hashable, Identifiable, Sendable {
     public let id: String
     public let title: String
     public let date: Date
