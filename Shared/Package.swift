@@ -1,27 +1,48 @@
 // swift-tools-version: 6.3
-// The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
 
 let package = Package(
     name: "Shared",
+    platforms: [
+        .iOS(.v18),
+        .macOS(.v15),
+    ],
     products: [
-        // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
-            name: "Shared",
-            targets: ["Shared"]
+            name: "DottoAPI",
+            type: .dynamic,
+            targets: ["DottoAPI"]
+        ),
+        .library(
+            name: "DottoModel",
+            type: .dynamic,
+            targets: ["DottoModel"]
         ),
     ],
+    dependencies: [
+      .package(url: "https://github.com/swiftlang/swift-java", from: "0.1.2"),
+      .package(url: "https://github.com/apple/swift-openapi-generator", from: "1.6.0"),
+      .package(url: "https://github.com/apple/swift-openapi-runtime", from: "1.7.0"),
+      .package(url: "https://github.com/apple/swift-openapi-urlsession", from: "1.0.0"),
+      .package(url: "https://github.com/swift-server/swift-openapi-async-http-client", from: "1.0.0"),
+    ],
     targets: [
-        // Targets are the basic building blocks of a package, defining a module or a test suite.
-        // Targets can depend on other targets in this package and products from dependencies.
         .target(
-            name: "Shared"
+            name: "DottoAPI",
+            dependencies: [
+                .target(name: "DottoModel"),
+                .product(name: "OpenAPIRuntime", package: "swift-openapi-runtime"),
+                .product(name: "OpenAPIURLSession", package: "swift-openapi-urlsession", condition: .when(platforms: [.iOS, .macOS])),
+                .product(name: "OpenAPIAsyncHTTPClient", package: "swift-openapi-async-http-client", condition: .when(platforms: [.android])),
+                .product(name: "SwiftJava", package: "swift-java")
+            ],
+            plugins: [
+                .plugin(name: "OpenAPIGenerator", package: "swift-openapi-generator"),
+                .plugin(name: "JExtractSwiftPlugin", package: "swift-java")
+            ]
         ),
-        .testTarget(
-            name: "SharedTests",
-            dependencies: ["Shared"]
-        ),
+        .target(name: "DottoModel"),
     ],
     swiftLanguageModes: [.v6]
 )
