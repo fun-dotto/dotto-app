@@ -17,6 +17,7 @@ import SwiftUI
 struct AuthClient {
     var signIn: @Sendable (_ viewController: UIViewController) async throws -> DottoUser
     var signOut: @Sendable () async throws -> Void
+    var getCurrentUser: @Sendable () async throws -> DottoUser
 }
 
 extension AuthClient: TestDependencyKey {
@@ -30,6 +31,14 @@ extension AuthClient: TestDependencyKey {
             )
         },
         signOut: {
+        },
+        getCurrentUser: {
+            DottoUser(
+                id: "dotto-user",
+                name: "Dotto User",
+                email: "dottouser@fun.ac.jp",
+                avatarURL: nil
+            )
         }
     )
 
@@ -72,6 +81,17 @@ extension AuthClient: DependencyKey {
         signOut: {
             try Auth.auth().signOut()
             GIDSignIn.sharedInstance.signOut()
+        },
+        getCurrentUser: {
+            guard let firebaseUser = Auth.auth().currentUser else {
+                throw DomainError.unauthenticated
+            }
+            return DottoUser(
+                id: firebaseUser.uid,
+                name: firebaseUser.displayName ?? "",
+                email: firebaseUser.email ?? "",
+                avatarURL: firebaseUser.photoURL
+            )
         }
     )
 }
