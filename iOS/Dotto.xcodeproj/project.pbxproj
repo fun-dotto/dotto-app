@@ -13,6 +13,7 @@
 		F101361F2F89F834009A8957 /* DottoAPI in Frameworks */ = {isa = PBXBuildFile; productRef = F101361E2F89F834009A8957 /* DottoAPI */; };
 		F10136212F89F834009A8957 /* DottoModel in Frameworks */ = {isa = PBXBuildFile; productRef = F10136202F89F834009A8957 /* DottoModel */; };
 		F101362D2F89FB65009A8957 /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = F101362C2F89FB65009A8957 /* ComposableArchitecture */; };
+		F10136342F89FC61009A8957 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = F10136332F89FC61009A8957 /* GoogleSignIn */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -67,6 +68,7 @@
 				F10136212F89F834009A8957 /* DottoModel in Frameworks */,
 				F10136142F89F6BB009A8957 /* FirebaseCore in Frameworks */,
 				F10136122F89F6BB009A8957 /* FirebaseAuth in Frameworks */,
+				F10136342F89FC61009A8957 /* GoogleSignIn in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -133,6 +135,7 @@
 				F101361E2F89F834009A8957 /* DottoAPI */,
 				F10136202F89F834009A8957 /* DottoModel */,
 				F101362C2F89FB65009A8957 /* ComposableArchitecture */,
+				F10136332F89FC61009A8957 /* GoogleSignIn */,
 			);
 			productName = Dotto;
 			productReference = F1DE8F962F851E4300A72EDD /* Dotto.app */;
@@ -220,6 +223,7 @@
 				F101360E2F89F6BB009A8957 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				F101361D2F89F834009A8957 /* XCLocalSwiftPackageReference "../Shared" */,
 				F101362B2F89FB65009A8957 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */,
+				F10136322F89FC61009A8957 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = F1DE8F972F851E4300A72EDD /* Products */;
@@ -633,6 +637,14 @@
 			traits = (
 			);
 		};
+		F10136322F89FC61009A8957 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 9.1.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -663,6 +675,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = F101362B2F89FB65009A8957 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */;
 			productName = ComposableArchitecture;
+		};
+		F10136332F89FC61009A8957 /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F10136322F89FC61009A8957 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
