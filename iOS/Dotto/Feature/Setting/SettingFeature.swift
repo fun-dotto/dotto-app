@@ -17,8 +17,10 @@ struct SettingFeature {
     }
 
     enum Action {
+        case onAppear
         case onSignInButtonTapped(viewController: UIViewController)
         case onSignOutButtonTapped
+        case getUserResult(Result<DottoUser, Error>)
         case signInResult(Result<DottoUser, Error>)
         case signOutResult(Result<Void, Error>)
     }
@@ -28,6 +30,17 @@ struct SettingFeature {
     var body: some Reducer<State, Action> {
         Reduce { state, action in
             switch action {
+            case .onAppear:
+                return .run { send in
+                    await send(
+                        .getUserResult(
+                            Result {
+                                try await authClient.getCurrentUser()
+                            }
+                        )
+                    )
+                }
+
             case .onSignInButtonTapped(let viewController):
                 return .run { send in
                     await send(
@@ -49,6 +62,13 @@ struct SettingFeature {
                         )
                     )
                 }
+
+            case .getUserResult(.success(let user)):
+                state.user = user
+                return .none
+
+            case .getUserResult(.failure):
+                return .none
 
             case .signInResult(.success(let user)):
                 state.user = user

@@ -37,6 +37,9 @@ struct SettingScreen: View {
             }
             .navigationTitle("Setting")
         }
+        .onAppear {
+            store.send(.onAppear)
+        }
     }
 }
 
