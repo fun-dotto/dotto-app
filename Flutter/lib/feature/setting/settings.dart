@@ -47,6 +47,35 @@ final class SettingsScreen extends ConsumerWidget {
     );
   }
 
+Future<void> _showLogoutConfirmDialog(
+  BuildContext context,
+  WidgetRef ref,
+) async {
+  await showDialog<void>(
+    context: context,
+    builder: (dialogContext) {
+      return AlertDialog(
+        title: const Text('ログアウトしますか？'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(dialogContext).pop();
+            },
+            child: const Text('いいえ'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(dialogContext).pop();
+              unawaited(ref.read(userProvider.notifier).signOut());
+            },
+            child: const Text('はい'),
+          ),
+        ],
+      );
+    },
+  );
+}
+
   Future<bool> canOpenDebugScreen() async {
     if (kDebugMode) {
       return true;
