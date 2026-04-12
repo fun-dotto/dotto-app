@@ -55,8 +55,7 @@ final class SettingsScreen extends ConsumerWidget {
       context: context,
       builder: (dialogContext) {
         return AlertDialog(
-          title: null,
-          content: Text(
+          title: Text(
             'ログアウトしますか？',
             style: Theme.of(context).textTheme.titleMedium,
           ),
