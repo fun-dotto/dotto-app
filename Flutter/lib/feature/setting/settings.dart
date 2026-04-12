@@ -61,18 +61,27 @@ final class SettingsScreen extends ConsumerWidget {
             style: Theme.of(context).textTheme.titleMedium,
           ),
           actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(dialogContext).pop();
-              },
-              child: const Text('いいえ'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(dialogContext).pop();
-                unawaited(ref.read(userProvider.notifier).signOut());
-              },
-              child: const Text('はい'),
+            Row(
+              children: [
+                Expanded(
+                  child: TextButton(
+                    onPressed: () {
+                      Navigator.of(dialogContext).pop();
+                    },
+                    child: const Text('いいえ'),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: TextButton(
+                    onPressed: () {
+                      Navigator.of(dialogContext).pop();
+                      unawaited(ref.read(userProvider.notifier).signOut());
+                    },
+                    child: const Text('はい'),
+                  ),
+                ),
+              ],
             ),
           ],
         );
