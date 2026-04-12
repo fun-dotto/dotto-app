@@ -47,34 +47,34 @@ final class SettingsScreen extends ConsumerWidget {
     );
   }
 
-Future<void> _showLogoutConfirmDialog(
-  BuildContext context,
-  WidgetRef ref,
-) async {
-  await showDialog<void>(
-    context: context,
-    builder: (dialogContext) {
-      return AlertDialog(
-        title: const Text('ログアウトしますか？'),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(dialogContext).pop();
-            },
-            child: const Text('いいえ'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(dialogContext).pop();
-              unawaited(ref.read(userProvider.notifier).signOut());
-            },
-            child: const Text('はい'),
-          ),
-        ],
-      );
-    },
-  );
-}
+  Future<void> _showLogoutConfirmDialog(
+    BuildContext context,
+    WidgetRef ref,
+  ) async {
+    await showDialog<void>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text('ログアウトしますか？'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+              },
+              child: const Text('いいえ'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+                unawaited(ref.read(userProvider.notifier).signOut());
+              },
+              child: const Text('はい'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   Future<bool> canOpenDebugScreen() async {
     if (kDebugMode) {
@@ -138,7 +138,9 @@ Future<void> _showLogoutConfirmDialog(
                         child: UserInfoTile(
                           user: value,
                           onTap: value.id.isNotEmpty
-                              ? () => ref.read(userProvider.notifier).signOut()
+                              ? () async {
+                                  await _showLogoutConfirmDialog(context, ref);
+                                }
                               : () async {
                                   await ref
                                       .read(userProvider.notifier)
@@ -161,8 +163,12 @@ Future<void> _showLogoutConfirmDialog(
                           child: UserInfoTile(
                             user: previousUser,
                             onTap: isAuthenticated
-                                ? () =>
-                                      ref.read(userProvider.notifier).signOut()
+                                ? () async {
+                                    await _showLogoutConfirmDialog(
+                                      context,
+                                      ref,
+                                    );
+                                  }
                                 : () async {
                                     await ref
                                         .read(userProvider.notifier)
