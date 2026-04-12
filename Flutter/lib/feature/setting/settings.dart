@@ -67,7 +67,7 @@ final class SettingsScreen extends ConsumerWidget {
                     onPressed: () {
                       Navigator.of(dialogContext).pop();
                     },
-                    child: const Text('いいえ'),
+                    child: const Text('キャンセル'),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -77,7 +77,7 @@ final class SettingsScreen extends ConsumerWidget {
                       Navigator.of(dialogContext).pop();
                       unawaited(ref.read(userProvider.notifier).signOut());
                     },
-                    child: const Text('はい'),
+                    child: const Text('ログアウト'),
                   ),
                 ),
               ],
