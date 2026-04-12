@@ -61,6 +61,7 @@ final class SettingsScreen extends ConsumerWidget {
           ),
           actions: [
             Row(
+              spacing: 12,
               children: [
                 Expanded(
                   child: TextButton(
@@ -70,7 +71,6 @@ final class SettingsScreen extends ConsumerWidget {
                     child: const Text('キャンセル'),
                   ),
                 ),
-                const SizedBox(width: 12),
                 Expanded(
                   child: TextButton(
                     onPressed: () {
