@@ -49,7 +49,7 @@ final class SettingsScreen extends ConsumerWidget {
 
   Future<void> _showLogoutConfirmDialog(
     BuildContext context,
-    WidgetRef ref,
+    VoidCallback onLogout,
   ) async {
     await showDialog<void>(
       context: context,
@@ -75,7 +75,7 @@ final class SettingsScreen extends ConsumerWidget {
                   child: TextButton(
                     onPressed: () {
                       Navigator.of(dialogContext).pop();
-                      unawaited(ref.read(userProvider.notifier).signOut());
+                      onLogout();
                     },
                     child: const Text('ログアウト'),
                   ),
@@ -151,7 +151,12 @@ final class SettingsScreen extends ConsumerWidget {
                           user: value,
                           onTap: value.id.isNotEmpty
                               ? () async {
-                                  await _showLogoutConfirmDialog(context, ref);
+                                  await _showLogoutConfirmDialog(
+                                    context,
+                                    () => unawaited(
+                                      ref.read(userProvider.notifier).signOut(),
+                                    ),
+                                  );
                                 }
                               : () async {
                                   await ref
@@ -178,7 +183,11 @@ final class SettingsScreen extends ConsumerWidget {
                                 ? () async {
                                     await _showLogoutConfirmDialog(
                                       context,
-                                      ref,
+                                      () => unawaited(
+                                        ref
+                                            .read(userProvider.notifier)
+                                            .signOut(),
+                                      ),
                                     );
                                   }
                                 : () async {
