@@ -35,11 +35,18 @@ jobs:
     permissions:
       contents: read
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
       - uses: jdx/mise-action@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          cache: false
+          working_directory: Flutter
       - name: Install dependencies
         run: task install-all
+      - name: Generate code
+        run: task build-all
       - name: Run format
         run: task format
       - name: Check for diff
