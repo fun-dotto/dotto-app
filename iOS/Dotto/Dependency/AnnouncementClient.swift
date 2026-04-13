@@ -12,11 +12,11 @@ import DottoModel
 import Foundation
 
 @DependencyClient
-struct AnnouncementClient {
+nonisolated struct AnnouncementClient {
     var getAnnouncements: @Sendable () async throws -> [Announcement]
 }
 
-extension AnnouncementClient: TestDependencyKey {
+nonisolated extension AnnouncementClient: TestDependencyKey {
     static let previewValue = AnnouncementClient(
         getAnnouncements: {
             [
@@ -45,7 +45,7 @@ extension AnnouncementClient: TestDependencyKey {
     static let testValue = AnnouncementClient()
 }
 
-extension DependencyValues {
+nonisolated extension DependencyValues {
     var announcementClient: AnnouncementClient {
         get { self[AnnouncementClient.self] }
         set { self[AnnouncementClient.self] = newValue }
