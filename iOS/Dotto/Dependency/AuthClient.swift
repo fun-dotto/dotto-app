@@ -14,13 +14,13 @@ import GoogleSignIn
 import SwiftUI
 
 @DependencyClient
-struct AuthClient {
+nonisolated struct AuthClient {
     var signIn: @Sendable (_ viewController: UIViewController) async throws -> DottoUser
     var signOut: @Sendable () async throws -> Void
     var getCurrentUser: @Sendable () async throws -> DottoUser
 }
 
-extension AuthClient: TestDependencyKey {
+nonisolated extension AuthClient: TestDependencyKey {
     static let previewValue = AuthClient(
         signIn: { _ in
             DottoUser(
@@ -45,7 +45,7 @@ extension AuthClient: TestDependencyKey {
     static let testValue = AuthClient()
 }
 
-extension DependencyValues {
+nonisolated extension DependencyValues {
     var authClient: AuthClient {
         get { self[AuthClient.self] }
         set { self[AuthClient.self] = newValue }
