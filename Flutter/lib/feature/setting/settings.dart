@@ -47,6 +47,47 @@ final class SettingsScreen extends ConsumerWidget {
     );
   }
 
+  Future<void> _showLogoutConfirmDialog(
+    BuildContext context,
+    VoidCallback onLogout,
+  ) async {
+    await showDialog<void>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: Text(
+            'ログアウトしますか？',
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+          actions: [
+            Row(
+              spacing: 12,
+              children: [
+                Expanded(
+                  child: TextButton(
+                    onPressed: () {
+                      Navigator.of(dialogContext).pop();
+                    },
+                    child: const Text('キャンセル'),
+                  ),
+                ),
+                Expanded(
+                  child: TextButton(
+                    onPressed: () {
+                      Navigator.of(dialogContext).pop();
+                      onLogout();
+                    },
+                    child: const Text('ログアウト'),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Future<bool> canOpenDebugScreen() async {
     if (kDebugMode) {
       return true;
@@ -109,7 +150,14 @@ final class SettingsScreen extends ConsumerWidget {
                         child: UserInfoTile(
                           user: value,
                           onTap: value.id.isNotEmpty
-                              ? () => ref.read(userProvider.notifier).signOut()
+                              ? () async {
+                                  await _showLogoutConfirmDialog(
+                                    context,
+                                    () => unawaited(
+                                      ref.read(userProvider.notifier).signOut(),
+                                    ),
+                                  );
+                                }
                               : () async {
                                   await ref
                                       .read(userProvider.notifier)
@@ -132,8 +180,16 @@ final class SettingsScreen extends ConsumerWidget {
                           child: UserInfoTile(
                             user: previousUser,
                             onTap: isAuthenticated
-                                ? () =>
-                                      ref.read(userProvider.notifier).signOut()
+                                ? () async {
+                                    await _showLogoutConfirmDialog(
+                                      context,
+                                      () => unawaited(
+                                        ref
+                                            .read(userProvider.notifier)
+                                            .signOut(),
+                                      ),
+                                    );
+                                  }
                                 : () async {
                                     await ref
                                         .read(userProvider.notifier)
