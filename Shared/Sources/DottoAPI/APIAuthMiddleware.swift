@@ -23,14 +23,22 @@ final class APIAuthMiddleware: ClientMiddleware, @unchecked Sendable {
         operationID: String,
         next: @Sendable (HTTPTypes.HTTPRequest, OpenAPIRuntime.HTTPBody?, URL) async throws -> (HTTPTypes.HTTPResponse, OpenAPIRuntime.HTTPBody?)
     ) async throws -> (HTTPTypes.HTTPResponse, OpenAPIRuntime.HTTPBody?) {
-        let appCheckToken = try await firebaseHelper.getAppCheckToken()
-        let idToken = try await firebaseHelper.getUserIDToken()
         var request = request
-        request.headerFields.append(
-            .init(
-                name: .init("X-Firebase-AppCheck")!, value: appCheckToken
-            ))
-        request.headerFields[.authorization] = "Bearer \(idToken)"
+        do {
+            let appCheckToken = try await firebaseHelper.getAppCheckToken()
+            request.headerFields.append(
+                .init(
+                    name: .init("X-Firebase-AppCheck")!, value: appCheckToken
+                ))
+        } catch {
+            print("Failed to get App Check token: \(error)")
+        }
+        do {
+            let idToken = try await firebaseHelper.getUserIDToken()
+            request.headerFields[.authorization] = "Bearer \(idToken)"
+        } catch {
+            print("Failed to get ID token: \(error)")
+        }
         return try await next(request, body, baseURL)
     }
 }
