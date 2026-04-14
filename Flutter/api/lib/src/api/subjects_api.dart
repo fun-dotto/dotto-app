@@ -21,6 +21,7 @@ import 'package:openapi/src/model/subjects_v1_detail200_response.dart';
 import 'package:openapi/src/model/subjects_v1_list200_response.dart';
 
 class SubjectsApi {
+
   final Dio _dio;
 
   final Serializers _serializers;
@@ -28,10 +29,10 @@ class SubjectsApi {
   const SubjectsApi(this._dio, this._serializers);
 
   /// subjectsV1Detail
-  ///
+  /// 
   ///
   /// Parameters:
-  /// * [id]
+  /// * [id] 
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
   /// * [headers] - Can be used to add additional headers to the request
   /// * [extras] - Can be used to add flags to the request
@@ -41,7 +42,7 @@ class SubjectsApi {
   ///
   /// Returns a [Future] containing a [Response] with a [SubjectsV1Detail200Response] as data
   /// Throws [DioException] if API call or serialization fails
-  Future<Response<SubjectsV1Detail200Response>> subjectsV1Detail({
+  Future<Response<SubjectsV1Detail200Response>> subjectsV1Detail({ 
     required String id,
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
@@ -50,10 +51,7 @@ class SubjectsApi {
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
   }) async {
-    final _path = r'/v1/subjects/{id}'.replaceAll(
-        '{' r'id' '}',
-        encodeQueryParameter(_serializers, id, const FullType(String))
-            .toString());
+    final _path = r'/v1/subjects/{id}'.replaceAll('{' r'id' '}', encodeQueryParameter(_serializers, id, const FullType(String)).toString());
     final _options = Options(
       method: r'GET',
       headers: <String, dynamic>{
@@ -85,13 +83,12 @@ class SubjectsApi {
 
     try {
       final rawResponse = _response.data;
-      _responseData = rawResponse == null
-          ? null
-          : _serializers.deserialize(
-              rawResponse,
-              specifiedType: const FullType(SubjectsV1Detail200Response),
-            ) as SubjectsV1Detail200Response;
-    } on Exception catch (error, stackTrace) {
+      _responseData = rawResponse == null ? null : _serializers.deserialize(
+        rawResponse,
+        specifiedType: const FullType(SubjectsV1Detail200Response),
+      ) as SubjectsV1Detail200Response;
+
+    } catch (error, stackTrace) {
       throw DioException(
         requestOptions: _response.requestOptions,
         response: _response,
@@ -134,7 +131,7 @@ class SubjectsApi {
   ///
   /// Returns a [Future] containing a [Response] with a [SubjectsV1List200Response] as data
   /// Throws [DioException] if API call or serialization fails
-  Future<Response<SubjectsV1List200Response>> subjectsV1List({
+  Future<Response<SubjectsV1List200Response>> subjectsV1List({ 
     String? q,
     BuiltList<DottoFoundationV1Grade>? grades,
     BuiltList<DottoFoundationV1Course>? courses,
@@ -142,8 +139,7 @@ class SubjectsApi {
     BuiltList<DottoFoundationV1SubjectClassification>? classifications,
     BuiltList<DottoFoundationV1CourseSemester>? semesters,
     BuiltList<DottoFoundationV1SubjectRequirementType>? requirementTypes,
-    BuiltList<DottoFoundationV1CulturalSubjectCategory>?
-        culturalSubjectCategories,
+    BuiltList<DottoFoundationV1CulturalSubjectCategory>? culturalSubjectCategories,
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
     Map<String, dynamic>? extra,
@@ -172,65 +168,14 @@ class SubjectsApi {
     );
 
     final _queryParameters = <String, dynamic>{
-      if (q != null)
-        r'q': encodeQueryParameter(_serializers, q, const FullType(String)),
-      if (grades != null)
-        r'grades': encodeCollectionQueryParameter<DottoFoundationV1Grade>(
-          _serializers,
-          grades,
-          const FullType(BuiltList, [FullType(DottoFoundationV1Grade)]),
-          format: ListFormat.csv,
-        ),
-      if (courses != null)
-        r'courses': encodeCollectionQueryParameter<DottoFoundationV1Course>(
-          _serializers,
-          courses,
-          const FullType(BuiltList, [FullType(DottoFoundationV1Course)]),
-          format: ListFormat.csv,
-        ),
-      if (classes != null)
-        r'classes': encodeCollectionQueryParameter<DottoFoundationV1Class>(
-          _serializers,
-          classes,
-          const FullType(BuiltList, [FullType(DottoFoundationV1Class)]),
-          format: ListFormat.csv,
-        ),
-      if (classifications != null)
-        r'classifications': encodeCollectionQueryParameter<
-            DottoFoundationV1SubjectClassification>(
-          _serializers,
-          classifications,
-          const FullType(
-              BuiltList, [FullType(DottoFoundationV1SubjectClassification)]),
-          format: ListFormat.csv,
-        ),
-      if (semesters != null)
-        r'semesters':
-            encodeCollectionQueryParameter<DottoFoundationV1CourseSemester>(
-          _serializers,
-          semesters,
-          const FullType(
-              BuiltList, [FullType(DottoFoundationV1CourseSemester)]),
-          format: ListFormat.csv,
-        ),
-      if (requirementTypes != null)
-        r'requirementTypes': encodeCollectionQueryParameter<
-            DottoFoundationV1SubjectRequirementType>(
-          _serializers,
-          requirementTypes,
-          const FullType(
-              BuiltList, [FullType(DottoFoundationV1SubjectRequirementType)]),
-          format: ListFormat.csv,
-        ),
-      if (culturalSubjectCategories != null)
-        r'culturalSubjectCategories': encodeCollectionQueryParameter<
-            DottoFoundationV1CulturalSubjectCategory>(
-          _serializers,
-          culturalSubjectCategories,
-          const FullType(
-              BuiltList, [FullType(DottoFoundationV1CulturalSubjectCategory)]),
-          format: ListFormat.csv,
-        ),
+      if (q != null) r'q': encodeQueryParameter(_serializers, q, const FullType(String)),
+      if (grades != null) r'grades': encodeCollectionQueryParameter<DottoFoundationV1Grade>(_serializers, grades, const FullType(BuiltList, [FullType(DottoFoundationV1Grade)]), format: ListFormat.csv,),
+      if (courses != null) r'courses': encodeCollectionQueryParameter<DottoFoundationV1Course>(_serializers, courses, const FullType(BuiltList, [FullType(DottoFoundationV1Course)]), format: ListFormat.csv,),
+      if (classes != null) r'classes': encodeCollectionQueryParameter<DottoFoundationV1Class>(_serializers, classes, const FullType(BuiltList, [FullType(DottoFoundationV1Class)]), format: ListFormat.csv,),
+      if (classifications != null) r'classifications': encodeCollectionQueryParameter<DottoFoundationV1SubjectClassification>(_serializers, classifications, const FullType(BuiltList, [FullType(DottoFoundationV1SubjectClassification)]), format: ListFormat.csv,),
+      if (semesters != null) r'semesters': encodeCollectionQueryParameter<DottoFoundationV1CourseSemester>(_serializers, semesters, const FullType(BuiltList, [FullType(DottoFoundationV1CourseSemester)]), format: ListFormat.csv,),
+      if (requirementTypes != null) r'requirementTypes': encodeCollectionQueryParameter<DottoFoundationV1SubjectRequirementType>(_serializers, requirementTypes, const FullType(BuiltList, [FullType(DottoFoundationV1SubjectRequirementType)]), format: ListFormat.csv,),
+      if (culturalSubjectCategories != null) r'culturalSubjectCategories': encodeCollectionQueryParameter<DottoFoundationV1CulturalSubjectCategory>(_serializers, culturalSubjectCategories, const FullType(BuiltList, [FullType(DottoFoundationV1CulturalSubjectCategory)]), format: ListFormat.csv,),
     };
 
     final _response = await _dio.request<Object>(
@@ -246,13 +191,12 @@ class SubjectsApi {
 
     try {
       final rawResponse = _response.data;
-      _responseData = rawResponse == null
-          ? null
-          : _serializers.deserialize(
-              rawResponse,
-              specifiedType: const FullType(SubjectsV1List200Response),
-            ) as SubjectsV1List200Response;
-    } on Exception catch (error, stackTrace) {
+      _responseData = rawResponse == null ? null : _serializers.deserialize(
+        rawResponse,
+        specifiedType: const FullType(SubjectsV1List200Response),
+      ) as SubjectsV1List200Response;
+
+    } catch (error, stackTrace) {
       throw DioException(
         requestOptions: _response.requestOptions,
         response: _response,
@@ -273,4 +217,5 @@ class SubjectsApi {
       extra: _response.extra,
     );
   }
+
 }

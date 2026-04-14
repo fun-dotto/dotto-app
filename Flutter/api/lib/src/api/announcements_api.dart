@@ -11,6 +11,7 @@ import 'package:dio/dio.dart';
 import 'package:openapi/src/model/announcements_v1_list200_response.dart';
 
 class AnnouncementsApi {
+
   final Dio _dio;
 
   final Serializers _serializers;
@@ -18,7 +19,7 @@ class AnnouncementsApi {
   const AnnouncementsApi(this._dio, this._serializers);
 
   /// announcementsV1List
-  ///
+  /// 
   ///
   /// Parameters:
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
@@ -30,7 +31,7 @@ class AnnouncementsApi {
   ///
   /// Returns a [Future] containing a [Response] with a [AnnouncementsV1List200Response] as data
   /// Throws [DioException] if API call or serialization fails
-  Future<Response<AnnouncementsV1List200Response>> announcementsV1List({
+  Future<Response<AnnouncementsV1List200Response>> announcementsV1List({ 
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
     Map<String, dynamic>? extra,
@@ -70,13 +71,12 @@ class AnnouncementsApi {
 
     try {
       final rawResponse = _response.data;
-      _responseData = rawResponse == null
-          ? null
-          : _serializers.deserialize(
-              rawResponse,
-              specifiedType: const FullType(AnnouncementsV1List200Response),
-            ) as AnnouncementsV1List200Response;
-    } on Exception catch (error, stackTrace) {
+      _responseData = rawResponse == null ? null : _serializers.deserialize(
+        rawResponse,
+        specifiedType: const FullType(AnnouncementsV1List200Response),
+      ) as AnnouncementsV1List200Response;
+
+    } catch (error, stackTrace) {
       throw DioException(
         requestOptions: _response.requestOptions,
         response: _response,
@@ -97,4 +97,5 @@ class AnnouncementsApi {
       extra: _response.extra,
     );
   }
+
 }

@@ -54,7 +54,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[FirebaseAppCheckAuth](../README.md#FirebaseAppCheckAuth)
+[FirebaseAppCheckAuth](../README.md#FirebaseAppCheckAuth), [BearerAuth](../README.md#BearerAuth)
 
 ### HTTP request headers
 
