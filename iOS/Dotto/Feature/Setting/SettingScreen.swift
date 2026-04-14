@@ -45,7 +45,7 @@ struct SettingScreen: View {
                             }
                         )
                     } label: {
-                        Label("お知らせ", systemImage: "bell")
+                        Label("Announcements", systemImage: "bell")
                     }
                 }
             }
