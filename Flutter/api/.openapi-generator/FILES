@@ -119,12 +119,3 @@ lib/src/model/user_info.dart
 lib/src/model/users_v1_detail200_response.dart
 lib/src/serializers.dart
 pubspec.yaml
-test/cancelled_class_test.dart
-test/cancelled_classes_api_test.dart
-test/cancelled_classes_v1_list200_response_test.dart
-test/makeup_class_test.dart
-test/makeup_classes_api_test.dart
-test/makeup_classes_v1_list200_response_test.dart
-test/room_change_test.dart
-test/room_changes_api_test.dart
-test/room_changes_v1_list200_response_test.dart

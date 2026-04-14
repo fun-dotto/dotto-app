@@ -14,6 +14,7 @@ import 'package:openapi/src/model/dotto_foundation_v1_course_semester.dart';
 import 'package:openapi/src/model/timetable_items_v1_list200_response.dart';
 
 class TimetableItemsApi {
+
   final Dio _dio;
 
   final Serializers _serializers;
@@ -35,7 +36,7 @@ class TimetableItemsApi {
   ///
   /// Returns a [Future] containing a [Response] with a [TimetableItemsV1List200Response] as data
   /// Throws [DioException] if API call or serialization fails
-  Future<Response<TimetableItemsV1List200Response>> timetableItemsV1List({
+  Future<Response<TimetableItemsV1List200Response>> timetableItemsV1List({ 
     required BuiltList<DottoFoundationV1CourseSemester> semesters,
     int? year,
     CancelToken? cancelToken,
@@ -66,15 +67,8 @@ class TimetableItemsApi {
     );
 
     final _queryParameters = <String, dynamic>{
-      if (year != null)
-        r'year': encodeQueryParameter(_serializers, year, const FullType(int)),
-      r'semesters':
-          encodeCollectionQueryParameter<DottoFoundationV1CourseSemester>(
-        _serializers,
-        semesters,
-        const FullType(BuiltList, [FullType(DottoFoundationV1CourseSemester)]),
-        format: ListFormat.csv,
-      ),
+      if (year != null) r'year': encodeQueryParameter(_serializers, year, const FullType(int)),
+      r'semesters': encodeCollectionQueryParameter<DottoFoundationV1CourseSemester>(_serializers, semesters, const FullType(BuiltList, [FullType(DottoFoundationV1CourseSemester)]), format: ListFormat.csv,),
     };
 
     final _response = await _dio.request<Object>(
@@ -90,13 +84,12 @@ class TimetableItemsApi {
 
     try {
       final rawResponse = _response.data;
-      _responseData = rawResponse == null
-          ? null
-          : _serializers.deserialize(
-              rawResponse,
-              specifiedType: const FullType(TimetableItemsV1List200Response),
-            ) as TimetableItemsV1List200Response;
-    } on Exception catch (error, stackTrace) {
+      _responseData = rawResponse == null ? null : _serializers.deserialize(
+        rawResponse,
+        specifiedType: const FullType(TimetableItemsV1List200Response),
+      ) as TimetableItemsV1List200Response;
+
+    } catch (error, stackTrace) {
       throw DioException(
         requestOptions: _response.requestOptions,
         response: _response,
@@ -117,4 +110,5 @@ class TimetableItemsApi {
       extra: _response.extra,
     );
   }
+
 }

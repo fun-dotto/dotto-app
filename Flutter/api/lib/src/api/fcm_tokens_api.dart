@@ -12,6 +12,7 @@ import 'package:openapi/src/model/fcm_token_request.dart';
 import 'package:openapi/src/model/fcm_token_v1_upsert200_response.dart';
 
 class FCMTokensApi {
+
   final Dio _dio;
 
   final Serializers _serializers;
@@ -32,7 +33,7 @@ class FCMTokensApi {
   ///
   /// Returns a [Future] containing a [Response] with a [FCMTokenV1Upsert200Response] as data
   /// Throws [DioException] if API call or serialization fails
-  Future<Response<FCMTokenV1Upsert200Response>> fCMTokenV1Upsert({
+  Future<Response<FCMTokenV1Upsert200Response>> fCMTokenV1Upsert({ 
     required FCMTokenRequest fCMTokenRequest,
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
@@ -54,8 +55,7 @@ class FCMTokensApi {
             'name': 'FirebaseAppCheckAuth',
             'keyName': 'X-Firebase-AppCheck',
             'where': 'header',
-          },
-          {
+          },{
             'type': 'http',
             'scheme': 'Bearer',
             'name': 'BearerAuth',
@@ -72,9 +72,10 @@ class FCMTokensApi {
     try {
       const _type = FullType(FCMTokenRequest);
       _bodyData = _serializers.serialize(fCMTokenRequest, specifiedType: _type);
-    } catch (error, stackTrace) {
+
+    } catch(error, stackTrace) {
       throw DioException(
-        requestOptions: _options.compose(
+         requestOptions: _options.compose(
           _dio.options,
           _path,
         ),
@@ -97,13 +98,12 @@ class FCMTokensApi {
 
     try {
       final rawResponse = _response.data;
-      _responseData = rawResponse == null
-          ? null
-          : _serializers.deserialize(
-              rawResponse,
-              specifiedType: const FullType(FCMTokenV1Upsert200Response),
-            ) as FCMTokenV1Upsert200Response;
-    } on Exception catch (error, stackTrace) {
+      _responseData = rawResponse == null ? null : _serializers.deserialize(
+        rawResponse,
+        specifiedType: const FullType(FCMTokenV1Upsert200Response),
+      ) as FCMTokenV1Upsert200Response;
+
+    } catch (error, stackTrace) {
       throw DioException(
         requestOptions: _response.requestOptions,
         response: _response,
@@ -124,4 +124,5 @@ class FCMTokensApi {
       extra: _response.extra,
     );
   }
+
 }

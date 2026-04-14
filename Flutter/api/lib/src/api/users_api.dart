@@ -12,6 +12,7 @@ import 'package:openapi/src/model/user_info.dart';
 import 'package:openapi/src/model/users_v1_detail200_response.dart';
 
 class UsersApi {
+
   final Dio _dio;
 
   final Serializers _serializers;
@@ -31,7 +32,7 @@ class UsersApi {
   ///
   /// Returns a [Future] containing a [Response] with a [UsersV1Detail200Response] as data
   /// Throws [DioException] if API call or serialization fails
-  Future<Response<UsersV1Detail200Response>> usersV1Detail({
+  Future<Response<UsersV1Detail200Response>> usersV1Detail({ 
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
     Map<String, dynamic>? extra,
@@ -52,8 +53,7 @@ class UsersApi {
             'name': 'FirebaseAppCheckAuth',
             'keyName': 'X-Firebase-AppCheck',
             'where': 'header',
-          },
-          {
+          },{
             'type': 'http',
             'scheme': 'Bearer',
             'name': 'BearerAuth',
@@ -76,13 +76,12 @@ class UsersApi {
 
     try {
       final rawResponse = _response.data;
-      _responseData = rawResponse == null
-          ? null
-          : _serializers.deserialize(
-              rawResponse,
-              specifiedType: const FullType(UsersV1Detail200Response),
-            ) as UsersV1Detail200Response;
-    } on Exception catch (error, stackTrace) {
+      _responseData = rawResponse == null ? null : _serializers.deserialize(
+        rawResponse,
+        specifiedType: const FullType(UsersV1Detail200Response),
+      ) as UsersV1Detail200Response;
+
+    } catch (error, stackTrace) {
       throw DioException(
         requestOptions: _response.requestOptions,
         response: _response,
@@ -118,7 +117,7 @@ class UsersApi {
   ///
   /// Returns a [Future] containing a [Response] with a [UsersV1Detail200Response] as data
   /// Throws [DioException] if API call or serialization fails
-  Future<Response<UsersV1Detail200Response>> usersV1Upsert({
+  Future<Response<UsersV1Detail200Response>> usersV1Upsert({ 
     required UserInfo userInfo,
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
@@ -140,8 +139,7 @@ class UsersApi {
             'name': 'FirebaseAppCheckAuth',
             'keyName': 'X-Firebase-AppCheck',
             'where': 'header',
-          },
-          {
+          },{
             'type': 'http',
             'scheme': 'Bearer',
             'name': 'BearerAuth',
@@ -158,9 +156,10 @@ class UsersApi {
     try {
       const _type = FullType(UserInfo);
       _bodyData = _serializers.serialize(userInfo, specifiedType: _type);
-    } catch (error, stackTrace) {
+
+    } catch(error, stackTrace) {
       throw DioException(
-        requestOptions: _options.compose(
+         requestOptions: _options.compose(
           _dio.options,
           _path,
         ),
@@ -183,13 +182,12 @@ class UsersApi {
 
     try {
       final rawResponse = _response.data;
-      _responseData = rawResponse == null
-          ? null
-          : _serializers.deserialize(
-              rawResponse,
-              specifiedType: const FullType(UsersV1Detail200Response),
-            ) as UsersV1Detail200Response;
-    } on Exception catch (error, stackTrace) {
+      _responseData = rawResponse == null ? null : _serializers.deserialize(
+        rawResponse,
+        specifiedType: const FullType(UsersV1Detail200Response),
+      ) as UsersV1Detail200Response;
+
+    } catch (error, stackTrace) {
       throw DioException(
         requestOptions: _response.requestOptions,
         response: _response,
@@ -210,4 +208,5 @@ class UsersApi {
       extra: _response.extra,
     );
   }
+
 }
