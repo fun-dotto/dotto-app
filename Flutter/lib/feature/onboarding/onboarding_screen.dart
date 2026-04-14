@@ -1,11 +1,13 @@
 import 'package:dotto/asset.dart';
+import 'package:dotto/controller/config_controller.dart';
 import 'package:dotto/feature/onboarding/domain/onboarding_page.dart';
 import 'package:dotto_design_system/component/button.dart';
 import 'package:dotto_design_system/style/semantic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-final class OnboardingScreen extends HookWidget {
+final class OnboardingScreen extends HookConsumerWidget {
   const OnboardingScreen({required this.onDismissed, super.key});
 
   final void Function() onDismissed;
@@ -185,9 +187,10 @@ final class OnboardingScreen extends HookWidget {
 
   Widget _buildBottomArea({
     required int activeIndicatorIndex,
+    required int pageCount,
     required VoidCallback onNextButtonTapped,
   }) {
-    final indicatorCount = OnboardingPage.pages.length - 1;
+    final indicatorCount = pageCount - 1;
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(40, 40, 40, 40),
@@ -217,7 +220,7 @@ final class OnboardingScreen extends HookWidget {
             child: DottoButton(
               onPressed: onNextButtonTapped,
               child: Text(
-                activeIndicatorIndex == indicatorCount ? 'はじめる' : '次へ',
+                activeIndicatorIndex == indicatorCount - 1 ? 'はじめる' : '次へ',
               ),
             ),
           ),
@@ -252,9 +255,26 @@ final class OnboardingScreen extends HookWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isFunchEnabled = ref.watch(
+      configProvider.select((config) => config.isFunchEnabled),
+    );
+    final pages = OnboardingPage.pages(isFunchEnabled: isFunchEnabled);
     final pageController = usePageController();
     final currentPage = useState(0);
+
+    useEffect(() {
+      if (currentPage.value >= pages.length) {
+        final clamped = pages.length - 1;
+        currentPage.value = clamped;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (pageController.hasClients) {
+            pageController.jumpToPage(clamped);
+          }
+        });
+      }
+      return null;
+    }, [pages.length]);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Dottoの使い方')),
@@ -270,9 +290,9 @@ final class OnboardingScreen extends HookWidget {
                   child: PageView.builder(
                     controller: pageController,
                     onPageChanged: (index) => currentPage.value = index,
-                    itemCount: OnboardingPage.pages.length,
+                    itemCount: pages.length,
                     itemBuilder: (context, index) {
-                      final page = OnboardingPage.pages[index];
+                      final page = pages[index];
                       if (page is OnboardingWelcomePage) {
                         return _buildWelcomePage(context, page);
                       } else if (page is OnboardingContentPage) {
@@ -287,8 +307,9 @@ final class OnboardingScreen extends HookWidget {
                   activeIndicatorIndex: currentPage.value == 0
                       ? -1
                       : currentPage.value - 1,
+                  pageCount: pages.length,
                   onNextButtonTapped: () async {
-                    if (currentPage.value == OnboardingPage.pages.length - 1) {
+                    if (currentPage.value == pages.length - 1) {
                       onDismissed();
                       return;
                     }
