@@ -2,9 +2,23 @@ import java.nio.file.*
 import org.gradle.internal.os.OperatingSystem
 import groovy.json.JsonSlurper
 import kotlinx.serialization.json.*
+import org.gradle.api.DefaultTask
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.OutputDirectory
 
 plugins {
     id 'com.android.library'
+}
+
+abstract class BuildSwiftAllTask extends DefaultTask {
+    @OutputDirectory
+    abstract DirectoryProperty getOutputDirectory()
+}
+
+abstract class CopySwiftJniLibsTask extends Copy {
+    @Internal
+    abstract DirectoryProperty getOutputDirectory()
 }
 
 android {
@@ -112,7 +126,7 @@ def abis = [
 def generatedJniLibsDir = layout.buildDirectory.dir("generated/jniLibs")
 def swiftSdkPath = "${getSwiftSDKPath().absolutePath}/${sdkName}"
 
-def buildSwiftAll = tasks.register("buildSwiftAll") {
+def buildSwiftAll = tasks.register("buildSwiftAll", BuildSwiftAllTask) {
     group = "build"
     description = "Builds the Swift code for all Android ABIs."
 
@@ -120,7 +134,7 @@ def buildSwiftAll = tasks.register("buildSwiftAll") {
     inputs.file(new File(projectDir, "Package.swift"))
     inputs.dir(new File(layout.projectDirectory.asFile, "Sources/WeatherLibrary".toString()))
 
-    outputs.dir(layout.buildDirectory.dir("../.build/plugins/outputs/${layout.projectDirectory.asFile.getName().toLowerCase()}/WeatherLibrary/destination/JExtractSwiftPlugin/src/generated/java"))
+    outputDirectory.set(layout.buildDirectory.dir("../.build/plugins/outputs/${layout.projectDirectory.asFile.getName().toLowerCase()}/WeatherLibrary/destination/JExtractSwiftPlugin/src/generated/java"))
 }
 
 // Create a build task for each ABI
@@ -146,8 +160,10 @@ abis.each { abi, info ->
     buildSwiftAll.configure { dependsOn(task) }
 }
 
-def copyJniLibs = tasks.register("copyJniLibs", Copy) {
+def copyJniLibs = tasks.register("copyJniLibs", CopySwiftJniLibsTask) {
     dependsOn(buildSwiftAll)
+
+    outputDirectory.set(generatedJniLibsDir)
 
     abis.each { abi, info ->
         // Copy the built .so files
@@ -176,20 +192,10 @@ def copyJniLibs = tasks.register("copyJniLibs", Copy) {
     into(generatedJniLibsDir)
 }
 
-// Add the java-swift generated Java sources
-android {
-    sourceSets {
-        main {
-            java {
-                srcDir(buildSwiftAll)
-            }
-
-            jniLibs {
-                srcDir(generatedJniLibsDir)
-            }
-        }
+// Wire generated Swift sources and JNI libs into the variant model
+androidComponents {
+    onVariants(selector().all()) { variant ->
+        variant.sources.java.addGeneratedSourceDirectory(buildSwiftAll, { task -> task.outputDirectory })
+        variant.sources.jniLibs.addGeneratedSourceDirectory(copyJniLibs, { task -> task.outputDirectory })
     }
 }
-
-// Make sure we run our tasks before build
-preBuild.dependsOn(copyJniLibs)
