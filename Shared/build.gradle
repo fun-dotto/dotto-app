@@ -4,7 +4,7 @@ import groovy.json.JsonSlurper
 import kotlinx.serialization.json.*
 
 plugins {
-    alias(libs.plugins.android.library)
+    id 'com.android.library'
 }
 
 android {
