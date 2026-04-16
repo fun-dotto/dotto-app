@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:dotto/domain/bus_stop.dart';
 import 'package:dotto/domain/user_preference_keys.dart';
 import 'package:dotto/feature/bus/bus_state.dart';
+import 'package:dotto/helper/location_helper.dart';
 import 'package:dotto/helper/user_preference_repository.dart';
 import 'package:dotto/repository/repository_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -26,11 +27,14 @@ final class BusReducer extends _$BusReducer {
     });
 
     final busRepository = ref.read(busRepositoryProvider);
+    final nearUniFuture = LocationHelper.isNearUniversity();
+
     final allStops = await busRepository.getAllBusStops();
     final trips = await busRepository.getBusTrips(allStops);
 
     final myBusStop = await _loadMyBusStop(allStops);
     final now = DateTime.now();
+    final isNearUni = await nearUniFuture;
 
     _startPolling();
 
@@ -40,6 +44,7 @@ final class BusReducer extends _$BusReducer {
       myBusStop: myBusStop,
       isWeekday: now.weekday <= DateTime.friday,
       currentTime: now,
+      isTo: !isNearUni,
     );
   }
 
