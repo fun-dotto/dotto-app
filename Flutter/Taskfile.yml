@@ -152,46 +152,6 @@ tasks:
       - task: build
       - "{{.FLUTTER}} build appbundle --release $({{.DOTENVX}} decrypt --stdout | grep -v '^#' | sed 's/^/--dart-define=/')"
 
-  deploy-ios-firebase-app-distribution:
-    desc: Deploy iOS to Firebase App Distribution
-    cmds:
-      - task: ios:deploy-firebase-app-distribution
-        vars:
-          DOTENVX: "{{.DOTENVX}}"
-          FASTLANE: "{{.FASTLANE}}"
-
-  deploy-android-firebase-app-distribution:
-    desc: Deploy Android to Firebase App Distribution
-    cmds:
-      - task: android:deploy-firebase-app-distribution
-        vars:
-          DOTENVX: "{{.DOTENVX}}"
-          FASTLANE: "{{.FASTLANE}}"
-
-  deploy-ios-testflight:
-    desc: Deploy iOS to TestFlight
-    cmds:
-      - task: ios:deploy-testflight
-        vars:
-          DOTENVX: "{{.DOTENVX}}"
-          FASTLANE: "{{.FASTLANE}}"
-
-  deploy-android-google-play:
-    desc: Deploy Android to Google Play
-    cmds:
-      - task: android:deploy-google-play
-        vars:
-          DOTENVX: "{{.DOTENVX}}"
-          FASTLANE: "{{.FASTLANE}}"
-
-  match-development:
-    desc: Match development certificates (readonly)
-    cmds:
-      - task: ios:match-development
-        vars:
-          DOTENVX: "{{.DOTENVX}}"
-          FASTLANE: "{{.FASTLANE}}"
-
   bump-build:
     desc: Bump build number
     cmds:
