@@ -1,14 +1,15 @@
 import 'package:geolocator/geolocator.dart';
 
 abstract class LocationHelper {
-  static const double _universityLat = 41.8419;
-  static const double _universityLng = 140.7667;
-  static const double _nearThresholdMeters = 500;
+  static const double _universityLat = 41.841889;
+  static const double _universityLng = 140.766962;
+  static const double _nearThresholdMeters = 250;
 
   static Future<bool> isNearUniversity() async {
     try {
-      final position =
-          await determinePosition().timeout(const Duration(seconds: 5));
+      final position = await determinePosition().timeout(
+        const Duration(seconds: 5),
+      );
       if (position == null) return false;
       final distance = Geolocator.distanceBetween(
         position.latitude,
