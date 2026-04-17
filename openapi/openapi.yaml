@@ -960,6 +960,19 @@ components:
       properties:
         token:
           type: string
+    Faculty:
+      type: object
+      required:
+        - id
+        - name
+        - email
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
     MakeupClass:
       type: object
       required:
@@ -1051,8 +1064,21 @@ components:
           type: string
         name:
           type: string
+          description: 部屋名
         floor:
-          $ref: '#/components/schemas/DottoFoundationV1.Floor'
+          allOf:
+            - $ref: '#/components/schemas/DottoFoundationV1.Floor'
+          description: |-
+            フロア
+
+            オンラインなどの仮想教室の場合はVirtualを使用
+        faculty:
+          allOf:
+            - $ref: '#/components/schemas/Faculty'
+          description: |-
+            教員
+
+            空室の教員室や教員室でない場合は省略
     RoomChange:
       type: object
       required:
