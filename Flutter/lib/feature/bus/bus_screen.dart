@@ -381,54 +381,41 @@ final class _BusTripTile extends StatelessWidget {
       onTap: onTap,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              '${formatDuration(beginTime)} → ${formatDuration(endTime)}',
-              style: Theme.of(
-                context,
-              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              directionText.isEmpty ? route : '$route $directionText',
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: SemanticColor.light.labelSecondary,
-              ),
-            ),
-            const SizedBox(height: 6),
-            Row(
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              spacing: 4,
               children: [
-                Icon(
-                  Icons.directions_bus,
-                  size: 20,
-                  color: SemanticColor.light.accentPrimary,
+                Text(
+                  '${formatDuration(beginTime)} → ${formatDuration(endTime)}',
+                  style: Theme.of(context).textTheme.headlineSmall,
                 ),
-                if (boardStop != null) ...[
-                  const SizedBox(width: 6),
-                  Text(boardStop),
-                ],
-                const Text(' － '),
-                Text(alightStop),
-                const SizedBox(width: 6),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 6,
-                    vertical: 2,
-                  ),
-                  decoration: BoxDecoration(
+                Text(
+                  directionText.isEmpty ? route : '$route $directionText',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: SemanticColor.light.labelSecondary,
-                    borderRadius: BorderRadius.circular(4),
                   ),
-                  child: Text(
-                    '着',
-                    style: Theme.of(
-                      context,
-                    ).textTheme.labelSmall?.copyWith(color: Colors.white),
-                  ),
+                ),
+                Row(
+                  spacing: 4,
+                  children: [
+                    Icon(
+                      Icons.directions_bus,
+                      size: 20,
+                      color: SemanticColor.light.accentPrimary,
+                    ),
+                    if (boardStop != null) ...[Text(boardStop)],
+                    const Text('-'),
+                    Text(alightStop),
+                  ],
                 ),
               ],
+            ),
+            Icon(
+              Icons.chevron_right,
+              color: SemanticColor.light.labelSecondary,
             ),
           ],
         ),
