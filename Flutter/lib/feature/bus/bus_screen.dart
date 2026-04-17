@@ -1,5 +1,5 @@
 import 'package:collection/collection.dart';
-import 'package:dotto/feature/bus/bus_card.dart';
+import 'package:dotto/domain/bus_type.dart';
 import 'package:dotto/feature/bus/bus_reducer.dart';
 import 'package:dotto/feature/bus/bus_stop_select.dart';
 import 'package:dotto/feature/bus/bus_timetable.dart';
@@ -28,8 +28,6 @@ final class BusScreen extends HookConsumerWidget {
       initialLength: 2,
       initialIndex: isWeekday ? 0 : 1,
     );
-    final scrollController = useScrollController();
-
     useEffect(() {
       final desiredIndex = isWeekday ? 0 : 1;
       if (tabController.index != desiredIndex) {
@@ -92,7 +90,7 @@ final class BusScreen extends HookConsumerWidget {
         ),
         centerTitle: false,
         bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(128),
+          preferredSize: const Size.fromHeight(96),
           child: Column(
             children: [
               Padding(
@@ -109,9 +107,7 @@ final class BusScreen extends HookConsumerWidget {
                         color: SemanticColor.light.labelSecondary,
                       ),
                     ),
-                    Flexible(
-                      child: Column(children: [fromCard, toCard]),
-                    ),
+                    Flexible(child: Column(children: [fromCard, toCard])),
                   ],
                 ),
               ),
@@ -168,30 +164,27 @@ final class BusScreen extends HookConsumerWidget {
                     arriveAtSoon = false;
                     hasKey = true;
                   }
-                  return InkWell(
-                    onTap: () async {
-                      await Navigator.of(context).push(
-                        MaterialPageRoute<void>(
-                          builder: (context) => BusTimetableScreen(busTrip),
-                          settings: RouteSettings(
-                            name: '/bus/timetable?route=${busTrip.route}',
-                          ),
-                        ),
-                      );
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: BusCard(
-                        route: busTrip.route,
-                        beginTime: fromBusTripStop.time,
-                        endTime: toBusTripStop.time,
-                        arriveAt: arriveAt,
-                        isTo: value.isTo,
-                        myBusStopName: value.myBusStop.name,
-                        isKameda: kameda,
-                        key: hasKey ? busKey : null,
-                      ),
-                    ),
+                  return _BusTripTile(
+                    key: hasKey ? busKey : null,
+                    route: busTrip.route,
+                    beginTime: fromBusTripStop.time,
+                    endTime: toBusTripStop.time,
+                    isTo: value.isTo,
+                    isKameda: kameda,
+                    myBusStopName: value.myBusStop.name,
+                    onTap: busTrip.route == '0'
+                        ? null
+                        : () async {
+                            await Navigator.of(context).push(
+                              MaterialPageRoute<void>(
+                                builder: (context) =>
+                                    BusTimetableScreen(busTrip),
+                                settings: RouteSettings(
+                                  name: '/bus/timetable?route=${busTrip.route}',
+                                ),
+                              ),
+                            );
+                          },
                   );
                 })
                 .toList();
@@ -200,22 +193,18 @@ final class BusScreen extends HookConsumerWidget {
               if (value.isScrolled) return;
               final currentContext = busKey.currentContext;
               if (currentContext == null) return;
-              final box = currentContext.findRenderObject()! as RenderBox;
-              final position = box.localToGlobal(Offset.zero);
-              await scrollController.animateTo(
-                scrollController.offset + position.dy - 300,
+              await Scrollable.ensureVisible(
+                currentContext,
                 duration: const Duration(milliseconds: 500),
                 curve: Curves.easeInOut,
               );
               ref.read(busReducerProvider.notifier).setScrolled(value: true);
             });
 
-            return SingleChildScrollView(
-              controller: scrollController,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                child: Column(spacing: 8, children: tripWidgets),
-              ),
+            return ListView.separated(
+              itemCount: tripWidgets.length,
+              separatorBuilder: (_, _) => const Divider(height: 1),
+              itemBuilder: (_, index) => tripWidgets[index],
             );
           case AsyncError():
             return const Padding(
@@ -268,6 +257,109 @@ final class _BusStopCard extends StatelessWidget {
       onTap: onTap,
       splashColor: SemanticColor.light.borderPrimary,
       child: card,
+    );
+  }
+}
+
+final class _BusTripTile extends StatelessWidget {
+  const _BusTripTile({
+    required this.route,
+    required this.beginTime,
+    required this.endTime,
+    required this.isTo,
+    required this.isKameda,
+    required this.myBusStopName,
+    this.onTap,
+    super.key,
+  });
+
+  final String route;
+  final Duration beginTime;
+  final Duration endTime;
+  final bool isTo;
+  final bool isKameda;
+  final String myBusStopName;
+  final VoidCallback? onTap;
+
+  BusType _busType() {
+    if (['55', '55A', '55B', '55C', '55E', '55F'].contains(route)) {
+      return BusType.goryokaku;
+    }
+    if (route == '55G') return BusType.syowa;
+    if (route == '55H') return BusType.kameda;
+    return BusType.other;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (route == '0') {
+      return const ListTile(title: Text('今日の運行は終了しました。'));
+    }
+    final boardStop = isKameda && isTo ? '亀田支所前' : null;
+    final alightStop = isKameda && !isTo
+        ? '亀田支所前'
+        : (isTo ? _funBusStopName : myBusStopName);
+    final tripType = _busType();
+    final directionText = tripType != BusType.other
+        ? '${tripType.where}${isTo ? 'から' : '行き'}'
+        : '';
+
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '${formatDuration(beginTime)} → ${formatDuration(endTime)}',
+              style: Theme.of(
+                context,
+              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              directionText.isEmpty ? route : '$route $directionText',
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: SemanticColor.light.labelSecondary,
+              ),
+            ),
+            const SizedBox(height: 6),
+            Row(
+              children: [
+                Icon(
+                  Icons.directions_bus,
+                  size: 20,
+                  color: SemanticColor.light.accentPrimary,
+                ),
+                if (boardStop != null) ...[
+                  const SizedBox(width: 6),
+                  Text(boardStop),
+                ],
+                const Text(' － '),
+                Text(alightStop),
+                const SizedBox(width: 6),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 6,
+                    vertical: 2,
+                  ),
+                  decoration: BoxDecoration(
+                    color: SemanticColor.light.labelSecondary,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Text(
+                    '着',
+                    style: Theme.of(
+                      context,
+                    ).textTheme.labelSmall?.copyWith(color: Colors.white),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
