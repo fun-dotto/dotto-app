@@ -318,7 +318,11 @@ final class _BusStopCard extends StatelessWidget {
           children: [
             Icon(icon, size: 16, color: SemanticColor.light.labelSecondary),
             Expanded(
-              child: Text(label, style: Theme.of(context).textTheme.bodyMedium),
+              child: Text(
+                label,
+                style: Theme.of(context).textTheme.bodyMedium,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
           ],
         ),
