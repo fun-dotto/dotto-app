@@ -255,6 +255,7 @@ final class _BusStopCard extends StatelessWidget {
     if (onTap == null) return card;
     return InkWell(
       onTap: onTap,
+      borderRadius: BorderRadius.circular(4),
       splashColor: SemanticColor.light.borderPrimary,
       child: card,
     );
