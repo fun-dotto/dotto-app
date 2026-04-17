@@ -131,13 +131,15 @@ final class BusScreen extends HookConsumerWidget {
             var arriveAtSoon = true;
             final tripWidgets = value
                 .trips[fromToString]![value.isWeekday ? 'weekday' : 'holiday']!
+                .where(
+                  (busTrip) => busTrip.stops.any(
+                    (element) => element.stop.id == _funBusStopId,
+                  ),
+                )
                 .map((busTrip) {
-                  final funBusTripStop = busTrip.stops.firstWhereOrNull(
+                  final funBusTripStop = busTrip.stops.firstWhere(
                     (element) => element.stop.id == _funBusStopId,
                   );
-                  if (funBusTripStop == null) {
-                    return Container();
-                  }
                   var targetBusTripStop = busTrip.stops.firstWhereOrNull(
                     (element) => element.stop.id == value.myBusStop.id,
                   );
