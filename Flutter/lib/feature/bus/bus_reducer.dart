@@ -29,7 +29,9 @@ final class BusReducer extends _$BusReducer {
     });
 
     final busRepository = ref.read(busRepositoryProvider);
+    final holidayRepository = ref.read(holidayRepositoryProvider);
     final nearUniFuture = LocationHelper.isNearUniversity();
+    final holidayDatesFuture = holidayRepository.getHolidayDates();
 
     final allStops = await busRepository.getAllBusStops();
     final trips = await busRepository.getBusTrips(allStops);
@@ -37,6 +39,8 @@ final class BusReducer extends _$BusReducer {
     final myBusStop = await _loadMyBusStop(allStops);
     final now = DateTime.now();
     final isNearUni = await nearUniFuture;
+    final holidayDates = await holidayDatesFuture;
+    final isHolidayToday = holidayDates.contains(_formatYmd(now));
 
     _startPolling();
 
@@ -44,10 +48,17 @@ final class BusReducer extends _$BusReducer {
       trips: trips,
       allStops: allStops,
       myBusStop: myBusStop,
-      isWeekday: now.weekday <= DateTime.friday,
+      isWeekday: now.weekday <= DateTime.friday && !isHolidayToday,
       currentTime: now,
       isTo: !isNearUni,
     );
+  }
+
+  String _formatYmd(DateTime date) {
+    final y = date.year.toString().padLeft(4, '0');
+    final m = date.month.toString().padLeft(2, '0');
+    final d = date.day.toString().padLeft(2, '0');
+    return '$y-$m-$d';
   }
 
   Future<BusStop> _loadMyBusStop(List<BusStop> allStops) async {
