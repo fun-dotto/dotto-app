@@ -375,10 +375,12 @@ final class _BusTripTile extends StatelessWidget {
     if (route == '0') {
       return const ListTile(title: Text('今日の運行は終了しました。'));
     }
-    final boardStop = isKameda && isTo ? '亀田支所前' : null;
-    final alightStop = isKameda && !isTo
-        ? '亀田支所前'
-        : (isTo ? _funBusStopName : myBusStopName);
+    final boardStop = isTo
+        ? (isKameda ? '亀田支所前' : myBusStopName)
+        : _funBusStopName;
+    final alightStop = isTo
+        ? _funBusStopName
+        : (isKameda ? '亀田支所前' : myBusStopName);
     final tripType = _busType();
     final directionText = tripType != BusType.other
         ? '${tripType.where}${isTo ? 'から' : '行き'}'
@@ -413,7 +415,7 @@ final class _BusTripTile extends StatelessWidget {
                       size: 20,
                       color: SemanticColor.light.accentPrimary,
                     ),
-                    if (boardStop != null) ...[Text(boardStop)],
+                    Text(boardStop),
                     const Text('-'),
                     Text(alightStop),
                   ],
