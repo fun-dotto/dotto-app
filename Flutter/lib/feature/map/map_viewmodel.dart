@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:dotto/domain/floor.dart';
 import 'package:dotto/domain/room.dart';
-import 'package:dotto/feature/map/map_service.dart';
 import 'package:dotto/feature/map/map_viewstate.dart';
+import 'package:dotto/repository/repository_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -13,7 +13,7 @@ part 'map_viewmodel.g.dart';
 class MapViewModel extends _$MapViewModel {
   @override
   Future<MapViewState> build() async {
-    final rooms = await MapService(ref).getRooms();
+    final rooms = await ref.read(roomRepositoryProvider).getRooms();
     final state = MapViewState(
       rooms: rooms,
       filteredRooms: [],
