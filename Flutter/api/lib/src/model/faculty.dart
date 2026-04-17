@@ -3,59 +3,49 @@
 //
 
 // ignore_for_file: unused_element
-import 'package:openapi/src/model/faculty.dart';
-import 'package:openapi/src/model/dotto_foundation_v1_floor.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 
-part 'room.g.dart';
+part 'faculty.g.dart';
 
-/// Room
+/// Faculty
 ///
 /// Properties:
 /// * [id] 
-/// * [name] - 部屋名
-/// * [floor] - フロア  オンラインなどの仮想教室の場合はVirtualを使用
-/// * [faculty] - 教員  空室の教員室や教員室でない場合は省略
+/// * [name] 
+/// * [email] 
 @BuiltValue()
-abstract class Room implements Built<Room, RoomBuilder> {
+abstract class Faculty implements Built<Faculty, FacultyBuilder> {
   @BuiltValueField(wireName: r'id')
   String get id;
 
-  /// 部屋名
   @BuiltValueField(wireName: r'name')
   String get name;
 
-  /// フロア  オンラインなどの仮想教室の場合はVirtualを使用
-  @BuiltValueField(wireName: r'floor')
-  DottoFoundationV1Floor get floor;
-  // enum floorEnum {  Floor1,  Floor2,  Floor3,  Floor4,  Floor5,  Floor6,  Floor7,  Virtual,  };
+  @BuiltValueField(wireName: r'email')
+  String get email;
 
-  /// 教員  空室の教員室や教員室でない場合は省略
-  @BuiltValueField(wireName: r'faculty')
-  Faculty? get faculty;
+  Faculty._();
 
-  Room._();
-
-  factory Room([void updates(RoomBuilder b)]) = _$Room;
+  factory Faculty([void updates(FacultyBuilder b)]) = _$Faculty;
 
   @BuiltValueHook(initializeBuilder: true)
-  static void _defaults(RoomBuilder b) => b;
+  static void _defaults(FacultyBuilder b) => b;
 
   @BuiltValueSerializer(custom: true)
-  static Serializer<Room> get serializer => _$RoomSerializer();
+  static Serializer<Faculty> get serializer => _$FacultySerializer();
 }
 
-class _$RoomSerializer implements PrimitiveSerializer<Room> {
+class _$FacultySerializer implements PrimitiveSerializer<Faculty> {
   @override
-  final Iterable<Type> types = const [Room, _$Room];
+  final Iterable<Type> types = const [Faculty, _$Faculty];
 
   @override
-  final String wireName = r'Room';
+  final String wireName = r'Faculty';
 
   Iterable<Object?> _serializeProperties(
     Serializers serializers,
-    Room object, {
+    Faculty object, {
     FullType specifiedType = FullType.unspecified,
   }) sync* {
     yield r'id';
@@ -68,24 +58,17 @@ class _$RoomSerializer implements PrimitiveSerializer<Room> {
       object.name,
       specifiedType: const FullType(String),
     );
-    yield r'floor';
+    yield r'email';
     yield serializers.serialize(
-      object.floor,
-      specifiedType: const FullType(DottoFoundationV1Floor),
+      object.email,
+      specifiedType: const FullType(String),
     );
-    if (object.faculty != null) {
-      yield r'faculty';
-      yield serializers.serialize(
-        object.faculty,
-        specifiedType: const FullType(Faculty),
-      );
-    }
   }
 
   @override
   Object serialize(
     Serializers serializers,
-    Room object, {
+    Faculty object, {
     FullType specifiedType = FullType.unspecified,
   }) {
     return _serializeProperties(serializers, object, specifiedType: specifiedType).toList();
@@ -96,7 +79,7 @@ class _$RoomSerializer implements PrimitiveSerializer<Room> {
     Object serialized, {
     FullType specifiedType = FullType.unspecified,
     required List<Object?> serializedList,
-    required RoomBuilder result,
+    required FacultyBuilder result,
     required List<Object?> unhandled,
   }) {
     for (var i = 0; i < serializedList.length; i += 2) {
@@ -117,19 +100,12 @@ class _$RoomSerializer implements PrimitiveSerializer<Room> {
           ) as String;
           result.name = valueDes;
           break;
-        case r'floor':
+        case r'email':
           final valueDes = serializers.deserialize(
             value,
-            specifiedType: const FullType(DottoFoundationV1Floor),
-          ) as DottoFoundationV1Floor;
-          result.floor = valueDes;
-          break;
-        case r'faculty':
-          final valueDes = serializers.deserialize(
-            value,
-            specifiedType: const FullType(Faculty),
-          ) as Faculty;
-          result.faculty.replace(valueDes);
+            specifiedType: const FullType(String),
+          ) as String;
+          result.email = valueDes;
           break;
         default:
           unhandled.add(key);
@@ -140,12 +116,12 @@ class _$RoomSerializer implements PrimitiveSerializer<Room> {
   }
 
   @override
-  Room deserialize(
+  Faculty deserialize(
     Serializers serializers,
     Object serialized, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final result = RoomBuilder();
+    final result = FacultyBuilder();
     final serializedList = (serialized as Iterable<Object?>).toList();
     final unhandled = <Object?>[];
     _deserializeProperties(

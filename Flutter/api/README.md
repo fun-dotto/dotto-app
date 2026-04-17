@@ -111,6 +111,7 @@ Class | Method | HTTP request | Description
  - [FCMToken](doc/FCMToken.md)
  - [FCMTokenRequest](doc/FCMTokenRequest.md)
  - [FCMTokenV1Upsert200Response](doc/FCMTokenV1Upsert200Response.md)
+ - [Faculty](doc/Faculty.md)
  - [MakeupClass](doc/MakeupClass.md)
  - [MakeupClassesV1List200Response](doc/MakeupClassesV1List200Response.md)
  - [MenuItem](doc/MenuItem.md)

@@ -42,6 +42,7 @@ import 'package:openapi/src/model/dotto_foundation_v1_timetable_slot.dart';
 import 'package:openapi/src/model/fcm_token.dart';
 import 'package:openapi/src/model/fcm_token_request.dart';
 import 'package:openapi/src/model/fcm_token_v1_upsert200_response.dart';
+import 'package:openapi/src/model/faculty.dart';
 import 'package:openapi/src/model/makeup_class.dart';
 import 'package:openapi/src/model/makeup_classes_v1_list200_response.dart';
 import 'package:openapi/src/model/menu_item.dart';
@@ -94,6 +95,7 @@ part 'serializers.g.dart';
   FCMToken,
   FCMTokenRequest,
   FCMTokenV1Upsert200Response,
+  Faculty,
   MakeupClass,
   MakeupClassesV1List200Response,
   MenuItem,
