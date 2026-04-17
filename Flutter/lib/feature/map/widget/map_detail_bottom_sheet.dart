@@ -13,7 +13,6 @@ final class MapDetailBottomSheet extends StatelessWidget {
     required this.room,
     required this.dateTime,
     required this.isAuthenticated,
-    required this.onDismissed,
     required this.onGoToSettingButtonTapped,
     super.key,
   });
@@ -22,7 +21,6 @@ final class MapDetailBottomSheet extends StatelessWidget {
   final Room room;
   final DateTime dateTime;
   final bool isAuthenticated;
-  final void Function() onDismissed;
   final void Function() onGoToSettingButtonTapped;
 
   DateTime get startOfDay =>

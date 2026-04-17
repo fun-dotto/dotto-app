@@ -85,9 +85,6 @@ final class MapScreen extends HookConsumerWidget {
               room: room,
               dateTime: searchDatetime,
               isAuthenticated: isAuthenticated,
-              onDismissed: () {
-                ref.read(mapReducerProvider.notifier).onBottomSheetDismissed();
-              },
               onGoToSettingButtonTapped: onGoToSettingButtonTapped,
             ),
           ),
