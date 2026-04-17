@@ -96,9 +96,10 @@ final class MapScreen extends HookConsumerWidget {
         unawaited(
           newController?.closed.then((_) {
                 if (!context.mounted) return;
-                if (sheetController.value == newController) {
-                  sheetController.value = null;
-                }
+                // 張り替え等で既に別 controller になっている場合は、
+                // 現在表示中のシートではないのでユーザー操作由来とは扱わない。
+                if (sheetController.value != newController) return;
+                sheetController.value = null;
                 final current = ref
                     .read(mapReducerProvider)
                     .value
