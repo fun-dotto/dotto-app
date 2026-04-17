@@ -154,7 +154,7 @@ final class MapScreen extends HookConsumerWidget {
                       return ListTile(
                         title: Text(item.name),
                         onTap: () {
-                          controller.closeView(item.name);
+                          controller.closeView(controller.text);
                           ref
                               .read(mapReducerProvider.notifier)
                               .onSearchResultRowTapped(item);
