@@ -21,8 +21,12 @@ final class HolidayRepositoryImpl implements HolidayRepository {
     final filePath = await FileHelper.getApplicationFilePath(_cacheFilePath);
     final file = File(filePath);
 
-    if (file.existsSync()) {
-      final age = DateTime.now().difference(file.lastModifiedSync());
+    // UI 起動経路で呼ばれるため、同期 I/O を避けて非同期 API を使う。
+    // ignore: avoid_slow_async_io
+    if (await file.exists()) {
+      // UI 起動経路で呼ばれるため、同期 I/O を避けて非同期 API を使う。
+      // ignore: avoid_slow_async_io
+      final age = DateTime.now().difference(await file.lastModified());
       if (age < _cacheDuration) {
         final parsed = _tryParse(await file.readAsString());
         if (parsed != null) return parsed;
@@ -42,7 +46,9 @@ final class HolidayRepositoryImpl implements HolidayRepository {
       // ignore and fall through to stale cache / empty
     }
 
-    if (file.existsSync()) {
+    // UI 起動経路で呼ばれるため、同期 I/O を避けて非同期 API を使う。
+    // ignore: avoid_slow_async_io
+    if (await file.exists()) {
       final parsed = _tryParse(await file.readAsString());
       if (parsed != null) return parsed;
     }
