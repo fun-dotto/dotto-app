@@ -17,11 +17,15 @@ final class MapReducer extends _$MapReducer {
   @override
   Future<MapState> build() async {
     final rooms = await ref.read(roomRepositoryProvider).getRooms();
+    final transformationController = TransformationController(
+      Matrix4.identity(),
+    );
+    ref.onDispose(transformationController.dispose);
     return MapState(
       rooms: rooms,
       searchDatetime: DateTime.now(),
       selectedFloor: Floor.third,
-      transformationController: TransformationController(Matrix4.identity()),
+      transformationController: transformationController,
     );
   }
 
