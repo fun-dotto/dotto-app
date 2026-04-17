@@ -1,7 +1,7 @@
 import 'dart:convert';
+import 'dart:io';
 
-import 'package:dotto/domain/user_preference_keys.dart';
-import 'package:dotto/helper/user_preference_repository.dart';
+import 'package:dotto/helper/file_helper.dart';
 import 'package:http/http.dart' as http;
 
 abstract class HolidayRepository {
@@ -12,25 +12,20 @@ final class HolidayRepositoryImpl implements HolidayRepository {
   static final Uri _endpoint = Uri.parse(
     'https://holidays-jp.github.io/api/v1/date.json',
   );
+  static const String _cacheFilePath = 'holiday/date.json';
   static const Duration _cacheDuration = Duration(days: 1);
 
   @override
   Future<Set<String>> getHolidayDates() async {
-    final cachedJson = await UserPreferenceRepository.getString(
-      UserPreferenceKeys.holidayCacheJson,
-    );
-    final fetchedAt = await UserPreferenceRepository.getInt(
-      UserPreferenceKeys.holidayCacheFetchedAt,
-    );
+    final filePath = await FileHelper.getApplicationFilePath(_cacheFilePath);
+    final file = File(filePath);
 
-    final now = DateTime.now();
-    final isFresh = cachedJson != null &&
-        fetchedAt != null &&
-        now.millisecondsSinceEpoch - fetchedAt < _cacheDuration.inMilliseconds;
-
-    if (isFresh) {
-      final parsed = _tryParse(cachedJson);
-      if (parsed != null) return parsed;
+    if (file.existsSync()) {
+      final age = DateTime.now().difference(file.lastModifiedSync());
+      if (age < _cacheDuration) {
+        final parsed = _tryParse(await file.readAsString());
+        if (parsed != null) return parsed;
+      }
     }
 
     try {
@@ -38,14 +33,7 @@ final class HolidayRepositoryImpl implements HolidayRepository {
       if (response.statusCode == 200) {
         final parsed = _tryParse(response.body);
         if (parsed != null) {
-          await UserPreferenceRepository.setString(
-            UserPreferenceKeys.holidayCacheJson,
-            response.body,
-          );
-          await UserPreferenceRepository.setInt(
-            UserPreferenceKeys.holidayCacheFetchedAt,
-            now.millisecondsSinceEpoch,
-          );
+          await file.writeAsString(response.body, flush: true);
           return parsed;
         }
       }
@@ -53,8 +41,8 @@ final class HolidayRepositoryImpl implements HolidayRepository {
       // ignore and fall through to stale cache / empty
     }
 
-    if (cachedJson != null) {
-      final parsed = _tryParse(cachedJson);
+    if (file.existsSync()) {
+      final parsed = _tryParse(await file.readAsString());
       if (parsed != null) return parsed;
     }
     return <String>{};

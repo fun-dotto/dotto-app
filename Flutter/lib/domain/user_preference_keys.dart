@@ -10,9 +10,7 @@ enum UserPreferenceKeys {
   isAppTutorialComplete(key: 'isAppTutorialCompleted', type: bool),
   myBusStop(key: 'myBusStop', type: int),
   timetablePeriodStyle(key: 'timetablePeriodStyle', type: String),
-  isFunchEnabledOverride(key: 'isFunchEnabledOverride', type: bool),
-  holidayCacheJson(key: 'holidayCacheJson', type: String),
-  holidayCacheFetchedAt(key: 'holidayCacheFetchedAt', type: int);
+  isFunchEnabledOverride(key: 'isFunchEnabledOverride', type: bool);
 
   const UserPreferenceKeys({required this.key, required this.type});
 
