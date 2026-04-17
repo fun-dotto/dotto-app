@@ -33,6 +33,7 @@ doc/FCMToken.md
 doc/FCMTokenRequest.md
 doc/FCMTokenV1Upsert200Response.md
 doc/FCMTokensApi.md
+doc/Faculty.md
 doc/MakeupClass.md
 doc/MakeupClassesApi.md
 doc/MakeupClassesV1List200Response.md
@@ -106,6 +107,7 @@ lib/src/model/dotto_foundation_v1_personal_calendar_item_status.dart
 lib/src/model/dotto_foundation_v1_subject_classification.dart
 lib/src/model/dotto_foundation_v1_subject_requirement_type.dart
 lib/src/model/dotto_foundation_v1_timetable_slot.dart
+lib/src/model/faculty.dart
 lib/src/model/fcm_token.dart
 lib/src/model/fcm_token_request.dart
 lib/src/model/fcm_token_v1_upsert200_response.dart
@@ -131,9 +133,4 @@ lib/src/model/user_info.dart
 lib/src/model/users_v1_detail200_response.dart
 lib/src/serializers.dart
 pubspec.yaml
-test/category_test.dart
-test/menu_item_test.dart
-test/menu_items_api_test.dart
-test/menu_items_v1_list200_response_test.dart
-test/price_test.dart
-test/size_test.dart
+test/faculty_test.dart

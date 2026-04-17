@@ -50,6 +50,7 @@ export 'package:openapi/src/model/dotto_foundation_v1_timetable_slot.dart';
 export 'package:openapi/src/model/fcm_token.dart';
 export 'package:openapi/src/model/fcm_token_request.dart';
 export 'package:openapi/src/model/fcm_token_v1_upsert200_response.dart';
+export 'package:openapi/src/model/faculty.dart';
 export 'package:openapi/src/model/makeup_class.dart';
 export 'package:openapi/src/model/makeup_classes_v1_list200_response.dart';
 export 'package:openapi/src/model/menu_item.dart';
