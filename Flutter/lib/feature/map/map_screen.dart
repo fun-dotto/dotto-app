@@ -48,6 +48,12 @@ final class MapScreen extends HookConsumerWidget {
     final scaffoldKey = useMemoized(GlobalKey<ScaffoldState>.new);
     final sheetController = useRef<PersistentBottomSheetController?>(null);
     final searchController = useMemoized(SearchController.new);
+    useEffect(() {
+      return () {
+        sheetController.value?.close();
+        searchController.dispose();
+      };
+    }, [searchController]);
     final searchFocusNode = useFocusNode();
 
     final searchDatetime = asyncState.value?.searchDatetime;
