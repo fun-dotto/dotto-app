@@ -116,7 +116,7 @@ final class MapScreen extends HookConsumerWidget {
         );
       });
       return null;
-    }, [focusedMapTileProps?.id]);
+    }, [focusedMapTileProps?.id, searchDatetime, isAuthenticated]);
 
     return Scaffold(
       key: scaffoldKey,
