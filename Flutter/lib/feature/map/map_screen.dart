@@ -55,6 +55,7 @@ final class MapScreen extends HookConsumerWidget {
       };
     }, [searchController]);
     final searchFocusNode = useFocusNode();
+    final isMounted = useIsMounted();
 
     final searchDatetime = asyncState.value?.searchDatetime;
     final rooms = asyncState.value?.rooms;
@@ -62,6 +63,7 @@ final class MapScreen extends HookConsumerWidget {
 
     useEffect(() {
       WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!isMounted()) return;
         sheetController.value?.close();
         sheetController.value = null;
         searchFocusNode.unfocus();
@@ -97,6 +99,7 @@ final class MapScreen extends HookConsumerWidget {
         final shownPropsId = props.id;
         unawaited(
           newController?.closed.then((_) {
+                if (!isMounted()) return;
                 if (sheetController.value == newController) {
                   sheetController.value = null;
                 }
