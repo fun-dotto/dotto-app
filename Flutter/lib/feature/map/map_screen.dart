@@ -136,6 +136,7 @@ final class MapScreen extends HookConsumerWidget {
               textCapitalization: TextCapitalization.none,
               builder: (context, controller) {
                 return SearchBar(
+                  controller: controller,
                   focusNode: searchFocusNode,
                   padding: const WidgetStatePropertyAll<EdgeInsets>(
                     EdgeInsets.symmetric(horizontal: 16),
@@ -148,9 +149,7 @@ final class MapScreen extends HookConsumerWidget {
                     controller.openView();
                   },
                   leading: const Icon(Icons.search),
-                  hintText: controller.text.isEmpty
-                      ? '部屋名、教員名、メールアドレスで検索'
-                      : controller.text,
+                  hintText: '部屋名、教員名、メールアドレスで検索',
                 );
               },
               suggestionsBuilder: (context, controller) {
