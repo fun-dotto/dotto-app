@@ -9,7 +9,8 @@ import 'package:dotto/domain/personal_timetable_item.dart';
 import 'package:dotto/domain/subject_faculty.dart';
 import 'package:dotto/domain/subject_summary.dart';
 import 'package:flutter/foundation.dart';
-import 'package:openapi/openapi.dart' hide SubjectFaculty, SubjectSummary;
+import 'package:openapi/openapi.dart'
+    hide Faculty, SubjectFaculty, SubjectSummary;
 
 abstract class PersonalCalendarRepository {
   Future<List<PersonalTimetableDay>> getPersonalTimetableDays({

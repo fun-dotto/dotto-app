@@ -21,7 +21,8 @@ import 'package:dotto/domain/subject_summary.dart';
 import 'package:dotto/domain/syllabus.dart';
 import 'package:dotto/extension/iterable_extension.dart';
 import 'package:dotto/helper/syllabus_database_helper.dart';
-import 'package:openapi/openapi.dart' hide SubjectFaculty, SubjectSummary;
+import 'package:openapi/openapi.dart'
+    hide Faculty, SubjectFaculty, SubjectSummary;
 
 abstract class SubjectRepository {
   Future<List<SubjectSummary>> getSubjects(String query, SubjectFilter filter);

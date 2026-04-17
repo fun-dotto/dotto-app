@@ -6,7 +6,12 @@ import 'package:dotto/domain/semester.dart';
 import 'package:dotto/domain/subject_faculty.dart';
 import 'package:dotto/domain/subject_summary.dart';
 import 'package:openapi/openapi.dart'
-    hide CourseRegistration, SubjectFaculty, SubjectSummary, TimetableItem;
+    hide
+        CourseRegistration,
+        Faculty,
+        SubjectFaculty,
+        SubjectSummary,
+        TimetableItem;
 
 abstract class CourseRegistrationRepository {
   Future<List<CourseRegistration>> getCourseRegistrations(
