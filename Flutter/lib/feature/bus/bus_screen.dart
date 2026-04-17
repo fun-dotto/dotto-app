@@ -217,11 +217,8 @@ final class BusScreen extends HookConsumerWidget {
               final activeController = value.isWeekday
                   ? weekdayScrollController
                   : holidayScrollController;
-              final activeKey = value.isWeekday
-                  ? weekdayBusKey
-                  : holidayBusKey;
-              if (activeController.hasClients &&
-                  activeController.offset != 0) {
+              final activeKey = value.isWeekday ? weekdayBusKey : holidayBusKey;
+              if (activeController.hasClients && activeController.offset != 0) {
                 activeController.jumpTo(0);
               }
               final currentContext = activeKey.currentContext;
