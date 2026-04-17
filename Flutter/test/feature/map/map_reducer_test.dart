@@ -217,6 +217,129 @@ void main() {
       // listener が呼ばれたことを確認
       verify(listener.call(any, any)).called(greaterThan(0));
     });
+
+    test('マップタイルがタップされると focusedMapTileProps が設定される', () async {
+      final container = createContainer()
+        ..listen(mapReducerProvider, listener.call, fireImmediately: true);
+
+      // 初期状態を待つ
+      await container.read(mapReducerProvider.notifier).future;
+
+      // onMapTileTapped を呼び出す
+      container
+          .read(mapReducerProvider.notifier)
+          .onMapTileTapped(testTileProps[0]);
+
+      // focusedMapTileProps が設定されたことを確認
+      final updatedState = container.read(mapReducerProvider).requireValue;
+      expect(updatedState.focusedMapTileProps, testTileProps[0]);
+    });
+
+    test('同じマップタイルが再度タップされると focusedMapTileProps が解除される', () async {
+      final container = createContainer()
+        ..listen(mapReducerProvider, listener.call, fireImmediately: true);
+
+      // 初期状態を待つ
+      await container.read(mapReducerProvider.notifier).future;
+
+      // 1回目のタップ
+      container
+          .read(mapReducerProvider.notifier)
+          .onMapTileTapped(testTileProps[0]);
+      expect(
+        container.read(mapReducerProvider).requireValue.focusedMapTileProps,
+        testTileProps[0],
+      );
+
+      // 2回目のタップで解除
+      container
+          .read(mapReducerProvider.notifier)
+          .onMapTileTapped(testTileProps[0]);
+      expect(
+        container.read(mapReducerProvider).requireValue.focusedMapTileProps,
+        isNull,
+      );
+    });
+
+    test('異なるマップタイルがタップされると focusedMapTileProps が切り替わる', () async {
+      final container = createContainer()
+        ..listen(mapReducerProvider, listener.call, fireImmediately: true);
+
+      // 初期状態を待つ
+      await container.read(mapReducerProvider.notifier).future;
+
+      container
+          .read(mapReducerProvider.notifier)
+          .onMapTileTapped(testTileProps[0]);
+      container
+          .read(mapReducerProvider.notifier)
+          .onMapTileTapped(testTileProps[1]);
+
+      expect(
+        container.read(mapReducerProvider).requireValue.focusedMapTileProps,
+        testTileProps[1],
+      );
+    });
+
+    test('BottomSheet が閉じられると focusedMapTileProps が解除される', () async {
+      final container = createContainer()
+        ..listen(mapReducerProvider, listener.call, fireImmediately: true);
+
+      // 初期状態を待つ
+      await container.read(mapReducerProvider.notifier).future;
+
+      // 先にタイルを選択しておく
+      container
+          .read(mapReducerProvider.notifier)
+          .onMapTileTapped(testTileProps[0]);
+      expect(
+        container.read(mapReducerProvider).requireValue.focusedMapTileProps,
+        testTileProps[0],
+      );
+
+      // dismissed で null に戻る
+      container.read(mapReducerProvider.notifier).onBottomSheetDismissed();
+      expect(
+        container.read(mapReducerProvider).requireValue.focusedMapTileProps,
+        isNull,
+      );
+    });
+
+    test('時限ボタンが押されると searchDatetime が更新される', () async {
+      final container = createContainer()
+        ..listen(mapReducerProvider, listener.call, fireImmediately: true);
+
+      // 初期状態を待つ
+      await container.read(mapReducerProvider.notifier).future;
+
+      final target = DateTime(2025, 11, 1, 9);
+      container
+          .read(mapReducerProvider.notifier)
+          .onPeriodButtonTapped(target);
+
+      expect(
+        container.read(mapReducerProvider).requireValue.searchDatetime,
+        target,
+      );
+    });
+
+    test('DatePicker で確定すると searchDatetime が更新される', () async {
+      final container = createContainer()
+        ..listen(mapReducerProvider, listener.call, fireImmediately: true);
+
+      // 初期状態を待つ
+      await container.read(mapReducerProvider.notifier).future;
+
+      final target = DateTime(2025, 12, 24, 13, 30);
+      container
+          .read(mapReducerProvider.notifier)
+          .onDatePickerConfirmed(target);
+
+      expect(
+        container.read(mapReducerProvider).requireValue.searchDatetime,
+        target,
+      );
+    });
   });
 
   group('MapReducer 異常系', () {
