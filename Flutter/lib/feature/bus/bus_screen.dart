@@ -8,7 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-final GlobalKey<State<StatefulWidget>> busKey = GlobalKey();
+final GlobalKey<State<StatefulWidget>> weekdayBusKey = GlobalKey();
+final GlobalKey<State<StatefulWidget>> holidayBusKey = GlobalKey();
 
 const int _funBusStopId = 14023;
 const String _funBusStopName = 'はこだて未来大学';
@@ -23,6 +24,9 @@ final class BusScreen extends HookConsumerWidget {
     final isTo = value?.isTo ?? true;
     final isWeekday = value?.isWeekday ?? true;
     final myBusStopName = value?.myBusStop.name ?? '';
+
+    final weekdayScrollController = useScrollController();
+    final holidayScrollController = useScrollController();
 
     final tabController = useTabController(
       initialLength: 2,
@@ -112,7 +116,7 @@ final class BusScreen extends HookConsumerWidget {
                 ),
               ),
               TabBar(
-                dividerColor: Colors.transparent,
+                dividerColor: SemanticColor.light.borderPrimary,
                 controller: tabController,
                 tabs: const [
                   Tab(text: '平日'),
@@ -126,87 +130,137 @@ final class BusScreen extends HookConsumerWidget {
       body: () {
         switch (state) {
           case AsyncData(:final value):
-            final fromToString = value.isTo ? 'to_fun' : 'from_fun';
-
-            var arriveAtSoon = true;
-            final tripWidgets = value
-                .trips[fromToString]![value.isWeekday ? 'weekday' : 'holiday']!
-                .where(
-                  (busTrip) => busTrip.stops.any(
-                    (element) => element.stop.id == _funBusStopId,
-                  ),
-                )
-                .map((busTrip) {
-                  final funBusTripStop = busTrip.stops.firstWhere(
-                    (element) => element.stop.id == _funBusStopId,
-                  );
-                  var targetBusTripStop = busTrip.stops.firstWhereOrNull(
-                    (element) => element.stop.id == value.myBusStop.id,
-                  );
-                  var kameda = false;
-                  if (targetBusTripStop == null) {
-                    targetBusTripStop = busTrip.stops.firstWhere(
-                      (element) => element.stop.id == kamedaBusStopId,
+            List<Widget> buildTripWidgets({
+              required bool weekday,
+              required GlobalKey scrollKey,
+            }) {
+              final fromToString = value.isTo ? 'to_fun' : 'from_fun';
+              var arriveAtSoon = true;
+              return value
+                  .trips[fromToString]![weekday ? 'weekday' : 'holiday']!
+                  .where(
+                    (busTrip) => busTrip.stops.any(
+                      (element) => element.stop.id == _funBusStopId,
+                    ),
+                  )
+                  .map((busTrip) {
+                    final funBusTripStop = busTrip.stops.firstWhere(
+                      (element) => element.stop.id == _funBusStopId,
                     );
-                    kameda = true;
-                  }
-                  final fromBusTripStop = value.isTo
-                      ? targetBusTripStop
-                      : funBusTripStop;
-                  final toBusTripStop = value.isTo
-                      ? funBusTripStop
-                      : targetBusTripStop;
-                  final nowDuration = Duration(
-                    hours: value.currentTime.hour,
-                    minutes: value.currentTime.minute,
-                  );
-                  final arriveAt = fromBusTripStop.time - nowDuration;
-                  var hasKey = false;
-                  if (arriveAtSoon && arriveAt > Duration.zero) {
-                    arriveAtSoon = false;
-                    hasKey = true;
-                  }
-                  return _BusTripTile(
-                    key: hasKey ? busKey : null,
-                    route: busTrip.route,
-                    beginTime: fromBusTripStop.time,
-                    endTime: toBusTripStop.time,
-                    isTo: value.isTo,
-                    isKameda: kameda,
-                    myBusStopName: value.myBusStop.name,
-                    onTap: busTrip.route == '0'
-                        ? null
-                        : () async {
-                            await Navigator.of(context).push(
-                              MaterialPageRoute<void>(
-                                builder: (context) =>
-                                    BusTimetableScreen(busTrip),
-                                settings: RouteSettings(
-                                  name: '/bus/timetable?route=${busTrip.route}',
+                    var targetBusTripStop = busTrip.stops.firstWhereOrNull(
+                      (element) => element.stop.id == value.myBusStop.id,
+                    );
+                    var kameda = false;
+                    if (targetBusTripStop == null) {
+                      targetBusTripStop = busTrip.stops.firstWhere(
+                        (element) => element.stop.id == kamedaBusStopId,
+                      );
+                      kameda = true;
+                    }
+                    final fromBusTripStop = value.isTo
+                        ? targetBusTripStop
+                        : funBusTripStop;
+                    final toBusTripStop = value.isTo
+                        ? funBusTripStop
+                        : targetBusTripStop;
+                    final nowDuration = Duration(
+                      hours: value.currentTime.hour,
+                      minutes: value.currentTime.minute,
+                    );
+                    final arriveAt = fromBusTripStop.time - nowDuration;
+                    var hasKey = false;
+                    if (arriveAtSoon && arriveAt > Duration.zero) {
+                      arriveAtSoon = false;
+                      hasKey = true;
+                    }
+                    return _BusTripTile(
+                      key: hasKey ? scrollKey : null,
+                      route: busTrip.route,
+                      beginTime: fromBusTripStop.time,
+                      endTime: toBusTripStop.time,
+                      isTo: value.isTo,
+                      isKameda: kameda,
+                      myBusStopName: value.myBusStop.name,
+                      onTap: busTrip.route == '0'
+                          ? null
+                          : () async {
+                              await Navigator.of(context).push(
+                                MaterialPageRoute<void>(
+                                  builder: (context) =>
+                                      BusTimetableScreen(busTrip),
+                                  settings: RouteSettings(
+                                    name:
+                                        '/bus/timetable?route=${busTrip.route}',
+                                  ),
                                 ),
-                              ),
-                            );
-                          },
-                  );
-                })
-                .toList();
+                              );
+                            },
+                    );
+                  })
+                  .toList();
+            }
+
+            final weekdayTripWidgets = buildTripWidgets(
+              weekday: true,
+              scrollKey: weekdayBusKey,
+            );
+            final holidayTripWidgets = buildTripWidgets(
+              weekday: false,
+              scrollKey: holidayBusKey,
+            );
 
             WidgetsBinding.instance.addPostFrameCallback((_) async {
-              if (value.isScrolled) return;
-              final currentContext = busKey.currentContext;
+              final alreadyScrolled = value.isWeekday
+                  ? value.isWeekdayScrolled
+                  : value.isHolidayScrolled;
+              if (alreadyScrolled) return;
+              final activeController = value.isWeekday
+                  ? weekdayScrollController
+                  : holidayScrollController;
+              final activeKey = value.isWeekday
+                  ? weekdayBusKey
+                  : holidayBusKey;
+              if (activeController.hasClients &&
+                  activeController.offset != 0) {
+                activeController.jumpTo(0);
+              }
+              final currentContext = activeKey.currentContext;
               if (currentContext == null) return;
               await Scrollable.ensureVisible(
                 currentContext,
                 duration: const Duration(milliseconds: 500),
                 curve: Curves.easeInOut,
               );
-              ref.read(busReducerProvider.notifier).setScrolled(value: true);
+              final notifier = ref.read(busReducerProvider.notifier);
+              if (value.isWeekday) {
+                notifier.setWeekdayScrolled(value: true);
+              } else {
+                notifier.setHolidayScrolled(value: true);
+              }
             });
 
-            return ListView.separated(
-              itemCount: tripWidgets.length,
-              separatorBuilder: (_, _) => const Divider(height: 1),
-              itemBuilder: (_, index) => tripWidgets[index],
+            return TabBarView(
+              controller: tabController,
+              children: [
+                _KeepAliveTab(
+                  child: ListView.separated(
+                    controller: weekdayScrollController,
+                    cacheExtent: 10000,
+                    itemCount: weekdayTripWidgets.length,
+                    separatorBuilder: (_, _) => const Divider(height: 1),
+                    itemBuilder: (_, index) => weekdayTripWidgets[index],
+                  ),
+                ),
+                _KeepAliveTab(
+                  child: ListView.separated(
+                    controller: holidayScrollController,
+                    cacheExtent: 10000,
+                    itemCount: holidayTripWidgets.length,
+                    separatorBuilder: (_, _) => const Divider(height: 1),
+                    itemBuilder: (_, index) => holidayTripWidgets[index],
+                  ),
+                ),
+              ],
             );
           case AsyncError():
             return const Padding(
@@ -218,6 +272,27 @@ final class BusScreen extends HookConsumerWidget {
         }
       }(),
     );
+  }
+}
+
+final class _KeepAliveTab extends StatefulWidget {
+  const _KeepAliveTab({required this.child});
+
+  final Widget child;
+
+  @override
+  State<_KeepAliveTab> createState() => _KeepAliveTabState();
+}
+
+class _KeepAliveTabState extends State<_KeepAliveTab>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+    return widget.child;
   }
 }
 

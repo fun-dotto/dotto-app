@@ -73,15 +73,19 @@ final class BusReducer extends _$BusReducer {
   void toggleDirection() {
     final current = state.asData?.value;
     if (current == null) return;
-    state = AsyncData(current.copyWith(isTo: !current.isTo, isScrolled: false));
+    state = AsyncData(
+      current.copyWith(
+        isTo: !current.isTo,
+        isWeekdayScrolled: false,
+        isHolidayScrolled: false,
+      ),
+    );
   }
 
   void toggleWeekday() {
     final current = state.asData?.value;
     if (current == null) return;
-    state = AsyncData(
-      current.copyWith(isWeekday: !current.isWeekday, isScrolled: false),
-    );
+    state = AsyncData(current.copyWith(isWeekday: !current.isWeekday));
   }
 
   Future<void> selectBusStop(BusStop busStop) async {
@@ -94,10 +98,16 @@ final class BusReducer extends _$BusReducer {
     state = AsyncData(current.copyWith(myBusStop: busStop));
   }
 
-  void setScrolled({required bool value}) {
+  void setWeekdayScrolled({required bool value}) {
     final current = state.asData?.value;
     if (current == null) return;
-    state = AsyncData(current.copyWith(isScrolled: value));
+    state = AsyncData(current.copyWith(isWeekdayScrolled: value));
+  }
+
+  void setHolidayScrolled({required bool value}) {
+    final current = state.asData?.value;
+    if (current == null) return;
+    state = AsyncData(current.copyWith(isHolidayScrolled: value));
   }
 }
 
