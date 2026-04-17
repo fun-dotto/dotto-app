@@ -189,8 +189,14 @@ final class MapScreen extends HookConsumerWidget {
                         },
                       );
                     }).toList();
-                  case AsyncError(:final error):
-                    return [ListTile(title: Text('エラーが発生しました: $error'))];
+                  case AsyncError(:final error, :final stackTrace):
+                    debugPrint(
+                      'Failed to build map search suggestions: '
+                      '$error\n$stackTrace',
+                    );
+                    return [
+                      const ListTile(title: Text('検索結果の取得に失敗しました')),
+                    ];
                   case AsyncLoading():
                     return [const ListTile(title: Text('読み込み中...'))];
                 }
