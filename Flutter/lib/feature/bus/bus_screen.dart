@@ -212,9 +212,7 @@ final class BusScreen extends HookConsumerWidget {
               child: Center(child: Text('エラーが発生しました')),
             );
           case AsyncLoading():
-            return const Scaffold(
-              body: Center(child: CircularProgressIndicator()),
-            );
+            return const Center(child: CircularProgressIndicator());
         }
       }(),
     );
