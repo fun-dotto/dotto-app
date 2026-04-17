@@ -239,7 +239,7 @@ final class MapScreen extends HookConsumerWidget {
                                   focusedMapTileProps:
                                       state.focusedMapTileProps,
                                   dateTime: state.searchDatetime,
-                                  onTapped: (props, room) {
+                                  onTapped: (props, _) {
                                     ref
                                         .read(mapReducerProvider.notifier)
                                         .onMapTileTapped(props);
