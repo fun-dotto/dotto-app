@@ -313,9 +313,7 @@ void main() {
       await container.read(mapReducerProvider.notifier).future;
 
       final target = DateTime(2025, 11, 1, 9);
-      container
-          .read(mapReducerProvider.notifier)
-          .onPeriodButtonTapped(target);
+      container.read(mapReducerProvider.notifier).onPeriodButtonTapped(target);
 
       expect(
         container.read(mapReducerProvider).requireValue.searchDatetime,
@@ -331,9 +329,7 @@ void main() {
       await container.read(mapReducerProvider.notifier).future;
 
       final target = DateTime(2025, 12, 24, 13, 30);
-      container
-          .read(mapReducerProvider.notifier)
-          .onDatePickerConfirmed(target);
+      container.read(mapReducerProvider.notifier).onDatePickerConfirmed(target);
 
       expect(
         container.read(mapReducerProvider).requireValue.searchDatetime,
