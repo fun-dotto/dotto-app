@@ -1,7 +1,10 @@
 import 'dart:async';
 
+import 'package:collection/collection.dart';
 import 'package:dotto/domain/floor.dart';
+import 'package:dotto/domain/map_tile_props.dart';
 import 'package:dotto/domain/room.dart';
+import 'package:dotto/feature/map/fun_map.dart';
 import 'package:dotto/feature/map/map_state.dart';
 import 'package:dotto/repository/repository_provider.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +29,9 @@ final class MapReducer extends _$MapReducer {
   void onFloorButtonTapped(Floor floor) {
     final current = state.asData?.value;
     if (current == null) return;
-    state = AsyncData(current.copyWith(selectedFloor: floor));
+    state = AsyncData(
+      current.copyWith(selectedFloor: floor, focusedMapTileProps: null),
+    );
     current.transformationController.value = Matrix4.identity();
   }
 
@@ -73,7 +78,28 @@ final class MapReducer extends _$MapReducer {
   void onSearchResultRowTapped(Room room) {
     final current = state.asData?.value;
     if (current == null) return;
-    state = AsyncData(current.copyWith(selectedFloor: room.floor));
+    final tileProps = ref
+        .read(funMapProvider)
+        .firstWhereOrNull((e) => e.id == room.id);
+    state = AsyncData(
+      current.copyWith(
+        selectedFloor: room.floor,
+        focusedMapTileProps: tileProps,
+      ),
+    );
+  }
+
+  void onMapTileTapped(MapTileProps props) {
+    final current = state.asData?.value;
+    if (current == null) return;
+    final next = current.focusedMapTileProps == props ? null : props;
+    state = AsyncData(current.copyWith(focusedMapTileProps: next));
+  }
+
+  void onBottomSheetDismissed() {
+    final current = state.asData?.value;
+    if (current == null || current.focusedMapTileProps == null) return;
+    state = AsyncData(current.copyWith(focusedMapTileProps: null));
   }
 
   void onPeriodButtonTapped(DateTime dateTime) {

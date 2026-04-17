@@ -2,8 +2,6 @@ import 'dart:async';
 
 import 'package:collection/collection.dart';
 import 'package:dotto/controller/user_controller.dart';
-import 'package:dotto/domain/map_tile_props.dart';
-import 'package:dotto/feature/map/fun_map.dart';
 import 'package:dotto/feature/map/map_reducer.dart';
 import 'package:dotto/feature/map/widget/map.dart';
 import 'package:dotto/feature/map/widget/map_date_picker.dart';
@@ -48,23 +46,17 @@ final class MapScreen extends HookConsumerWidget {
     final isAuthenticated = ref.watch(isAuthenticatedProvider);
     final scaffoldKey = useMemoized(GlobalKey<ScaffoldState>.new);
     final sheetController = useRef<PersistentBottomSheetController?>(null);
-    final focusedMapTileProps = useState<MapTileProps?>(null);
 
     final searchDatetime = asyncState.value?.searchDatetime;
     final rooms = asyncState.value?.rooms;
-    final selectedFloor = asyncState.value?.selectedFloor;
-
-    useEffect(() {
-      focusedMapTileProps.value = null;
-      return null;
-    }, [selectedFloor]);
+    final focusedMapTileProps = asyncState.value?.focusedMapTileProps;
 
     useEffect(() {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         sheetController.value?.close();
         sheetController.value = null;
 
-        final props = focusedMapTileProps.value;
+        final props = focusedMapTileProps;
         if (props == null || rooms == null || searchDatetime == null) {
           return;
         }
@@ -82,7 +74,7 @@ final class MapScreen extends HookConsumerWidget {
               dateTime: searchDatetime,
               isAuthenticated: isAuthenticated,
               onDismissed: () {
-                focusedMapTileProps.value = null;
+                ref.read(mapReducerProvider.notifier).onBottomSheetDismissed();
               },
               onGoToSettingButtonTapped: onGoToSettingButtonTapped,
             ),
@@ -96,15 +88,21 @@ final class MapScreen extends HookConsumerWidget {
                 if (sheetController.value == newController) {
                   sheetController.value = null;
                 }
-                if (focusedMapTileProps.value?.id == shownPropsId) {
-                  focusedMapTileProps.value = null;
+                final current = ref
+                    .read(mapReducerProvider)
+                    .value
+                    ?.focusedMapTileProps;
+                if (current?.id == shownPropsId) {
+                  ref
+                      .read(mapReducerProvider.notifier)
+                      .onBottomSheetDismissed();
                 }
               }) ??
               Future<void>.value(),
         );
       });
       return null;
-    }, [focusedMapTileProps.value?.id]);
+    }, [focusedMapTileProps?.id]);
 
     return Scaffold(
       key: scaffoldKey,
@@ -160,8 +158,6 @@ final class MapScreen extends HookConsumerWidget {
                           ref
                               .read(mapReducerProvider.notifier)
                               .onSearchResultRowTapped(item);
-                          focusedMapTileProps.value = FUNMap.tileProps
-                              .firstWhereOrNull((e) => e.id == item.id);
                         },
                       );
                     }).toList();
@@ -212,13 +208,12 @@ final class MapScreen extends HookConsumerWidget {
                                   selectedFloor: state.selectedFloor,
                                   rooms: state.rooms,
                                   focusedMapTileProps:
-                                      focusedMapTileProps.value,
+                                      state.focusedMapTileProps,
                                   dateTime: state.searchDatetime,
                                   onTapped: (props, room) {
-                                    focusedMapTileProps.value =
-                                        focusedMapTileProps.value == props
-                                        ? null
-                                        : props;
+                                    ref
+                                        .read(mapReducerProvider.notifier)
+                                        .onMapTileTapped(props);
                                   },
                                 ),
                               ),
