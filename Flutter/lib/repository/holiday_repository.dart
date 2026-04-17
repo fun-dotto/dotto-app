@@ -14,6 +14,7 @@ final class HolidayRepositoryImpl implements HolidayRepository {
   );
   static const String _cacheFilePath = 'holiday/date.json';
   static const Duration _cacheDuration = Duration(days: 1);
+  static const Duration _requestTimeout = Duration(seconds: 10);
 
   @override
   Future<Set<String>> getHolidayDates() async {
@@ -29,7 +30,7 @@ final class HolidayRepositoryImpl implements HolidayRepository {
     }
 
     try {
-      final response = await http.get(_endpoint);
+      final response = await http.get(_endpoint).timeout(_requestTimeout);
       if (response.statusCode == 200) {
         final parsed = _tryParse(response.body);
         if (parsed != null) {
