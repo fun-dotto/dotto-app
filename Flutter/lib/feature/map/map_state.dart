@@ -10,7 +10,6 @@ part 'map_state.freezed.dart';
 abstract class MapState with _$MapState {
   const factory MapState({
     required List<Room> rooms,
-    required List<Room> filteredRooms,
     required DateTime searchDatetime,
     required Floor selectedFloor,
     required TransformationController transformationController,

@@ -149,7 +149,6 @@ void main() {
         completion(
           isA<MapState>()
               .having((p0) => p0.rooms, 'rooms', testRooms)
-              .having((p0) => p0.filteredRooms, 'filteredRooms', isEmpty)
               .having((p0) => p0.selectedFloor, 'selectedFloor', Floor.third)
               .having(
                 (p0) => p0.transformationController,
@@ -192,87 +191,12 @@ void main() {
       verify(listener.call(any, any)).called(greaterThan(0));
     });
 
-    test('検索テキストが変更されたときに状態が更新される', () async {
-      final container = createContainer()
-        ..listen(mapReducerProvider, listener.call, fireImmediately: true);
-
-      // 初期状態を待つ
-      final initialState = await container
-          .read(mapReducerProvider.notifier)
-          .future;
-      expect(initialState.filteredRooms, isEmpty);
-
-      // onSearchTextChanged を呼び出す
-      await container
-          .read(mapReducerProvider.notifier)
-          .onSearchTextChanged('101');
-
-      // 状態が更新されたことを確認
-      final updatedState = container.read(mapReducerProvider).requireValue;
-      expect(
-        updatedState,
-        isA<MapState>().having((p0) => p0.filteredRooms, 'filteredRooms', [
-          testRooms[0],
-        ]),
-      );
-
-      // listener が呼ばれたことを確認
-      verify(listener.call(any, any)).called(greaterThan(0));
-    });
-
-    test('検索テキストがクリアされたときに状態が更新される', () async {
-      final container = createContainer()
-        ..listen(mapReducerProvider, listener.call, fireImmediately: true);
-
-      // 初期状態を待つ
-      final initialState = await container
-          .read(mapReducerProvider.notifier)
-          .future;
-      expect(initialState.filteredRooms, isEmpty);
-
-      // onSearchTextChanged を呼び出す
-      await container
-          .read(mapReducerProvider.notifier)
-          .onSearchTextChanged('101');
-      final stateAfterSearch = container
-          .read(mapReducerProvider)
-          .requireValue;
-      expect(
-        stateAfterSearch,
-        isA<MapState>().having(
-          (p0) => p0.filteredRooms,
-          'filteredRooms',
-          isNotEmpty,
-        ),
-      );
-
-      // onSearchTextCleared を呼び出す
-      container.read(mapReducerProvider.notifier).onSearchTextCleared();
-
-      // 状態が更新されたことを確認
-      final stateAfterClear = container.read(mapReducerProvider).requireValue;
-      expect(
-        stateAfterClear,
-        isA<MapState>().having(
-          (p0) => p0.filteredRooms,
-          'filteredRooms',
-          isEmpty,
-        ),
-      );
-
-      // listener が呼ばれたことを確認
-      verify(listener.call(any, any)).called(greaterThan(0));
-    });
-
     test('検索結果行が押されたときに状態が更新される', () async {
       final container = createContainer()
         ..listen(mapReducerProvider, listener.call, fireImmediately: true);
 
       // 初期状態を待つ
-      final initialState = await container
-          .read(mapReducerProvider.notifier)
-          .future;
-      expect(initialState.filteredRooms, isEmpty);
+      await container.read(mapReducerProvider.notifier).future;
 
       // onSearchResultRowTapped を呼び出す
       container
