@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:collection/collection.dart';
 import 'package:dotto/domain/floor.dart';
 import 'package:dotto/domain/map_tile_props.dart';
