@@ -3,59 +3,66 @@
 //
 
 // ignore_for_file: unused_element
-import 'package:openapi/src/model/faculty.dart';
-import 'package:openapi/src/model/dotto_foundation_v1_floor.dart';
+import 'package:built_collection/built_collection.dart';
+import 'package:openapi/src/model/category.dart';
+import 'package:openapi/src/model/date.dart';
+import 'package:openapi/src/model/price.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 
-part 'room.g.dart';
+part 'menu_item.g.dart';
 
-/// Room
+/// MenuItem
 ///
 /// Properties:
 /// * [id] 
-/// * [name] - 部屋名
-/// * [floor] - フロア  オンラインなどの仮想教室の場合はVirtualを使用
-/// * [faculty] - 教員  空室の教員室や教員室でない場合は省略
+/// * [date] 
+/// * [name] 
+/// * [imageUrl] 
+/// * [category] 
+/// * [prices] 
 @BuiltValue()
-abstract class Room implements Built<Room, RoomBuilder> {
+abstract class MenuItem implements Built<MenuItem, MenuItemBuilder> {
   @BuiltValueField(wireName: r'id')
   String get id;
 
-  /// 部屋名
+  @BuiltValueField(wireName: r'date')
+  Date get date;
+
   @BuiltValueField(wireName: r'name')
   String get name;
 
-  /// フロア  オンラインなどの仮想教室の場合はVirtualを使用
-  @BuiltValueField(wireName: r'floor')
-  DottoFoundationV1Floor get floor;
-  // enum floorEnum {  Floor1,  Floor2,  Floor3,  Floor4,  Floor5,  Floor6,  Floor7,  Virtual,  };
+  @BuiltValueField(wireName: r'imageUrl')
+  String get imageUrl;
 
-  /// 教員  空室の教員室や教員室でない場合は省略
-  @BuiltValueField(wireName: r'faculty')
-  Faculty? get faculty;
+  @BuiltValueField(wireName: r'category')
+  Category get category;
+  // enum categoryEnum {  SetAndSingle,  BowlAndCurry,  Noodle,  Side,  Dessert,  };
 
-  Room._();
+  @BuiltValueField(wireName: r'prices')
+  BuiltList<Price> get prices;
 
-  factory Room([void updates(RoomBuilder b)]) = _$Room;
+  MenuItem._();
+
+  factory MenuItem([void updates(MenuItemBuilder b)]) = _$MenuItem;
 
   @BuiltValueHook(initializeBuilder: true)
-  static void _defaults(RoomBuilder b) => b;
+  static void _defaults(MenuItemBuilder b) => b;
 
   @BuiltValueSerializer(custom: true)
-  static Serializer<Room> get serializer => _$RoomSerializer();
+  static Serializer<MenuItem> get serializer => _$MenuItemSerializer();
 }
 
-class _$RoomSerializer implements PrimitiveSerializer<Room> {
+class _$MenuItemSerializer implements PrimitiveSerializer<MenuItem> {
   @override
-  final Iterable<Type> types = const [Room, _$Room];
+  final Iterable<Type> types = const [MenuItem, _$MenuItem];
 
   @override
-  final String wireName = r'Room';
+  final String wireName = r'MenuItem';
 
   Iterable<Object?> _serializeProperties(
     Serializers serializers,
-    Room object, {
+    MenuItem object, {
     FullType specifiedType = FullType.unspecified,
   }) sync* {
     yield r'id';
@@ -63,29 +70,37 @@ class _$RoomSerializer implements PrimitiveSerializer<Room> {
       object.id,
       specifiedType: const FullType(String),
     );
+    yield r'date';
+    yield serializers.serialize(
+      object.date,
+      specifiedType: const FullType(Date),
+    );
     yield r'name';
     yield serializers.serialize(
       object.name,
       specifiedType: const FullType(String),
     );
-    yield r'floor';
+    yield r'imageUrl';
     yield serializers.serialize(
-      object.floor,
-      specifiedType: const FullType(DottoFoundationV1Floor),
+      object.imageUrl,
+      specifiedType: const FullType(String),
     );
-    if (object.faculty != null) {
-      yield r'faculty';
-      yield serializers.serialize(
-        object.faculty,
-        specifiedType: const FullType(Faculty),
-      );
-    }
+    yield r'category';
+    yield serializers.serialize(
+      object.category,
+      specifiedType: const FullType(Category),
+    );
+    yield r'prices';
+    yield serializers.serialize(
+      object.prices,
+      specifiedType: const FullType(BuiltList, [FullType(Price)]),
+    );
   }
 
   @override
   Object serialize(
     Serializers serializers,
-    Room object, {
+    MenuItem object, {
     FullType specifiedType = FullType.unspecified,
   }) {
     return _serializeProperties(serializers, object, specifiedType: specifiedType).toList();
@@ -96,7 +111,7 @@ class _$RoomSerializer implements PrimitiveSerializer<Room> {
     Object serialized, {
     FullType specifiedType = FullType.unspecified,
     required List<Object?> serializedList,
-    required RoomBuilder result,
+    required MenuItemBuilder result,
     required List<Object?> unhandled,
   }) {
     for (var i = 0; i < serializedList.length; i += 2) {
@@ -110,6 +125,13 @@ class _$RoomSerializer implements PrimitiveSerializer<Room> {
           ) as String;
           result.id = valueDes;
           break;
+        case r'date':
+          final valueDes = serializers.deserialize(
+            value,
+            specifiedType: const FullType(Date),
+          ) as Date;
+          result.date = valueDes;
+          break;
         case r'name':
           final valueDes = serializers.deserialize(
             value,
@@ -117,19 +139,26 @@ class _$RoomSerializer implements PrimitiveSerializer<Room> {
           ) as String;
           result.name = valueDes;
           break;
-        case r'floor':
+        case r'imageUrl':
           final valueDes = serializers.deserialize(
             value,
-            specifiedType: const FullType(DottoFoundationV1Floor),
-          ) as DottoFoundationV1Floor;
-          result.floor = valueDes;
+            specifiedType: const FullType(String),
+          ) as String;
+          result.imageUrl = valueDes;
           break;
-        case r'faculty':
+        case r'category':
           final valueDes = serializers.deserialize(
             value,
-            specifiedType: const FullType(Faculty),
-          ) as Faculty;
-          result.faculty.replace(valueDes);
+            specifiedType: const FullType(Category),
+          ) as Category;
+          result.category = valueDes;
+          break;
+        case r'prices':
+          final valueDes = serializers.deserialize(
+            value,
+            specifiedType: const FullType(BuiltList, [FullType(Price)]),
+          ) as BuiltList<Price>;
+          result.prices.replace(valueDes);
           break;
         default:
           unhandled.add(key);
@@ -140,12 +169,12 @@ class _$RoomSerializer implements PrimitiveSerializer<Room> {
   }
 
   @override
-  Room deserialize(
+  MenuItem deserialize(
     Serializers serializers,
     Object serialized, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final result = RoomBuilder();
+    final result = MenuItemBuilder();
     final serializedList = (serialized as Iterable<Object?>).toList();
     final unhandled = <Object?>[];
     _deserializeProperties(

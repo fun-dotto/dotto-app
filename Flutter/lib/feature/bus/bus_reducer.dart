@@ -3,14 +3,17 @@ import 'dart:async';
 import 'package:dotto/domain/bus_stop.dart';
 import 'package:dotto/domain/user_preference_keys.dart';
 import 'package:dotto/feature/bus/bus_state.dart';
+import 'package:dotto/helper/location_helper.dart';
 import 'package:dotto/helper/user_preference_repository.dart';
 import 'package:dotto/repository/repository_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'bus_reducer.g.dart';
 
+const kamedaBusStopId = 14013;
+
 const _defaultBusStop = BusStop(
-  id: 14013,
+  id: kamedaBusStopId,
   name: '亀田支所前',
   routeList: ['50', '55', '55A', '55B', '55C', '55E', '55F', '55G', '55H'],
 );
@@ -26,11 +29,14 @@ final class BusReducer extends _$BusReducer {
     });
 
     final busRepository = ref.read(busRepositoryProvider);
+    final nearUniFuture = LocationHelper.isNearUniversity();
+
     final allStops = await busRepository.getAllBusStops();
     final trips = await busRepository.getBusTrips(allStops);
 
     final myBusStop = await _loadMyBusStop(allStops);
     final now = DateTime.now();
+    final isNearUni = await nearUniFuture;
 
     _startPolling();
 
@@ -40,6 +46,7 @@ final class BusReducer extends _$BusReducer {
       myBusStop: myBusStop,
       isWeekday: now.weekday <= DateTime.friday,
       currentTime: now,
+      isTo: !isNearUni,
     );
   }
 
@@ -66,15 +73,19 @@ final class BusReducer extends _$BusReducer {
   void toggleDirection() {
     final current = state.asData?.value;
     if (current == null) return;
-    state = AsyncData(current.copyWith(isTo: !current.isTo, isScrolled: false));
+    state = AsyncData(
+      current.copyWith(
+        isTo: !current.isTo,
+        isWeekdayScrolled: false,
+        isHolidayScrolled: false,
+      ),
+    );
   }
 
   void toggleWeekday() {
     final current = state.asData?.value;
     if (current == null) return;
-    state = AsyncData(
-      current.copyWith(isWeekday: !current.isWeekday, isScrolled: false),
-    );
+    state = AsyncData(current.copyWith(isWeekday: !current.isWeekday));
   }
 
   Future<void> selectBusStop(BusStop busStop) async {
@@ -87,10 +98,16 @@ final class BusReducer extends _$BusReducer {
     state = AsyncData(current.copyWith(myBusStop: busStop));
   }
 
-  void setScrolled({required bool value}) {
+  void setWeekdayScrolled({required bool value}) {
     final current = state.asData?.value;
     if (current == null) return;
-    state = AsyncData(current.copyWith(isScrolled: value));
+    state = AsyncData(current.copyWith(isWeekdayScrolled: value));
+  }
+
+  void setHolidayScrolled({required bool value}) {
+    final current = state.asData?.value;
+    if (current == null) return;
+    state = AsyncData(current.copyWith(isHolidayScrolled: value));
   }
 }
 

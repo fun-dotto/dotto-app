@@ -45,7 +45,12 @@ final class MapDatePicker extends StatelessWidget {
         padding: EdgeInsets.zero,
       ),
       onPressed: () async {
-        final locale = WidgetsBinding.instance.platformDispatcher.locale;
+        final languageCode =
+            WidgetsBinding.instance.platformDispatcher.locale.languageCode;
+        final locale = switch (languageCode) {
+          'ja' => LocaleType.jp,
+          _ => LocaleType.en,
+        };
         await DatePicker.showDateTimePicker(
           context,
           minTime: monday,

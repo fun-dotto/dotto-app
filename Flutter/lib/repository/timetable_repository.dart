@@ -9,7 +9,7 @@ import 'package:dotto/domain/subject_summary.dart';
 import 'package:dotto/domain/timetable_item.dart';
 import 'package:dotto/domain/timetable_slot.dart';
 import 'package:openapi/openapi.dart'
-    hide SubjectFaculty, SubjectSummary, TimetableItem;
+    hide Faculty, SubjectFaculty, SubjectSummary, TimetableItem;
 
 abstract class TimetableRepository {
   Future<List<TimetableItem>> getTimetableItems(List<Semester> semesters);

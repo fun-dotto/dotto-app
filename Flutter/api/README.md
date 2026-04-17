@@ -71,6 +71,7 @@ Class | Method | HTTP request | Description
 [*CourseRegistrationsApi*](doc/CourseRegistrationsApi.md) | [**courseRegistrationsV1List**](doc/CourseRegistrationsApi.md#courseregistrationsv1list) | **GET** /v1/courseRegistrations | 
 [*FCMTokensApi*](doc/FCMTokensApi.md) | [**fCMTokenV1Upsert**](doc/FCMTokensApi.md#fcmtokenv1upsert) | **POST** /v1/fcmTokens | 
 [*MakeupClassesApi*](doc/MakeupClassesApi.md) | [**makeupClassesV1List**](doc/MakeupClassesApi.md#makeupclassesv1list) | **GET** /v1/makeupClasses | 
+[*MenuItemsApi*](doc/MenuItemsApi.md) | [**menuItemsV1List**](doc/MenuItemsApi.md#menuitemsv1list) | **GET** /v1/menuItems | 
 [*PersonalCalendarItemsApi*](doc/PersonalCalendarItemsApi.md) | [**personalCalendarItemsV1List**](doc/PersonalCalendarItemsApi.md#personalcalendaritemsv1list) | **GET** /v1/personalCalendarItems | 
 [*RoomChangesApi*](doc/RoomChangesApi.md) | [**roomChangesV1List**](doc/RoomChangesApi.md#roomchangesv1list) | **GET** /v1/roomChanges | 
 [*SubjectsApi*](doc/SubjectsApi.md) | [**subjectsV1Detail**](doc/SubjectsApi.md#subjectsv1detail) | **GET** /v1/subjects/{id} | 
@@ -90,6 +91,7 @@ Class | Method | HTTP request | Description
  - [AnnouncementsV1List200Response](doc/AnnouncementsV1List200Response.md)
  - [CancelledClass](doc/CancelledClass.md)
  - [CancelledClassesV1List200Response](doc/CancelledClassesV1List200Response.md)
+ - [Category](doc/Category.md)
  - [CourseRegistration](doc/CourseRegistration.md)
  - [CourseRegistrationRequest](doc/CourseRegistrationRequest.md)
  - [CourseRegistrationsV1Create201Response](doc/CourseRegistrationsV1Create201Response.md)
@@ -109,13 +111,18 @@ Class | Method | HTTP request | Description
  - [FCMToken](doc/FCMToken.md)
  - [FCMTokenRequest](doc/FCMTokenRequest.md)
  - [FCMTokenV1Upsert200Response](doc/FCMTokenV1Upsert200Response.md)
+ - [Faculty](doc/Faculty.md)
  - [MakeupClass](doc/MakeupClass.md)
  - [MakeupClassesV1List200Response](doc/MakeupClassesV1List200Response.md)
+ - [MenuItem](doc/MenuItem.md)
+ - [MenuItemsV1List200Response](doc/MenuItemsV1List200Response.md)
  - [PersonalCalendarItem](doc/PersonalCalendarItem.md)
  - [PersonalCalendarItemsV1List200Response](doc/PersonalCalendarItemsV1List200Response.md)
+ - [Price](doc/Price.md)
  - [Room](doc/Room.md)
  - [RoomChange](doc/RoomChange.md)
  - [RoomChangesV1List200Response](doc/RoomChangesV1List200Response.md)
+ - [Size](doc/Size.md)
  - [SubjectDetail](doc/SubjectDetail.md)
  - [SubjectFaculty](doc/SubjectFaculty.md)
  - [SubjectSummary](doc/SubjectSummary.md)

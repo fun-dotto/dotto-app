@@ -14,6 +14,7 @@ import 'package:openapi/src/api/cancelled_classes_api.dart';
 import 'package:openapi/src/api/course_registrations_api.dart';
 import 'package:openapi/src/api/fcm_tokens_api.dart';
 import 'package:openapi/src/api/makeup_classes_api.dart';
+import 'package:openapi/src/api/menu_items_api.dart';
 import 'package:openapi/src/api/personal_calendar_items_api.dart';
 import 'package:openapi/src/api/room_changes_api.dart';
 import 'package:openapi/src/api/subjects_api.dart';
@@ -102,6 +103,12 @@ class Openapi {
   /// by doing that all interceptors will not be executed
   MakeupClassesApi getMakeupClassesApi() {
     return MakeupClassesApi(dio, serializers);
+  }
+
+  /// Get MenuItemsApi instance, base route and serializer can be overridden by a given but be careful,
+  /// by doing that all interceptors will not be executed
+  MenuItemsApi getMenuItemsApi() {
+    return MenuItemsApi(dio, serializers);
   }
 
   /// Get PersonalCalendarItemsApi instance, base route and serializer can be overridden by a given but be careful,

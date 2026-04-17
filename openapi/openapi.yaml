@@ -13,6 +13,7 @@ tags:
   - name: TimetableItems
   - name: Users
   - name: FCM Tokens
+  - name: MenuItems
 paths:
   /v1/announcements:
     get:
@@ -262,6 +263,37 @@ paths:
       security:
         - BearerAuth: []
           FirebaseAppCheckAuth: []
+  /v1/menuItems:
+    get:
+      operationId: MenuItemsV1_list
+      description: メニューを取得する
+      parameters:
+        - name: date
+          in: query
+          required: true
+          description: メニューを取得する日付
+          schema:
+            type: string
+            format: date
+          explode: false
+      responses:
+        '200':
+          description: メニューのリスト
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  menuItems:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/MenuItem'
+                required:
+                  - menuItems
+        '401':
+          description: Access is unauthorized.
+      tags:
+        - MenuItems
   /v1/personalCalendarItems:
     get:
       operationId: PersonalCalendarItemsV1_list
@@ -756,6 +788,14 @@ components:
         comment:
           type: string
       description: 休講
+    Category:
+      type: string
+      enum:
+        - SetAndSingle
+        - BowlAndCurry
+        - Noodle
+        - Side
+        - Dessert
     CourseRegistration:
       type: object
       required:
@@ -920,6 +960,19 @@ components:
       properties:
         token:
           type: string
+    Faculty:
+      type: object
+      required:
+        - id
+        - name
+        - email
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
     MakeupClass:
       type: object
       required:
@@ -941,6 +994,32 @@ components:
         comment:
           type: string
       description: 補講
+    MenuItem:
+      type: object
+      required:
+        - id
+        - date
+        - name
+        - imageUrl
+        - category
+        - prices
+      properties:
+        id:
+          type: string
+        date:
+          type: string
+          format: date
+        name:
+          type: string
+        imageUrl:
+          type: string
+          format: uri
+        category:
+          $ref: '#/components/schemas/Category'
+        prices:
+          type: array
+          items:
+            $ref: '#/components/schemas/Price'
     PersonalCalendarItem:
       type: object
       required:
@@ -963,6 +1042,17 @@ components:
             $ref: '#/components/schemas/Room'
         status:
           $ref: '#/components/schemas/DottoFoundationV1.PersonalCalendarItemStatus'
+    Price:
+      type: object
+      required:
+        - size
+        - price
+      properties:
+        size:
+          $ref: '#/components/schemas/Size'
+        price:
+          type: integer
+          format: int32
     Room:
       type: object
       required:
@@ -974,8 +1064,21 @@ components:
           type: string
         name:
           type: string
+          description: 部屋名
         floor:
-          $ref: '#/components/schemas/DottoFoundationV1.Floor'
+          allOf:
+            - $ref: '#/components/schemas/DottoFoundationV1.Floor'
+          description: |-
+            フロア
+
+            オンラインなどの仮想教室の場合はVirtualを使用
+        faculty:
+          allOf:
+            - $ref: '#/components/schemas/Faculty'
+          description: |-
+            教員
+
+            空室の教員室や教員室でない場合は省略
     RoomChange:
       type: object
       required:
@@ -1000,6 +1103,12 @@ components:
         newRoom:
           $ref: '#/components/schemas/Room'
       description: 教室変更
+    Size:
+      type: string
+      enum:
+        - Small
+        - Medium
+        - Large
     SubjectDetail:
       type: object
       required:

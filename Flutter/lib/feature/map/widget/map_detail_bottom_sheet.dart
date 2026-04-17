@@ -13,7 +13,6 @@ final class MapDetailBottomSheet extends StatelessWidget {
     required this.room,
     required this.dateTime,
     required this.isAuthenticated,
-    required this.onDismissed,
     required this.onGoToSettingButtonTapped,
     super.key,
   });
@@ -22,7 +21,6 @@ final class MapDetailBottomSheet extends StatelessWidget {
   final Room room;
   final DateTime dateTime;
   final bool isAuthenticated;
-  final void Function() onDismissed;
   final void Function() onGoToSettingButtonTapped;
 
   DateTime get startOfDay =>
@@ -39,7 +37,6 @@ final class MapDetailBottomSheet extends StatelessWidget {
     String title,
   ) {
     return Container(
-      width: MediaQuery.of(context).size.width,
       margin: const EdgeInsets.symmetric(vertical: 5),
       padding: const EdgeInsets.all(10),
       decoration: const BoxDecoration(
@@ -106,28 +103,21 @@ final class MapDetailBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 250,
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        spacing: 8,
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: SelectableText(
-                  room.name,
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-              ),
-              IconButton(onPressed: onDismissed, icon: const Icon(Icons.close)),
-            ],
+          SelectableText(
+            room.name,
+            style: Theme.of(context).textTheme.titleMedium,
           ),
           if (isAuthenticated)
             Expanded(
               child: SingleChildScrollView(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
                     Wrap(
                       spacing: 8,
@@ -165,11 +155,11 @@ final class MapDetailBottomSheet extends StatelessWidget {
                       ],
                     ),
                     Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         if (room.schedules.isNotEmpty)
                           Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: room.schedules
                                 .where(
                                   (e) =>
