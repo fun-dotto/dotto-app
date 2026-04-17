@@ -4,7 +4,7 @@ import 'package:collection/collection.dart';
 import 'package:dotto/controller/user_controller.dart';
 import 'package:dotto/domain/map_tile_props.dart';
 import 'package:dotto/feature/map/fun_map.dart';
-import 'package:dotto/feature/map/map_viewmodel.dart';
+import 'package:dotto/feature/map/map_reducer.dart';
 import 'package:dotto/feature/map/widget/map.dart';
 import 'package:dotto/feature/map/widget/map_date_picker.dart';
 import 'package:dotto/feature/map/widget/map_detail_bottom_sheet.dart';
@@ -44,15 +44,15 @@ final class MapScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final asyncViewModel = ref.watch(mapViewModelProvider);
+    final asyncState = ref.watch(mapReducerProvider);
     final isAuthenticated = ref.watch(isAuthenticatedProvider);
     final scaffoldKey = useMemoized(GlobalKey<ScaffoldState>.new);
     final sheetController = useRef<PersistentBottomSheetController?>(null);
     final focusedMapTileProps = useState<MapTileProps?>(null);
 
-    final searchDatetime = asyncViewModel.value?.searchDatetime;
-    final rooms = asyncViewModel.value?.rooms;
-    final selectedFloor = asyncViewModel.value?.selectedFloor;
+    final searchDatetime = asyncState.value?.searchDatetime;
+    final rooms = asyncState.value?.rooms;
+    final selectedFloor = asyncState.value?.selectedFloor;
 
     useEffect(() {
       focusedMapTileProps.value = null;
@@ -134,12 +134,12 @@ final class MapScreen extends HookConsumerWidget {
                   onChanged: (value) async {
                     controller.openView();
                     await ref
-                        .read(mapViewModelProvider.notifier)
+                        .read(mapReducerProvider.notifier)
                         .onSearchTextChanged(value);
                   },
                   onSubmitted: (value) async {
                     await ref
-                        .read(mapViewModelProvider.notifier)
+                        .read(mapReducerProvider.notifier)
                         .onSearchTextSubmitted(value);
                   },
                   leading: const Icon(Icons.search),
@@ -147,7 +147,7 @@ final class MapScreen extends HookConsumerWidget {
                 );
               },
               suggestionsBuilder: (context, controller) {
-                switch (asyncViewModel) {
+                switch (asyncState) {
                   case AsyncData(:final value):
                     if (value.filteredRooms.isEmpty) {
                       return [const ListTile(title: Text('見つかりませんでした'))];
@@ -158,7 +158,7 @@ final class MapScreen extends HookConsumerWidget {
                         onTap: () {
                           controller.closeView(item.name);
                           ref
-                              .read(mapViewModelProvider.notifier)
+                              .read(mapReducerProvider.notifier)
                               .onSearchResultRowTapped(item);
                           focusedMapTileProps.value = FUNMap.tileProps
                               .firstWhereOrNull((e) => e.id == item.id);
@@ -177,8 +177,8 @@ final class MapScreen extends HookConsumerWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 16),
-        child: asyncViewModel.when(
-          data: (viewModel) => Column(
+        child: asyncState.when(
+          data: (state) => Column(
             spacing: 8,
             children: [
               Expanded(
@@ -192,10 +192,10 @@ final class MapScreen extends HookConsumerWidget {
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 16),
                             child: MapFloorButton(
-                              selectedFloor: viewModel.selectedFloor,
+                              selectedFloor: state.selectedFloor,
                               onPressed: (floor) {
                                 ref
-                                    .read(mapViewModelProvider.notifier)
+                                    .read(mapReducerProvider.notifier)
                                     .onFloorButtonTapped(floor);
                               },
                             ),
@@ -208,14 +208,13 @@ final class MapScreen extends HookConsumerWidget {
                               SizedBox.expand(
                                 child: Map(
                                   mapViewTransformationController:
-                                      viewModel.transformationController,
-                                  selectedFloor: viewModel.selectedFloor,
-                                  rooms: viewModel.rooms,
+                                      state.transformationController,
+                                  selectedFloor: state.selectedFloor,
+                                  rooms: state.rooms,
                                   focusedMapTileProps:
                                       focusedMapTileProps.value,
-                                  dateTime: viewModel.searchDatetime,
+                                  dateTime: state.searchDatetime,
                                   onTapped: (props, room) {
-                                    viewModel.focusNode.unfocus();
                                     focusedMapTileProps.value =
                                         focusedMapTileProps.value == props
                                         ? null
@@ -232,19 +231,19 @@ final class MapScreen extends HookConsumerWidget {
                         ),
                         _datePickerSection(
                           isAuthenticated: isAuthenticated,
-                          searchDatetime: viewModel.searchDatetime,
+                          searchDatetime: state.searchDatetime,
                           onPeriodButtonTapped: (dateTime) async {
                             var setDate = dateTime;
                             if (setDate.hour == 0) {
                               setDate = DateTime.now();
                             }
                             ref
-                                .read(mapViewModelProvider.notifier)
+                                .read(mapReducerProvider.notifier)
                                 .onPeriodButtonTapped(setDate);
                           },
                           onDatePickerConfirmed: (dateTime) async {
                             ref
-                                .read(mapViewModelProvider.notifier)
+                                .read(mapReducerProvider.notifier)
                                 .onDatePickerConfirmed(dateTime);
                           },
                         ),

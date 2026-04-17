@@ -2,83 +2,60 @@ import 'dart:async';
 
 import 'package:dotto/domain/floor.dart';
 import 'package:dotto/domain/room.dart';
-import 'package:dotto/feature/map/map_viewstate.dart';
+import 'package:dotto/feature/map/map_state.dart';
 import 'package:dotto/repository/repository_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-part 'map_viewmodel.g.dart';
+part 'map_reducer.g.dart';
 
 @riverpod
-class MapViewModel extends _$MapViewModel {
+final class MapReducer extends _$MapReducer {
   @override
-  Future<MapViewState> build() async {
+  Future<MapState> build() async {
     final rooms = await ref.read(roomRepositoryProvider).getRooms();
-    final state = MapViewState(
+    return MapState(
       rooms: rooms,
       filteredRooms: [],
       searchDatetime: DateTime.now(),
       selectedFloor: Floor.third,
-      focusNode: FocusNode(),
       transformationController: TransformationController(Matrix4.identity()),
     );
-    return state;
   }
 
   void onFloorButtonTapped(Floor floor) {
-    state.value?.focusNode.unfocus();
-    final newState = state.value?.copyWith(selectedFloor: floor);
-    if (newState != null) {
-      state = AsyncData(newState);
-    }
-    state.value?.transformationController.value = Matrix4(
-      1,
-      0,
-      0,
-      0,
-      0,
-      1,
-      0,
-      0,
-      0,
-      0,
-      1,
-      0,
-      0,
-      0,
-      0,
-      1,
-    );
+    final current = state.asData?.value;
+    if (current == null) return;
+    state = AsyncData(current.copyWith(selectedFloor: floor));
+    current.transformationController.value = Matrix4.identity();
   }
 
   Future<void> onSearchTextChanged(String query) async {
     final filteredRooms = await _search(query);
-    final newState = state.value?.copyWith(filteredRooms: filteredRooms);
-    if (newState != null) {
-      state = AsyncData(newState);
-    }
+    final current = state.asData?.value;
+    if (current == null) return;
+    state = AsyncData(current.copyWith(filteredRooms: filteredRooms));
   }
 
   Future<void> onSearchTextSubmitted(String query) async {
     final filteredRooms = await _search(query);
-    final newState = state.value?.copyWith(filteredRooms: filteredRooms);
-    if (newState != null) {
-      state = AsyncData(newState);
-    }
+    final current = state.asData?.value;
+    if (current == null) return;
+    state = AsyncData(current.copyWith(filteredRooms: filteredRooms));
   }
 
   void onSearchTextCleared() {
-    final newState = state.value?.copyWith(filteredRooms: const []);
-    if (newState != null) {
-      state = AsyncData(newState);
-    }
+    final current = state.asData?.value;
+    if (current == null) return;
+    state = AsyncData(current.copyWith(filteredRooms: const []));
   }
 
   Future<List<Room>> _search(String query) async {
     if (query.isEmpty) {
       return [];
     }
-    return (state.value?.rooms ?? [])
+    final current = state.asData?.value;
+    return (current?.rooms ?? [])
         .where(
           (room) =>
               room.id.toLowerCase().contains(query.toLowerCase()) ||
@@ -94,24 +71,20 @@ class MapViewModel extends _$MapViewModel {
   }
 
   void onSearchResultRowTapped(Room room) {
-    state.value?.focusNode.unfocus();
-    final newState = state.value?.copyWith(selectedFloor: room.floor);
-    if (newState != null) {
-      state = AsyncData(newState);
-    }
+    final current = state.asData?.value;
+    if (current == null) return;
+    state = AsyncData(current.copyWith(selectedFloor: room.floor));
   }
 
   void onPeriodButtonTapped(DateTime dateTime) {
-    final newState = state.value?.copyWith(searchDatetime: dateTime);
-    if (newState != null) {
-      state = AsyncData(newState);
-    }
+    final current = state.asData?.value;
+    if (current == null) return;
+    state = AsyncData(current.copyWith(searchDatetime: dateTime));
   }
 
   void onDatePickerConfirmed(DateTime dateTime) {
-    final newState = state.value?.copyWith(searchDatetime: dateTime);
-    if (newState != null) {
-      state = AsyncData(newState);
-    }
+    final current = state.asData?.value;
+    if (current == null) return;
+    state = AsyncData(current.copyWith(searchDatetime: dateTime));
   }
 }
