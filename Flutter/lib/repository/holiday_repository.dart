@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:dotto/domain/domain_error.dart';
 import 'package:dotto/helper/file_helper.dart';
 import 'package:http/http.dart' as http;
 
@@ -35,24 +36,39 @@ final class HolidayRepositoryImpl implements HolidayRepository {
 
     try {
       final response = await http.get(_endpoint).timeout(_requestTimeout);
-      if (response.statusCode == 200) {
-        final parsed = _tryParse(response.body);
-        if (parsed != null) {
-          await file.writeAsString(response.body, flush: true);
-          return parsed;
-        }
+      if (response.statusCode != 200) {
+        throw DomainError(
+          type: DomainErrorType.server,
+          message: 'Failed to fetch holidays: status ${response.statusCode}',
+        );
       }
-    } on Exception {
-      // ignore and fall through to stale cache / empty
+      final parsed = _tryParse(response.body);
+      if (parsed == null) {
+        throw const DomainError(
+          type: DomainErrorType.invalidResponse,
+          message: 'Failed to parse holidays JSON',
+        );
+      }
+      await file.writeAsString(response.body, flush: true);
+      return parsed;
+    } on DomainError {
+      final stale = await _readStaleCache(file);
+      if (stale != null) return stale;
+      rethrow;
+    } on Exception catch (e, st) {
+      final stale = await _readStaleCache(file);
+      if (stale != null) return stale;
+      throw DomainError.fromException(e: e, stackTrace: st);
     }
+  }
 
+  Future<Set<String>?> _readStaleCache(File file) async {
     // UI 起動経路で呼ばれるため、同期 I/O を避けて非同期 API を使う。
     // ignore: avoid_slow_async_io
     if (await file.exists()) {
-      final parsed = _tryParse(await file.readAsString());
-      if (parsed != null) return parsed;
+      return _tryParse(await file.readAsString());
     }
-    return <String>{};
+    return null;
   }
 
   Set<String>? _tryParse(String body) {

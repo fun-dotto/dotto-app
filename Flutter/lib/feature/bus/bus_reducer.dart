@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:dotto/domain/bus_stop.dart';
+import 'package:dotto/domain/domain_error.dart';
 import 'package:dotto/domain/user_preference_keys.dart';
 import 'package:dotto/feature/bus/bus_state.dart';
 import 'package:dotto/helper/date_formatter.dart';
@@ -43,7 +44,7 @@ final class BusReducer extends _$BusReducer {
     Set<String> holidayDates;
     try {
       holidayDates = await holidayDatesFuture;
-    } on Object {
+    } on DomainError {
       holidayDates = const <String>{};
     }
     final isHolidayToday = holidayDates.contains(DateFormatter.date(now));
