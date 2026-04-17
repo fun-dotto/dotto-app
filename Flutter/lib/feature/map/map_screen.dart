@@ -1,7 +1,8 @@
+import 'dart:async';
+
 import 'package:collection/collection.dart';
 import 'package:dotto/controller/user_controller.dart';
 import 'package:dotto/domain/map_tile_props.dart';
-import 'package:dotto/domain/room.dart';
 import 'package:dotto/feature/map/fun_map.dart';
 import 'package:dotto/feature/map/map_viewmodel.dart';
 import 'package:dotto/feature/map/widget/map.dart';
@@ -41,52 +42,72 @@ final class MapScreen extends HookConsumerWidget {
     );
   }
 
-  Widget _bottomSheet({
-    required MapTileProps? props,
-    required Room? room,
-    required DateTime dateTime,
-    required bool isAuthenticated,
-    required void Function() onDismissed,
-    required void Function() onGoToSettingButtonTapped,
-  }) {
-    const bottomSheetHeight = 250.0;
-    final isVisible = props != null && room != null;
-
-    return AnimatedPositioned(
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeOutCubic,
-      bottom: isVisible ? 0 : -bottomSheetHeight,
-      left: 0,
-      right: 0,
-      child: Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(16),
-            topRight: Radius.circular(16),
-          ),
-        ),
-        child: isVisible
-            ? MapDetailBottomSheet(
-                props: props,
-                room: room,
-                dateTime: dateTime,
-                isAuthenticated: isAuthenticated,
-                onDismissed: onDismissed,
-                onGoToSettingButtonTapped: onGoToSettingButtonTapped,
-              )
-            : const SizedBox(height: bottomSheetHeight),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final asyncViewModel = ref.watch(mapViewModelProvider);
     final isAuthenticated = ref.watch(isAuthenticatedProvider);
-    final controller = useTextEditingController();
+    final scaffoldKey = useMemoized(GlobalKey<ScaffoldState>.new);
+    final sheetController = useRef<PersistentBottomSheetController?>(null);
+    final focusedMapTileProps = useState<MapTileProps?>(null);
+
+    final searchDatetime = asyncViewModel.value?.searchDatetime;
+    final rooms = asyncViewModel.value?.rooms;
+    final selectedFloor = asyncViewModel.value?.selectedFloor;
+
+    useEffect(() {
+      focusedMapTileProps.value = null;
+      return null;
+    }, [selectedFloor]);
+
+    useEffect(() {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        sheetController.value?.close();
+        sheetController.value = null;
+
+        final props = focusedMapTileProps.value;
+        if (props == null || rooms == null || searchDatetime == null) {
+          return;
+        }
+        final room = rooms.firstWhereOrNull((e) => e.id == props.id);
+        if (room == null) {
+          return;
+        }
+
+        final newController = scaffoldKey.currentState?.showBottomSheet(
+          (_) => SizedBox(
+            height: 240,
+            child: MapDetailBottomSheet(
+              props: props,
+              room: room,
+              dateTime: searchDatetime,
+              isAuthenticated: isAuthenticated,
+              onDismissed: () {
+                focusedMapTileProps.value = null;
+              },
+              onGoToSettingButtonTapped: onGoToSettingButtonTapped,
+            ),
+          ),
+          showDragHandle: true,
+        );
+        sheetController.value = newController;
+        final shownPropsId = props.id;
+        unawaited(
+          newController?.closed.then((_) {
+                if (sheetController.value == newController) {
+                  sheetController.value = null;
+                }
+                if (focusedMapTileProps.value?.id == shownPropsId) {
+                  focusedMapTileProps.value = null;
+                }
+              }) ??
+              Future<void>.value(),
+        );
+      });
+      return null;
+    }, [focusedMapTileProps.value?.id]);
 
     return Scaffold(
+      key: scaffoldKey,
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text(
@@ -97,7 +118,7 @@ final class MapScreen extends HookConsumerWidget {
         ),
         centerTitle: false,
         bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(56),
+          preferredSize: const Size.fromHeight(48),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: SearchAnchor(
@@ -139,6 +160,8 @@ final class MapScreen extends HookConsumerWidget {
                           ref
                               .read(mapViewModelProvider.notifier)
                               .onSearchResultRowTapped(item);
+                          focusedMapTileProps.value = FUNMap.tileProps
+                              .firstWhereOrNull((e) => e.id == item.id);
                         },
                       );
                     }).toList();
@@ -152,100 +175,89 @@ final class MapScreen extends HookConsumerWidget {
           ),
         ),
       ),
-      body: asyncViewModel.when(
-        data: (viewModel) => Column(
-          spacing: 8,
-          children: [
-            Expanded(
-              child: Stack(
-                children: [
-                  Column(
-                    spacing: 8,
-                    children: [
-                      ConstrainedBox(
-                        constraints: const BoxConstraints(maxWidth: 480),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: MapFloorButton(
-                            selectedFloor: viewModel.selectedFloor,
-                            onPressed: (floor) {
-                              ref
-                                  .read(mapViewModelProvider.notifier)
-                                  .onFloorButtonTapped(floor);
-                            },
+      body: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        child: asyncViewModel.when(
+          data: (viewModel) => Column(
+            spacing: 8,
+            children: [
+              Expanded(
+                child: Stack(
+                  children: [
+                    Column(
+                      spacing: 8,
+                      children: [
+                        ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 480),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: MapFloorButton(
+                              selectedFloor: viewModel.selectedFloor,
+                              onPressed: (floor) {
+                                ref
+                                    .read(mapViewModelProvider.notifier)
+                                    .onFloorButtonTapped(floor);
+                              },
+                            ),
                           ),
                         ),
-                      ),
-                      Expanded(
-                        child: Stack(
-                          alignment: Alignment.bottomLeft,
-                          children: [
-                            SizedBox.expand(
-                              child: Map(
-                                mapViewTransformationController:
-                                    viewModel.transformationController,
-                                selectedFloor: viewModel.selectedFloor,
-                                rooms: viewModel.rooms,
-                                focusedMapTileProps:
-                                    viewModel.focusedMapTileProps,
-                                dateTime: viewModel.searchDatetime,
-                                onTapped: (props, room) {
-                                  ref
-                                      .read(mapViewModelProvider.notifier)
-                                      .onMapTileTapped(props, room);
-                                },
+                        Expanded(
+                          child: Stack(
+                            alignment: Alignment.bottomLeft,
+                            children: [
+                              SizedBox.expand(
+                                child: Map(
+                                  mapViewTransformationController:
+                                      viewModel.transformationController,
+                                  selectedFloor: viewModel.selectedFloor,
+                                  rooms: viewModel.rooms,
+                                  focusedMapTileProps:
+                                      focusedMapTileProps.value,
+                                  dateTime: viewModel.searchDatetime,
+                                  onTapped: (props, room) {
+                                    viewModel.focusNode.unfocus();
+                                    focusedMapTileProps.value =
+                                        focusedMapTileProps.value == props
+                                        ? null
+                                        : props;
+                                  },
+                                ),
                               ),
-                            ),
-                            const Padding(
-                              padding: EdgeInsets.only(left: 16),
-                              child: MapLegend(),
-                            ),
-                          ],
+                              const Padding(
+                                padding: EdgeInsets.only(left: 16),
+                                child: MapLegend(),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      _datePickerSection(
-                        isAuthenticated: isAuthenticated,
-                        searchDatetime: viewModel.searchDatetime,
-                        onPeriodButtonTapped: (dateTime) async {
-                          var setDate = dateTime;
-                          if (setDate.hour == 0) {
-                            setDate = DateTime.now();
-                          }
-                          ref
-                              .read(mapViewModelProvider.notifier)
-                              .onPeriodButtonTapped(setDate);
-                        },
-                        onDatePickerConfirmed: (dateTime) async {
-                          ref
-                              .read(mapViewModelProvider.notifier)
-                              .onDatePickerConfirmed(dateTime);
-                        },
-                      ),
-                    ],
-                  ),
-                  _bottomSheet(
-                    props: FUNMap.tileProps.firstWhereOrNull(
-                      (e) => e.id == viewModel.focusedMapTileProps?.id,
+                        _datePickerSection(
+                          isAuthenticated: isAuthenticated,
+                          searchDatetime: viewModel.searchDatetime,
+                          onPeriodButtonTapped: (dateTime) async {
+                            var setDate = dateTime;
+                            if (setDate.hour == 0) {
+                              setDate = DateTime.now();
+                            }
+                            ref
+                                .read(mapViewModelProvider.notifier)
+                                .onPeriodButtonTapped(setDate);
+                          },
+                          onDatePickerConfirmed: (dateTime) async {
+                            ref
+                                .read(mapViewModelProvider.notifier)
+                                .onDatePickerConfirmed(dateTime);
+                          },
+                        ),
+                      ],
                     ),
-                    room: viewModel.rooms.firstWhereOrNull(
-                      (e) => e.id == viewModel.focusedMapTileProps?.id,
-                    ),
-                    dateTime: viewModel.searchDatetime,
-                    isAuthenticated: isAuthenticated,
-                    onDismissed: () {
-                      ref
-                          .read(mapViewModelProvider.notifier)
-                          .onBottomSheetDismissed();
-                    },
-                    onGoToSettingButtonTapped: onGoToSettingButtonTapped,
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
+          error: (error, stackTrace) => const Center(child: Text('エラーが発生しました')),
+          loading: () => const Center(child: CircularProgressIndicator()),
         ),
-        error: (error, stackTrace) => const Center(child: Text('エラーが発生しました')),
-        loading: () => const Center(child: CircularProgressIndicator()),
       ),
     );
   }

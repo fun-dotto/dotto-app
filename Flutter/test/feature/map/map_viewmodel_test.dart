@@ -150,18 +150,8 @@ void main() {
           isA<MapViewState>()
               .having((p0) => p0.rooms, 'rooms', testRooms)
               .having((p0) => p0.filteredRooms, 'filteredRooms', isEmpty)
-              .having(
-                (p0) => p0.focusedMapTileProps,
-                'focusedMapTileProps',
-                isNull,
-              )
               .having((p0) => p0.selectedFloor, 'selectedFloor', Floor.third)
               .having((p0) => p0.focusNode, 'focusNode', isA<FocusNode>())
-              .having(
-                (p0) => p0.textEditingController,
-                'textEditingController',
-                isA<TextEditingController>(),
-              )
               .having(
                 (p0) => p0.transformationController,
                 'transformationController',
@@ -180,7 +170,6 @@ void main() {
           .read(mapViewModelProvider.notifier)
           .future;
       expect(initialState.selectedFloor, Floor.third);
-      expect(initialState.focusedMapTileProps, isNull);
 
       // onFloorButtonTapped を呼び出す
       container
@@ -193,11 +182,6 @@ void main() {
         updatedState,
         isA<MapViewState>()
             .having((p0) => p0.selectedFloor, 'selectedFloor', Floor.first)
-            .having(
-              (p0) => p0.focusedMapTileProps,
-              'focusedMapTileProps',
-              isNull,
-            )
             .having(
               (p0) => p0.transformationController.value,
               'transformationController.value',
@@ -306,44 +290,7 @@ void main() {
               (p0) => p0.selectedFloor,
               'selectedFloor',
               testRooms[0].floor,
-            )
-            .having(
-              (p0) => p0.focusedMapTileProps,
-              'focusedMapTileProps',
-              testTileProps[0],
             ),
-      );
-
-      // listener が呼ばれたことを確認
-      verify(listener.call(any, any)).called(greaterThan(0));
-    });
-
-    test('マップタイルが押されたときに状態が更新される', () async {
-      final container = createContainer()
-        ..listen(mapViewModelProvider, listener.call, fireImmediately: true);
-
-      // 初期状態を待つ
-      final initialState = await container
-          .read(mapViewModelProvider.notifier)
-          .future;
-      expect(initialState.focusedMapTileProps, isNull);
-
-      // onMapTileTapped を呼び出す
-      container
-          .read(mapViewModelProvider.notifier)
-          .onMapTileTapped(testTileProps[0], testRooms[0]);
-
-      // 状態が更新されたことを確認
-      final updatedState = container.read(mapViewModelProvider).requireValue;
-      expect(
-        updatedState,
-        isA<MapViewState>()
-            .having(
-              (p0) => p0.focusedMapTileProps,
-              'focusedMapTileProps',
-              testTileProps[0],
-            )
-            .having((p0) => p0.focusNode.hasFocus, 'focusNode.hasFocus', false),
       );
 
       // listener が呼ばれたことを確認

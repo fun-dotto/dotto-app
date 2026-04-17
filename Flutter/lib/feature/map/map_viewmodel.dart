@@ -1,10 +1,7 @@
 import 'dart:async';
 
-import 'package:collection/collection.dart';
 import 'package:dotto/domain/floor.dart';
-import 'package:dotto/domain/map_tile_props.dart';
 import 'package:dotto/domain/room.dart';
-import 'package:dotto/feature/map/fun_map.dart';
 import 'package:dotto/feature/map/map_service.dart';
 import 'package:dotto/feature/map/map_viewstate.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +17,6 @@ class MapViewModel extends _$MapViewModel {
     final state = MapViewState(
       rooms: rooms,
       filteredRooms: [],
-      focusedMapTileProps: null,
       searchDatetime: DateTime.now(),
       selectedFloor: Floor.third,
       focusNode: FocusNode(),
@@ -31,10 +27,7 @@ class MapViewModel extends _$MapViewModel {
 
   void onFloorButtonTapped(Floor floor) {
     state.value?.focusNode.unfocus();
-    final newState = state.value?.copyWith(
-      selectedFloor: floor,
-      focusedMapTileProps: null,
-    );
+    final newState = state.value?.copyWith(selectedFloor: floor);
     if (newState != null) {
       state = AsyncData(newState);
     }
@@ -102,12 +95,7 @@ class MapViewModel extends _$MapViewModel {
 
   void onSearchResultRowTapped(Room room) {
     state.value?.focusNode.unfocus();
-    final newState = state.value?.copyWith(
-      selectedFloor: room.floor,
-      focusedMapTileProps: ref
-          .read(funMapProvider)
-          .firstWhereOrNull((e) => e.id == room.id),
-    );
+    final newState = state.value?.copyWith(selectedFloor: room.floor);
     if (newState != null) {
       state = AsyncData(newState);
     }
@@ -122,26 +110,6 @@ class MapViewModel extends _$MapViewModel {
 
   void onDatePickerConfirmed(DateTime dateTime) {
     final newState = state.value?.copyWith(searchDatetime: dateTime);
-    if (newState != null) {
-      state = AsyncData(newState);
-    }
-  }
-
-  void onMapTileTapped(MapTileProps props, Room? room) {
-    state.value?.focusNode.unfocus();
-    MapViewState? newState;
-    if (props == state.value?.focusedMapTileProps) {
-      newState = state.value?.copyWith(focusedMapTileProps: null);
-    } else {
-      newState = state.value?.copyWith(focusedMapTileProps: props);
-    }
-    if (newState != null) {
-      state = AsyncData(newState);
-    }
-  }
-
-  void onBottomSheetDismissed() {
-    final newState = state.value?.copyWith(focusedMapTileProps: null);
     if (newState != null) {
       state = AsyncData(newState);
     }
