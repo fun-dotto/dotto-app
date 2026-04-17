@@ -62,182 +62,281 @@ final class BusScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final busState = ref.watch(busReducerProvider);
+    final state = ref.watch(busReducerProvider);
+    final tabController = useTabController(initialLength: 2);
     final scrollController = useScrollController();
 
-    return busState.when(
-      data: (state) {
-        final myBusStopButton = _busStopButton(
-          context,
-          () async {
-            await Navigator.of(context).push(
-              MaterialPageRoute<void>(
-                builder: (context) => const BusStopSelectScreen(),
-                settings: const RouteSettings(name: '/bus/select_stop'),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'バス',
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+            color: SemanticColor.light.accentPrimary,
+          ),
+        ),
+        centerTitle: false,
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(128),
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Row(
+                  children: [
+                    IconButton(
+                      onPressed: ref
+                          .read(busReducerProvider.notifier)
+                          .toggleDirection,
+                      icon: Icon(
+                        Icons.swap_vert_outlined,
+                        size: 24,
+                        color: SemanticColor.light.labelSecondary,
+                      ),
+                    ),
+                    Flexible(
+                      child: Column(
+                        children: [
+                          Card(
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
+                              child: Row(
+                                spacing: 8,
+                                children: [
+                                  Icon(
+                                    Icons.school,
+                                    size: 16,
+                                    color: SemanticColor.light.labelSecondary,
+                                  ),
+                                  Expanded(
+                                    child: Text(
+                                      'はこだて未来大学',
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.bodyMedium,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          InkWell(
+                            onTap: () {
+                              // Handle tap event
+                            },
+                            splashColor: SemanticColor.light.borderPrimary,
+                            child: Card(
+                              elevation: 1,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 4,
+                                ),
+                                child: Row(
+                                  spacing: 8,
+                                  children: [
+                                    Icon(
+                                      Icons.pin_drop,
+                                      size: 16,
+                                      color: SemanticColor.light.labelSecondary,
+                                    ),
+                                    Expanded(
+                                      child: Text(
+                                        // TODO: 選択したバス停の名前
+                                        '五稜郭',
+                                        style: Theme.of(
+                                          context,
+                                        ).textTheme.bodyMedium,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            );
-          },
-          Icons.directions_bus,
-          state.myBusStop.name,
-        );
-        final funBusStopButton = _busStopButton(
-          context,
-          null,
-          Icons.school,
-          '未来大',
-        );
-        final departure = state.isTo ? myBusStopButton : funBusStopButton;
-        final destination = state.isTo ? funBusStopButton : myBusStopButton;
-        final fromToString = state.isTo ? 'to_fun' : 'from_fun';
-
-        final btnChange = IconButton(
-          iconSize: 20,
-          color: SemanticColor.light.accentInfo,
-          onPressed: () {
-            ref.read(busReducerProvider.notifier).toggleDirection();
-          },
-          icon: const Icon(Icons.swap_horiz_outlined),
-        );
-
-        var arriveAtSoon = true;
-        final tripWidgets = state
-            .trips[fromToString]![state.isWeekday ? 'weekday' : 'holiday']!
-            .map((busTrip) {
-              final funBusTripStop = busTrip.stops.firstWhereOrNull(
-                (element) => element.stop.id == 14023,
-              );
-              if (funBusTripStop == null) {
-                return Container();
-              }
-              var targetBusTripStop = busTrip.stops.firstWhereOrNull(
-                (element) => element.stop.id == state.myBusStop.id,
-              );
-              var kameda = false;
-              if (targetBusTripStop == null) {
-                targetBusTripStop = busTrip.stops.firstWhere(
-                  (element) => element.stop.id == 14013,
+              TabBar(
+                dividerColor: Colors.transparent,
+                controller: tabController,
+                tabs: const [
+                  Tab(text: '平日'),
+                  Tab(text: '休日'),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+      body: () {
+        switch (state) {
+          case AsyncData(:final value):
+            final myBusStopButton = _busStopButton(
+              context,
+              () async {
+                await Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (context) => const BusStopSelectScreen(),
+                    settings: const RouteSettings(name: '/bus/select_stop'),
+                  ),
                 );
-                kameda = true;
-              }
-              final fromBusTripStop = state.isTo
-                  ? targetBusTripStop
-                  : funBusTripStop;
-              final toBusTripStop = state.isTo
-                  ? funBusTripStop
-                  : targetBusTripStop;
-              final nowDuration = Duration(
-                hours: state.currentTime.hour,
-                minutes: state.currentTime.minute,
-              );
-              final arriveAt = fromBusTripStop.time - nowDuration;
-              var hasKey = false;
-              if (arriveAtSoon && arriveAt > Duration.zero) {
-                arriveAtSoon = false;
-                hasKey = true;
-              }
-              return InkWell(
-                onTap: () async {
-                  await Navigator.of(context).push(
-                    MaterialPageRoute<void>(
-                      builder: (context) => BusTimetableScreen(busTrip),
-                      settings: RouteSettings(
-                        name: '/bus/timetable?route=${busTrip.route}',
+              },
+              Icons.directions_bus,
+              value.myBusStop.name,
+            );
+            final funBusStopButton = _busStopButton(
+              context,
+              null,
+              Icons.school,
+              '未来大',
+            );
+            final departure = value.isTo ? myBusStopButton : funBusStopButton;
+            final destination = value.isTo ? funBusStopButton : myBusStopButton;
+            final fromToString = value.isTo ? 'to_fun' : 'from_fun';
+
+            final btnChange = IconButton(
+              iconSize: 20,
+              color: SemanticColor.light.accentInfo,
+              onPressed: () {
+                ref.read(busReducerProvider.notifier).toggleDirection();
+              },
+              icon: const Icon(Icons.swap_horiz_outlined),
+            );
+
+            var arriveAtSoon = true;
+            final tripWidgets = value
+                .trips[fromToString]![value.isWeekday ? 'weekday' : 'holiday']!
+                .map((busTrip) {
+                  final funBusTripStop = busTrip.stops.firstWhereOrNull(
+                    (element) => element.stop.id == 14023,
+                  );
+                  if (funBusTripStop == null) {
+                    return Container();
+                  }
+                  var targetBusTripStop = busTrip.stops.firstWhereOrNull(
+                    (element) => element.stop.id == value.myBusStop.id,
+                  );
+                  var kameda = false;
+                  if (targetBusTripStop == null) {
+                    targetBusTripStop = busTrip.stops.firstWhere(
+                      (element) => element.stop.id == 14013,
+                    );
+                    kameda = true;
+                  }
+                  final fromBusTripStop = value.isTo
+                      ? targetBusTripStop
+                      : funBusTripStop;
+                  final toBusTripStop = value.isTo
+                      ? funBusTripStop
+                      : targetBusTripStop;
+                  final nowDuration = Duration(
+                    hours: value.currentTime.hour,
+                    minutes: value.currentTime.minute,
+                  );
+                  final arriveAt = fromBusTripStop.time - nowDuration;
+                  var hasKey = false;
+                  if (arriveAtSoon && arriveAt > Duration.zero) {
+                    arriveAtSoon = false;
+                    hasKey = true;
+                  }
+                  return InkWell(
+                    onTap: () async {
+                      await Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (context) => BusTimetableScreen(busTrip),
+                          settings: RouteSettings(
+                            name: '/bus/timetable?route=${busTrip.route}',
+                          ),
+                        ),
+                      );
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: BusCard(
+                        route: busTrip.route,
+                        beginTime: fromBusTripStop.time,
+                        endTime: toBusTripStop.time,
+                        arriveAt: arriveAt,
+                        isTo: value.isTo,
+                        myBusStopName: value.myBusStop.name,
+                        isKameda: kameda,
+                        key: hasKey ? busKey : null,
                       ),
                     ),
                   );
-                },
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: BusCard(
-                    route: busTrip.route,
-                    beginTime: fromBusTripStop.time,
-                    endTime: toBusTripStop.time,
-                    arriveAt: arriveAt,
-                    isTo: state.isTo,
-                    myBusStopName: state.myBusStop.name,
-                    isKameda: kameda,
-                    key: hasKey ? busKey : null,
+                })
+                .toList();
+
+            WidgetsBinding.instance.addPostFrameCallback((_) async {
+              if (value.isScrolled) return;
+              final currentContext = busKey.currentContext;
+              if (currentContext == null) return;
+              final box = currentContext.findRenderObject()! as RenderBox;
+              final position = box.localToGlobal(Offset.zero);
+              await scrollController.animateTo(
+                scrollController.offset + position.dy - 300,
+                duration: const Duration(milliseconds: 500),
+                curve: Curves.easeInOut,
+              );
+              ref.read(busReducerProvider.notifier).setScrolled(value: true);
+            });
+
+            return Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    children: [
+                      Image.asset(
+                        Asset.bus,
+                        width: MediaQuery.of(context).size.width * 0.57,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          departure,
+                          Stack(
+                            alignment: AlignmentDirectional.center,
+                            children: [btnChange],
+                          ),
+                          destination,
+                        ],
+                      ),
+                    ],
                   ),
                 ),
-              );
-            })
-            .toList();
-
-        WidgetsBinding.instance.addPostFrameCallback((_) async {
-          if (state.isScrolled) return;
-          final currentContext = busKey.currentContext;
-          if (currentContext == null) return;
-          final box = currentContext.findRenderObject()! as RenderBox;
-          final position = box.localToGlobal(Offset.zero);
-          await scrollController.animateTo(
-            scrollController.offset + position.dy - 300,
-            duration: const Duration(milliseconds: 500),
-            curve: Curves.easeInOut,
-          );
-          ref.read(busReducerProvider.notifier).setScrolled(value: true);
-        });
-
-        return Scaffold(
-          appBar: AppBar(
-            title: Text(
-              'バス',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                color: SemanticColor.light.accentPrimary,
-              ),
-            ),
-            centerTitle: false,
-            actions: [
-              TextButton(
-                onPressed: () {
-                  ref.read(busReducerProvider.notifier).toggleWeekday();
-                },
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.swap_horiz_outlined),
-                    Text("${state.isWeekday ? "土日" : "平日"}へ "),
-                  ],
+                Expanded(
+                  child: SingleChildScrollView(
+                    controller: scrollController,
+                    child: Column(spacing: 8, children: tripWidgets),
+                  ),
                 ),
-              ),
-            ],
-          ),
-          body: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  children: [
-                    Image.asset(
-                      Asset.bus,
-                      width: MediaQuery.of(context).size.width * 0.57,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        departure,
-                        Stack(
-                          alignment: AlignmentDirectional.center,
-                          children: [btnChange],
-                        ),
-                        destination,
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: SingleChildScrollView(
-                  controller: scrollController,
-                  child: Column(spacing: 8, children: tripWidgets),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-      error: (error, stackTrace) => const Scaffold(body: SizedBox.shrink()),
-      loading: () =>
-          const Scaffold(body: Center(child: CircularProgressIndicator())),
+              ],
+            );
+          case AsyncError():
+            return const Padding(
+              padding: EdgeInsets.all(16),
+              child: Center(child: Text('エラーが発生しました')),
+            );
+          case AsyncLoading():
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
+        }
+      }(),
     );
   }
 }
