@@ -40,7 +40,12 @@ final class BusReducer extends _$BusReducer {
     final myBusStop = await _loadMyBusStop(allStops);
     final now = DateTime.now();
     final isNearUni = await nearUniFuture;
-    final holidayDates = await holidayDatesFuture;
+    Set<String> holidayDates;
+    try {
+      holidayDates = await holidayDatesFuture;
+    } on Object {
+      holidayDates = const <String>{};
+    }
     final isHolidayToday = holidayDates.contains(DateFormatter.date(now));
 
     _startPolling();
