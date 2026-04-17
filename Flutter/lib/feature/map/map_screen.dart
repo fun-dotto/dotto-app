@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:collection/collection.dart';
 import 'package:dotto/controller/user_controller.dart';
+import 'package:dotto/domain/map_tile_props.dart';
 import 'package:dotto/feature/map/map_reducer.dart';
 import 'package:dotto/feature/map/widget/map.dart';
 import 'package:dotto/feature/map/widget/map_date_picker.dart';
@@ -46,6 +47,8 @@ final class MapScreen extends HookConsumerWidget {
     final isAuthenticated = ref.watch(isAuthenticatedProvider);
     final scaffoldKey = useMemoized(GlobalKey<ScaffoldState>.new);
     final sheetController = useRef<PersistentBottomSheetController?>(null);
+    final searchController = useMemoized(SearchController.new);
+    final searchFocusNode = useFocusNode();
 
     final searchDatetime = asyncState.value?.searchDatetime;
     final rooms = asyncState.value?.rooms;
@@ -55,6 +58,7 @@ final class MapScreen extends HookConsumerWidget {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         sheetController.value?.close();
         sheetController.value = null;
+        searchFocusNode.unfocus();
 
         final props = focusedMapTileProps;
         if (props == null || rooms == null || searchDatetime == null) {
@@ -65,9 +69,10 @@ final class MapScreen extends HookConsumerWidget {
           return;
         }
 
+        final sheetHeight = props is FacultyRoomMapTileProps ? 120.0 : 240.0;
         final newController = scaffoldKey.currentState?.showBottomSheet(
           (_) => SizedBox(
-            height: 240,
+            height: sheetHeight,
             child: MapDetailBottomSheet(
               props: props,
               room: room,
@@ -82,6 +87,7 @@ final class MapScreen extends HookConsumerWidget {
           showDragHandle: true,
         );
         sheetController.value = newController;
+        searchFocusNode.unfocus();
         final shownPropsId = props.id;
         unawaited(
           newController?.closed.then((_) {
@@ -120,41 +126,56 @@ final class MapScreen extends HookConsumerWidget {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: SearchAnchor(
+              searchController: searchController,
+              textCapitalization: TextCapitalization.none,
               builder: (context, controller) {
                 return SearchBar(
-                  // controller: controller,
+                  focusNode: searchFocusNode,
                   padding: const WidgetStatePropertyAll<EdgeInsets>(
                     EdgeInsets.symmetric(horizontal: 16),
                   ),
+                  textCapitalization: TextCapitalization.none,
                   onTap: () {
                     controller.openView();
                   },
-                  onChanged: (value) async {
+                  onChanged: (value) {
                     controller.openView();
-                    await ref
-                        .read(mapReducerProvider.notifier)
-                        .onSearchTextChanged(value);
-                  },
-                  onSubmitted: (value) async {
-                    await ref
-                        .read(mapReducerProvider.notifier)
-                        .onSearchTextSubmitted(value);
                   },
                   leading: const Icon(Icons.search),
-                  hintText: '部屋名、教員名、メールアドレスで検索',
+                  hintText: controller.text.isEmpty
+                      ? '部屋名、教員名、メールアドレスで検索'
+                      : controller.text,
                 );
               },
               suggestionsBuilder: (context, controller) {
                 switch (asyncState) {
                   case AsyncData(:final value):
-                    if (value.filteredRooms.isEmpty) {
+                    final query = controller.text.trim().toLowerCase();
+                    if (query.isEmpty) {
+                      return const <Widget>[];
+                    }
+                    final results = value.rooms
+                        .where(
+                          (room) =>
+                              room.id.toLowerCase().contains(query) ||
+                              room.name.toLowerCase().contains(query) ||
+                              room.description.toLowerCase().contains(query) ||
+                              room.email.toLowerCase().contains(query) ||
+                              room.keywords.any(
+                                (keyword) =>
+                                    keyword.toLowerCase().contains(query),
+                              ),
+                        )
+                        .toList();
+                    if (results.isEmpty) {
                       return [const ListTile(title: Text('見つかりませんでした'))];
                     }
-                    return value.filteredRooms.map((item) {
+                    return results.map((item) {
                       return ListTile(
                         title: Text(item.name),
                         onTap: () {
                           controller.closeView(controller.text);
+                          searchFocusNode.unfocus();
                           ref
                               .read(mapReducerProvider.notifier)
                               .onSearchResultRowTapped(item);
@@ -172,7 +193,7 @@ final class MapScreen extends HookConsumerWidget {
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 16),
+        padding: const EdgeInsets.only(top: 8),
         child: asyncState.when(
           data: (state) => Column(
             spacing: 8,
