@@ -10,8 +10,10 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'bus_reducer.g.dart';
 
+const kamedaBusStopId = 14013;
+
 const _defaultBusStop = BusStop(
-  id: 14013,
+  id: kamedaBusStopId,
   name: '亀田支所前',
   routeList: ['50', '55', '55A', '55B', '55C', '55E', '55F', '55G', '55H'],
 );

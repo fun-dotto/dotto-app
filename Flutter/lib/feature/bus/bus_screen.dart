@@ -146,7 +146,7 @@ final class BusScreen extends HookConsumerWidget {
                   var kameda = false;
                   if (targetBusTripStop == null) {
                     targetBusTripStop = busTrip.stops.firstWhere(
-                      (element) => element.stop.id == 14013,
+                      (element) => element.stop.id == kamedaBusStopId,
                     );
                     kameda = true;
                   }
