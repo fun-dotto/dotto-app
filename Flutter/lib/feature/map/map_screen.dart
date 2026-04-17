@@ -9,13 +9,12 @@ import 'package:dotto/feature/map/widget/map_date_picker.dart';
 import 'package:dotto/feature/map/widget/map_detail_bottom_sheet.dart';
 import 'package:dotto/feature/map/widget/map_floor_button.dart';
 import 'package:dotto/feature/map/widget/map_legend.dart';
-import 'package:dotto/feature/map/widget/map_search_bar.dart';
-import 'package:dotto/feature/map/widget/map_search_result_list.dart';
 import 'package:dotto_design_system/style/semantic_color.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-final class MapScreen extends ConsumerWidget {
+final class MapScreen extends HookConsumerWidget {
   const MapScreen({required this.onGoToSettingButtonTapped, super.key});
 
   final void Function() onGoToSettingButtonTapped;
@@ -85,6 +84,7 @@ final class MapScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final asyncViewModel = ref.watch(mapViewModelProvider);
     final isAuthenticated = ref.watch(isAuthenticatedProvider);
+    final controller = useTextEditingController();
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -96,31 +96,66 @@ final class MapScreen extends ConsumerWidget {
           ),
         ),
         centerTitle: false,
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(56),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: SearchAnchor(
+              builder: (context, controller) {
+                return SearchBar(
+                  // controller: controller,
+                  padding: const WidgetStatePropertyAll<EdgeInsets>(
+                    EdgeInsets.symmetric(horizontal: 16),
+                  ),
+                  onTap: () {
+                    controller.openView();
+                  },
+                  onChanged: (value) async {
+                    controller.openView();
+                    await ref
+                        .read(mapViewModelProvider.notifier)
+                        .onSearchTextChanged(value);
+                  },
+                  onSubmitted: (value) async {
+                    await ref
+                        .read(mapViewModelProvider.notifier)
+                        .onSearchTextSubmitted(value);
+                  },
+                  leading: const Icon(Icons.search),
+                  hintText: '部屋名、教員名、メールアドレスで検索',
+                );
+              },
+              suggestionsBuilder: (context, controller) {
+                switch (asyncViewModel) {
+                  case AsyncData(:final value):
+                    if (value.filteredRooms.isEmpty) {
+                      return [const ListTile(title: Text('見つかりませんでした'))];
+                    }
+                    return value.filteredRooms.map((item) {
+                      return ListTile(
+                        title: Text(item.name),
+                        onTap: () {
+                          controller.closeView(item.name);
+                          ref
+                              .read(mapViewModelProvider.notifier)
+                              .onSearchResultRowTapped(item);
+                        },
+                      );
+                    }).toList();
+                  case AsyncError(:final error):
+                    return [ListTile(title: Text('エラーが発生しました: $error'))];
+                  case AsyncLoading():
+                    return [const ListTile(title: Text('読み込み中...'))];
+                }
+              },
+            ),
+          ),
+        ),
       ),
       body: asyncViewModel.when(
         data: (viewModel) => Column(
           spacing: 8,
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: MapSearchBar(
-                textEditingController: viewModel.textEditingController,
-                focusNode: viewModel.focusNode,
-                onChanged: (value) async {
-                  await ref
-                      .read(mapViewModelProvider.notifier)
-                      .onSearchTextChanged(value);
-                },
-                onSubmitted: (value) async {
-                  await ref
-                      .read(mapViewModelProvider.notifier)
-                      .onSearchTextSubmitted(value);
-                },
-                onCleared: () {
-                  ref.read(mapViewModelProvider.notifier).onSearchTextCleared();
-                },
-              ),
-            ),
             Expanded(
               child: Stack(
                 children: [
@@ -203,15 +238,6 @@ final class MapScreen extends ConsumerWidget {
                           .onBottomSheetDismissed();
                     },
                     onGoToSettingButtonTapped: onGoToSettingButtonTapped,
-                  ),
-                  MapSearchResultList(
-                    rooms: viewModel.filteredRooms,
-                    isFocused: viewModel.focusNode.hasFocus,
-                    onTapped: (item) {
-                      ref
-                          .read(mapViewModelProvider.notifier)
-                          .onSearchResultRowTapped(item);
-                    },
                   ),
                 ],
               ),

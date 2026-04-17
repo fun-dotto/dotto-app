@@ -15,7 +15,6 @@ abstract class MapViewState with _$MapViewState {
     required DateTime searchDatetime,
     required Floor selectedFloor,
     required FocusNode focusNode,
-    required TextEditingController textEditingController,
     required TransformationController transformationController,
   }) = _MapViewState;
 }

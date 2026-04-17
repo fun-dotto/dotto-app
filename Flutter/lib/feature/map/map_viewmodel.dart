@@ -24,7 +24,6 @@ class MapViewModel extends _$MapViewModel {
       searchDatetime: DateTime.now(),
       selectedFloor: Floor.third,
       focusNode: FocusNode(),
-      textEditingController: TextEditingController(),
       transformationController: TransformationController(Matrix4.identity()),
     );
     return state;
