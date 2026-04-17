@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:dotto/domain/bus_stop.dart';
 import 'package:dotto/domain/user_preference_keys.dart';
 import 'package:dotto/feature/bus/bus_state.dart';
+import 'package:dotto/helper/date_formatter.dart';
 import 'package:dotto/helper/location_helper.dart';
 import 'package:dotto/helper/user_preference_repository.dart';
 import 'package:dotto/repository/repository_provider.dart';
@@ -40,7 +41,7 @@ final class BusReducer extends _$BusReducer {
     final now = DateTime.now();
     final isNearUni = await nearUniFuture;
     final holidayDates = await holidayDatesFuture;
-    final isHolidayToday = holidayDates.contains(_formatYmd(now));
+    final isHolidayToday = holidayDates.contains(DateFormatter.date(now));
 
     _startPolling();
 
@@ -52,13 +53,6 @@ final class BusReducer extends _$BusReducer {
       currentTime: now,
       isTo: !isNearUni,
     );
-  }
-
-  String _formatYmd(DateTime date) {
-    final y = date.year.toString().padLeft(4, '0');
-    final m = date.month.toString().padLeft(2, '0');
-    final d = date.day.toString().padLeft(2, '0');
-    return '$y-$m-$d';
   }
 
   Future<BusStop> _loadMyBusStop(List<BusStop> allStops) async {
