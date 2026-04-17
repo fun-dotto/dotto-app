@@ -22,6 +22,7 @@ import 'package:openapi/src/model/announcement.dart';
 import 'package:openapi/src/model/announcements_v1_list200_response.dart';
 import 'package:openapi/src/model/cancelled_class.dart';
 import 'package:openapi/src/model/cancelled_classes_v1_list200_response.dart';
+import 'package:openapi/src/model/category.dart';
 import 'package:openapi/src/model/course_registration.dart';
 import 'package:openapi/src/model/course_registration_request.dart';
 import 'package:openapi/src/model/course_registrations_v1_create201_response.dart';
@@ -43,11 +44,15 @@ import 'package:openapi/src/model/fcm_token_request.dart';
 import 'package:openapi/src/model/fcm_token_v1_upsert200_response.dart';
 import 'package:openapi/src/model/makeup_class.dart';
 import 'package:openapi/src/model/makeup_classes_v1_list200_response.dart';
+import 'package:openapi/src/model/menu_item.dart';
+import 'package:openapi/src/model/menu_items_v1_list200_response.dart';
 import 'package:openapi/src/model/personal_calendar_item.dart';
 import 'package:openapi/src/model/personal_calendar_items_v1_list200_response.dart';
+import 'package:openapi/src/model/price.dart';
 import 'package:openapi/src/model/room.dart';
 import 'package:openapi/src/model/room_change.dart';
 import 'package:openapi/src/model/room_changes_v1_list200_response.dart';
+import 'package:openapi/src/model/size.dart';
 import 'package:openapi/src/model/subject_detail.dart';
 import 'package:openapi/src/model/subject_faculty.dart';
 import 'package:openapi/src/model/subject_summary.dart';
@@ -69,6 +74,7 @@ part 'serializers.g.dart';
   AnnouncementsV1List200Response,
   CancelledClass,
   CancelledClassesV1List200Response,
+  Category,
   CourseRegistration,
   CourseRegistrationRequest,
   CourseRegistrationsV1Create201Response,
@@ -90,11 +96,15 @@ part 'serializers.g.dart';
   FCMTokenV1Upsert200Response,
   MakeupClass,
   MakeupClassesV1List200Response,
+  MenuItem,
+  MenuItemsV1List200Response,
   PersonalCalendarItem,
   PersonalCalendarItemsV1List200Response,
+  Price,
   Room,
   RoomChange,
   RoomChangesV1List200Response,
+  Size,
   SubjectDetail,
   SubjectFaculty,
   SubjectSummary,
