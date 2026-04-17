@@ -35,3 +35,5 @@
   - MVVM + UseCase + Repository パターンが使われていることがあるが、現在は非推奨。
   - RepositoryはRiverpodに依存しないこと。
   - Repositoryは互いに独立していること。
+- 日付整形
+  - `DateFormat` は各所で直接使わず、`lib/helper/date_formatter.dart` の `DateFormatter` クラスにメソッドとして定義して利用すること。
