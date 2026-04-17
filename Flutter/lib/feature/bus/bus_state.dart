@@ -15,6 +15,7 @@ abstract class BusState with _$BusState {
     required bool isWeekday,
     required DateTime currentTime,
     @Default(true) bool isTo,
-    @Default(false) bool isScrolled,
+    @Default(false) bool isWeekdayScrolled,
+    @Default(false) bool isHolidayScrolled,
   }) = _BusState;
 }
