@@ -32,6 +32,22 @@ final class BusScreen extends HookConsumerWidget {
       initialLength: 2,
       initialIndex: isWeekday ? 0 : 1,
     );
+    final isWeekdayRef = useRef(isWeekday);
+    isWeekdayRef.value = isWeekday;
+
+    useEffect(() {
+      void listener() {
+        if (tabController.indexIsChanging) return;
+        final currentIsWeekday = tabController.index == 0;
+        if (currentIsWeekday != isWeekdayRef.value) {
+          ref.read(busReducerProvider.notifier).toggleWeekday();
+        }
+      }
+
+      tabController.addListener(listener);
+      return () => tabController.removeListener(listener);
+    }, [tabController]);
+
     useEffect(() {
       final desiredIndex = isWeekday ? 0 : 1;
       if (tabController.index != desiredIndex) {
@@ -39,19 +55,6 @@ final class BusScreen extends HookConsumerWidget {
       }
       return null;
     }, [isWeekday]);
-
-    useEffect(() {
-      void listener() {
-        if (tabController.indexIsChanging) return;
-        final currentIsWeekday = tabController.index == 0;
-        if (currentIsWeekday != isWeekday) {
-          ref.read(busReducerProvider.notifier).toggleWeekday();
-        }
-      }
-
-      tabController.addListener(listener);
-      return () => tabController.removeListener(listener);
-    }, [tabController, isWeekday]);
 
     final fromCard = _BusStopCard(
       icon: isTo ? Icons.pin_drop : Icons.school,
