@@ -35,3 +35,6 @@
   - MVVM + UseCase + Repository パターンが使われていることがあるが、現在は非推奨。
   - RepositoryはRiverpodに依存しないこと。
   - Repositoryは互いに独立していること。
+  - Repository が画面層に例外を伝播させる場合は、`DomainError` に変換して throw すること。生の `DioException` / `FirebaseException` / `Exception` をそのまま投げない。
+- 日付整形
+  - `DateFormat` は各所で直接使わず、`lib/helper/date_formatter.dart` の `DateFormatter` クラスにメソッドとして定義して利用すること。

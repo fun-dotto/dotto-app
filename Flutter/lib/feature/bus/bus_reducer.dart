@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:dotto/domain/bus_stop.dart';
+import 'package:dotto/domain/domain_error.dart';
 import 'package:dotto/domain/user_preference_keys.dart';
 import 'package:dotto/feature/bus/bus_state.dart';
+import 'package:dotto/helper/date_formatter.dart';
 import 'package:dotto/helper/location_helper.dart';
 import 'package:dotto/helper/user_preference_repository.dart';
 import 'package:dotto/repository/repository_provider.dart';
@@ -29,7 +31,9 @@ final class BusReducer extends _$BusReducer {
     });
 
     final busRepository = ref.read(busRepositoryProvider);
+    final holidayRepository = ref.read(holidayRepositoryProvider);
     final nearUniFuture = LocationHelper.isNearUniversity();
+    final holidayDatesFuture = holidayRepository.getHolidayDates();
 
     final allStops = await busRepository.getAllBusStops();
     final trips = await busRepository.getBusTrips(allStops);
@@ -37,6 +41,13 @@ final class BusReducer extends _$BusReducer {
     final myBusStop = await _loadMyBusStop(allStops);
     final now = DateTime.now();
     final isNearUni = await nearUniFuture;
+    Set<String> holidayDates;
+    try {
+      holidayDates = await holidayDatesFuture;
+    } on DomainError {
+      holidayDates = const <String>{};
+    }
+    final isHolidayToday = holidayDates.contains(DateFormatter.date(now));
 
     _startPolling();
 
@@ -44,7 +55,7 @@ final class BusReducer extends _$BusReducer {
       trips: trips,
       allStops: allStops,
       myBusStop: myBusStop,
-      isWeekday: now.weekday <= DateTime.friday,
+      isWeekday: now.weekday <= DateTime.friday && !isHolidayToday,
       currentTime: now,
       isTo: !isNearUni,
     );

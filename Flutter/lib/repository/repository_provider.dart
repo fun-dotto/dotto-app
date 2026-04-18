@@ -3,6 +3,7 @@ import 'package:dotto/helper/firebase_realtime_database_repository.dart';
 import 'package:dotto/repository/bus_repository.dart';
 import 'package:dotto/repository/course_registration_repository.dart';
 import 'package:dotto/repository/fcm_token_repository.dart';
+import 'package:dotto/repository/holiday_repository.dart';
 import 'package:dotto/repository/personal_calendar_repository.dart';
 import 'package:dotto/repository/room_repository.dart';
 import 'package:dotto/repository/timetable_repository.dart';
@@ -10,6 +11,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final busRepositoryProvider = Provider<BusRepository>(
   (_) => BusRepositoryImpl(FirebaseRealtimeDatabaseRepository()),
+);
+
+final holidayRepositoryProvider = Provider<HolidayRepository>(
+  (_) => HolidayRepositoryImpl(),
 );
 
 final fcmTokenRepositoryProvider = Provider<FCMTokenRepository>(
