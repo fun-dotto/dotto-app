@@ -14,6 +14,7 @@ tags:
   - name: Users
   - name: FCM Tokens
   - name: MenuItems
+  - name: Reservations
 paths:
   /v1/announcements:
     get:
@@ -330,6 +331,54 @@ paths:
       security:
         - BearerAuth: []
           FirebaseAppCheckAuth: []
+  /v1/reservations:
+    get:
+      operationId: ReservationsV1_list
+      description: |-
+        教室の予約一覧を取得する
+        検索対象期間に一部でも重複する予約が取得される
+      parameters:
+        - name: roomIds
+          in: query
+          required: false
+          description: 教室IDのリスト
+          schema:
+            type: array
+            items:
+              type: string
+          explode: false
+        - name: from
+          in: query
+          required: false
+          description: 検索対象開始日時
+          schema:
+            type: string
+            format: date-time
+        - name: until
+          in: query
+          required: false
+          description: 検索対象終了日時
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: 予約のリスト
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  reservations:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Reservation'
+                required:
+                  - reservations
+        '401':
+          description: Access is unauthorized.
+      tags:
+        - Reservations
   /v1/roomChanges:
     get:
       operationId: RoomChangesV1_list
@@ -1053,6 +1102,27 @@ components:
         price:
           type: integer
           format: int32
+    Reservation:
+      type: object
+      required:
+        - id
+        - room
+        - startAt
+        - endAt
+        - title
+      properties:
+        id:
+          type: string
+        room:
+          $ref: '#/components/schemas/Room'
+        startAt:
+          type: string
+          format: date-time
+        endAt:
+          type: string
+          format: date-time
+        title:
+          type: string
     Room:
       type: object
       required:
