@@ -33,8 +33,31 @@
   - クリーンアーキテクチャを意識した設計を準州すること。
   - Hooks + Riverpod + Reducer + Repository パターンで実装すること。
   - MVVM + UseCase + Repository パターンが使われていることがあるが、現在は非推奨。
+  - Riverpod Notifier の上にメソッド束を生やしただけの Reducer（名ばかりReducer）も非推奨。後述の `useReducer` ベース設計に置き換えること。
   - RepositoryはRiverpodに依存しないこと。
   - Repositoryは互いに独立していること。
   - Repository が画面層に例外を伝播させる場合は、`DomainError` に変換して throw すること。生の `DioException` / `FirebaseException` / `Exception` をそのまま投げない。
+- Reducer 設計（`useReducer` ベース）
+  - 画面ローカルで完結する状態は Widget ローカルの `useReducer` で管理する。Riverpod Notifier に画面ローカル状態を載せない。画面横断で共有したい状態のみ Riverpod Notifier に置き、名称に "Reducer" は付けない。
+  - feature 単位で以下6ファイル構成に分割する。
+    - `<feature>_state.dart` — Freezed な State
+    - `<feature>_action.dart` — Freezed `sealed class` な Action（union）
+    - `<feature>_reducer.dart` — 純粋関数 `reduce(state, action) -> state`
+    - `<feature>_effects.dart` — `useEffect` ベースの Effect フック（副作用層）
+    - `<feature>_store.dart` — `use<Feature>Store()` 合成フック
+    - `<feature>_screen.dart` — `HookConsumerWidget`
+  - State は Freezed。loading / data / error は `AsyncValue<T>` に統一する。
+  - Action は必ず Freezed `sealed class` にし、User intent（`xxxToggled` / `xxxSelected`）と System result（`xxxLoaded` / `xxxFailed`）を命名で区別する。
+  - `reduce` 関数の中では以下を禁止する:
+    - `Future` / `async` / `await` / Repository 呼び出し / `ref` 参照
+    - `DateTime.now()` / `Random` など時刻・乱数の参照（必要なら Action に詰めて渡す）
+    - `print` / `Logger` などのログ出力
+  - 副作用は `useEffect` ベースの Effect フックからのみ行う。
+    - `useEffect` のキーは「どの state 変化で再実行するか」を明示する。
+    - クリーンアップ関数で cancel フラグを立て、unmount 後の late dispatch を防ぐ。
+    - 独立した副作用は `useEffect` を分割する（1つに詰めない）。
+    - Repository 例外は `DomainError` に変換済み前提で catch し、失敗 Action を dispatch する。
+  - `use<Feature>Store()` は `useReducer` と `use<Feature>Effects` を合成し、`{state, dispatch}` を返す薄いラッパーとする。
+  - Repository は `HookConsumerWidget` の `WidgetRef` から `ref.read(xxxRepositoryProvider)` で取得し、Effect フックに注入する。Reducer 本体に `@riverpod` は付けない（Repository Provider には引き続き `@riverpod` を使う）。
 - 日付整形
   - `DateFormat` は各所で直接使わず、`lib/helper/date_formatter.dart` の `DateFormatter` クラスにメソッドとして定義して利用すること。
