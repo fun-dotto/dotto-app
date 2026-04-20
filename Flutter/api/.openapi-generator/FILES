@@ -44,6 +44,9 @@ doc/PersonalCalendarItem.md
 doc/PersonalCalendarItemsApi.md
 doc/PersonalCalendarItemsV1List200Response.md
 doc/Price.md
+doc/Reservation.md
+doc/ReservationsApi.md
+doc/ReservationsV1List200Response.md
 doc/Room.md
 doc/RoomChange.md
 doc/RoomChangesApi.md
@@ -70,6 +73,7 @@ lib/src/api/fcm_tokens_api.dart
 lib/src/api/makeup_classes_api.dart
 lib/src/api/menu_items_api.dart
 lib/src/api/personal_calendar_items_api.dart
+lib/src/api/reservations_api.dart
 lib/src/api/room_changes_api.dart
 lib/src/api/subjects_api.dart
 lib/src/api/timetable_items_api.dart
@@ -118,6 +122,8 @@ lib/src/model/menu_items_v1_list200_response.dart
 lib/src/model/personal_calendar_item.dart
 lib/src/model/personal_calendar_items_v1_list200_response.dart
 lib/src/model/price.dart
+lib/src/model/reservation.dart
+lib/src/model/reservations_v1_list200_response.dart
 lib/src/model/room.dart
 lib/src/model/room_change.dart
 lib/src/model/room_changes_v1_list200_response.dart
@@ -133,4 +139,6 @@ lib/src/model/user_info.dart
 lib/src/model/users_v1_detail200_response.dart
 lib/src/serializers.dart
 pubspec.yaml
-test/faculty_test.dart
+test/reservation_test.dart
+test/reservations_api_test.dart
+test/reservations_v1_list200_response_test.dart
