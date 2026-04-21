@@ -379,6 +379,9 @@ paths:
           description: Access is unauthorized.
       tags:
         - Reservations
+      security:
+        - BearerAuth: []
+          FirebaseAppCheckAuth: []
   /v1/roomChanges:
     get:
       operationId: RoomChangesV1_list
