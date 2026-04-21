@@ -50,6 +50,8 @@ import 'package:openapi/src/model/menu_items_v1_list200_response.dart';
 import 'package:openapi/src/model/personal_calendar_item.dart';
 import 'package:openapi/src/model/personal_calendar_items_v1_list200_response.dart';
 import 'package:openapi/src/model/price.dart';
+import 'package:openapi/src/model/reservation.dart';
+import 'package:openapi/src/model/reservations_v1_list200_response.dart';
 import 'package:openapi/src/model/room.dart';
 import 'package:openapi/src/model/room_change.dart';
 import 'package:openapi/src/model/room_changes_v1_list200_response.dart';
@@ -103,6 +105,8 @@ part 'serializers.g.dart';
   PersonalCalendarItem,
   PersonalCalendarItemsV1List200Response,
   Price,
+  Reservation,
+  ReservationsV1List200Response,
   Room,
   RoomChange,
   RoomChangesV1List200Response,
