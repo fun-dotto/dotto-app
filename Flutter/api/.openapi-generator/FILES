@@ -139,6 +139,3 @@ lib/src/model/user_info.dart
 lib/src/model/users_v1_detail200_response.dart
 lib/src/serializers.dart
 pubspec.yaml
-test/reservation_test.dart
-test/reservations_api_test.dart
-test/reservations_v1_list200_response_test.dart

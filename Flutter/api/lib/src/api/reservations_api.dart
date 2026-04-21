@@ -60,6 +60,10 @@ class ReservationsApi {
             'name': 'FirebaseAppCheckAuth',
             'keyName': 'X-Firebase-AppCheck',
             'where': 'header',
+          },{
+            'type': 'http',
+            'scheme': 'Bearer',
+            'name': 'BearerAuth',
           },
         ],
         ...?extra,
