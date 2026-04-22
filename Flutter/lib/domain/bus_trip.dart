@@ -25,9 +25,11 @@ abstract class BusTripStop with _$BusTripStop {
   }
 }
 
-final Random _mockDelayRandom = Random();
+final Random _mockRandom = Random();
 
-int _mockDelayMinutes() => _mockDelayRandom.nextInt(9);
+int _mockDelayMinutes() => _mockRandom.nextInt(9);
+
+bool _mockIsCancelled() => _mockRandom.nextInt(10) == 0;
 
 @freezed
 abstract class BusTrip with _$BusTrip {
@@ -35,6 +37,7 @@ abstract class BusTrip with _$BusTrip {
     required String route,
     required List<BusTripStop> stops,
     int? delayMinutes,
+    @Default(false) bool isCancelled,
   }) = _BusTrip;
 
   factory BusTrip.fromFirebase(
@@ -43,6 +46,8 @@ abstract class BusTrip with _$BusTrip {
   ) {
     final stopsList = map['stops'] as List;
     final route = map['route'] as String;
+    // TODO(dummy): 遅延/運休のデータソースが決まるまでの仮置き。
+    final cancelled = _mockIsCancelled();
     return BusTrip(
       route: route,
       stops: stopsList.map((e) {
@@ -53,8 +58,8 @@ abstract class BusTrip with _$BusTrip {
         );
         return BusTripStop.fromFirebase(targetBusStop, stopMap);
       }).toList(),
-      // TODO(dummy): 遅延分数のデータソースが決まるまでの仮置き。
-      delayMinutes: _mockDelayMinutes(),
+      delayMinutes: cancelled ? null : _mockDelayMinutes(),
+      isCancelled: cancelled,
     );
   }
 }
