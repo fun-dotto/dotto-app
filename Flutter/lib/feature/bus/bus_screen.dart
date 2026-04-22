@@ -184,6 +184,7 @@ final class BusScreen extends HookConsumerWidget {
                       isTo: value.isTo,
                       isKameda: kameda,
                       myBusStopName: value.myBusStop.name,
+                      delayMinutes: busTrip.delayMinutes,
                       onTap: busTrip.route == '0'
                           ? null
                           : () async {
@@ -349,6 +350,7 @@ final class _BusTripTile extends StatelessWidget {
     required this.isTo,
     required this.isKameda,
     required this.myBusStopName,
+    this.delayMinutes,
     this.onTap,
     super.key,
   });
@@ -359,6 +361,7 @@ final class _BusTripTile extends StatelessWidget {
   final bool isTo;
   final bool isKameda;
   final String myBusStopName;
+  final int? delayMinutes;
   final VoidCallback? onTap;
 
   BusType _busType() {
@@ -401,6 +404,24 @@ final class _BusTripTile extends StatelessWidget {
                   '${formatDuration(beginTime)} → ${formatDuration(endTime)}',
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
+                if (delayMinutes != null && delayMinutes! > 0)
+                  Row(
+                    spacing: 4,
+                    children: [
+                      Icon(
+                        Icons.schedule,
+                        size: 16,
+                        color: SemanticColor.light.accentWarning,
+                      ),
+                      Text(
+                        '$delayMinutes分遅延見込み',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: SemanticColor.light.accentWarning,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
                 Text(
                   directionText.isEmpty ? route : '$route $directionText',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(

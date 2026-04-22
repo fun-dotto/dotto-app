@@ -28,6 +28,7 @@ abstract class BusTrip with _$BusTrip {
   const factory BusTrip({
     required String route,
     required List<BusTripStop> stops,
+    int? delayMinutes,
   }) = _BusTrip;
 
   factory BusTrip.fromFirebase(
