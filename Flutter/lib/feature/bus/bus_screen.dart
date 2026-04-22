@@ -185,7 +185,8 @@ final class BusScreen extends HookConsumerWidget {
                       isKameda: kameda,
                       myBusStopName: value.myBusStop.name,
                       delayMinutes: busTrip.delayMinutes,
-                      onTap: busTrip.route == '0'
+                      isCancelled: busTrip.isCancelled,
+                      onTap: busTrip.route == '0' || busTrip.isCancelled
                           ? null
                           : () async {
                               await Navigator.of(context).push(
@@ -351,6 +352,7 @@ final class _BusTripTile extends StatelessWidget {
     required this.isKameda,
     required this.myBusStopName,
     this.delayMinutes,
+    this.isCancelled = false,
     this.onTap,
     super.key,
   });
@@ -362,6 +364,7 @@ final class _BusTripTile extends StatelessWidget {
   final bool isKameda;
   final String myBusStopName;
   final int? delayMinutes;
+  final bool isCancelled;
   final VoidCallback? onTap;
 
   BusType _busType() {
@@ -402,9 +405,34 @@ final class _BusTripTile extends StatelessWidget {
               children: [
                 Text(
                   '${formatDuration(beginTime)} → ${formatDuration(endTime)}',
-                  style: Theme.of(context).textTheme.headlineSmall,
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    color: isCancelled
+                        ? SemanticColor.light.labelSecondary
+                        : null,
+                    decoration: isCancelled
+                        ? TextDecoration.lineThrough
+                        : null,
+                  ),
                 ),
-                if (delayMinutes != null && delayMinutes! > 0)
+                if (isCancelled)
+                  Row(
+                    spacing: 4,
+                    children: [
+                      Icon(
+                        Icons.block,
+                        size: 16,
+                        color: SemanticColor.light.accentError,
+                      ),
+                      Text(
+                        '運休',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: SemanticColor.light.accentError,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  )
+                else if (delayMinutes != null && delayMinutes! > 0)
                   Row(
                     spacing: 4,
                     children: [
