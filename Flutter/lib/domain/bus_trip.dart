@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:dotto/domain/bus_stop.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
@@ -23,6 +25,10 @@ abstract class BusTripStop with _$BusTripStop {
   }
 }
 
+final Random _mockDelayRandom = Random();
+
+int _mockDelayMinutes() => _mockDelayRandom.nextInt(9);
+
 @freezed
 abstract class BusTrip with _$BusTrip {
   const factory BusTrip({
@@ -36,8 +42,9 @@ abstract class BusTrip with _$BusTrip {
     List<BusStop> allStops,
   ) {
     final stopsList = map['stops'] as List;
+    final route = map['route'] as String;
     return BusTrip(
-      route: map['route'] as String,
+      route: route,
       stops: stopsList.map((e) {
         final stopMap = Map<String, dynamic>.from(e as Map);
         final id = stopMap['id'] as int;
@@ -46,6 +53,8 @@ abstract class BusTrip with _$BusTrip {
         );
         return BusTripStop.fromFirebase(targetBusStop, stopMap);
       }).toList(),
+      // TODO(dummy): 遅延分数のデータソースが決まるまでの仮置き。
+      delayMinutes: _mockDelayMinutes(),
     );
   }
 }
