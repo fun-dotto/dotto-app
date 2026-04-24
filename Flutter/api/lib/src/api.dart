@@ -16,6 +16,7 @@ import 'package:openapi/src/api/fcm_tokens_api.dart';
 import 'package:openapi/src/api/makeup_classes_api.dart';
 import 'package:openapi/src/api/menu_items_api.dart';
 import 'package:openapi/src/api/personal_calendar_items_api.dart';
+import 'package:openapi/src/api/reservations_api.dart';
 import 'package:openapi/src/api/room_changes_api.dart';
 import 'package:openapi/src/api/subjects_api.dart';
 import 'package:openapi/src/api/timetable_items_api.dart';
@@ -115,6 +116,12 @@ class Openapi {
   /// by doing that all interceptors will not be executed
   PersonalCalendarItemsApi getPersonalCalendarItemsApi() {
     return PersonalCalendarItemsApi(dio, serializers);
+  }
+
+  /// Get ReservationsApi instance, base route and serializer can be overridden by a given but be careful,
+  /// by doing that all interceptors will not be executed
+  ReservationsApi getReservationsApi() {
+    return ReservationsApi(dio, serializers);
   }
 
   /// Get RoomChangesApi instance, base route and serializer can be overridden by a given but be careful,

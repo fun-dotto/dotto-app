@@ -73,6 +73,7 @@ Class | Method | HTTP request | Description
 [*MakeupClassesApi*](doc/MakeupClassesApi.md) | [**makeupClassesV1List**](doc/MakeupClassesApi.md#makeupclassesv1list) | **GET** /v1/makeupClasses | 
 [*MenuItemsApi*](doc/MenuItemsApi.md) | [**menuItemsV1List**](doc/MenuItemsApi.md#menuitemsv1list) | **GET** /v1/menuItems | 
 [*PersonalCalendarItemsApi*](doc/PersonalCalendarItemsApi.md) | [**personalCalendarItemsV1List**](doc/PersonalCalendarItemsApi.md#personalcalendaritemsv1list) | **GET** /v1/personalCalendarItems | 
+[*ReservationsApi*](doc/ReservationsApi.md) | [**reservationsV1List**](doc/ReservationsApi.md#reservationsv1list) | **GET** /v1/reservations | 
 [*RoomChangesApi*](doc/RoomChangesApi.md) | [**roomChangesV1List**](doc/RoomChangesApi.md#roomchangesv1list) | **GET** /v1/roomChanges | 
 [*SubjectsApi*](doc/SubjectsApi.md) | [**subjectsV1Detail**](doc/SubjectsApi.md#subjectsv1detail) | **GET** /v1/subjects/{id} | 
 [*SubjectsApi*](doc/SubjectsApi.md) | [**subjectsV1List**](doc/SubjectsApi.md#subjectsv1list) | **GET** /v1/subjects | 
@@ -119,6 +120,8 @@ Class | Method | HTTP request | Description
  - [PersonalCalendarItem](doc/PersonalCalendarItem.md)
  - [PersonalCalendarItemsV1List200Response](doc/PersonalCalendarItemsV1List200Response.md)
  - [Price](doc/Price.md)
+ - [Reservation](doc/Reservation.md)
+ - [ReservationsV1List200Response](doc/ReservationsV1List200Response.md)
  - [Room](doc/Room.md)
  - [RoomChange](doc/RoomChange.md)
  - [RoomChangesV1List200Response](doc/RoomChangesV1List200Response.md)
