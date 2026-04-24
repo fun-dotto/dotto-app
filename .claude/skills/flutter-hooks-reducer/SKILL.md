@@ -87,6 +87,7 @@ sealed class BusAction with _$BusAction {
 
 - `sealed class` 必須（switch の exhaustive チェックを効かせる）
 - User intent は過去分詞形（`Toggled` / `Selected` / `Submitted`）、System result は `Loaded` / `Failed` で揃える
+- ロード開始が user intent（ボタン押下など）なら `xxxRequested` Action を dispatch し、Effect 側で検知して Repository を呼ぶ。画面表示時の自動ロードなど system 起点のトリガーは Effect 内で完結させ、専用 Action を発行しない
 
 ### 3. Reducer（純粋関数）
 
@@ -155,6 +156,7 @@ void useBusEffects({
 - クリーンアップ関数で `cancelled` フラグを立て、unmount 後の dispatch を抑止
 - 独立した副作用は `useEffect` を **複数回** 書く（1つに詰めて条件分岐しない）
 - Repository は `DomainError` に変換済みである前提（AGENTS.md "Repository が画面層に例外を伝播..." 参照）
+- Repository は `HookConsumerWidget` の `WidgetRef` から `ref.read(xxxRepositoryProvider)` で取得し、Effect フックに注入する。Reducer 本体に `@riverpod` は付けない（Repository Provider には引き続き `@riverpod` を使う）
 
 ### 5. Store フック
 
@@ -220,6 +222,11 @@ class BusScreen extends HookConsumerWidget {
 5. **`use<Feature>Store()` を作成し画面を書き換え**: 画面の `ref.watch(xxxReducerProvider)` を `useXxxStore(ref).state` に、`ref.read(xxxReducerProvider.notifier).foo()` を `store.dispatch(...)` に置き換える。
 6. **Riverpod Notifier 削除**: 古い `xxx_reducer.dart` の `@riverpod` クラスと `.g.dart` を削除。`build_runner` を再実行。
 7. **検証**: 後述の検証手順を実行。
+
+## パフォーマンス
+
+- `useReducer` の state 更新は当該 `HookConsumerWidget` 全体を rebuild する
+- 画面が肥大化する場合は feature を分割するか、重い子 Widget を `const` 化／`HookBuilder` に切り出して rebuild スコープを絞る
 
 ## 検証手順
 
