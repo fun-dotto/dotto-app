@@ -1,0 +1,5 @@
+[tools]
+java = "25.0.2"
+
+[env]
+JAVA_HOME = "$HOME/.local/share/mise/installs/java/25.0.2"
