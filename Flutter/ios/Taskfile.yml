@@ -5,21 +5,36 @@ vars:
   FASTLANE: mise x -- bundle exec fastlane
 
 tasks:
+  download-appstore-metadata:
+    desc: Download App Store metadata
+    cmds:
+      - "{{.DOTENVX}} run -f ../.env.keys -- {{.DOTENVX}} run -f ./fastlane/.env -- {{.FASTLANE}} deliver download_metadata"
+
+  download-appstore-screenshots:
+    desc: Download App Store screenshots
+    cmds:
+      - "{{.DOTENVX}} run -f ../.env.keys -- {{.DOTENVX}} run -f ./fastlane/.env -- {{.FASTLANE}} deliver download_screenshots"
+
   download-appstore-metadata-and-screenshots:
     desc: Download App Store metadata and screenshots
     cmds:
       - "{{.DOTENVX}} run -f ../.env.keys -- {{.DOTENVX}} run -f ./fastlane/.env -- {{.FASTLANE}} deliver download_metadata"
       - "{{.DOTENVX}} run -f ../.env.keys -- {{.DOTENVX}} run -f ./fastlane/.env -- {{.FASTLANE}} deliver download_screenshots"
 
+  upload-appstore-metadata:
+    desc: Upload App Store metadata
+    cmds:
+      - "{{.DOTENVX}} run -f ../.env.keys -- {{.DOTENVX}} run -f ./fastlane/.env -- {{.FASTLANE}} deliver --skip_binary_upload --skip_screenshots --force"
+
+  upload-appstore-screenshots:
+    desc: Upload App Store screenshots
+    cmds:
+      - "{{.DOTENVX}} run -f ../.env.keys -- {{.DOTENVX}} run -f ./fastlane/.env -- {{.FASTLANE}} deliver --skip_binary_upload --skip_metadata --force"
+
   upload-appstore-metadata-and-screenshots:
     desc: Upload App Store metadata and screenshots
     cmds:
       - "{{.DOTENVX}} run -f ../.env.keys -- {{.DOTENVX}} run -f ./fastlane/.env -- {{.FASTLANE}} deliver --skip_binary_upload --force"
-
-  upload-appstore-metadata:
-    desc: Upload App Store metadata and screenshots
-    cmds:
-      - "{{.DOTENVX}} run -f ../.env.keys -- {{.DOTENVX}} run -f ./fastlane/.env -- {{.FASTLANE}} deliver --skip_binary_upload --skip_screenshots --force"
 
   deploy-firebase-app-distribution:
     desc: Deploy iOS to Firebase App Distribution
