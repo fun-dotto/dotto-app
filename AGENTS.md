@@ -62,6 +62,6 @@
   - `use<Feature>Store()` は `useReducer` と `use<Feature>Effects` を合成し、`{state, dispatch}` を返す薄いラッパーとする。
   - Repository は `HookConsumerWidget` の `WidgetRef` から `ref.read(xxxRepositoryProvider)` で取得し、Effect フックに注入する。Reducer 本体に `@riverpod` は付けない（Repository Provider には引き続き `@riverpod` を使う）。
   - パフォーマンス: `useReducer` の state 更新は当該 `HookConsumerWidget` 全体を rebuild する。画面が肥大化する場合は feature を分割するか、重い子 Widget は `const` 化／`HookBuilder` 切り出しで rebuild スコープを絞ること。
-  - 実装・レビュー・移行は `flutter-hooks-reducer` skill の手順に従う。
+  - 実装・レビュー・移行は、本節「Reducer 設計（`useReducer` ベース）」に記載の手順とルールに従う。
 - 日付整形
   - `DateFormat` は各所で直接使わず、`lib/helper/date_formatter.dart` の `DateFormatter` クラスにメソッドとして定義して利用すること。
