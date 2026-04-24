@@ -30,7 +30,7 @@
 - Freezed
   - ドメインモデルのclassでは、freezed_annotationを使用すること。
 - アーキテクチャ
-  - クリーンアーキテクチャを意識した設計を準州すること。
+  - クリーンアーキテクチャを意識した設計を遵守すること。
   - Hooks + Riverpod + Reducer + Repository パターンで実装すること。
   - MVVM + UseCase + Repository パターンが使われていることがあるが、現在は非推奨。
   - Riverpod Notifier の上にメソッド束を生やしただけの Reducer（名ばかりReducer）も非推奨。後述の `useReducer` ベース設計に置き換えること。
