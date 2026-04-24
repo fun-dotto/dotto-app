@@ -5,8 +5,5 @@ part 'menu_price.freezed.dart';
 
 @freezed
 abstract class Price with _$Price {
-  const factory Price({
-    required Size size,
-    required int price,
-  }) = _Price;
+  const factory Price({required Size size, required int price}) = _Price;
 }

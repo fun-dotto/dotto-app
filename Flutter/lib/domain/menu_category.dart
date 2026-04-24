@@ -1,7 +1,1 @@
-enum Category {
-  setAndSingle,
-  bowlAndCurry,
-  noodlev,
-  side,
-  dessert;
-}
+enum Category { setAndSingle, bowlAndCurry, noodlev, side, dessert }

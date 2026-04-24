@@ -1,5 +1,1 @@
-enum Size {
-  small,
-  medium,
-  large;
-}
+enum Size { small, medium, large }
