@@ -56,7 +56,7 @@
     - `print` / `Logger` などのログ出力
   - 副作用は `useEffect` ベースの Effect フックからのみ行う。
     - `useEffect` のキーは「どの state 変化で再実行するか」を明示する。
-    - クリーンアップ関数で cancel フラグを立て、unmount 後の late dispatch を防ぐ。
+    - クリーンアップ関数で cancel フラグを立て、dispose（アンマウント）後に dispatch しないようにする。
     - 独立した副作用は `useEffect` を分割する（1つに詰めない）。
     - Repository 例外は `DomainError` に変換済み前提で catch し、失敗 Action を dispatch する。
   - `use<Feature>Store()` は `useReducer` と `use<Feature>Effects` を合成し、`{state, dispatch}` を返す薄いラッパーとする。
