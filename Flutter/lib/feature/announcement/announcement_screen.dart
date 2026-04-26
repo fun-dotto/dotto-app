@@ -1,12 +1,11 @@
 import 'package:dotto/domain/announcement.dart';
-import 'package:dotto/feature/announcement/announcement_viewmodel.dart';
-import 'package:dotto/feature/announcement/announcement_viewstate.dart';
+import 'package:dotto/feature/announcement/announcement_store.dart';
 import 'package:dotto/helper/date_formatter.dart';
 import 'package:dotto/helper/url_launcher_helper.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-final class AnnouncementScreen extends ConsumerWidget {
+final class AnnouncementScreen extends HookConsumerWidget {
   const AnnouncementScreen({super.key});
 
   Widget _announcementListRow(BuildContext context, Announcement announcement) {
@@ -26,20 +25,18 @@ final class AnnouncementScreen extends ConsumerWidget {
 
   Widget _body(
     BuildContext context,
-    AsyncValue<AnnouncementViewState> viewModelAsync, {
+    AsyncValue<List<Announcement>> announcements, {
     required Future<void> Function() onRefresh,
   }) {
-    switch (viewModelAsync) {
+    switch (announcements) {
       case AsyncData(:final value):
         return RefreshIndicator(
           onRefresh: onRefresh,
           child: ListView.separated(
-            itemCount: value.announcements.length,
+            itemCount: value.length,
             separatorBuilder: (_, _) => const Divider(height: 0),
-            itemBuilder: (_, index) {
-              final announcement = value.announcements[index];
-              return _announcementListRow(context, announcement);
-            },
+            itemBuilder: (_, index) =>
+                _announcementListRow(context, value[index]),
           ),
         );
       case AsyncError(:final error):
@@ -51,16 +48,14 @@ final class AnnouncementScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final viewModelAsync = ref.watch(announcementViewModelProvider);
+    final store = useAnnouncementStore(ref);
 
     return Scaffold(
       appBar: AppBar(title: const Text('お知らせ')),
       body: _body(
         context,
-        viewModelAsync,
-        onRefresh: () async {
-          await ref.read(announcementViewModelProvider.notifier).onRefresh();
-        },
+        store.state.announcements,
+        onRefresh: store.refresh,
       ),
     );
   }
