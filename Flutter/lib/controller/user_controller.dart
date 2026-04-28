@@ -20,7 +20,7 @@ final Provider<bool> isAuthenticatedProvider = Provider.autoDispose<bool>((
   return authState.value != null;
 });
 
-@riverpod
+@Riverpod(keepAlive: true)
 final class UserNotifier extends _$UserNotifier {
   @override
   Future<DottoUser> build() async {
@@ -31,34 +31,20 @@ final class UserNotifier extends _$UserNotifier {
   }
 
   Future<void> refresh() async {
-    final userRepository = ref.read(userRepositoryProvider);
-    state = const AsyncValue.loading();
-    state = await AsyncValue.guard(() async {
-      final firebaseUser = FirebaseAuth.instance.currentUser;
-      return _syncUser(firebaseUser, userRepository);
-    });
+    ref.invalidateSelf();
+    await future;
   }
 
   Future<void> signIn() async {
-    final userRepository = ref.read(userRepositoryProvider);
     final logger = ref.read(loggerProvider);
-    state = const AsyncValue.loading();
-    state = await AsyncValue.guard(() async {
-      final firebaseUser = await FirebaseAuthHelper.signIn();
-      await logger.logLogin();
-      return _syncUser(firebaseUser, userRepository);
-    });
+    await FirebaseAuthHelper.signIn();
+    await logger.logLogin();
   }
 
   Future<void> signOut() async {
-    final userRepository = ref.read(userRepositoryProvider);
     final logger = ref.read(loggerProvider);
-    state = const AsyncValue.loading();
-    state = await AsyncValue.guard(() async {
-      await FirebaseAuthHelper.signOut();
-      await logger.logLogout();
-      return _syncUser(null, userRepository);
-    });
+    await FirebaseAuthHelper.signOut();
+    await logger.logLogout();
   }
 
   Future<void> setGrade(Grade? grade) async {
@@ -124,22 +110,26 @@ final class UserNotifier extends _$UserNotifier {
       return defaultUser;
     }
     try {
-      final user =
-          await userRepository.getUser(firebaseUser: firebaseUser) ??
-          defaultUser.copyWith(
-            id: firebaseUser.uid,
-            name: firebaseUser.displayName ?? '',
-            email: firebaseUser.email ?? '',
-            avatarUrl: firebaseUser.photoURL ?? '',
-          );
+      final existingUser = await userRepository.getUser(
+        firebaseUser: firebaseUser,
+      );
+      if (existingUser != null) {
+        return existingUser;
+      }
+      final newUser = defaultUser.copyWith(
+        id: firebaseUser.uid,
+        name: firebaseUser.displayName ?? '',
+        email: firebaseUser.email ?? '',
+        avatarUrl: firebaseUser.photoURL ?? '',
+      );
       try {
         return await userRepository.upsertUser(
           firebaseUser: firebaseUser,
-          user: user,
+          user: newUser,
         );
       } on Exception catch (e) {
         debugPrint('Error during upserting user: $e');
-        return user;
+        return newUser;
       }
     } on Exception catch (e) {
       debugPrint('Error during getting user: $e');
