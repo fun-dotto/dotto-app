@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:dotto/controller/config_controller.dart';
+import 'package:dotto/controller/notification_status_controller.dart';
 import 'package:dotto/controller/user_controller.dart';
 import 'package:dotto/domain/academic_area.dart';
 import 'package:dotto/domain/academic_class.dart';
@@ -12,6 +13,7 @@ import 'package:dotto/feature/github_contributor/github_contributor_screen.dart'
 import 'package:dotto/feature/onboarding/onboarding_screen.dart';
 import 'package:dotto/feature/setting/widget/license.dart';
 import 'package:dotto/feature/setting/widget/user_info_tile.dart';
+import 'package:dotto/helper/notification_helper.dart';
 import 'package:dotto/helper/url_launcher_helper.dart';
 import 'package:dotto_design_system/style/semantic_color.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -121,11 +123,15 @@ final class SettingsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(userProvider);
     final config = ref.watch(configProvider);
+    final notificationStatus = ref.watch(notificationStatusProvider);
     final isAuthenticated = user.value?.id.isNotEmpty ?? false;
 
     // 設定を取得
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(configProvider.notifier).refresh();
+      unawaited(
+        ref.read(notificationStatusProvider.notifier).refresh(),
+      );
     });
 
     return Scaffold(
@@ -380,6 +386,22 @@ final class SettingsScreen extends ConsumerWidget {
                             ),
                           ),
                         );
+                      },
+                    ),
+                    // 通知設定
+                    SettingsTile.navigation(
+                      title: const Text('通知'),
+                      leading: const Icon(Icons.notifications_active),
+                      value: _settingValueText(
+                        notificationStatus.value?.label ?? '確認中',
+                      ),
+                      onPressed: (_) async {
+                        await ref
+                            .read(notificationHelperProvider)
+                            .openSystemSettings();
+                        await ref
+                            .read(notificationStatusProvider.notifier)
+                            .refresh();
                       },
                     ),
                     // フィードバック
