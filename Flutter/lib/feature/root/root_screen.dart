@@ -11,8 +11,13 @@ import 'package:dotto/feature/onboarding/onboarding_screen.dart';
 import 'package:dotto/feature/root/root_viewmodel.dart';
 import 'package:dotto/feature/setting/settings.dart';
 import 'package:dotto/feature/subject/search_subject_screen.dart';
+import 'package:dotto/helper/firebase_auth_provider.dart';
+import 'package:dotto/helper/firebase_messaging_provider.dart';
 import 'package:dotto/helper/url_launcher_helper.dart';
+import 'package:dotto/repository/repository_provider.dart';
 import 'package:dotto/widget/invalid_app_version_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -69,6 +74,25 @@ final class RootScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref
+      ..listen(firebaseAuthStateChangesProvider, (prev, next) async {
+        final prevUser = prev?.value;
+        final nextUser = next.value;
+        if (prevUser == null && nextUser != null) {
+          final token = await FirebaseMessaging.instance.getToken();
+          if (token == null) return;
+          await ref.read(fcmTokenRepositoryProvider).upsertToken(token: token);
+        } else if (prevUser != null && nextUser == null) {
+          await FirebaseMessaging.instance.deleteToken();
+        }
+      })
+      ..listen(fcmTokenRefreshStreamProvider, (prev, next) async {
+        final token = next.value;
+        if (token == null) return;
+        if (FirebaseAuth.instance.currentUser == null) return;
+        await ref.read(fcmTokenRepositoryProvider).upsertToken(token: token);
+      });
+
     final viewModelAsync = ref.watch(rootViewModelProvider);
     final environment = ref.watch(apiEnvironmentProvider);
     final isFunchEnabled = ref.watch(
