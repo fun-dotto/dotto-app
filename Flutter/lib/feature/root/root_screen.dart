@@ -2,7 +2,10 @@ import 'dart:io';
 
 import 'package:dotto/api/api_environment.dart';
 import 'package:dotto/controller/config_controller.dart';
+import 'package:dotto/controller/notification_status_controller.dart';
+import 'package:dotto/domain/notification_alert_status.dart';
 import 'package:dotto/domain/tab_item.dart';
+import 'package:dotto/domain/user_preference_keys.dart';
 import 'package:dotto/feature/bus/bus_screen.dart';
 import 'package:dotto/feature/course/course_screen.dart';
 import 'package:dotto/feature/funch/funch.dart';
@@ -11,7 +14,9 @@ import 'package:dotto/feature/onboarding/onboarding_screen.dart';
 import 'package:dotto/feature/root/root_viewmodel.dart';
 import 'package:dotto/feature/setting/settings.dart';
 import 'package:dotto/feature/subject/search_subject_screen.dart';
+import 'package:dotto/helper/notification_helper.dart';
 import 'package:dotto/helper/url_launcher_helper.dart';
+import 'package:dotto/helper/user_preference_repository.dart';
 import 'package:dotto/widget/invalid_app_version_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -42,6 +47,53 @@ final class RootScreen extends ConsumerWidget {
       TabItem.setting => const SettingsScreen(),
       TabItem.subject => const SearchSubjectScreen(),
     };
+  }
+
+  static const _notificationPromptCooldown = Duration(days: 7);
+
+  Future<bool> _shouldPromptNotification(NotificationAlertStatus status) async {
+    if (!status.shouldPromptUser) return false;
+    final lastShown = await UserPreferenceRepository.getInt(
+      UserPreferenceKeys.notificationPromptLastShownAt,
+    );
+    if (lastShown == null) return true;
+    final elapsed = DateTime.now().difference(
+      DateTime.fromMillisecondsSinceEpoch(lastShown),
+    );
+    return elapsed >= _notificationPromptCooldown;
+  }
+
+  Widget _notificationAlertDialog({
+    required BuildContext context,
+    required WidgetRef ref,
+    required NotificationAlertStatus status,
+  }) {
+    final message = switch (status) {
+      NotificationAlertStatus.denied =>
+        '通知が拒否されています。最新のお知らせを受け取るには、設定アプリから通知を許可してください。',
+      NotificationAlertStatus.provisional =>
+        '現在は静かな配信のみ許可されています。バナーやサウンドで目立つ通知を受け取るには、設定アプリから通知を許可してください。',
+      NotificationAlertStatus.alertDisabled =>
+        '通知バナーが無効になっています。目立つ通知を受け取るには、設定アプリから通知バナーを有効にしてください。',
+      _ => '',
+    };
+    return AlertDialog(
+      title: const Text('通知を有効にしますか？'),
+      content: Text(message),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('あとで'),
+        ),
+        TextButton(
+          onPressed: () async {
+            Navigator.of(context).pop();
+            await ref.read(notificationHelperProvider).openSystemSettings();
+          },
+          child: const Text('設定を開く'),
+        ),
+      ],
+    );
   }
 
   Widget _updateAlertDialog({
@@ -105,6 +157,31 @@ final class RootScreen extends ConsumerWidget {
                 latestAppVersion: value.latestAppVersion,
               ),
             );
+          }
+
+          if (!value.hasShownNotificationAlert) {
+            final status = await ref.read(
+              notificationStatusProvider.future,
+            );
+            if (!context.mounted) return;
+            if (await _shouldPromptNotification(status)) {
+              if (!context.mounted) return;
+              ref
+                  .read(rootViewModelProvider.notifier)
+                  .onNotificationAlertShown();
+              await showDialog<void>(
+                context: context,
+                builder: (context) => _notificationAlertDialog(
+                  context: context,
+                  ref: ref,
+                  status: status,
+                ),
+              );
+            } else {
+              ref
+                  .read(rootViewModelProvider.notifier)
+                  .onNotificationAlertShown();
+            }
           }
         });
 

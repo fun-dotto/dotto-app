@@ -92,6 +92,7 @@ class RootViewModel extends _$RootViewModel {
       selectedTab: tabs.first,
       hasShownAppTutorial: hasShownAppTutorial,
       hasShownUpdateAlert: false,
+      hasShownNotificationAlert: false,
       isValidAppVersion: versionEvaluation.isValidAppVersion,
       isLatestAppVersion: versionEvaluation.isLatestAppVersion,
       currentAppVersion: currentAppVersion,
@@ -145,5 +146,17 @@ class RootViewModel extends _$RootViewModel {
 
   void onUpdateAlertShown() {
     state = AsyncValue.data(state.value!.copyWith(hasShownUpdateAlert: true));
+  }
+
+  void onNotificationAlertShown() {
+    state = AsyncValue.data(
+      state.value!.copyWith(hasShownNotificationAlert: true),
+    );
+    unawaited(
+      UserPreferenceRepository.setInt(
+        UserPreferenceKeys.notificationPromptLastShownAt,
+        DateTime.now().millisecondsSinceEpoch,
+      ),
+    );
   }
 }
