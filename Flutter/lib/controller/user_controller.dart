@@ -3,6 +3,7 @@ import 'package:dotto/domain/academic_class.dart';
 import 'package:dotto/domain/dotto_user.dart';
 import 'package:dotto/domain/grade.dart';
 import 'package:dotto/helper/firebase_auth_helper.dart';
+import 'package:dotto/helper/firebase_auth_provider.dart';
 import 'package:dotto/helper/logger.dart';
 import 'package:dotto/repository/fcm_token_repository.dart';
 import 'package:dotto/repository/repository_provider.dart';
@@ -14,11 +15,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'user_controller.g.dart';
-
-final StreamProvider<User?> firebaseAuthStateChangesProvider =
-    StreamProvider.autoDispose<User?>((ref) {
-      return FirebaseAuth.instance.authStateChanges();
-    });
 
 final Provider<bool> isAuthenticatedProvider = Provider.autoDispose<bool>((
   ref,
