@@ -55,7 +55,7 @@ Future<void> main() async {
 
   // Firebase Messaging
   // 通知許可をリクエスト
-  await FirebaseMessaging.instance.requestPermission(provisional: true);
+  await FirebaseMessaging.instance.requestPermission();
   // バックグラウンドハンドラーを設定
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
