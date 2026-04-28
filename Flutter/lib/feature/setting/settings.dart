@@ -123,11 +123,6 @@ final class SettingsScreen extends ConsumerWidget {
     final config = ref.watch(configProvider);
     final isAuthenticated = user.value?.id.isNotEmpty ?? false;
 
-    // 設定を取得
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(configProvider.notifier).refresh();
-    });
-
     return Scaffold(
       appBar: AppBar(
         title: Text(
