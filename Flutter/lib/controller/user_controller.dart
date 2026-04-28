@@ -136,5 +136,4 @@ final class UserNotifier extends _$UserNotifier {
       return defaultUser;
     }
   }
-
 }

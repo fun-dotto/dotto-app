@@ -81,9 +81,7 @@ final class RootScreen extends ConsumerWidget {
         if (prevUser == null && nextUser != null) {
           final token = await FirebaseMessaging.instance.getToken();
           if (token == null) return;
-          await ref
-              .read(fcmTokenRepositoryProvider)
-              .upsertToken(token: token);
+          await ref.read(fcmTokenRepositoryProvider).upsertToken(token: token);
         } else if (prevUser != null && nextUser == null) {
           await FirebaseMessaging.instance.deleteToken();
         }
