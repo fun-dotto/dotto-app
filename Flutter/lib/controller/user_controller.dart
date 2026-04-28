@@ -5,11 +5,8 @@ import 'package:dotto/domain/grade.dart';
 import 'package:dotto/helper/firebase_auth_helper.dart';
 import 'package:dotto/helper/firebase_auth_provider.dart';
 import 'package:dotto/helper/logger.dart';
-import 'package:dotto/repository/fcm_token_repository.dart';
-import 'package:dotto/repository/repository_provider.dart';
 import 'package:dotto/repository/user_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -28,37 +25,27 @@ final class UserNotifier extends _$UserNotifier {
   @override
   Future<DottoUser> build() async {
     final userRepository = ref.read(userRepositoryProvider);
-    final fcmTokenRepository = ref.read(fcmTokenRepositoryProvider);
     final authState = ref.watch(firebaseAuthStateChangesProvider);
     final firebaseUser = authState.value;
-    if (firebaseUser != null) {
-      await _saveFCMToken(fcmTokenRepository);
-    }
     return _syncUser(firebaseUser, userRepository);
   }
 
   Future<void> refresh() async {
     final userRepository = ref.read(userRepositoryProvider);
-    final fcmTokenRepository = ref.read(fcmTokenRepositoryProvider);
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
       final firebaseUser = FirebaseAuth.instance.currentUser;
-      if (firebaseUser != null) {
-        await _saveFCMToken(fcmTokenRepository);
-      }
       return _syncUser(firebaseUser, userRepository);
     });
   }
 
   Future<void> signIn() async {
     final userRepository = ref.read(userRepositoryProvider);
-    final fcmTokenRepository = ref.read(fcmTokenRepositoryProvider);
     final logger = ref.read(loggerProvider);
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
       final firebaseUser = await FirebaseAuthHelper.signIn();
       await logger.logLogin();
-      await _saveFCMToken(fcmTokenRepository);
       return _syncUser(firebaseUser, userRepository);
     });
   }
@@ -160,11 +147,4 @@ final class UserNotifier extends _$UserNotifier {
     }
   }
 
-  Future<void> _saveFCMToken(FCMTokenRepository fcmTokenRepository) async {
-    final fcmToken = await FirebaseMessaging.instance.getToken();
-    if (fcmToken == null) {
-      return;
-    }
-    await fcmTokenRepository.upsertToken(token: fcmToken);
-  }
 }
