@@ -37,14 +37,22 @@ final class UserNotifier extends _$UserNotifier {
 
   Future<void> signIn() async {
     final logger = ref.read(loggerProvider);
-    await FirebaseAuthHelper.signIn();
-    await logger.logLogin();
+    try {
+      await FirebaseAuthHelper.signIn();
+      await logger.logLogin();
+    } on Object catch (error, stackTrace) {
+      state = AsyncValue.error(error, stackTrace);
+    }
   }
 
   Future<void> signOut() async {
     final logger = ref.read(loggerProvider);
-    await FirebaseAuthHelper.signOut();
-    await logger.logLogout();
+    try {
+      await FirebaseAuthHelper.signOut();
+      await logger.logLogout();
+    } on Object catch (error, stackTrace) {
+      state = AsyncValue.error(error, stackTrace);
+    }
   }
 
   Future<void> setGrade(Grade? grade) async {
