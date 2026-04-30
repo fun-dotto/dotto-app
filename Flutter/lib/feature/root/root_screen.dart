@@ -104,9 +104,7 @@ final class RootScreen extends ConsumerWidget {
           final token = next.value;
           if (token == null) return;
           if (FirebaseAuth.instance.currentUser == null) return;
-          await ref
-              .read(fcmTokenRepositoryProvider)
-              .upsertToken(token: token);
+          await ref.read(fcmTokenRepositoryProvider).upsertToken(token: token);
         } on Object catch (error, stackTrace) {
           await ref
               .read(loggerProvider)
