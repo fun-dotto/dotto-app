@@ -13,6 +13,7 @@ import 'package:dotto/feature/setting/settings.dart';
 import 'package:dotto/feature/subject/search_subject_screen.dart';
 import 'package:dotto/helper/firebase_auth_provider.dart';
 import 'package:dotto/helper/firebase_messaging_provider.dart';
+import 'package:dotto/helper/logger.dart';
 import 'package:dotto/helper/url_launcher_helper.dart';
 import 'package:dotto/repository/repository_provider.dart';
 import 'package:dotto/widget/invalid_app_version_screen.dart';
@@ -76,21 +77,45 @@ final class RootScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     ref
       ..listen(firebaseAuthStateChangesProvider, (prev, next) async {
-        final prevUser = prev?.value;
-        final nextUser = next.value;
-        if (prevUser == null && nextUser != null) {
-          final token = await FirebaseMessaging.instance.getToken();
-          if (token == null) return;
-          await ref.read(fcmTokenRepositoryProvider).upsertToken(token: token);
-        } else if (prevUser != null && nextUser == null) {
-          await FirebaseMessaging.instance.deleteToken();
+        try {
+          final prevUser = prev?.value;
+          final nextUser = next.value;
+          if (prevUser == null && nextUser != null) {
+            final token = await FirebaseMessaging.instance.getToken();
+            if (token == null) return;
+            await ref
+                .read(fcmTokenRepositoryProvider)
+                .upsertToken(token: token);
+          } else if (prevUser != null && nextUser == null) {
+            await FirebaseMessaging.instance.deleteToken();
+          }
+        } on Object catch (error, stackTrace) {
+          await ref
+              .read(loggerProvider)
+              .logError(
+                error,
+                stackTrace,
+                reason: 'firebaseAuthStateChangesProvider listener failed',
+              );
         }
       })
       ..listen(fcmTokenRefreshStreamProvider, (_, next) async {
-        final token = next.value;
-        if (token == null) return;
-        if (FirebaseAuth.instance.currentUser == null) return;
-        await ref.read(fcmTokenRepositoryProvider).upsertToken(token: token);
+        try {
+          final token = next.value;
+          if (token == null) return;
+          if (FirebaseAuth.instance.currentUser == null) return;
+          await ref
+              .read(fcmTokenRepositoryProvider)
+              .upsertToken(token: token);
+        } on Object catch (error, stackTrace) {
+          await ref
+              .read(loggerProvider)
+              .logError(
+                error,
+                stackTrace,
+                reason: 'fcmTokenRefreshStreamProvider listener failed',
+              );
+        }
       });
 
     final viewModelAsync = ref.watch(rootViewModelProvider);
