@@ -86,7 +86,7 @@ final class RootScreen extends ConsumerWidget {
           await FirebaseMessaging.instance.deleteToken();
         }
       })
-      ..listen(fcmTokenRefreshStreamProvider, (prev, next) async {
+      ..listen(fcmTokenRefreshStreamProvider, (_, next) async {
         final token = next.value;
         if (token == null) return;
         if (FirebaseAuth.instance.currentUser == null) return;
