@@ -84,22 +84,16 @@ void main() {
       );
     }
 
-    test('未認証時は空の DottoUser を返す', () async {
+    test('未認証時は null を返す', () async {
       final container = createContainer();
       addTearDown(container.dispose);
 
       final user = await container.read(userProvider.future);
 
-      expect(user.id, isEmpty);
-      expect(user.name, isEmpty);
-      expect(user.email, isEmpty);
-      expect(user.avatarUrl, isEmpty);
-      expect(user.grade, isNull);
-      expect(user.course, isNull);
-      expect(user.class_, isNull);
+      expect(user, isNull);
     });
 
-    test('setGrade と setCourse と setClass は現在の state だけ更新する', () async {
+    test('未認証時の setGrade/setCourse/setClass は state を更新しない', () async {
       final container = createContainer();
       addTearDown(container.dispose);
 
@@ -110,11 +104,7 @@ void main() {
       await notifier.setCourse(AcademicArea.informationDesignCourse);
       await notifier.setClass(AcademicClass.c);
 
-      final user = container.read(userProvider).requireValue;
-
-      expect(user.grade, Grade.b2);
-      expect(user.course, AcademicArea.informationDesignCourse);
-      expect(user.class_, AcademicClass.c);
+      expect(container.read(userProvider).requireValue, isNull);
     });
   });
 
