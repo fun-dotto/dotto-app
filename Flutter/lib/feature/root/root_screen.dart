@@ -77,6 +77,8 @@ final class RootScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     ref
       ..listen(firebaseAuthStateChangesProvider, (prev, next) async {
+        final fcmTokenRepository = ref.read(fcmTokenRepositoryProvider);
+        final logger = ref.read(loggerProvider);
         try {
           final prevUser = prev?.asData?.value;
           final nextUser = next.asData?.value;
@@ -85,36 +87,32 @@ final class RootScreen extends ConsumerWidget {
           if (nextUser != null) {
             final token = await FirebaseMessaging.instance.getToken();
             if (token == null) return;
-            await ref
-                .read(fcmTokenRepositoryProvider)
-                .upsertToken(token: token);
+            await fcmTokenRepository.upsertToken(token: token);
           } else {
             await FirebaseMessaging.instance.deleteToken();
           }
         } on Object catch (error, stackTrace) {
-          await ref
-              .read(loggerProvider)
-              .logError(
-                error,
-                stackTrace,
-                reason: 'firebaseAuthStateChangesProvider listener failed',
-              );
+          await logger.logError(
+            error,
+            stackTrace,
+            reason: 'firebaseAuthStateChangesProvider listener failed',
+          );
         }
       })
       ..listen(fcmTokenRefreshStreamProvider, (_, next) async {
+        final fcmTokenRepository = ref.read(fcmTokenRepositoryProvider);
+        final logger = ref.read(loggerProvider);
         try {
           final token = next.value;
           if (token == null) return;
           if (FirebaseAuth.instance.currentUser == null) return;
-          await ref.read(fcmTokenRepositoryProvider).upsertToken(token: token);
+          await fcmTokenRepository.upsertToken(token: token);
         } on Object catch (error, stackTrace) {
-          await ref
-              .read(loggerProvider)
-              .logError(
-                error,
-                stackTrace,
-                reason: 'fcmTokenRefreshStreamProvider listener failed',
-              );
+          await logger.logError(
+            error,
+            stackTrace,
+            reason: 'fcmTokenRefreshStreamProvider listener failed',
+          );
         }
       });
 
