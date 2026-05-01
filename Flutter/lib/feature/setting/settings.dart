@@ -110,7 +110,7 @@ final class SettingsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(userProvider);
     final config = ref.watch(configProvider);
-    final isAuthenticated = user.value?.id.isNotEmpty ?? false;
+    final isAuthenticated = user.value != null;
 
     return Scaffold(
       appBar: AppBar(
@@ -158,11 +158,9 @@ final class SettingsScreen extends ConsumerWidget {
                         );
                       },
                       error: (err, stack) {
-                        final previousUser = user.value;
-                        final isAuthenticated = user.value != null;
                         return CustomSettingsTile(
                           child: UserInfoTile(
-                            user: previousUser,
+                            user: user.value,
                             onTap: isAuthenticated
                                 ? () async {
                                     await _showLogoutConfirmDialog(
