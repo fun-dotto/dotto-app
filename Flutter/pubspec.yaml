@@ -9,6 +9,7 @@ environment:
 
 dependencies:
   app_links: 7.0.0
+  app_settings: 7.0.0
   built_collection: ^5.1.1
   carousel_slider: 5.1.2
   cloud_firestore: 6.1.2
@@ -53,7 +54,6 @@ dependencies:
   package_info_plus: 9.0.0
   path: 1.9.1
   path_provider: 2.1.5
-  permission_handler: 12.0.1
   riverpod_annotation: 4.0.0
   settings_ui: 2.0.2
   share_plus: 12.0.1

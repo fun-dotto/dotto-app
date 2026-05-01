@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:app_settings/app_settings.dart';
 import 'package:dotto/api/api_environment.dart';
 import 'package:dotto/controller/config_controller.dart';
 import 'package:dotto/controller/notification_status_controller.dart';
@@ -25,7 +26,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 final class RootScreen extends ConsumerWidget {
   const RootScreen({super.key});
@@ -94,7 +94,9 @@ final class RootScreen extends ConsumerWidget {
         TextButton(
           onPressed: () async {
             Navigator.of(context).pop();
-            await openAppSettings();
+            await AppSettings.openAppSettings(
+              type: AppSettingsType.notification,
+            );
           },
           child: const Text('設定を開く'),
         ),

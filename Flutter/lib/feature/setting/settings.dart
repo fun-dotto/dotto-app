@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:app_settings/app_settings.dart';
 import 'package:dotto/controller/config_controller.dart';
 import 'package:dotto/controller/notification_status_controller.dart';
 import 'package:dotto/controller/user_controller.dart';
@@ -19,7 +20,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:settings_ui/settings_ui.dart';
 
 final class SettingsScreen extends ConsumerWidget {
@@ -381,7 +381,9 @@ final class SettingsScreen extends ConsumerWidget {
                         notificationStatus.value?.label ?? '確認中',
                       ),
                       onPressed: (_) async {
-                        await openAppSettings();
+                        await AppSettings.openAppSettings(
+                          type: AppSettingsType.notification,
+                        );
                         await ref
                             .read(notificationStatusProvider.notifier)
                             .refresh();
