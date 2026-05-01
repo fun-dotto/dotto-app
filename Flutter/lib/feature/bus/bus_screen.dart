@@ -32,8 +32,7 @@ final class BusScreen extends HookConsumerWidget {
       initialLength: 2,
       initialIndex: isWeekday ? 0 : 1,
     );
-    final isWeekdayRef = useRef(isWeekday);
-    isWeekdayRef.value = isWeekday;
+    final isWeekdayRef = useRef(isWeekday)..value = isWeekday;
 
     useEffect(() {
       void listener() {

@@ -12,8 +12,8 @@ abstract class DottoUser with _$DottoUser {
     required String name,
     required String email,
     required String avatarUrl,
-    required Grade? grade,
-    required AcademicArea? course,
-    required AcademicClass? class_,
+    Grade? grade,
+    AcademicArea? course,
+    AcademicClass? class_,
   }) = _DottoUser;
 }

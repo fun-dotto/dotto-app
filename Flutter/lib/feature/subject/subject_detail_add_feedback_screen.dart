@@ -34,6 +34,7 @@ final class SubjectDetailAddFeedbackScreen extends HookConsumerWidget {
           TextButton(
             onPressed: switch (user) {
               AsyncData(:final value) => () async {
+                if (value == null) return;
                 try {
                   if (score.value == null) {
                     ScaffoldMessenger.of(context).showSnackBar(

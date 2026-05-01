@@ -5,7 +5,6 @@ import 'package:dotto/controller/notification_status_controller.dart';
 import 'package:dotto/controller/user_controller.dart';
 import 'package:dotto/domain/academic_area.dart';
 import 'package:dotto/domain/academic_class.dart';
-import 'package:dotto/domain/dotto_user.dart';
 import 'package:dotto/domain/grade.dart';
 import 'package:dotto/feature/announcement/announcement_screen.dart';
 import 'package:dotto/feature/debug/debug_screen.dart';
@@ -25,16 +24,6 @@ import 'package:settings_ui/settings_ui.dart';
 
 final class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
-
-  static const _emptyUser = DottoUser(
-    id: '',
-    name: '',
-    email: '',
-    avatarUrl: '',
-    grade: null,
-    course: null,
-    class_: null,
-  );
 
   Widget _settingValueText(String text) {
     return ConstrainedBox(
@@ -124,7 +113,7 @@ final class SettingsScreen extends ConsumerWidget {
     final user = ref.watch(userProvider);
     final config = ref.watch(configProvider);
     final notificationStatus = ref.watch(notificationStatusProvider);
-    final isAuthenticated = user.value?.id.isNotEmpty ?? false;
+    final isAuthenticated = user.value != null;
 
     // 設定を取得
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -155,7 +144,7 @@ final class SettingsScreen extends ConsumerWidget {
                       data: (value) => CustomSettingsTile(
                         child: UserInfoTile(
                           user: value,
-                          onTap: value.id.isNotEmpty
+                          onTap: value != null
                               ? () async {
                                   await _showLogoutConfirmDialog(
                                     context,
@@ -174,17 +163,15 @@ final class SettingsScreen extends ConsumerWidget {
                       loading: () {
                         return CustomSettingsTile(
                           child: UserInfoTile(
-                            user: user.value ?? _emptyUser,
+                            user: user.value,
                             isLoading: true,
                           ),
                         );
                       },
                       error: (err, stack) {
-                        final previousUser = user.value ?? _emptyUser;
-                        final isAuthenticated = previousUser.id.isNotEmpty;
                         return CustomSettingsTile(
                           child: UserInfoTile(
-                            user: previousUser,
+                            user: user.value,
                             onTap: isAuthenticated
                                 ? () async {
                                     await _showLogoutConfirmDialog(

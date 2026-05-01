@@ -5,14 +5,14 @@ import 'package:shimmer_animation/shimmer_animation.dart';
 
 final class UserInfoTile extends StatelessWidget {
   const UserInfoTile({
-    required this.user,
+    this.user,
     super.key,
     this.onTap,
     this.isLoading = false,
   });
 
   /// 表示するユーザー（DottoUser）
-  final DottoUser user;
+  final DottoUser? user;
   final void Function()? onTap;
   final bool isLoading;
 
@@ -39,10 +39,15 @@ final class UserInfoTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final photoUrl = user.avatarUrl;
-    final name = (user.name.trim().isNotEmpty) ? user.name.trim() : 'ログイン';
-    final email = user.email.trim().isNotEmpty
-        ? '${user.email.trim()}でログイン中'
+    final trimmedAvatarUrl = user?.avatarUrl.trim();
+    final photoUrl = (trimmedAvatarUrl?.isNotEmpty ?? false)
+        ? trimmedAvatarUrl
+        : null;
+    final trimmedName = user?.name.trim();
+    final name = (trimmedName?.isNotEmpty ?? false) ? trimmedName! : 'ログイン';
+    final trimmedEmail = user?.email.trim();
+    final email = (trimmedEmail?.isNotEmpty ?? false)
+        ? '$trimmedEmailでログイン中'
         : 'Google アカウント (@fun.ac.jp) でログイン';
     final avatar = isLoading
         ? _buildSkeleton(width: 44, height: 44, shape: BoxShape.circle)
@@ -57,7 +62,7 @@ final class UserInfoTile extends StatelessWidget {
               child: SizedBox(
                 width: 48,
                 height: 48,
-                child: (photoUrl.trim().isNotEmpty)
+                child: photoUrl != null
                     ? Image.network(
                         photoUrl,
                         fit: BoxFit.cover,
