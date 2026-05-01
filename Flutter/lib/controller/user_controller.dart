@@ -23,16 +23,26 @@ final Provider<bool> isAuthenticatedProvider = Provider.autoDispose<bool>((
 @Riverpod(keepAlive: true)
 final class UserNotifier extends _$UserNotifier {
   @override
-  Future<DottoUser> build() async {
+  Future<DottoUser?> build() async {
     final userRepository = ref.read(userRepositoryProvider);
     final authState = ref.watch(firebaseAuthStateChangesProvider);
     final firebaseUser = authState.value;
-    return _syncUser(firebaseUser, userRepository);
-  }
-
-  Future<void> refresh() async {
-    ref.invalidateSelf();
-    await future;
+    if (firebaseUser == null) {
+      return null;
+    }
+    final existingUser = await userRepository.getUser(
+      firebaseUser: firebaseUser,
+    );
+    if (existingUser != null) {
+      return existingUser;
+    }
+    final newUser = DottoUser(
+      id: firebaseUser.uid,
+      name: firebaseUser.displayName ?? '',
+      email: firebaseUser.email ?? '',
+      avatarUrl: firebaseUser.photoURL ?? '',
+    );
+    return userRepository.upsertUser(firebaseUser: firebaseUser, user: newUser);
   }
 
   Future<void> signIn() async {
@@ -100,50 +110,6 @@ final class UserNotifier extends _$UserNotifier {
       await userRepository.upsertUser(firebaseUser: firebaseUser, user: user);
     } on Exception catch (e) {
       debugPrint('Error during upserting user: $e');
-    }
-  }
-
-  Future<DottoUser> _syncUser(
-    User? firebaseUser,
-    UserRepository userRepository,
-  ) async {
-    const defaultUser = DottoUser(
-      id: '',
-      name: '',
-      email: '',
-      avatarUrl: '',
-      grade: null,
-      course: null,
-      class_: null,
-    );
-    if (firebaseUser == null) {
-      return defaultUser;
-    }
-    try {
-      final existingUser = await userRepository.getUser(
-        firebaseUser: firebaseUser,
-      );
-      if (existingUser != null) {
-        return existingUser;
-      }
-      final newUser = defaultUser.copyWith(
-        id: firebaseUser.uid,
-        name: firebaseUser.displayName ?? '',
-        email: firebaseUser.email ?? '',
-        avatarUrl: firebaseUser.photoURL ?? '',
-      );
-      try {
-        return await userRepository.upsertUser(
-          firebaseUser: firebaseUser,
-          user: newUser,
-        );
-      } on Exception catch (e) {
-        debugPrint('Error during upserting user: $e');
-        return newUser;
-      }
-    } on Exception catch (e) {
-      debugPrint('Error during getting user: $e');
-      return defaultUser;
     }
   }
 }
