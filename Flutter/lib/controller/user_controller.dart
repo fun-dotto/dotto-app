@@ -37,6 +37,7 @@ final class UserNotifier extends _$UserNotifier {
 
   Future<void> signIn() async {
     final logger = ref.read(loggerProvider);
+    state = const AsyncValue.loading();
     try {
       await FirebaseAuthHelper.signIn();
       await logger.logLogin();
@@ -47,6 +48,7 @@ final class UserNotifier extends _$UserNotifier {
 
   Future<void> signOut() async {
     final logger = ref.read(loggerProvider);
+    state = const AsyncValue.loading();
     try {
       await FirebaseAuthHelper.signOut();
       await logger.logLogout();
