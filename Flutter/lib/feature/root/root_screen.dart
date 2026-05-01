@@ -17,7 +17,6 @@ import 'package:dotto/feature/subject/search_subject_screen.dart';
 import 'package:dotto/helper/firebase_auth_provider.dart';
 import 'package:dotto/helper/firebase_messaging_provider.dart';
 import 'package:dotto/helper/logger.dart';
-import 'package:dotto/helper/notification_helper.dart';
 import 'package:dotto/helper/url_launcher_helper.dart';
 import 'package:dotto/helper/user_preference_repository.dart';
 import 'package:dotto/repository/repository_provider.dart';
@@ -26,6 +25,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 final class RootScreen extends ConsumerWidget {
   const RootScreen({super.key});
@@ -94,7 +94,7 @@ final class RootScreen extends ConsumerWidget {
         TextButton(
           onPressed: () async {
             Navigator.of(context).pop();
-            await ref.read(notificationHelperProvider).openSystemSettings();
+            await openAppSettings();
           },
           child: const Text('設定を開く'),
         ),
@@ -204,9 +204,7 @@ final class RootScreen extends ConsumerWidget {
           }
 
           if (!value.hasShownNotificationAlert) {
-            final status = await ref.read(
-              notificationStatusProvider.future,
-            );
+            final status = await ref.read(notificationStatusProvider.future);
             if (!context.mounted) return;
             if (await _shouldPromptNotification(status)) {
               if (!context.mounted) return;

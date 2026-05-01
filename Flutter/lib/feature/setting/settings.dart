@@ -12,7 +12,6 @@ import 'package:dotto/feature/github_contributor/github_contributor_screen.dart'
 import 'package:dotto/feature/onboarding/onboarding_screen.dart';
 import 'package:dotto/feature/setting/widget/license.dart';
 import 'package:dotto/feature/setting/widget/user_info_tile.dart';
-import 'package:dotto/helper/notification_helper.dart';
 import 'package:dotto/helper/url_launcher_helper.dart';
 import 'package:dotto_design_system/style/semantic_color.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -20,6 +19,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:settings_ui/settings_ui.dart';
 
 final class SettingsScreen extends ConsumerWidget {
@@ -118,9 +118,7 @@ final class SettingsScreen extends ConsumerWidget {
     // 設定を取得
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(configProvider.notifier).refresh();
-      unawaited(
-        ref.read(notificationStatusProvider.notifier).refresh(),
-      );
+      unawaited(ref.read(notificationStatusProvider.notifier).refresh());
     });
 
     return Scaffold(
@@ -383,9 +381,7 @@ final class SettingsScreen extends ConsumerWidget {
                         notificationStatus.value?.label ?? '確認中',
                       ),
                       onPressed: (_) async {
-                        await ref
-                            .read(notificationHelperProvider)
-                            .openSystemSettings();
+                        await openAppSettings();
                         await ref
                             .read(notificationStatusProvider.notifier)
                             .refresh();
