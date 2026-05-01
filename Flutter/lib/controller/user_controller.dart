@@ -3,22 +3,15 @@ import 'package:dotto/domain/academic_class.dart';
 import 'package:dotto/domain/dotto_user.dart';
 import 'package:dotto/domain/grade.dart';
 import 'package:dotto/helper/firebase_auth_helper.dart';
+import 'package:dotto/helper/firebase_auth_provider.dart';
 import 'package:dotto/helper/logger.dart';
-import 'package:dotto/repository/fcm_token_repository.dart';
-import 'package:dotto/repository/repository_provider.dart';
 import 'package:dotto/repository/user_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'user_controller.g.dart';
-
-final StreamProvider<User?> firebaseAuthStateChangesProvider =
-    StreamProvider.autoDispose<User?>((ref) {
-      return FirebaseAuth.instance.authStateChanges();
-    });
 
 final Provider<bool> isAuthenticatedProvider = Provider.autoDispose<bool>((
   ref,
@@ -27,55 +20,51 @@ final Provider<bool> isAuthenticatedProvider = Provider.autoDispose<bool>((
   return authState.value != null;
 });
 
-@riverpod
+@Riverpod(keepAlive: true)
 final class UserNotifier extends _$UserNotifier {
   @override
-  Future<DottoUser> build() async {
+  Future<DottoUser?> build() async {
     final userRepository = ref.read(userRepositoryProvider);
-    final fcmTokenRepository = ref.read(fcmTokenRepositoryProvider);
     final authState = ref.watch(firebaseAuthStateChangesProvider);
     final firebaseUser = authState.value;
-    if (firebaseUser != null) {
-      await _saveFCMToken(fcmTokenRepository);
+    if (firebaseUser == null) {
+      return null;
     }
-    return _syncUser(firebaseUser, userRepository);
-  }
-
-  Future<void> refresh() async {
-    final userRepository = ref.read(userRepositoryProvider);
-    final fcmTokenRepository = ref.read(fcmTokenRepositoryProvider);
-    state = const AsyncValue.loading();
-    state = await AsyncValue.guard(() async {
-      final firebaseUser = FirebaseAuth.instance.currentUser;
-      if (firebaseUser != null) {
-        await _saveFCMToken(fcmTokenRepository);
-      }
-      return _syncUser(firebaseUser, userRepository);
-    });
+    final existingUser = await userRepository.getUser(
+      firebaseUser: firebaseUser,
+    );
+    if (existingUser != null) {
+      return existingUser;
+    }
+    final newUser = DottoUser(
+      id: firebaseUser.uid,
+      name: firebaseUser.displayName ?? '',
+      email: firebaseUser.email ?? '',
+      avatarUrl: firebaseUser.photoURL ?? '',
+    );
+    return userRepository.upsertUser(firebaseUser: firebaseUser, user: newUser);
   }
 
   Future<void> signIn() async {
-    final userRepository = ref.read(userRepositoryProvider);
-    final fcmTokenRepository = ref.read(fcmTokenRepositoryProvider);
     final logger = ref.read(loggerProvider);
     state = const AsyncValue.loading();
-    state = await AsyncValue.guard(() async {
-      final firebaseUser = await FirebaseAuthHelper.signIn();
+    try {
+      await FirebaseAuthHelper.signIn();
       await logger.logLogin();
-      await _saveFCMToken(fcmTokenRepository);
-      return _syncUser(firebaseUser, userRepository);
-    });
+    } on Object catch (error, stackTrace) {
+      state = AsyncValue.error(error, stackTrace);
+    }
   }
 
   Future<void> signOut() async {
-    final userRepository = ref.read(userRepositoryProvider);
     final logger = ref.read(loggerProvider);
     state = const AsyncValue.loading();
-    state = await AsyncValue.guard(() async {
+    try {
       await FirebaseAuthHelper.signOut();
       await logger.logLogout();
-      return _syncUser(null, userRepository);
-    });
+    } on Object catch (error, stackTrace) {
+      state = AsyncValue.error(error, stackTrace);
+    }
   }
 
   Future<void> setGrade(Grade? grade) async {
@@ -122,53 +111,5 @@ final class UserNotifier extends _$UserNotifier {
     } on Exception catch (e) {
       debugPrint('Error during upserting user: $e');
     }
-  }
-
-  Future<DottoUser> _syncUser(
-    User? firebaseUser,
-    UserRepository userRepository,
-  ) async {
-    const defaultUser = DottoUser(
-      id: '',
-      name: '',
-      email: '',
-      avatarUrl: '',
-      grade: null,
-      course: null,
-      class_: null,
-    );
-    if (firebaseUser == null) {
-      return defaultUser;
-    }
-    try {
-      final user =
-          await userRepository.getUser(firebaseUser: firebaseUser) ??
-          defaultUser.copyWith(
-            id: firebaseUser.uid,
-            name: firebaseUser.displayName ?? '',
-            email: firebaseUser.email ?? '',
-            avatarUrl: firebaseUser.photoURL ?? '',
-          );
-      try {
-        return await userRepository.upsertUser(
-          firebaseUser: firebaseUser,
-          user: user,
-        );
-      } on Exception catch (e) {
-        debugPrint('Error during upserting user: $e');
-        return user;
-      }
-    } on Exception catch (e) {
-      debugPrint('Error during getting user: $e');
-      return defaultUser;
-    }
-  }
-
-  Future<void> _saveFCMToken(FCMTokenRepository fcmTokenRepository) async {
-    final fcmToken = await FirebaseMessaging.instance.getToken();
-    if (fcmToken == null) {
-      return;
-    }
-    await fcmTokenRepository.upsertToken(token: fcmToken);
   }
 }
