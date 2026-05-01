@@ -78,15 +78,17 @@ final class RootScreen extends ConsumerWidget {
     ref
       ..listen(firebaseAuthStateChangesProvider, (prev, next) async {
         try {
-          final prevUser = prev?.value;
-          final nextUser = next.value;
-          if (prevUser == null && nextUser != null) {
+          final prevUser = prev?.asData?.value;
+          final nextUser = next.asData?.value;
+          if (prevUser?.uid == nextUser?.uid) return;
+
+          if (nextUser != null) {
             final token = await FirebaseMessaging.instance.getToken();
             if (token == null) return;
             await ref
                 .read(fcmTokenRepositoryProvider)
                 .upsertToken(token: token);
-          } else if (prevUser != null && nextUser == null) {
+          } else {
             await FirebaseMessaging.instance.deleteToken();
           }
         } on Object catch (error, stackTrace) {
