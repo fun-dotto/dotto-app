@@ -84,13 +84,10 @@ final class RootScreen extends ConsumerWidget {
           final nextUser = next.asData?.value;
           if (prevUser?.uid == nextUser?.uid) return;
 
-          if (nextUser != null) {
-            final token = await FirebaseMessaging.instance.getToken();
-            if (token == null) return;
-            await fcmTokenRepository.upsertToken(token: token);
-          } else {
-            await FirebaseMessaging.instance.deleteToken();
-          }
+          if (nextUser == null) return;
+          final token = await FirebaseMessaging.instance.getToken();
+          if (token == null) return;
+          await fcmTokenRepository.upsertToken(token: token);
         } on Object catch (error, stackTrace) {
           await logger.logError(
             error,
