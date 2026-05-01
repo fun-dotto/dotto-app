@@ -39,10 +39,15 @@ final class UserInfoTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final photoUrl = user?.avatarUrl;
-    final name = user != null ? user!.name.trim() : 'ログイン';
-    final email = user != null
-        ? '${user!.email.trim()}でログイン中'
+    final trimmedAvatarUrl = user?.avatarUrl.trim();
+    final photoUrl = (trimmedAvatarUrl?.isNotEmpty ?? false)
+        ? trimmedAvatarUrl
+        : null;
+    final trimmedName = user?.name.trim();
+    final name = (trimmedName?.isNotEmpty ?? false) ? trimmedName! : 'ログイン';
+    final trimmedEmail = user?.email.trim();
+    final email = (trimmedEmail?.isNotEmpty ?? false)
+        ? '$trimmedEmailでログイン中'
         : 'Google アカウント (@fun.ac.jp) でログイン';
     final avatar = isLoading
         ? _buildSkeleton(width: 44, height: 44, shape: BoxShape.circle)
