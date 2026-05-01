@@ -24,6 +24,7 @@ import 'package:dotto/repository/repository_provider.dart';
 import 'package:dotto/widget/invalid_app_version_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -59,6 +60,7 @@ final class RootScreen extends ConsumerWidget {
 
   Future<bool> _shouldPromptNotification(NotificationAlertStatus status) async {
     if (!status.shouldPromptUser) return false;
+    if (kDebugMode) return true;
     final lastShown = await UserPreferenceRepository.getInt(
       UserPreferenceKeys.notificationPromptLastShownAt,
     );
