@@ -209,19 +209,34 @@ final class RootScreen extends ConsumerWidget {
           }
 
           if (!value.hasShownNotificationAlert) {
-            final status = await ref.read(notificationStatusProvider.future);
-            if (!context.mounted) return;
-            if (await _shouldPromptNotification(status)) {
+            try {
+              final status = await ref.read(notificationStatusProvider.future);
               if (!context.mounted) return;
-              ref
-                  .read(rootViewModelProvider.notifier)
-                  .markNotificationAlertShown();
-              await showDialog<void>(
-                context: context,
-                builder: (context) =>
-                    _notificationAlertDialog(context: context, status: status),
-              );
-            } else {
+              if (await _shouldPromptNotification(status)) {
+                if (!context.mounted) return;
+                ref
+                    .read(rootViewModelProvider.notifier)
+                    .markNotificationAlertShown();
+                await showDialog<void>(
+                  context: context,
+                  builder: (context) => _notificationAlertDialog(
+                    context: context,
+                    status: status,
+                  ),
+                );
+              } else {
+                ref
+                    .read(rootViewModelProvider.notifier)
+                    .markNotificationAlertEvaluated();
+              }
+            } on Object catch (error, stackTrace) {
+              await ref
+                  .read(loggerProvider)
+                  .logError(
+                    error,
+                    stackTrace,
+                    reason: 'notificationStatusProvider read failed',
+                  );
               ref
                   .read(rootViewModelProvider.notifier)
                   .markNotificationAlertEvaluated();
