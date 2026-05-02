@@ -218,10 +218,8 @@ final class RootScreen extends ConsumerWidget {
                   .markNotificationAlertShown();
               await showDialog<void>(
                 context: context,
-                builder: (context) => _notificationAlertDialog(
-                  context: context,
-                  status: status,
-                ),
+                builder: (context) =>
+                    _notificationAlertDialog(context: context, status: status),
               );
             } else {
               ref
