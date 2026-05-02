@@ -5,7 +5,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'notification_status_controller.g.dart';
 
 @riverpod
-class NotificationStatusNotifier extends _$NotificationStatusNotifier {
+final class NotificationStatusNotifier extends _$NotificationStatusNotifier {
   @override
   Future<NotificationAlertStatus> build() async {
     return ref.read(notificationHelperProvider).fetchAlertStatus();
