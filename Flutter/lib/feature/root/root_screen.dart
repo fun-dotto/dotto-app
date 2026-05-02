@@ -85,7 +85,8 @@ final class RootScreen extends ConsumerWidget {
             '設定アプリから通知を許可してください。',
       NotificationAlertStatus.alertDisabled =>
         '通知バナーが無効になっています。休講・補講・教室変更などのお知らせを目立つ形で受け取るには、設定アプリから通知バナーを有効にしてください。',
-      _ => '',
+      NotificationAlertStatus.enabled ||
+      NotificationAlertStatus.notDetermined => '',
     };
     return AlertDialog(
       title: const Text('通知を有効にしますか？'),
