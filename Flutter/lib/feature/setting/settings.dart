@@ -18,11 +18,12 @@ import 'package:dotto_design_system/style/semantic_color.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:settings_ui/settings_ui.dart';
 
-final class SettingsScreen extends ConsumerWidget {
+final class SettingsScreen extends HookConsumerWidget {
   const SettingsScreen({super.key});
 
   Widget _settingValueText(String text) {
@@ -115,10 +116,13 @@ final class SettingsScreen extends ConsumerWidget {
     final notificationStatus = ref.watch(notificationStatusProvider);
     final isAuthenticated = user.value != null;
 
-    // 設定を取得
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(configProvider.notifier).refresh();
-    });
+    // 設定を取得（初回マウント時のみ）
+    useEffect(() {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref.read(configProvider.notifier).refresh();
+      });
+      return null;
+    }, const []);
 
     return Scaffold(
       appBar: AppBar(
