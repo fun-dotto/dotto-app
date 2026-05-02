@@ -203,23 +203,37 @@ final class RootScreen extends HookConsumerWidget {
         }
 
         WidgetsBinding.instance.addPostFrameCallback((_) async {
-          if (!value.isLatestAppVersion && !value.hasShownUpdateAlert) {
+          // 同一フレーム内で複数のコールバックが積まれたときに重複表示しない
+          // よう、コールバック実行時点の最新状態を再取得して判定する。
+          final latest = ref.read(rootViewModelProvider).value;
+          if (latest == null) return;
+
+          if (!latest.isLatestAppVersion && !latest.hasShownUpdateAlert) {
             ref.read(rootViewModelProvider.notifier).onUpdateAlertShown();
             await showDialog<void>(
               context: context,
               builder: (context) => _updateAlertDialog(
                 context: context,
-                appStorePageUrl: value.appStorePageUrl,
-                currentAppVersion: value.currentAppVersion,
-                latestAppVersion: value.latestAppVersion,
+                appStorePageUrl: latest.appStorePageUrl,
+                currentAppVersion: latest.currentAppVersion,
+                latestAppVersion: latest.latestAppVersion,
               ),
             );
           }
 
-          if (!value.hasShownNotificationAlert) {
+          if (!ref
+              .read(rootViewModelProvider)
+              .value!
+              .hasShownNotificationAlert) {
             try {
               final status = await ref.read(notificationStatusProvider.future);
               if (!context.mounted) return;
+              if (ref
+                  .read(rootViewModelProvider)
+                  .value!
+                  .hasShownNotificationAlert) {
+                return;
+              }
               if (await _shouldPromptNotification(status)) {
                 if (!context.mounted) return;
                 ref
