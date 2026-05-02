@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:app_settings/app_settings.dart';
 import 'package:dotto/api/api_environment.dart';
 import 'package:dotto/controller/config_controller.dart';
 import 'package:dotto/controller/notification_status_controller.dart';
@@ -18,6 +17,7 @@ import 'package:dotto/feature/subject/search_subject_screen.dart';
 import 'package:dotto/helper/firebase_auth_provider.dart';
 import 'package:dotto/helper/firebase_messaging_provider.dart';
 import 'package:dotto/helper/logger.dart';
+import 'package:dotto/helper/notification_helper.dart';
 import 'package:dotto/helper/url_launcher_helper.dart';
 import 'package:dotto/helper/user_preference_repository.dart';
 import 'package:dotto/repository/repository_provider.dart';
@@ -73,6 +73,7 @@ final class RootScreen extends ConsumerWidget {
 
   Widget _notificationAlertDialog({
     required BuildContext context,
+    required WidgetRef ref,
     required NotificationAlertStatus status,
   }) {
     final message = switch (status) {
@@ -97,9 +98,7 @@ final class RootScreen extends ConsumerWidget {
         TextButton(
           onPressed: () async {
             Navigator.of(context).pop();
-            await AppSettings.openAppSettings(
-              type: AppSettingsType.notification,
-            );
+            await ref.read(notificationHelperProvider).openSystemSettings();
           },
           child: const Text('設定を開く'),
         ),
@@ -221,6 +220,7 @@ final class RootScreen extends ConsumerWidget {
                   context: context,
                   builder: (context) => _notificationAlertDialog(
                     context: context,
+                    ref: ref,
                     status: status,
                   ),
                 );

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:app_settings/app_settings.dart';
 import 'package:dotto/domain/notification_alert_status.dart';
 import 'package:dotto/helper/url_launcher_helper.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -12,6 +13,7 @@ final notificationHelperProvider = Provider<NotificationHelper>(
 abstract class NotificationHelper {
   Future<void> setupInteractedMessage();
   Future<NotificationAlertStatus> fetchAlertStatus();
+  Future<void> openSystemSettings();
 }
 
 final class NotificationHelperImpl implements NotificationHelper {
@@ -39,6 +41,11 @@ final class NotificationHelperImpl implements NotificationHelper {
   Future<NotificationAlertStatus> fetchAlertStatus() async {
     final settings = await FirebaseMessaging.instance.getNotificationSettings();
     return NotificationAlertStatus.fromSettings(settings);
+  }
+
+  @override
+  Future<void> openSystemSettings() async {
+    await AppSettings.openAppSettings(type: AppSettingsType.notification);
   }
 
   Future<void> _handleMessage(RemoteMessage message) async {

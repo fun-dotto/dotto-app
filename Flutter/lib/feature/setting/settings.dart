@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:app_settings/app_settings.dart';
 import 'package:dotto/controller/config_controller.dart';
 import 'package:dotto/controller/notification_status_controller.dart';
 import 'package:dotto/controller/user_controller.dart';
@@ -13,6 +12,7 @@ import 'package:dotto/feature/github_contributor/github_contributor_screen.dart'
 import 'package:dotto/feature/onboarding/onboarding_screen.dart';
 import 'package:dotto/feature/setting/widget/license.dart';
 import 'package:dotto/feature/setting/widget/user_info_tile.dart';
+import 'package:dotto/helper/notification_helper.dart';
 import 'package:dotto/helper/url_launcher_helper.dart';
 import 'package:dotto_design_system/style/semantic_color.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -380,9 +380,9 @@ final class SettingsScreen extends ConsumerWidget {
                         notificationStatus.value?.label ?? '確認中',
                       ),
                       onPressed: (_) async {
-                        await AppSettings.openAppSettings(
-                          type: AppSettingsType.notification,
-                        );
+                        await ref
+                            .read(notificationHelperProvider)
+                            .openSystemSettings();
                         await ref
                             .read(notificationStatusProvider.notifier)
                             .refresh();
