@@ -75,4 +75,27 @@ void main() {
       expect(result, NotificationAlertStatus.enabled);
     });
   });
+
+  group('NotificationAlertStatus.shouldPromptUser', () {
+    test('denied / provisional / alertDisabled は true', () {
+      expect(NotificationAlertStatus.denied.shouldPromptUser, isTrue);
+      expect(NotificationAlertStatus.provisional.shouldPromptUser, isTrue);
+      expect(NotificationAlertStatus.alertDisabled.shouldPromptUser, isTrue);
+    });
+
+    test('enabled / notDetermined は false', () {
+      expect(NotificationAlertStatus.enabled.shouldPromptUser, isFalse);
+      expect(NotificationAlertStatus.notDetermined.shouldPromptUser, isFalse);
+    });
+  });
+
+  group('NotificationAlertStatus.isProminentEnabled', () {
+    test('enabled のみ true', () {
+      expect(NotificationAlertStatus.enabled.isProminentEnabled, isTrue);
+      expect(NotificationAlertStatus.provisional.isProminentEnabled, isFalse);
+      expect(NotificationAlertStatus.alertDisabled.isProminentEnabled, isFalse);
+      expect(NotificationAlertStatus.denied.isProminentEnabled, isFalse);
+      expect(NotificationAlertStatus.notDetermined.isProminentEnabled, isFalse);
+    });
+  });
 }
