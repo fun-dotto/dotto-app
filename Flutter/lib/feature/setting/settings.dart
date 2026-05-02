@@ -383,9 +383,6 @@ final class SettingsScreen extends ConsumerWidget {
                         await ref
                             .read(notificationHelperProvider)
                             .openSystemSettings();
-                        await ref
-                            .read(notificationStatusProvider.notifier)
-                            .refresh();
                       },
                     ),
                     // フィードバック

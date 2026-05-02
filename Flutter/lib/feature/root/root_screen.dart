@@ -26,9 +26,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-final class RootScreen extends ConsumerWidget {
+final class RootScreen extends HookConsumerWidget {
   const RootScreen({super.key});
 
   List<TabItem> _activeTabs({required bool isFunchEnabled}) {
@@ -132,6 +133,13 @@ final class RootScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    useEffect(() {
+      final listener = AppLifecycleListener(
+        onResume: () => ref.invalidate(notificationStatusProvider),
+      );
+      return listener.dispose;
+    }, const []);
+
     ref
       ..listen(firebaseAuthStateChangesProvider, (prev, next) async {
         final fcmTokenRepository = ref.read(fcmTokenRepositoryProvider);
