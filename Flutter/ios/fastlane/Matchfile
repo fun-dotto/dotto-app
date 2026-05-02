@@ -1,4 +1,4 @@
-git_url("git@github.com:fun-dotto/dotto-ios-certificates.git")
+git_url("git@github.com:fun-dotto/apple-certificates.git")
 
 storage_mode("git")
 
