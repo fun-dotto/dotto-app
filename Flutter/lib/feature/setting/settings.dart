@@ -118,7 +118,6 @@ final class SettingsScreen extends ConsumerWidget {
     // 設定を取得
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(configProvider.notifier).refresh();
-      unawaited(ref.read(notificationStatusProvider.notifier).refresh());
     });
 
     return Scaffold(
