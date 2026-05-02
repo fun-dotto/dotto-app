@@ -73,7 +73,6 @@ final class RootScreen extends ConsumerWidget {
 
   Widget _notificationAlertDialog({
     required BuildContext context,
-    required WidgetRef ref,
     required NotificationAlertStatus status,
   }) {
     final message = switch (status) {
@@ -216,19 +215,18 @@ final class RootScreen extends ConsumerWidget {
               if (!context.mounted) return;
               ref
                   .read(rootViewModelProvider.notifier)
-                  .onNotificationAlertShown();
+                  .markNotificationAlertShown();
               await showDialog<void>(
                 context: context,
                 builder: (context) => _notificationAlertDialog(
                   context: context,
-                  ref: ref,
                   status: status,
                 ),
               );
             } else {
               ref
                   .read(rootViewModelProvider.notifier)
-                  .onNotificationAlertShown();
+                  .markNotificationAlertEvaluated();
             }
           }
         });
