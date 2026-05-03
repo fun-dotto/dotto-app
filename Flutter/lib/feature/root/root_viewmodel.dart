@@ -150,16 +150,18 @@ class RootViewModel extends _$RootViewModel {
   }
 
   void markNotificationAlertEvaluated() {
-    state = AsyncValue.data(
-      state.value!.copyWith(hasShownNotificationAlert: true),
-    );
+    _markNotificationAlertHandled(persistLastShownAt: false);
   }
 
   void markNotificationAlertShown() {
+    _markNotificationAlertHandled(persistLastShownAt: true);
+  }
+
+  void _markNotificationAlertHandled({required bool persistLastShownAt}) {
     state = AsyncValue.data(
       state.value!.copyWith(hasShownNotificationAlert: true),
     );
-    if (kDebugMode) return;
+    if (!persistLastShownAt || kDebugMode) return;
     unawaited(
       UserPreferenceRepository.setInt(
         UserPreferenceKeys.notificationPromptLastShownAt,
