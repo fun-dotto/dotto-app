@@ -360,13 +360,13 @@ final class _BusTripTile extends StatelessWidget {
   final String myBusStopName;
   final VoidCallback? onTap;
 
-  BusType _busType() {
+  BusLandmark _busType() {
     if (['55', '55A', '55B', '55C', '55E', '55F'].contains(route)) {
-      return BusType.goryokaku;
+      return BusLandmark.goryokaku;
     }
-    if (route == '55G') return BusType.syowa;
-    if (route == '55H') return BusType.kameda;
-    return BusType.other;
+    if (route == '55G') return BusLandmark.syowa;
+    if (route == '55H') return BusLandmark.kameda;
+    return BusLandmark.other;
   }
 
   @override
@@ -381,7 +381,7 @@ final class _BusTripTile extends StatelessWidget {
         ? _funBusStopName
         : (isKameda ? '亀田支所前' : myBusStopName);
     final tripType = _busType();
-    final directionText = tripType != BusType.other
+    final directionText = tripType != BusLandmark.other
         ? '${tripType.label}${isTo ? 'から' : '行き'}'
         : '';
 
