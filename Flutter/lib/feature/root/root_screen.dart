@@ -221,49 +221,48 @@ final class RootScreen extends HookConsumerWidget {
             );
           }
 
-          if (!ref
-              .read(rootViewModelProvider)
-              .value!
-              .hasShownNotificationAlert) {
-            try {
-              final status = await ref.read(notificationStatusProvider.future);
+          if (!context.mounted) return;
+          final afterUpdate = ref.read(rootViewModelProvider).value;
+          if (afterUpdate == null || afterUpdate.hasShownNotificationAlert) {
+            return;
+          }
+
+          try {
+            final status = await ref.read(notificationStatusProvider.future);
+            if (!context.mounted) return;
+            final current = ref.read(rootViewModelProvider).value;
+            if (current == null || current.hasShownNotificationAlert) {
+              return;
+            }
+            if (await _shouldPromptNotification(status)) {
               if (!context.mounted) return;
-              if (ref
-                  .read(rootViewModelProvider)
-                  .value!
-                  .hasShownNotificationAlert) {
-                return;
-              }
-              if (await _shouldPromptNotification(status)) {
-                if (!context.mounted) return;
-                ref
-                    .read(rootViewModelProvider.notifier)
-                    .markNotificationAlertShown();
-                await showDialog<void>(
+              ref
+                  .read(rootViewModelProvider.notifier)
+                  .markNotificationAlertShown();
+              await showDialog<void>(
+                context: context,
+                builder: (context) => _notificationAlertDialog(
                   context: context,
-                  builder: (context) => _notificationAlertDialog(
-                    context: context,
-                    ref: ref,
-                    status: status,
-                  ),
-                );
-              } else {
-                ref
-                    .read(rootViewModelProvider.notifier)
-                    .markNotificationAlertEvaluated();
-              }
-            } on Object catch (error, stackTrace) {
-              await ref
-                  .read(loggerProvider)
-                  .logError(
-                    error,
-                    stackTrace,
-                    reason: 'notificationStatusProvider read failed',
-                  );
+                  ref: ref,
+                  status: status,
+                ),
+              );
+            } else {
               ref
                   .read(rootViewModelProvider.notifier)
                   .markNotificationAlertEvaluated();
             }
+          } on Object catch (error, stackTrace) {
+            await ref
+                .read(loggerProvider)
+                .logError(
+                  error,
+                  stackTrace,
+                  reason: 'notificationStatusProvider read failed',
+                );
+            ref
+                .read(rootViewModelProvider.notifier)
+                .markNotificationAlertEvaluated();
           }
         });
 
