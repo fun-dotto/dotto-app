@@ -12,6 +12,7 @@ abstract class BusStop with _$BusStop {
     bool? selectable,
   }) = _BusStop;
 
+  @Deprecated('ドメインモデルでFirebaseからの変換を行うことは不適切。Dotto API導入後に削除予定。')
   factory BusStop.fromFirebase(Map<String, dynamic> map) {
     final routeList = (map['route'] as List).map((e) => e.toString()).toList();
     return BusStop(
