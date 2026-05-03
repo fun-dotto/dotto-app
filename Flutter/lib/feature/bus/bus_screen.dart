@@ -382,7 +382,7 @@ final class _BusTripTile extends StatelessWidget {
         : (isKameda ? '亀田支所前' : myBusStopName);
     final tripType = _busType();
     final directionText = tripType != BusType.other
-        ? '${tripType.where}${isTo ? 'から' : '行き'}'
+        ? '${tripType.label}${isTo ? 'から' : '行き'}'
         : '';
 
     return InkWell(

@@ -4,7 +4,7 @@ enum BusType {
   syowa('昭和方面'),
   other('');
 
-  const BusType(this.where);
+  const BusType(this.label);
 
-  final String where;
+  final String label;
 }
