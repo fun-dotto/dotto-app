@@ -10,6 +10,7 @@ import 'package:dotto/helper/logger.dart';
 import 'package:dotto/helper/notification_helper.dart';
 import 'package:dotto/helper/remote_config_helper.dart';
 import 'package:dotto/helper/user_preference_repository.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -92,6 +93,7 @@ class RootViewModel extends _$RootViewModel {
       selectedTab: tabs.first,
       hasShownAppTutorial: hasShownAppTutorial,
       hasShownUpdateAlert: false,
+      hasShownNotificationAlert: false,
       isValidAppVersion: versionEvaluation.isValidAppVersion,
       isLatestAppVersion: versionEvaluation.isLatestAppVersion,
       currentAppVersion: currentAppVersion,
@@ -145,5 +147,26 @@ class RootViewModel extends _$RootViewModel {
 
   void onUpdateAlertShown() {
     state = AsyncValue.data(state.value!.copyWith(hasShownUpdateAlert: true));
+  }
+
+  void markNotificationAlertEvaluated() {
+    _markNotificationAlertHandled(persistLastShownAt: false);
+  }
+
+  void markNotificationAlertShown() {
+    _markNotificationAlertHandled(persistLastShownAt: true);
+  }
+
+  void _markNotificationAlertHandled({required bool persistLastShownAt}) {
+    state = AsyncValue.data(
+      state.value!.copyWith(hasShownNotificationAlert: true),
+    );
+    if (!persistLastShownAt || kDebugMode) return;
+    unawaited(
+      UserPreferenceRepository.setInt(
+        UserPreferenceKeys.notificationPromptLastShownAt,
+        DateTime.now().millisecondsSinceEpoch,
+      ),
+    );
   }
 }

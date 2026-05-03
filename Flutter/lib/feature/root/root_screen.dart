@@ -2,7 +2,10 @@ import 'dart:io';
 
 import 'package:dotto/api/api_environment.dart';
 import 'package:dotto/controller/config_controller.dart';
+import 'package:dotto/controller/notification_status_controller.dart';
+import 'package:dotto/domain/notification_alert_status.dart';
 import 'package:dotto/domain/tab_item.dart';
+import 'package:dotto/domain/user_preference_keys.dart';
 import 'package:dotto/feature/bus/bus_screen.dart';
 import 'package:dotto/feature/course/course_screen.dart';
 import 'package:dotto/feature/funch/funch.dart';
@@ -14,15 +17,19 @@ import 'package:dotto/feature/subject/search_subject_screen.dart';
 import 'package:dotto/helper/firebase_auth_provider.dart';
 import 'package:dotto/helper/firebase_messaging_provider.dart';
 import 'package:dotto/helper/logger.dart';
+import 'package:dotto/helper/notification_helper.dart';
 import 'package:dotto/helper/url_launcher_helper.dart';
+import 'package:dotto/helper/user_preference_repository.dart';
 import 'package:dotto/repository/repository_provider.dart';
 import 'package:dotto/widget/invalid_app_version_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-final class RootScreen extends ConsumerWidget {
+final class RootScreen extends HookConsumerWidget {
   const RootScreen({super.key});
 
   List<TabItem> _activeTabs({required bool isFunchEnabled}) {
@@ -50,6 +57,57 @@ final class RootScreen extends ConsumerWidget {
     };
   }
 
+  static const _notificationPromptCooldown = Duration(days: 7);
+
+  Future<bool> _shouldPromptNotification(NotificationAlertStatus status) async {
+    if (!status.shouldPromptUser) return false;
+    if (kDebugMode) return true;
+    final lastShown = await UserPreferenceRepository.getInt(
+      UserPreferenceKeys.notificationPromptLastShownAt,
+    );
+    if (lastShown == null) return true;
+    final elapsed = DateTime.now().difference(
+      DateTime.fromMillisecondsSinceEpoch(lastShown),
+    );
+    return elapsed >= _notificationPromptCooldown;
+  }
+
+  Widget _notificationAlertDialog({
+    required BuildContext context,
+    required WidgetRef ref,
+    required NotificationAlertStatus status,
+  }) {
+    final message = switch (status) {
+      NotificationAlertStatus.denied =>
+        '通知が拒否されています。休講・補講・教室変更などのお知らせを受け取るには、設定アプリから通知を許可してください。',
+      NotificationAlertStatus.provisional =>
+        '現在は静かな配信のみ許可されています。'
+            '休講・補講・教室変更などのお知らせをバナーやサウンドで受け取るには、'
+            '設定アプリから通知を許可してください。',
+      NotificationAlertStatus.alertDisabled =>
+        '通知バナーが無効になっています。休講・補講・教室変更などのお知らせを目立つ形で受け取るには、設定アプリから通知バナーを有効にしてください。',
+      NotificationAlertStatus.enabled ||
+      NotificationAlertStatus.notDetermined => '',
+    };
+    return AlertDialog(
+      title: const Text('通知を有効にしますか？'),
+      content: Text(message),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('あとで'),
+        ),
+        TextButton(
+          onPressed: () async {
+            Navigator.of(context).pop();
+            await ref.read(notificationHelperProvider).openSystemSettings();
+          },
+          child: const Text('設定を開く'),
+        ),
+      ],
+    );
+  }
+
   Widget _updateAlertDialog({
     required BuildContext context,
     required String appStorePageUrl,
@@ -75,6 +133,13 @@ final class RootScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    useEffect(() {
+      final listener = AppLifecycleListener(
+        onResume: () => ref.invalidate(notificationStatusProvider),
+      );
+      return listener.dispose;
+    }, const []);
+
     ref
       ..listen(firebaseAuthStateChangesProvider, (prev, next) async {
         final fcmTokenRepository = ref.read(fcmTokenRepositoryProvider);
@@ -138,17 +203,66 @@ final class RootScreen extends ConsumerWidget {
         }
 
         WidgetsBinding.instance.addPostFrameCallback((_) async {
-          if (!value.isLatestAppVersion && !value.hasShownUpdateAlert) {
+          // 同一フレーム内で複数のコールバックが積まれたときに重複表示しない
+          // よう、コールバック実行時点の最新状態を再取得して判定する。
+          final latest = ref.read(rootViewModelProvider).value;
+          if (latest == null) return;
+
+          if (!latest.isLatestAppVersion && !latest.hasShownUpdateAlert) {
             ref.read(rootViewModelProvider.notifier).onUpdateAlertShown();
             await showDialog<void>(
               context: context,
               builder: (context) => _updateAlertDialog(
                 context: context,
-                appStorePageUrl: value.appStorePageUrl,
-                currentAppVersion: value.currentAppVersion,
-                latestAppVersion: value.latestAppVersion,
+                appStorePageUrl: latest.appStorePageUrl,
+                currentAppVersion: latest.currentAppVersion,
+                latestAppVersion: latest.latestAppVersion,
               ),
             );
+          }
+
+          if (!context.mounted) return;
+          final afterUpdate = ref.read(rootViewModelProvider).value;
+          if (afterUpdate == null || afterUpdate.hasShownNotificationAlert) {
+            return;
+          }
+
+          try {
+            final status = await ref.read(notificationStatusProvider.future);
+            if (!context.mounted) return;
+            final current = ref.read(rootViewModelProvider).value;
+            if (current == null || current.hasShownNotificationAlert) {
+              return;
+            }
+            if (await _shouldPromptNotification(status)) {
+              if (!context.mounted) return;
+              ref
+                  .read(rootViewModelProvider.notifier)
+                  .markNotificationAlertShown();
+              await showDialog<void>(
+                context: context,
+                builder: (context) => _notificationAlertDialog(
+                  context: context,
+                  ref: ref,
+                  status: status,
+                ),
+              );
+            } else {
+              ref
+                  .read(rootViewModelProvider.notifier)
+                  .markNotificationAlertEvaluated();
+            }
+          } on Object catch (error, stackTrace) {
+            await ref
+                .read(loggerProvider)
+                .logError(
+                  error,
+                  stackTrace,
+                  reason: 'notificationStatusProvider read failed',
+                );
+            ref
+                .read(rootViewModelProvider.notifier)
+                .markNotificationAlertEvaluated();
           }
         });
 

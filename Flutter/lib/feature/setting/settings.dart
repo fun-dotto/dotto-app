@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:dotto/controller/config_controller.dart';
+import 'package:dotto/controller/notification_status_controller.dart';
 import 'package:dotto/controller/user_controller.dart';
 import 'package:dotto/domain/academic_area.dart';
 import 'package:dotto/domain/academic_class.dart';
@@ -11,16 +12,18 @@ import 'package:dotto/feature/github_contributor/github_contributor_screen.dart'
 import 'package:dotto/feature/onboarding/onboarding_screen.dart';
 import 'package:dotto/feature/setting/widget/license.dart';
 import 'package:dotto/feature/setting/widget/user_info_tile.dart';
+import 'package:dotto/helper/notification_helper.dart';
 import 'package:dotto/helper/url_launcher_helper.dart';
 import 'package:dotto_design_system/style/semantic_color.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:settings_ui/settings_ui.dart';
 
-final class SettingsScreen extends ConsumerWidget {
+final class SettingsScreen extends HookConsumerWidget {
   const SettingsScreen({super.key});
 
   Widget _settingValueText(String text) {
@@ -110,7 +113,16 @@ final class SettingsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(userProvider);
     final config = ref.watch(configProvider);
+    final notificationStatus = ref.watch(notificationStatusProvider);
     final isAuthenticated = user.value != null;
+
+    // 設定を取得（初回マウント時のみ）
+    useEffect(() {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref.read(configProvider.notifier).refresh();
+      });
+      return null;
+    }, const []);
 
     return Scaffold(
       appBar: AppBar(
@@ -362,6 +374,19 @@ final class SettingsScreen extends ConsumerWidget {
                             ),
                           ),
                         );
+                      },
+                    ),
+                    // 通知設定
+                    SettingsTile.navigation(
+                      title: const Text('通知'),
+                      leading: const Icon(Icons.notifications_active),
+                      value: _settingValueText(
+                        notificationStatus.value?.label ?? '確認中',
+                      ),
+                      onPressed: (_) async {
+                        await ref
+                            .read(notificationHelperProvider)
+                            .openSystemSettings();
                       },
                     ),
                     // フィードバック

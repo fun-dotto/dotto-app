@@ -11,6 +11,7 @@ abstract class RootViewModelState with _$RootViewModelState {
     required Map<TabItem, GlobalKey<NavigatorState>> navigatorKeys,
     required bool hasShownAppTutorial,
     required bool hasShownUpdateAlert,
+    required bool hasShownNotificationAlert,
     required bool isValidAppVersion,
     required bool isLatestAppVersion,
     required String currentAppVersion,
