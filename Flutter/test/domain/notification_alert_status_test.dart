@@ -47,10 +47,7 @@ void main() {
 
     test('authorized かつ alert が enabled なら enabled を返す', () {
       final result = NotificationAlertStatus.fromSettings(
-        _settings(
-          authorizationStatus: AuthorizationStatus.authorized,
-          alert: AppleNotificationSetting.enabled,
-        ),
+        _settings(authorizationStatus: AuthorizationStatus.authorized),
       );
       expect(result, NotificationAlertStatus.enabled);
     });
