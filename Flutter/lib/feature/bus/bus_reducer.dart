@@ -1,12 +1,12 @@
 import 'dart:async';
 
-import 'package:dotto/domain/bus_stop.dart';
 import 'package:dotto/domain/domain_error.dart';
 import 'package:dotto/domain/user_preference_keys.dart';
 import 'package:dotto/feature/bus/bus_state.dart';
 import 'package:dotto/helper/date_formatter.dart';
 import 'package:dotto/helper/location_helper.dart';
 import 'package:dotto/helper/user_preference_repository.dart';
+import 'package:dotto/repository/model/bus_stop.dart';
 import 'package:dotto/repository/repository_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
