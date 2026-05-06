@@ -16,14 +16,16 @@ abstract class BusTrip with _$BusTrip {
     List<BusStop> allStops,
   ) {
     final stopsList = map['stops'] as List;
+    final busStopById = {for (final stop in allStops) stop.id: stop};
     return BusTrip(
       route: map['route'] as String,
       stops: stopsList.map((e) {
         final stopMap = Map<String, dynamic>.from(e as Map);
         final id = stopMap['id'] as int;
-        final targetBusStop = allStops.firstWhere(
-          (busStop) => busStop.id == id,
-        );
+        final targetBusStop = busStopById[id];
+        if (targetBusStop == null) {
+          throw FormatException('Unknown bus stop id: $id');
+        }
         return BusTripStop.fromFirebase(targetBusStop, stopMap);
       }).toList(),
     );
