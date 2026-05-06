@@ -17,8 +17,8 @@ abstract class BusStop with _$BusStop {
     final id = switch (rawId) {
       final int v => v,
       final num v => v.toInt(),
-      final String v => int.tryParse(v) ??
-          (throw FormatException('Invalid BusStop id', v)),
+      final String v =>
+        int.tryParse(v) ?? (throw FormatException('Invalid BusStop id', v)),
       _ => throw FormatException('Invalid BusStop id', rawId),
     };
     final rawRoute = map['route'];
