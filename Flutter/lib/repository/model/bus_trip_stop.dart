@@ -12,9 +12,16 @@ abstract class BusTripStop with _$BusTripStop {
   }) = _BusTripStop;
 
   factory BusTripStop.fromFirebase(BusStop stop, Map<String, dynamic> map) {
-    final timeStrList = (map['time'] as String).split(':');
-    final hour = int.parse(timeStrList[0]);
-    final minute = int.parse(timeStrList[1]);
+    final timeStr = map['time'] as String;
+    final timeStrList = timeStr.split(':');
+    if (timeStrList.length != 2) {
+      throw FormatException('Invalid time format (expected HH:mm)', timeStr);
+    }
+    final hour = int.tryParse(timeStrList[0]);
+    final minute = int.tryParse(timeStrList[1]);
+    if (hour == null || minute == null) {
+      throw FormatException('Invalid time format (expected HH:mm)', timeStr);
+    }
     return BusTripStop(
       time: Duration(hours: hour, minutes: minute),
       stop: stop,
