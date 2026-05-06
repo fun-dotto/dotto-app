@@ -11,7 +11,6 @@ abstract class BusTripStop with _$BusTripStop {
     int? terminal,
   }) = _BusTripStop;
 
-  @Deprecated('ドメインモデルでFirebaseからの変換を行うことは不適切。Dotto API導入後に削除予定。')
   factory BusTripStop.fromFirebase(BusStop stop, Map<String, dynamic> map) {
     final timeStrList = (map['time'] as String).split(':');
     final hour = int.parse(timeStrList[0]);
