@@ -21,7 +21,7 @@ concurrency:
 defaults:
   run:
     shell: bash
-    working-directory: Flutter
+    working-directory: .
 
 jobs:
   format:
@@ -38,7 +38,7 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           cache: false
-          working_directory: Flutter
+          working_directory: .
       - name: Install dependencies
         run: task install-all
       - name: Generate code
