@@ -16,8 +16,6 @@ on:
       - synchronize
       - unassigned
       - unlabeled
-    paths:
-      - Flutter/**
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

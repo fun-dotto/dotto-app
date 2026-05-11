@@ -4,16 +4,12 @@ on:
   push:
     branches:
       - main
-    paths:
-      - Flutter/**
   pull_request:
     types:
       - opened
       - ready_for_review
       - reopened
       - synchronize
-    paths:
-      - Flutter/**
   schedule:
     - cron: 0 15 * * *
   workflow_dispatch:
