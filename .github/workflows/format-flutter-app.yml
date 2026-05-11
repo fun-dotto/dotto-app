@@ -4,16 +4,12 @@ on:
   push:
     branches:
       - main
-    paths:
-      - Flutter/**
   pull_request:
     types:
       - opened
       - ready_for_review
       - reopened
       - synchronize
-    paths:
-      - Flutter/**
   schedule:
     - cron: 0 15 * * *
   workflow_dispatch:
@@ -25,7 +21,7 @@ concurrency:
 defaults:
   run:
     shell: bash
-    working-directory: Flutter
+    working-directory: .
 
 jobs:
   format:
@@ -42,7 +38,7 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           cache: false
-          working_directory: Flutter
+          working_directory: .
       - name: Install dependencies
         run: task install-all
       - name: Generate code

@@ -1,0 +1,21 @@
+import 'package:dotto/repository/model/bus_stop.dart';
+import 'package:dotto/repository/model/bus_trip.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+part 'bus_state.freezed.dart';
+
+@freezed
+abstract class BusState with _$BusState {
+  const factory BusState({
+    /// {from_fun: {holiday: [], weekday: []},
+    ///  to_fun: {holiday: [], weekday: []}}
+    required Map<String, Map<String, List<BusTrip>>> trips,
+    required List<BusStop> allStops,
+    required BusStop myBusStop,
+    required bool isWeekday,
+    required DateTime currentTime,
+    @Default(true) bool isTo,
+    @Default(false) bool isWeekdayScrolled,
+    @Default(false) bool isHolidayScrolled,
+  }) = _BusState;
+}

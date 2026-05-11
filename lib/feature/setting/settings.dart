@@ -1,0 +1,501 @@
+import 'dart:async';
+
+import 'package:dotto/controller/config_controller.dart';
+import 'package:dotto/controller/notification_status_controller.dart';
+import 'package:dotto/controller/user_controller.dart';
+import 'package:dotto/domain/academic_area.dart';
+import 'package:dotto/domain/academic_class.dart';
+import 'package:dotto/domain/grade.dart';
+import 'package:dotto/feature/announcement/announcement_screen.dart';
+import 'package:dotto/feature/debug/debug_screen.dart';
+import 'package:dotto/feature/github_contributor/github_contributor_screen.dart';
+import 'package:dotto/feature/onboarding/onboarding_screen.dart';
+import 'package:dotto/feature/setting/widget/license.dart';
+import 'package:dotto/feature/setting/widget/user_info_tile.dart';
+import 'package:dotto/helper/notification_helper.dart';
+import 'package:dotto/helper/url_launcher_helper.dart';
+import 'package:dotto_design_system/style/semantic_color.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:settings_ui/settings_ui.dart';
+
+final class SettingsScreen extends HookConsumerWidget {
+  const SettingsScreen({super.key});
+
+  Widget _settingValueText(String text) {
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 180),
+      child: Text(
+        text,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        softWrap: false,
+        textAlign: TextAlign.end,
+      ),
+    );
+  }
+
+  Future<void> _showLogoutConfirmDialog(
+    BuildContext context,
+    VoidCallback onLogout,
+  ) async {
+    await showDialog<void>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: Text(
+            'ログアウトしますか？',
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+          actions: [
+            Row(
+              spacing: 12,
+              children: [
+                Expanded(
+                  child: TextButton(
+                    onPressed: () {
+                      Navigator.of(dialogContext).pop();
+                    },
+                    child: const Text('キャンセル'),
+                  ),
+                ),
+                Expanded(
+                  child: TextButton(
+                    onPressed: () {
+                      Navigator.of(dialogContext).pop();
+                      onLogout();
+                    },
+                    child: const Text('ログアウト'),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<bool> canOpenDebugScreen() async {
+    if (kDebugMode) {
+      return true;
+    }
+
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      return false;
+    }
+
+    try {
+      final tokenResult = await user.getIdTokenResult(true);
+      final developerClaim = tokenResult.claims?['developer'];
+
+      if (developerClaim is bool) {
+        return developerClaim;
+      }
+      if (developerClaim is String) {
+        return developerClaim.toLowerCase() == 'true';
+      }
+      if (developerClaim is num) {
+        return developerClaim != 0;
+      }
+      return developerClaim != null;
+    } on Exception {
+      return false;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final user = ref.watch(userProvider);
+    final config = ref.watch(configProvider);
+    final notificationStatus = ref.watch(notificationStatusProvider);
+    final isAuthenticated = user.value != null;
+
+    // 設定を取得（初回マウント時のみ）
+    useEffect(() {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref.read(configProvider.notifier).refresh();
+      });
+      return null;
+    }, const []);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          '設定',
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+            color: SemanticColor.light.accentPrimary,
+          ),
+        ),
+        centerTitle: false,
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: SettingsList(
+              sections: [
+                SettingsSection(
+                  tiles: <AbstractSettingsTile>[
+                    user.when(
+                      data: (value) => CustomSettingsTile(
+                        child: UserInfoTile(
+                          user: value,
+                          onTap: value != null
+                              ? () async {
+                                  await _showLogoutConfirmDialog(
+                                    context,
+                                    () => unawaited(
+                                      ref.read(userProvider.notifier).signOut(),
+                                    ),
+                                  );
+                                }
+                              : () async {
+                                  await ref
+                                      .read(userProvider.notifier)
+                                      .signIn();
+                                },
+                        ),
+                      ),
+                      loading: () {
+                        return CustomSettingsTile(
+                          child: UserInfoTile(
+                            user: user.value,
+                            isLoading: true,
+                          ),
+                        );
+                      },
+                      error: (err, stack) {
+                        return CustomSettingsTile(
+                          child: UserInfoTile(
+                            user: user.value,
+                            onTap: isAuthenticated
+                                ? () async {
+                                    await _showLogoutConfirmDialog(
+                                      context,
+                                      () => unawaited(
+                                        ref
+                                            .read(userProvider.notifier)
+                                            .signOut(),
+                                      ),
+                                    );
+                                  }
+                                : () async {
+                                    await ref
+                                        .read(userProvider.notifier)
+                                        .signIn();
+                                  },
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+                if (isAuthenticated)
+                  SettingsSection(
+                    tiles: <SettingsTile>[
+                      SettingsTile.navigation(
+                        onPressed: (_) async {
+                          await showDialog<void>(
+                            context: context,
+                            builder: (context) => SimpleDialog(
+                              title: const Text('学年'),
+                              children: [
+                                MaterialButton(
+                                  onPressed: () async {
+                                    await ref
+                                        .read(userProvider.notifier)
+                                        .setGrade(null);
+                                    if (!context.mounted) return;
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: ListTile(
+                                    title: const Text('なし'),
+                                    trailing: Icon(
+                                      user.value?.grade == null
+                                          ? Icons.check
+                                          : null,
+                                    ),
+                                  ),
+                                ),
+                                ...Grade.values.map((grade) {
+                                  return MaterialButton(
+                                    onPressed: () async {
+                                      await ref
+                                          .read(userProvider.notifier)
+                                          .setGrade(grade);
+                                      if (!context.mounted) return;
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: ListTile(
+                                      title: Text(grade.label),
+                                      trailing: Icon(
+                                        user.value?.grade == grade
+                                            ? Icons.check
+                                            : null,
+                                      ),
+                                    ),
+                                  );
+                                }),
+                              ],
+                            ),
+                          );
+                        },
+                        leading: const Icon(Icons.school),
+                        title: const Text('学年'),
+                        value: _settingValueText(
+                          user.value?.grade?.label ?? '未設定',
+                        ),
+                      ),
+                      SettingsTile.navigation(
+                        onPressed: (_) async {
+                          await showDialog<void>(
+                            context: context,
+                            builder: (context) => SimpleDialog(
+                              title: const Text('コース'),
+                              children: [
+                                MaterialButton(
+                                  onPressed: () async {
+                                    await ref
+                                        .read(userProvider.notifier)
+                                        .setCourse(null);
+                                    if (!context.mounted) return;
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: ListTile(
+                                    title: const Text('なし'),
+                                    trailing: Icon(
+                                      user.value?.course == null
+                                          ? Icons.check
+                                          : null,
+                                    ),
+                                  ),
+                                ),
+                                ...AcademicArea.values.map((academicArea) {
+                                  return MaterialButton(
+                                    onPressed: () async {
+                                      await ref
+                                          .read(userProvider.notifier)
+                                          .setCourse(academicArea);
+                                      if (!context.mounted) return;
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: ListTile(
+                                      title: Text(academicArea.label),
+                                      trailing: Icon(
+                                        user.value?.course == academicArea
+                                            ? Icons.check
+                                            : null,
+                                      ),
+                                    ),
+                                  );
+                                }),
+                              ],
+                            ),
+                          );
+                        },
+                        leading: const Icon(Icons.school),
+                        title: const Text('コース'),
+                        value: _settingValueText(
+                          user.value?.course?.label ?? '未設定',
+                        ),
+                      ),
+                      SettingsTile.navigation(
+                        onPressed: (_) async {
+                          await showDialog<void>(
+                            context: context,
+                            builder: (context) => SimpleDialog(
+                              title: const Text('クラス'),
+                              children: [
+                                MaterialButton(
+                                  onPressed: () async {
+                                    await ref
+                                        .read(userProvider.notifier)
+                                        .setClass(null);
+                                    if (!context.mounted) return;
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: ListTile(
+                                    title: const Text('なし'),
+                                    trailing: Icon(
+                                      user.value?.class_ == null
+                                          ? Icons.check
+                                          : null,
+                                    ),
+                                  ),
+                                ),
+                                ...AcademicClass.values.map((academicClass) {
+                                  return MaterialButton(
+                                    onPressed: () async {
+                                      await ref
+                                          .read(userProvider.notifier)
+                                          .setClass(academicClass);
+                                      if (!context.mounted) return;
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: ListTile(
+                                      title: Text(academicClass.label),
+                                      trailing: Icon(
+                                        user.value?.class_ == academicClass
+                                            ? Icons.check
+                                            : null,
+                                      ),
+                                    ),
+                                  );
+                                }),
+                              ],
+                            ),
+                          );
+                        },
+                        leading: const Icon(Icons.school),
+                        title: const Text('クラス'),
+                        value: _settingValueText(
+                          user.value?.class_?.label ?? '未設定',
+                        ),
+                      ),
+                    ],
+                  ),
+                SettingsSection(
+                  tiles: <SettingsTile>[
+                    // お知らせ
+                    SettingsTile.navigation(
+                      title: const Text('お知らせ'),
+                      leading: const Icon(Icons.notifications),
+                      onPressed: (_) async {
+                        await Navigator.of(context).push(
+                          MaterialPageRoute<void>(
+                            builder: (_) => const AnnouncementScreen(),
+                            settings: const RouteSettings(
+                              name: '/setting/announcements',
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    // 通知設定
+                    SettingsTile.navigation(
+                      title: const Text('通知'),
+                      leading: const Icon(Icons.notifications_active),
+                      value: _settingValueText(
+                        notificationStatus.value?.label ?? '確認中',
+                      ),
+                      onPressed: (_) async {
+                        await ref
+                            .read(notificationHelperProvider)
+                            .openSystemSettings();
+                      },
+                    ),
+                    // フィードバック
+                    SettingsTile.navigation(
+                      title: const Text('フィードバックを送る'),
+                      leading: const Icon(Icons.messenger_rounded),
+                      onPressed: (_) async =>
+                          launchUrlSafely(config.feedbackFormUrl),
+                    ),
+                    // Contributors表示
+                    SettingsTile.navigation(
+                      title: const Text('開発者'),
+                      leading: const Icon(Icons.person),
+                      onPressed: (_) async {
+                        await Navigator.of(context).push(
+                          MaterialPageRoute<void>(
+                            builder: (_) => const GitHubContributorScreen(),
+                            settings: const RouteSettings(
+                              name: '/setting/developers',
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    // アプリの使い方
+                    SettingsTile.navigation(
+                      title: const Text('アプリの使い方'),
+                      leading: const Icon(Icons.assignment),
+                      onPressed: (_) async {
+                        await Navigator.of(context).push(
+                          MaterialPageRoute<void>(
+                            builder: (_) => OnboardingScreen(
+                              onDismissed: () => Navigator.of(context).pop(),
+                            ),
+                            settings: const RouteSettings(
+                              name: '/setting/onboarding',
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    // 利用規約
+                    SettingsTile.navigation(
+                      title: const Text('利用規約'),
+                      leading: const Icon(Icons.verified_user),
+                      onPressed: (_) async =>
+                          launchUrlSafely(config.termsOfServiceUrl),
+                    ),
+                    // プライバシーポリシー
+                    SettingsTile.navigation(
+                      title: const Text('プライバシーポリシー'),
+                      leading: const Icon(Icons.admin_panel_settings),
+                      onPressed: (_) async =>
+                          launchUrlSafely(config.privacyPolicyUrl),
+                    ),
+                    // ライセンス
+                    SettingsTile.navigation(
+                      title: const Text('ライセンス'),
+                      leading: const Icon(Icons.info),
+                      onPressed: (_) async {
+                        await Navigator.of(context).push(
+                          MaterialPageRoute<void>(
+                            builder: (_) => const SettingsLicenseScreen(),
+                            settings: const RouteSettings(
+                              name: '/setting/licenses',
+                            ),
+                          ),
+                        );
+                      },
+                      // バージョン
+                      description: GestureDetector(
+                        onTap: () async {
+                          final canOpen = await canOpenDebugScreen();
+                          if (!canOpen || !context.mounted) {
+                            return;
+                          }
+                          unawaited(
+                            Navigator.of(context).push(
+                              MaterialPageRoute<void>(
+                                builder: (_) => const DebugScreen(),
+                                settings: const RouteSettings(
+                                  name: '/setting/debug',
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                        child: FutureBuilder(
+                          future: PackageInfo.fromPlatform(),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              final data = snapshot.data!;
+                              return Text(
+                                '${data.version} (${data.buildNumber})',
+                              );
+                            } else {
+                              return const Text('');
+                            }
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
