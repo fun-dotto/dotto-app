@@ -16,8 +16,6 @@ on:
       - synchronize
       - unassigned
       - unlabeled
-    paths:
-      - Flutter/**
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -26,7 +24,7 @@ concurrency:
 defaults:
   run:
     shell: bash
-    working-directory: ./Flutter
+    working-directory: .
 
 jobs:
   danger:
@@ -44,7 +42,7 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           cache: false
-          working_directory: Flutter
+          working_directory: .
       - name: Install dependencies
         run: bundle install
       - name: Run Danger
