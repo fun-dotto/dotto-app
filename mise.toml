@@ -7,7 +7,7 @@ compile = false
 [tools]
 "aqua:go-task/task" = "3.50.0"
 dotenvx = "1.65.0"
-flutter = "3.38.9"
+flutter = "3.41.9"
 "github:linux-test-project/lcov" = "2.4"
 java = "25.0.2"
 "npm:firebase-tools" = "15.15.0"
