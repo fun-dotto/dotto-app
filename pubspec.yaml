@@ -4,7 +4,7 @@ publish_to: "none"
 version: 2.1.2+0
 
 environment:
-  sdk: 3.11.5
+  sdk: 3.11.6
 
 dependencies:
   app_links: 7.0.0
