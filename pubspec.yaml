@@ -54,7 +54,7 @@ dependencies:
   path: 1.9.1
   path_provider: 2.1.5
   riverpod_annotation: 4.0.2
-  settings_ui: 2.0.2
+  settings_ui: 3.0.1
   share_plus: 12.0.2
   shared_preferences: 2.5.5
   shimmer_animation: 2.2.2+1
