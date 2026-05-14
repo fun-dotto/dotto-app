@@ -1,55 +1,61 @@
 version: "3"
 
 vars:
-  DOTENVX: mise x -- dotenvx
   FASTLANE: mise x -- bundle exec fastlane
+  GCLOUD: mise x -- gcloud
 
 tasks:
+  fetch-fastlane-env:
+    desc: Fetch .env for fastlane
+    cmds:
+      - rm -f ./fastlane/.env
+      - "{{.GCLOUD}} secrets versions access latest --secret=app_env_fastlane_ios --project=swift2023groupc > ./fastlane/.env"
+
   download-appstore-metadata:
     desc: Download App Store metadata
     cmds:
-      - "{{.DOTENVX}} run -f ../.env.keys -- {{.DOTENVX}} run -f ./fastlane/.env -- {{.FASTLANE}} deliver download_metadata"
+      - "{{.FASTLANE}} deliver download_metadata"
 
   download-appstore-screenshots:
     desc: Download App Store screenshots
     cmds:
-      - "{{.DOTENVX}} run -f ../.env.keys -- {{.DOTENVX}} run -f ./fastlane/.env -- {{.FASTLANE}} deliver download_screenshots"
+      - "{{.FASTLANE}} deliver download_screenshots"
 
   download-appstore-metadata-and-screenshots:
     desc: Download App Store metadata and screenshots
     cmds:
-      - "{{.DOTENVX}} run -f ../.env.keys -- {{.DOTENVX}} run -f ./fastlane/.env -- {{.FASTLANE}} deliver download_metadata"
-      - "{{.DOTENVX}} run -f ../.env.keys -- {{.DOTENVX}} run -f ./fastlane/.env -- {{.FASTLANE}} deliver download_screenshots"
+      - "{{.FASTLANE}} deliver download_metadata"
+      - "{{.FASTLANE}} deliver download_screenshots"
 
   upload-appstore-metadata:
     desc: Upload App Store metadata
     cmds:
-      - "{{.DOTENVX}} run -f ../.env.keys -- {{.DOTENVX}} run -f ./fastlane/.env -- {{.FASTLANE}} deliver --skip_binary_upload --skip_screenshots --force"
+      - "{{.FASTLANE}} deliver --skip_binary_upload --skip_screenshots --force"
 
   upload-appstore-screenshots:
     desc: Upload App Store screenshots
     cmds:
-      - "{{.DOTENVX}} run -f ../.env.keys -- {{.DOTENVX}} run -f ./fastlane/.env -- {{.FASTLANE}} deliver --skip_binary_upload --skip_metadata --force"
+      - "{{.FASTLANE}} deliver --skip_binary_upload --skip_metadata --force"
 
   upload-appstore-metadata-and-screenshots:
     desc: Upload App Store metadata and screenshots
     cmds:
-      - "{{.DOTENVX}} run -f ../.env.keys -- {{.DOTENVX}} run -f ./fastlane/.env -- {{.FASTLANE}} deliver --skip_binary_upload --force"
+      - "{{.FASTLANE}} deliver --skip_binary_upload --force"
 
   deploy-firebase-app-distribution:
     desc: Deploy iOS to Firebase App Distribution
     cmds:
-      - "{{.DOTENVX}} run -f ../.env.keys -- {{.DOTENVX}} run -f ./fastlane/.env -- {{.FASTLANE}} deploy_firebase_app_distribution"
+      - "{{.FASTLANE}} deploy_firebase_app_distribution"
 
   deploy-testflight:
     desc: Deploy iOS to TestFlight
     cmds:
-      - "{{.DOTENVX}} run -f ../.env.keys -- {{.DOTENVX}} run -f ./fastlane/.env -- {{.FASTLANE}} deploy_testflight"
+      - "{{.FASTLANE}} deploy_testflight"
 
   match-development:
     desc: Match development certificates (readonly)
     cmds:
-      - "{{.DOTENVX}} run -f ../.env.keys -- {{.DOTENVX}} run -f ./fastlane/.env -- {{.FASTLANE}} match_development_readonly"
+      - "{{.FASTLANE}} match_development_readonly"
 
   register-device:
     desc: Register iOS device and update provisioning profiles
@@ -57,7 +63,7 @@ tasks:
       NAME: "{{.name}}"
       UDID: "{{.udid}}"
     cmds:
-      - "{{.DOTENVX}} run -f ../.env.keys -- {{.DOTENVX}} run -f ./fastlane/.env -- {{.FASTLANE}} run register_device name:{{.NAME}} udid:{{.UDID}}"
-      - "{{.DOTENVX}} run -f ../.env.keys -- {{.DOTENVX}} run -f ./fastlane/.env -- {{.FASTLANE}} match_development"
-      - "{{.DOTENVX}} run -f ../.env.keys -- {{.DOTENVX}} run -f ./fastlane/.env -- {{.FASTLANE}} match_adhoc"
-      - "{{.DOTENVX}} run -f ../.env.keys -- {{.DOTENVX}} run -f ./fastlane/.env -- {{.FASTLANE}} match_appstore"
+      - "{{.FASTLANE}} run register_device name:{{.NAME}} udid:{{.UDID}}"
+      - "{{.FASTLANE}} match_development"
+      - "{{.FASTLANE}} match_adhoc"
+      - "{{.FASTLANE}} match_appstore"
