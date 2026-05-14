@@ -30,7 +30,7 @@ dependencies:
     sdk: flutter
   flutter_datetime_picker_plus: 2.2.0
   flutter_hooks: 0.21.3+1
-  flutter_local_notifications: 20.1.0
+  flutter_local_notifications: 21.0.0
   flutter_localizations:
     sdk: flutter
   flutter_overboard: 3.1.3
