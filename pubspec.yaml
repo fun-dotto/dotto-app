@@ -11,7 +11,7 @@ dependencies:
   app_settings: 7.0.0
   built_collection: 5.1.1
   carousel_slider: 5.1.2
-  cloud_firestore: 6.4.0
+  cloud_firestore: 6.4.1
   collection: 1.19.1
   cupertino_icons: 1.0.9
   dio: 5.9.2
