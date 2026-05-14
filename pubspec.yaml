@@ -50,7 +50,7 @@ dependencies:
   minio: 3.5.8
   openapi:
     path: ./api
-  package_info_plus: 9.0.0
+  package_info_plus: 9.0.1
   path: 1.9.1
   path_provider: 2.1.5
   riverpod_annotation: 4.0.0
