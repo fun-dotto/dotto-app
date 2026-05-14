@@ -15,21 +15,12 @@
 
 default_platform(:ios)
 
-def decrypted_dart_defines
-  project_root = File.expand_path("../..", __dir__)
-  env_file = File.join(project_root, ".env")
-  env_keys_file = File.join(project_root, ".env.keys")
-
-  decrypted = sh("dotenvx", "decrypt", "-f", env_file, "-fk", env_keys_file, "--stdout", log: false)
-  decrypted
-    .lines
-    .map(&:strip)
-    .reject { |line| line.empty? || line.start_with?("#") }
-    .map { |line| "--dart-define=#{line}" }
+def dart_defines_file
+  File.expand_path("../../dart_defines/production.json", __dir__)
 end
 
-def flutter_build_release_with_dotenvx_defines
-  sh("flutter", "build", "ios", "--release", *decrypted_dart_defines)
+def flutter_build_release_with_dart_defines
+  sh("flutter", "build", "ios", "--release", "--dart-define-from-file=#{dart_defines_file}")
 end
 
 platform :ios do
@@ -45,7 +36,7 @@ platform :ios do
   desc "Build for Ad Hoc"
   lane :build_adhoc do
     match_adhoc_readonly
-    flutter_build_release_with_dotenvx_defines
+    flutter_build_release_with_dart_defines
     build_app(
       clean: true,
       export_method: "ad-hoc",
@@ -60,7 +51,7 @@ platform :ios do
   desc "Build for App Store"
   lane :build_appstore do
     match_appstore_readonly
-    flutter_build_release_with_dotenvx_defines
+    flutter_build_release_with_dart_defines
     build_app(
       export_method: "app-store",
       export_options: {
