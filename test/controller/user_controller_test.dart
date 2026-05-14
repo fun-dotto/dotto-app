@@ -30,7 +30,7 @@ final class FakeFirebaseAuthPlatform extends FirebaseAuthPlatform {
 
   @override
   FirebaseAuthPlatform setInitialValues({
-    PigeonUserDetails? currentUser,
+    InternalUserDetails? currentUser,
     String? languageCode,
   }) {
     return this;
