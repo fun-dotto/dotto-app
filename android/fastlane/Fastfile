@@ -15,17 +15,8 @@
 
 default_platform(:android)
 
-def decrypted_dart_defines
-  project_root = File.expand_path("../..", __dir__)
-  env_file = File.join(project_root, ".env")
-  env_keys_file = File.join(project_root, ".env.keys")
-
-  decrypted = sh("dotenvx", "decrypt", "-f", env_file, "-fk", env_keys_file, "--stdout", log: false)
-  decrypted
-    .lines
-    .map(&:strip)
-    .reject { |line| line.empty? || line.start_with?("#") }
-    .map { |line| "--dart-define=#{line}" }
+def dart_defines_file
+  File.expand_path("../../dart_defines/production.json", __dir__)
 end
 
 def ensure_release_signing_config!
@@ -65,7 +56,7 @@ platform :android do
 
   desc "Deploy to Firebase App Distribution"
   lane :deploy_firebase_app_distribution do
-    sh("flutter", "build", "appbundle", "--release", *decrypted_dart_defines)
+    sh("flutter", "build", "appbundle", "--release", "--dart-define-from-file=#{dart_defines_file}")
     firebase_app_distribution(
       app: ENV["FIREBASE_APP_ID"],
       groups: ENV["FIREBASE_APP_DISTRIBUTION_GROUPS"],
@@ -100,7 +91,7 @@ platform :android do
       "build",
       "appbundle",
       "--release",
-      *decrypted_dart_defines,
+      "--dart-define-from-file=#{dart_defines_file}",
       "--build-number=#{new_version_code}",
     )
 
