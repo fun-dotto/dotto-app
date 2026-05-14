@@ -16,9 +16,9 @@ includes:
 
 vars:
   DART: mise x -- dart
-  DOTENVX: mise x -- dotenvx
   FASTLANE: mise x -- bundle exec fastlane
   FLUTTER: mise x -- flutter
+  GCLOUD: mise x -- gcloud
   GENHTML: mise x -- genhtml
   LCOV: mise x -- lcov
   OPENAPI_GENERATOR: mise x -- openapi-generator-cli
@@ -39,14 +39,8 @@ tasks:
     desc: Install dependencies for all projects
     deps:
       - task: install
-        vars:
-          FLUTTER: "{{.FLUTTER}}"
       - task: dotto_design_system:install
-        vars:
-          FLUTTER: "{{.FLUTTER}}"
       - task: api:install
-        vars:
-          FLUTTER: "{{.FLUTTER}}"
 
   setup-pre-commit:
     desc: Setup pre-commit hooks (using mise)
@@ -67,14 +61,8 @@ tasks:
     desc: Run build_runner to generate code for all projects
     deps:
       - task: build
-        vars:
-          DART: "{{.DART}}"
       - task: dotto_design_system:build
-        vars:
-          DART: "{{.DART}}"
       - task: api:build
-        vars:
-          DART: "{{.DART}}"
 
   watch:
     desc: Run build_runner to generate code in watch mode
@@ -85,26 +73,18 @@ tasks:
     desc: Run build_runner to generate code in watch mode for all projects
     deps:
       - task: watch
-        vars:
-          DART: "{{.DART}}"
       - task: dotto_design_system:watch
-        vars:
-          DART: "{{.DART}}"
       - task: api:watch
-        vars:
-          DART: "{{.DART}}"
 
   run:
     desc: Run the Flutter app
     cmds:
-      - "{{.FLUTTER}} run $({{.DOTENVX}} decrypt --stdout | grep -v '^#' | sed 's/^/--dart-define=/')"
+      - "{{.FLUTTER}} run --dart-define-from-file=./dart_defines/development.json"
 
   run-storybook:
     desc: Run the Storybook app
     cmds:
       - task: dotto_design_system:run
-        vars:
-          FLUTTER: "{{.FLUTTER}}"
 
   clean:
     desc: Clean Flutter build files
@@ -144,13 +124,13 @@ tasks:
     desc: Build iOS release
     cmds:
       - task: build
-      - "{{.FLUTTER}} build ios --release $({{.DOTENVX}} decrypt --stdout | grep -v '^#' | sed 's/^/--dart-define=/')"
+      - "{{.FLUTTER}} build ios --release --dart-define-from-file=./dart_defines/production.json"
 
   build-android:
     desc: Build Android release appbundle
     cmds:
       - task: build
-      - "{{.FLUTTER}} build appbundle --release $({{.DOTENVX}} decrypt --stdout | grep -v '^#' | sed 's/^/--dart-define=/')"
+      - "{{.FLUTTER}} build appbundle --release --dart-define-from-file=./dart_defines/production.json"
 
   bump-build:
     desc: Bump build number
@@ -181,7 +161,34 @@ tasks:
     cmds:
       - task: ios:register-device
         vars:
-          DOTENVX: "{{.DOTENVX}}"
           FASTLANE: "{{.FASTLANE}}"
           name: "{{.name}}"
           udid: "{{.udid}}"
+
+  fetch-dart-define-development:
+    desc: Fetch dart define file (Development)
+    cmds:
+      - mkdir -p ./dart_defines
+      - rm -f ./dart_defines/development.json
+      - "{{.GCLOUD}} secrets versions access latest --secret=app_dart_define_development --project=swift2023groupc > ./dart_defines/development.json"
+
+  fetch-dart-define-production:
+    desc: Fetch dart define file (Production)
+    cmds:
+      - mkdir -p ./dart_defines
+      - rm -f ./dart_defines/production.json
+      - "{{.GCLOUD}} secrets versions access latest --secret=app_dart_define_production --project=swift2023groupc > ./dart_defines/production.json"
+
+  fetch-dart-defines:
+    desc: Fetch dart define files
+    cmds:
+      - task: fetch-dart-define-development
+      - task: fetch-dart-define-production
+
+  fetch-secrets:
+    desc: Fetch secrets
+    deps:
+      - task: android:fetch-fastlane-env
+      - task: ios:fetch-fastlane-env
+    cmds:
+      - task: fetch-dart-defines
