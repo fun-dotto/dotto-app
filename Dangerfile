@@ -1,31 +1,36 @@
 # Dangerfile for Flutter project
 
+# Bot PRの判定
+is_bot_pr = github.pr_json["user"]["login"].include?("[bot]")
+
 # PRの基本情報確認
 has_app_changes = !git.modified_files.grep(/^lib\//).empty?
 has_test_changes = !git.modified_files.grep(/^test\//).empty?
 
-# PRタイトルのチェック
-if github.pr_title.length < 5
-  fail("PRタイトルが短すぎます。より詳細なタイトルを入力してください。")
-end
+unless is_bot_pr
+  # PRタイトルのチェック
+  if github.pr_title.length < 5
+    fail("PRタイトルが短すぎます。より詳細なタイトルを入力してください。")
+  end
 
-# PR説明のチェック
-if github.pr_body.length < 10
-  warn("PR説明が短すぎます。変更内容をより詳しく記載することをお勧めします。")
-end
+  # PR説明のチェック
+  if github.pr_body.length < 10
+    warn("PR説明が短すぎます。変更内容をより詳しく記載することをお勧めします。")
+  end
 
-if github.pr_json["requested_reviewers"].nil? || github.pr_json["requested_reviewers"].empty?
-  fail("PRにReviewerが設定されていません。Reviewerを設定してください。")
-end
+  if github.pr_json["requested_reviewers"].nil? || github.pr_json["requested_reviewers"].empty?
+    fail("PRにReviewerが設定されていません。Reviewerを設定してください。")
+  end
 
-# Assigneesのチェック
-if github.pr_json["assignees"].nil? || github.pr_json["assignees"].empty?
-  fail("PRにAssigneeが設定されていません。あなた自身をアサインしてください。")
-end
+  # Assigneesのチェック
+  if github.pr_json["assignees"].nil? || github.pr_json["assignees"].empty?
+    fail("PRにAssigneeが設定されていません。あなた自身をアサインしてください。")
+  end
 
-# Milestoneのチェック
-if github.pr_json["milestone"].nil?
-  fail("PRにMilestoneが設定されていません。適切なMilestoneを設定してください。")
+  # Milestoneのチェック
+  if github.pr_json["milestone"].nil?
+    fail("PRにMilestoneが設定されていません。適切なMilestoneを設定してください。")
+  end
 end
 
 # 大きなPRの警告
