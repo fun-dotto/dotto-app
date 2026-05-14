@@ -19,8 +19,8 @@ dependencies:
     path: ./dotto_design_system
   firebase_analytics: 12.1.1
   firebase_app_check: 0.4.1+4
-  firebase_auth: 6.1.4
-  firebase_core: 4.4.0
+  firebase_auth: 6.4.0
+  firebase_core: 4.7.0
   firebase_crashlytics: 5.0.7
   firebase_database: 12.1.2
   firebase_messaging: 16.1.1
