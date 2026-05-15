@@ -1844,10 +1844,10 @@ packages:
     dependency: transitive
     description:
       name: widgetbook_annotation
-      sha256: "55504431b15eedef3c1fc4af2d108ac98b32610b59d4a4e2eea87a8515d17eef"
+      sha256: ec98130f23579f14e304b6b45516612676ae4e0b0e6bb1debe9dba4ea604ab42
       url: "https://pub.dev"
     source: hosted
-    version: "3.9.0"
+    version: "3.11.0"
   win32:
     dependency: transitive
     description:
