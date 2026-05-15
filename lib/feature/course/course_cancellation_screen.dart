@@ -60,7 +60,7 @@ final class CourseCancellationScreen extends ConsumerWidget {
           ),
         ),
         body: switch (state) {
-          AsyncData(value: final value) => TabBarView(
+          AsyncData(:final value) => TabBarView(
             children: [
               _CancelledClassList(
                 items: value.cancelledClasses,
