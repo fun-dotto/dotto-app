@@ -5,6 +5,18 @@
   "packageRules": [
     {
       "matchManagers": ["pub"]
+    },
+    {
+      "groupName": "json_annotation and json_serializable",
+      "matchPackageNames": ["json_annotation", "json_serializable", "riverpod_generator", "mockito"]
+    },
+    {
+      "groupName": "timezone and flutter_local_notifications",
+      "matchPackageNames": ["timezone", "flutter_local_notifications"]
+    },
+    {
+      "groupName": "share_plus and package_info_plus",
+      "matchPackageNames": ["share_plus", "package_info_plus", "geolocator"]
     }
   ]
 }
