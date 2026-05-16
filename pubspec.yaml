@@ -17,10 +17,6 @@ melos:
       hooks:
         pre:
           run: flutter config --enable-swift-package-manager
-        post:
-          run: |
-            melos run setup:flutterfire
-            melos run fetch:dart_defines
     clean:
       hooks:
         post:

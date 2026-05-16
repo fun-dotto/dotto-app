@@ -21,6 +21,16 @@ run = [
   "bundle install",
   "dart pub global activate melos",
   "dart pub global activate flutterfire_cli",
+  "melos bootstrap",
+  "melos run setup:flutterfire",
+  "melos run fetch:dart_defines"
+]
+
+[tasks.setup-ci]
+run = [
+  "bundle install",
+  "dart pub global activate melos",
+  "dart pub global activate flutterfire_cli",
   "melos bootstrap"
 ]
 
@@ -38,6 +48,9 @@ run = [
   "melos run gen:build_runner --no-select",
   "cd packages/dotto_design_system && flutter run",
 ]
+
+[tasks.test-unit]
+run = "melos run test:unit"
 
 [tasks.analyze]
 run = "dart analyze apps/dotto/ packages/dotto_design_system/ scripts/"
