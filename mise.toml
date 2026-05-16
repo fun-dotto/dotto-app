@@ -1,5 +1,5 @@
 [settings]
-minimum_release_age = "14d"
+minimum_release_age = "7d"
 
 [settings.ruby]
 compile = false
