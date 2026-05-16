@@ -1,25 +1,92 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "enabledManagers": ["pub"],
-  "extends": ["config:recommended"],
+  "extends": [
+    "config:best-practices",
+    ":pinVersions",
+    ":timezone(Asia/Tokyo)"
+  ],
+  "schedule": [
+    "after 0am and before 4am on monday"
+  ],
+  "major": {
+    "minimumReleaseAge": "14 days"
+  },
+  "minor": {
+    "minimumReleaseAge": "7 days"
+  },
+  "patch": {
+    "minimumReleaseAge": "7 days"
+  },
+  "lockFileMaintenance": {
+    "enabled": true,
+    "automerge": true,
+    "schedule": [
+      "after 0am and before 4am on monday"
+    ]
+  },
   "packageRules": [
     {
-      "matchManagers": ["pub"]
+      "matchManagers": [
+        "mise"
+      ],
+      "matchPackageNames": [
+        "flutter",
+        "ruby"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "major"
+      ],
+      "enabled": false
     },
     {
-      "groupName": "json_annotation and json_serializable",
-      "matchPackageNames": ["json_annotation", "json_serializable", "mockito"]
+      "matchManagers": [
+        "mise"
+      ],
+      "matchPackageNames": [
+        "flutter",
+        "ruby"
+      ],
+      "matchUpdateTypes": [
+        "patch"
+      ],
+      "schedule": [
+        "after 0am and before 4am on monday"
+      ]
     },
     {
-      "groupName": "timezone and flutter_local_notifications",
-      "matchPackageNames": ["timezone", "flutter_local_notifications"]
+      "matchManagers": [
+        "mise"
+      ],
+      "matchPackageNames": [
+        "java"
+      ],
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "enabled": false
     },
     {
-      "groupName": "share_plus and package_info_plus",
-      "matchPackageNames": ["share_plus", "package_info_plus", "geolocator"]
+      "matchManagers": [
+        "mise"
+      ],
+      "matchPackageNames": [
+        "java"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
+      "schedule": [
+        "after 0am and before 4am on monday"
+      ]
     },
     {
       "groupName": "firebase",
+      "matchManagers": [
+        "pub"
+      ],
       "matchPackageNames": [
         "firebase_core",
         "firebase_auth",
@@ -37,6 +104,9 @@
     },
     {
       "groupName": "riverpod",
+      "matchManagers": [
+        "pub"
+      ],
       "matchPackageNames": [
         "flutter_riverpod",
         "hooks_riverpod",
@@ -46,15 +116,34 @@
     },
     {
       "groupName": "freezed",
-      "matchPackageNames": ["freezed", "freezed_annotation"]
+      "matchManagers": [
+        "pub"
+      ],
+      "matchPackageNames": [
+        "freezed",
+        "freezed_annotation"
+      ]
     },
     {
       "groupName": "widgetbook",
-      "matchPackageNames": ["widgetbook", "widgetbook_annotation", "widgetbook_generator"]
+      "matchManagers": [
+        "pub"
+      ],
+      "matchPackageNames": [
+        "widgetbook",
+        "widgetbook_annotation",
+        "widgetbook_generator"
+      ]
     },
     {
       "groupName": "sqflite",
-      "matchPackageNames": ["sqflite", "sqflite_common"]
+      "matchManagers": [
+        "pub"
+      ],
+      "matchPackageNames": [
+        "sqflite",
+        "sqflite_common"
+      ]
     }
   ]
 }
