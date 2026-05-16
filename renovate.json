@@ -1,10 +1,149 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "enabledManagers": ["pub"],
-  "extends": ["config:recommended"],
+  "extends": [
+    "config:best-practices",
+    ":pinVersions",
+    ":timezone(Asia/Tokyo)"
+  ],
+  "schedule": [
+    "after 0am and before 4am on monday"
+  ],
+  "major": {
+    "minimumReleaseAge": "14 days"
+  },
+  "minor": {
+    "minimumReleaseAge": "7 days"
+  },
+  "patch": {
+    "minimumReleaseAge": "7 days"
+  },
+  "lockFileMaintenance": {
+    "enabled": true,
+    "automerge": true,
+    "schedule": [
+      "after 0am and before 4am on monday"
+    ]
+  },
   "packageRules": [
     {
-      "matchManagers": ["pub"]
+      "matchManagers": [
+        "mise"
+      ],
+      "matchPackageNames": [
+        "flutter",
+        "ruby"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "major"
+      ],
+      "enabled": false
+    },
+    {
+      "matchManagers": [
+        "mise"
+      ],
+      "matchPackageNames": [
+        "flutter",
+        "ruby"
+      ],
+      "matchUpdateTypes": [
+        "patch"
+      ],
+      "schedule": [
+        "after 0am and before 4am on monday"
+      ]
+    },
+    {
+      "matchManagers": [
+        "mise"
+      ],
+      "matchPackageNames": [
+        "java"
+      ],
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "enabled": false
+    },
+    {
+      "matchManagers": [
+        "mise"
+      ],
+      "matchPackageNames": [
+        "java"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
+      "schedule": [
+        "after 0am and before 4am on monday"
+      ]
+    },
+    {
+      "groupName": "firebase",
+      "matchManagers": [
+        "pub"
+      ],
+      "matchPackageNames": [
+        "firebase_core",
+        "firebase_auth",
+        "firebase_analytics",
+        "firebase_crashlytics",
+        "firebase_database",
+        "firebase_messaging",
+        "firebase_remote_config",
+        "firebase_storage",
+        "firebase_app_check",
+        "cloud_firestore",
+        "firebase_auth_platform_interface",
+        "firebase_core_platform_interface"
+      ]
+    },
+    {
+      "groupName": "riverpod",
+      "matchManagers": [
+        "pub"
+      ],
+      "matchPackageNames": [
+        "flutter_riverpod",
+        "hooks_riverpod",
+        "riverpod_annotation",
+        "riverpod_generator"
+      ]
+    },
+    {
+      "groupName": "freezed",
+      "matchManagers": [
+        "pub"
+      ],
+      "matchPackageNames": [
+        "freezed",
+        "freezed_annotation"
+      ]
+    },
+    {
+      "groupName": "widgetbook",
+      "matchManagers": [
+        "pub"
+      ],
+      "matchPackageNames": [
+        "widgetbook",
+        "widgetbook_annotation",
+        "widgetbook_generator"
+      ]
+    },
+    {
+      "groupName": "sqflite",
+      "matchManagers": [
+        "pub"
+      ],
+      "matchPackageNames": [
+        "sqflite",
+        "sqflite_common"
+      ]
     }
   ]
 }

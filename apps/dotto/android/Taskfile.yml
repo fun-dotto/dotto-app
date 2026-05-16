@@ -1,0 +1,36 @@
+version: "3"
+
+vars:
+  FASTLANE: mise x -- bundle exec fastlane
+  GCLOUD: mise x -- gcloud
+
+tasks:
+  fetch-fastlane-env:
+    desc: Fetch .env for fastlane
+    cmds:
+      - rm -f ./fastlane/.env
+      - "{{.GCLOUD}} secrets versions access latest --secret=app_env_fastlane_android --project=swift2023groupc > ./fastlane/.env"
+
+  download-google-play-metadata-and-screenshots:
+    desc: Download Google Play metadata and screenshots
+    cmds:
+      - "{{.FASTLANE}} supply init --json-key $GOOGLE_APPLICATION_CREDENTIALS --skip_upload_apk true --skip_upload_aab true --skip_upload_metadata true --skip_upload_changelogs true --skip_upload_images true --skip_upload_screenshots true"
+    env:
+      GOOGLE_APPLICATION_CREDENTIALS: "{{.GOOGLE_APPLICATION_CREDENTIALS}}"
+
+  upload-google-play-metadata-and-screenshots:
+    desc: Upload Google Play metadata and screenshots
+    cmds:
+      - "{{.FASTLANE}} supply --json-key $GOOGLE_APPLICATION_CREDENTIALS --skip_upload_aab true --skip_upload_apk true --skip_upload_images true"
+    env:
+      GOOGLE_APPLICATION_CREDENTIALS: "{{.GOOGLE_APPLICATION_CREDENTIALS}}"
+
+  deploy-firebase-app-distribution:
+    desc: Deploy Android to Firebase App Distribution
+    cmds:
+      - "{{.FASTLANE}} deploy_firebase_app_distribution"
+
+  deploy-google-play:
+    desc: Deploy Android to Google Play
+    cmds:
+      - "{{.FASTLANE}} deploy_google_play"

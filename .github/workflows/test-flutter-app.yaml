@@ -37,9 +37,5 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           cache: false
           working_directory: .
-      - name: Install Dependencies
-        run: task install-all
-      - name: Run Build
-        run: task build-all
-      - name: Run Tests
-        run: task test
+      - run: mise setup-ci
+      - run: mise test-unit

@@ -39,12 +39,8 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           cache: false
           working_directory: .
-      - name: Install dependencies
-        run: task install-all
-      - name: Generate code
-        run: task build-all
-      - name: Run format
-        run: task format
+      - run: mise setup-ci
+      - run: mise format
       - name: Check for diff
         run: |
           if [ -n "$(git diff --name-only)" ]; then

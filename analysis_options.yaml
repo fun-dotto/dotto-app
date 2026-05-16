@@ -2,10 +2,11 @@ include: package:very_good_analysis/analysis_options.yaml
 
 analyzer:
   exclude:
-    - api/**
-    - lib/**/*.freezed.dart
-    - lib/**/*.g.dart
-    - test/**/*.mocks.dart
+    - apps/dotto/lib/**/*.freezed.dart
+    - apps/dotto/lib/**/*.g.dart
+    - apps/dotto/test/**/*.mocks.dart
+    - packages/dotto_api/**
+    - packages/dotto_design_system/lib/**/*.g.dart
 formatter:
   page_width: 80
   trailing_commas: automate
