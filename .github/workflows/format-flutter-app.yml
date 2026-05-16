@@ -39,6 +39,10 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           cache: false
           working_directory: .
+      - name: Setup Dart path
+        run: |
+          echo 'export PATH="$HOME/.pub-cache/bin:$PATH"' >> ~/.zshrc
+          export PATH="$HOME/.pub-cache/bin:$PATH"
       - run: mise setup-ci
       - run: mise format
       - name: Check for diff
