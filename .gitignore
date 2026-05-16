@@ -103,8 +103,9 @@ Temporary Items
 **/.env
 **/.envrc
 **/**.freezed.dart
-**/**.iml
 **/**.g.dart
+**/**.iml
+**/**.log
 **/**.mocks.dart
 **/dart_defines/**.json
 .claude/worktrees/
