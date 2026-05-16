@@ -67,6 +67,9 @@ Future<int> checkDartFormat() async {
     'format',
     '--output=none',
     '--set-exit-if-changed',
+    'apps/dotto/',
+    'packages/dotto_design_system/',
+    'scripts/',
     ...stagedDartFiles,
   ]);
 
@@ -82,7 +85,7 @@ Future<int> checkDartFormat() async {
       print(stderr);
     }
     print('');
-    print("フォーマットを修正するには 'task format' を実行し、その後変更をステージしてください。");
+    print("フォーマットを修正するには 'mise format' を実行し、その後変更をステージしてください。");
     return 1;
   }
 

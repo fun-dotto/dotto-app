@@ -1,4 +1,5 @@
 name: dotto_design_system
+resolution: workspace
 
 environment:
   sdk: 3.11.5

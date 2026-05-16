@@ -7,7 +7,6 @@ compile = false
 [tools]
 "aqua:go-task/task" = "3.50.0"
 flutter = "3.41.9"
-"github:linux-test-project/lcov" = "2.4"
 gcloud = "567.0.0"
 java = "25.0.2"
 "npm:firebase-tools" = "15.15.0"
@@ -15,5 +14,36 @@ java = "25.0.2"
 ruby = "4.0.4"
 
 [tasks.pre-commit]
-description = "Run pre-commit checks"
 run = "dart run scripts/pre_commit.dart"
+
+[tasks.setup]
+run = [
+  "bundle install",
+  "dart pub global activate melos",
+  "dart pub global activate flutterfire_cli",
+  "melos bootstrap"
+]
+
+[tasks.build]
+run = "melos run gen:build_runner --no-select"
+
+[tasks.app]
+run = [
+  "melos run gen:build_runner --no-select",
+  "cd apps/dotto && flutter run --dart-define-from-file=./dart_defines/development.json",
+]
+
+[tasks.widgetbook]
+run = [
+  "melos run gen:build_runner --no-select",
+  "cd packages/dotto_design_system && flutter run",
+]
+
+[tasks.analyze]
+run = "dart analyze apps/dotto/ packages/dotto_design_system/ scripts/"
+
+[tasks.format]
+run = "dart fix --apply && dart format apps/dotto/ packages/dotto_design_system/ scripts/"
+
+[tasks.generate-openapi]
+run = "openapi-generator-cli generate -i ./openapi/openapi.yaml -g dart-dio -o ./packages/dotto_api"

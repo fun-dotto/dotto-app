@@ -103,11 +103,12 @@ Temporary Items
 **/.env
 **/.envrc
 **/**.freezed.dart
+**/**.iml
 **/**.g.dart
 **/**.mocks.dart
 **/dart_defines/**.json
 .claude/worktrees/
-coverage/
+.idea/
 firebase.json
 firebase_options.dart
 google-services.json
