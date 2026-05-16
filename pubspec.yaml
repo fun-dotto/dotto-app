@@ -37,7 +37,9 @@ melos:
       packageFilters:
         dependsOn: "build_runner"
     test:unit:
-      run: flutter test -j 8 --reporter=failures-only --dart-define=VERBOSE_TEST=false --no-pub
+      steps:
+        - melos run gen:build_runner
+        - melos exec --concurrency 8 --dir-exists=test --flutter -- "flutter test -j 8 --reporter=failures-only --dart-define=VERBOSE_TEST=false --no-pub"
     fetch:dart_defines:
       steps:
         - rm -rf ./apps/dotto/dart_defines
