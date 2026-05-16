@@ -9,6 +9,7 @@ compile = false
 flutter = "3.41.9"
 gcloud = "567.0.0"
 java = "25.0.2"
+node = "24.15.0"
 "npm:firebase-tools" = "15.15.0"
 "npm:@openapitools/openapi-generator-cli" = "2.32.0"
 ruby = "4.0.4"
