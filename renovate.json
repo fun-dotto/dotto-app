@@ -5,6 +5,56 @@
   "packageRules": [
     {
       "matchManagers": ["pub"]
+    },
+    {
+      "groupName": "json_annotation and json_serializable",
+      "matchPackageNames": ["json_annotation", "json_serializable", "mockito"]
+    },
+    {
+      "groupName": "timezone and flutter_local_notifications",
+      "matchPackageNames": ["timezone", "flutter_local_notifications"]
+    },
+    {
+      "groupName": "share_plus and package_info_plus",
+      "matchPackageNames": ["share_plus", "package_info_plus", "geolocator"]
+    },
+    {
+      "groupName": "firebase",
+      "matchPackageNames": [
+        "firebase_core",
+        "firebase_auth",
+        "firebase_analytics",
+        "firebase_crashlytics",
+        "firebase_database",
+        "firebase_messaging",
+        "firebase_remote_config",
+        "firebase_storage",
+        "firebase_app_check",
+        "cloud_firestore",
+        "firebase_auth_platform_interface",
+        "firebase_core_platform_interface"
+      ]
+    },
+    {
+      "groupName": "riverpod",
+      "matchPackageNames": [
+        "flutter_riverpod",
+        "hooks_riverpod",
+        "riverpod_annotation",
+        "riverpod_generator"
+      ]
+    },
+    {
+      "groupName": "freezed",
+      "matchPackageNames": ["freezed", "freezed_annotation"]
+    },
+    {
+      "groupName": "widgetbook",
+      "matchPackageNames": ["widgetbook", "widgetbook_annotation", "widgetbook_generator"]
+    },
+    {
+      "groupName": "sqflite",
+      "matchPackageNames": ["sqflite", "sqflite_common"]
     }
   ]
 }
