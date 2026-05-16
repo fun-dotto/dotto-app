@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:dotto/domain/map_tile_props.dart';
 import 'package:dotto/domain/room.dart';
 import 'package:dotto/domain/room_equipment.dart';
