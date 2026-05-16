@@ -40,8 +40,8 @@ melos:
       run: flutter test -j 8 --reporter=failures-only --dart-define=VERBOSE_TEST=false --no-pub
     fetch:dart_defines:
       steps:
-        - rm -rf ./dart_defines
-        - mkdir -p ./dart_defines
+        - rm -rf ./apps/dotto/dart_defines
+        - mkdir -p ./apps/dotto/dart_defines
         - gcloud secrets versions access latest --secret=app_dart_define_development --project=swift2023groupc > ./apps/dotto/dart_defines/development.json
         - gcloud secrets versions access latest --secret=app_dart_define_production --project=swift2023groupc > ./apps/dotto/dart_defines/production.json
       packageFilters:
