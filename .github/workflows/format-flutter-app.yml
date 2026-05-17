@@ -44,7 +44,7 @@ jobs:
       - name: Check for diff
         run: |
           if [ -n "$(git diff --name-only)" ]; then
-            echo "::error::Code is not formatted. Run 'task format' and commit the changes."
+            echo "::error::Code is not formatted. Run 'mise format' and commit the changes."
             git diff --name-only
             exit 1
           fi
