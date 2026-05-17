@@ -34,13 +34,6 @@ mise install
 mise generate git-pre-commit --write --task=pre-commit
 ```
 
-### Dart
-
-```zsh
-echo 'export PATH="$HOME/.pub-cache/bin:$PATH"' >> ~/.zshrc
-export PATH="$HOME/.pub-cache/bin:$PATH"
-```
-
 ### Google Cloud & Firebase を認証
 
 ```zsh

@@ -4,6 +4,9 @@ minimum_release_age = "7d"
 [settings.ruby]
 compile = false
 
+[env]
+_.path = ["{{env.HOME}}/.pub-cache/bin"]
+
 [tools]
 "aqua:go-task/task" = "3.50.0"
 flutter = "3.41.9"
