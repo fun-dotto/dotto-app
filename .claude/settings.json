@@ -1,5 +1,5 @@
 {
-  "defaultMode": "acceptEdits",
+  "defaultMode": "plan",
   "permissions": {
     "allow": [
       "Bash(* --version)",

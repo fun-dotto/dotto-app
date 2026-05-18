@@ -11,6 +11,14 @@
     "firebase-mcp-server": {
       "command": "npx",
       "args": ["-y", "firebase-tools@latest", "mcp"]
+    },
+    "xcode": {
+      "type": "stdio",
+      "command": "xcrun",
+      "args": [
+        "mcpbridge"
+      ],
+      "env": {}
     }
   }
 }
