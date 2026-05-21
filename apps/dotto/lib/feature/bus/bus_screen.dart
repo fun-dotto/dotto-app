@@ -243,8 +243,8 @@ final class BusScreen extends HookConsumerWidget {
               children: [
                 _KeepAliveTab(
                   child: ListView.separated(
+                    scrollCacheExtent: ScrollCacheExtent.pixels(10000),
                     controller: weekdayScrollController,
-                    cacheExtent: 10000,
                     itemCount: weekdayTripWidgets.length,
                     separatorBuilder: (_, _) => const Divider(height: 1),
                     itemBuilder: (_, index) => weekdayTripWidgets[index],
@@ -252,8 +252,8 @@ final class BusScreen extends HookConsumerWidget {
                 ),
                 _KeepAliveTab(
                   child: ListView.separated(
+                    scrollCacheExtent: ScrollCacheExtent.pixels(10000),
                     controller: holidayScrollController,
-                    cacheExtent: 10000,
                     itemCount: holidayTripWidgets.length,
                     separatorBuilder: (_, _) => const Divider(height: 1),
                     itemBuilder: (_, index) => holidayTripWidgets[index],
