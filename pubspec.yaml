@@ -13,10 +13,6 @@ dev_dependencies:
 
 melos:
   command:
-    bootstrap:
-      hooks:
-        pre:
-          run: flutter config --enable-swift-package-manager
     clean:
       hooks:
         post:

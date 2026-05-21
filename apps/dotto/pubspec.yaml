@@ -82,7 +82,5 @@ flutter:
     - assets/
     - assets/map/
     - assets/tutorial/
-  config:
-    enable-swift-package-manager: true
   generate: true
   uses-material-design: true
