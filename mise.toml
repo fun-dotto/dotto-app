@@ -9,7 +9,7 @@ _.path = ["{{env.HOME}}/.pub-cache/bin"]
 
 [tools]
 "aqua:go-task/task" = "3.50.0"
-flutter = "3.41.9"
+flutter = "3.44.0"
 gcloud = "567.0.0"
 java = "25.0.2"
 node = "24.15.0"
