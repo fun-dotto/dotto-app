@@ -174,15 +174,14 @@ final class DottoButton extends ButtonStyleButton {
 
     WidgetStateProperty<double>? elevationValue;
     if (elevation != null) {
-      elevationValue = WidgetStateProperty<double>.fromMap(
-        <WidgetStatesConstraint, double>{
-          WidgetState.disabled: 0,
-          WidgetState.pressed: elevation + 6,
-          WidgetState.hovered: elevation + 2,
-          WidgetState.focused: elevation + 2,
-          WidgetState.any: elevation,
-        },
-      );
+      elevationValue =
+          WidgetStateProperty<double>.fromMap(<WidgetStatesConstraint, double>{
+            WidgetState.disabled: 0,
+            WidgetState.pressed: elevation + 6,
+            WidgetState.hovered: elevation + 2,
+            WidgetState.focused: elevation + 2,
+            WidgetState.any: elevation,
+          });
     }
 
     return ButtonStyle(

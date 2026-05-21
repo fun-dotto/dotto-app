@@ -13,9 +13,7 @@ final class DottoTextFieldOverview extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         spacing: 16,
-        children: [
-          DottoTextField(placeholder: 'Type here...'),
-        ],
+        children: [DottoTextField(placeholder: 'Type here...')],
       ),
     );
   }
