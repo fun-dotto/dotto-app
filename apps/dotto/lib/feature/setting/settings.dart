@@ -144,7 +144,7 @@ final class SettingsScreen extends HookConsumerWidget {
                     user.when(
                       data: (value) => CustomSettingsTile(
                         child: UserInfoTile(
-                          user: value,
+                          user: Color.toARGB32,
                           onTap: value != null
                               ? () async {
                                   await _showLogoutConfirmDialog(

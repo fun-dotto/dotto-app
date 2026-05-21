@@ -19,6 +19,7 @@ import 'package:dotto/domain/subject_requirement.dart';
 import 'package:dotto/domain/subject_requirement_type.dart';
 import 'package:dotto/domain/subject_summary.dart';
 import 'package:dotto/domain/syllabus.dart';
+// ignore: unused_import
 import 'package:dotto/extension/iterable_extension.dart';
 import 'package:dotto/helper/syllabus_database_helper.dart';
 import 'package:openapi/openapi.dart'

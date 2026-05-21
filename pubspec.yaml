@@ -2,7 +2,7 @@ name: dotto_workspace
 publish_to: none
 
 environment:
-  sdk: 3.11.5
+  sdk: 3.12.0
 
 workspace:
   - apps/dotto # dotto
@@ -13,10 +13,6 @@ dev_dependencies:
 
 melos:
   command:
-    bootstrap:
-      hooks:
-        pre:
-          run: flutter config --enable-swift-package-manager
     clean:
       hooks:
         post:

@@ -15,8 +15,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 final class MockFirebaseUser extends Mock implements User {}
 
 final class FakeFirebaseAuthPlatform extends FirebaseAuthPlatform {
-  FakeFirebaseAuthPlatform({super.appInstance, UserPlatform? currentUser})
-    : _currentUser = currentUser;
+  FakeFirebaseAuthPlatform({super.appInstance, this._currentUser});
 
   UserPlatform? _currentUser;
 
